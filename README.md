@@ -1,39 +1,50 @@
 # ShareOS
 
 ShareOS is a free, open source alternative firmware for the D-Link
-DNS-320/320L/321/323/325/327L, DNR-322L and compatible NAS boxes.
+DNS-320L (and, later, the DNS-320/321/323/325/327L, DNR-322L and
+compatible NAS boxes).
 
-It is a fork of [Alt-F](http://sourceforge.net/projects/alt-f) (by João
-Cardoso), created because the original project's firmware support from
-D-Link ended and the Alt-F community firmware itself is no longer actively
-maintained. All credit for the original design and years of work goes to
-the Alt-F project and its author — see [LICENSE](LICENSE) and
-[COPYING](COPYING) for the full GPLv2 terms this code is distributed under.
+It is a fork of [Alt-F](http://sourceforge.net/projects/alt-f) by João
+Cardoso. All credit for the original design, the hardware support and
+years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
+[COPYING](COPYING) for the GPLv2 terms.
 
-## What changed from Alt-F
+## Status: phase 1 – new build base
 
-This is primarily a rebrand at this point: the boot banner, web admin UI,
-firmware image naming/detection, package-manager mount point (`/ShareOS`
-instead of `/Alt-F`), and related internal naming were updated throughout.
-The underlying buildroot-based system, kernel, and hardware support are
-unchanged from Alt-F r3935 (trunk).
+ShareOS is being rebuilt on a current, maintainable base while keeping
+what made Alt-F easy to use: the stock U-Boot, the stock flash layout and
+installing from the vendor web interface.
 
-A few places intentionally still point at the original Alt-F project,
-since ShareOS doesn't have its own release channel yet:
+| | Alt-F (legacy) | ShareOS |
+|---|---|---|
+| Build system | buildroot 2009.08 fork | buildroot 2026.02 LTS, `BR2_EXTERNAL` tree |
+| Toolchain | GCC 7.4, uClibc-ng | GCC 14, musl |
+| Kernel | 4.14 (EOL) | 6.18 LTS |
+| Configuration | scattered files, shell CGIs | UCI + ubus/rpcd/ucode (planned) |
+| Updates | manual upload | GitHub Releases (planned) |
 
-- The optional "install Debian alongside ShareOS" feature
-  (`customroot/usr/www/cgi-bin/debian_proc.cgi`) downloads a real Alt-F
-  firmware image to kexec back into after leaving Debian.
-- The QEMU test script (`qemu-ShareOS.sh`) downloads Alt-F's original
-  simulator kernel/rootfs images.
-- `fixup`'s `FIXSITE` still points at Alt-F's hosted fix repository.
+The phase-1 image is a **minimal test system** (SSH, hardware check) to
+validate the new kernel and board support on real hardware. It has no web
+interface yet. See [docs/TEST-PHASE1.md](docs/TEST-PHASE1.md) for how to
+try it from Alt-F *without flashing*.
 
-These can be pointed at ShareOS's own GitHub releases once any exist.
+## Layout
 
-## Documentation
+```
+configs/                 buildroot defconfigs (shareos_<board>_defconfig)
+board/dlink/dns320l/     device tree, kernel fragment, rootfs overlay, image scripts
+package/                 ShareOS buildroot packages
+src/alt-f-utils/         Alt-F device tools (MCU daemon, dns323-fw, sysctrl)
+patches/                 hashes/patches for buildroot packages
+scripts/                 helper scripts
+legacy/alt-f/            the original Alt-F tree, kept for reference
+```
 
-- [README.INSTALL](README.INSTALL) — flashing instructions
-- [README.USE](README.USE) — using the web admin interface
-- [README.BUILD](README.BUILD) — building firmware images from source
-- [NEWS](NEWS) / [CHANGES](CHANGES) — Alt-F's historical changelog, kept
-  as-is for the project history prior to this fork
+## Building
+
+See [docs/BUILD.md](docs/BUILD.md). In short:
+
+```sh
+make dns320l
+# -> output/dns320l/images/ShareOS-<version>-DNS-320L-rev-Ax.bin
+```

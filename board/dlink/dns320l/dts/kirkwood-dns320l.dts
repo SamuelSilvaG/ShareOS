@@ -1,0 +1,222 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Device Tree file for D-Link DNS-320L rev Ax
+ *
+ * Copyright (C) 2014, Andreas Boehler <dev@aboehler.at>
+ * Adapted to Alt-F by Joao Cardoso
+ * Ported to Linux 6.x for ShareOS
+ *
+ * The Weltrend MCU (fan, RTC, power LED, power-off, WOL) sits on
+ * uart1 and is driven from userspace by dns320l-daemon.
+ */
+
+/dts-v1/;
+
+#include <arm/marvell/kirkwood.dtsi>
+#include <arm/marvell/kirkwood-6281.dtsi>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "D-Link DNS-320L-rev-Ax NAS";
+	compatible = "dlink,dns-320l-a", "dlink,dns-320l",
+		     "marvell,kirkwood-88f6702", "marvell,kirkwood";
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x00000000 0x10000000>;	/* 256 MB */
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200 root=/dev/ram0 init=/init earlyprintk";
+		stdout-path = &uart0;
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&pmx_button_reset &pmx_button_usb_copy>;
+		pinctrl-names = "default";
+
+		button-usb {
+			label = "USB unmount button";
+			linux,code = <KEY_COPY>;
+			gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
+		};
+
+		button-reset {
+			label = "Reset push button";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
+		};
+
+		/*
+		 * The power button (mpp29) does not raise an interrupt and is
+		 * already low at boot, so it is polled from userspace
+		 * (see /usr/sbin/shareos-board), as Alt-F did.
+		 */
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+		pinctrl-0 = <&pmx_led_usb_blue &pmx_led_usb_orange
+			     &pmx_led_red_left_hdd &pmx_led_red_right_hdd>;
+		pinctrl-names = "default";
+
+		led-usb-blue {
+			label = "dns320l:blue:usb";
+			gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
+		};
+
+		led-sata1 {
+			label = "dns320l:red:sata1";
+			gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
+		};
+
+		led-sata0 {
+			label = "dns320l:red:sata0";
+			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+		};
+
+		led-usb-orange {
+			label = "dns320l:orange:usb";
+			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	sata_power: regulator-sata-power {
+		compatible = "regulator-fixed";
+		pinctrl-0 = <&pmx_power_sata>;
+		pinctrl-names = "default";
+		regulator-name = "SATA Power";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		enable-active-high;
+		regulator-always-on;
+		regulator-boot-on;
+		/* mpp24 -> gpio0 line 24 (Alt-F had &gpio1 24, which is not mpp24) */
+		gpio = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&pinctrl {
+	pmx_led_red_right_hdd: pmx-led-red-right-hdd {
+		marvell,pins = "mpp22";
+		marvell,function = "gpio";
+	};
+
+	pmx_led_red_left_hdd: pmx-led-red-left-hdd {
+		marvell,pins = "mpp23";
+		marvell,function = "gpio";
+	};
+
+	pmx_power_sata: pmx-power-sata {
+		marvell,pins = "mpp24";
+		marvell,function = "gpio";
+	};
+
+	pmx_led_usb_blue: pmx-led-usb-blue {
+		marvell,pins = "mpp25";
+		marvell,function = "gpio";
+	};
+
+	pmx_led_usb_orange: pmx-led-usb-orange {
+		marvell,pins = "mpp26";
+		marvell,function = "gpio";
+	};
+
+	pmx_button_usb_copy: pmx-button-usb-copy {
+		marvell,pins = "mpp27";
+		marvell,function = "gpio";
+	};
+
+	pmx_button_reset: pmx-button-reset {
+		marvell,pins = "mpp28";
+		marvell,function = "gpio";
+	};
+
+	pmx_button_power: pmx-button-power {
+		marvell,pins = "mpp29";
+		marvell,function = "gpio";
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&uart1 {
+	/* Weltrend MCU */
+	pinctrl-0 = <&pmx_uart1>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&sata {
+	status = "okay";
+	nr-ports = <2>;
+};
+
+&nand {
+	pinctrl-0 = <&pmx_nand>;
+	pinctrl-names = "default";
+	status = "okay";
+	chip-delay = <40>;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "u-boot";
+			reg = <0x0000000 0x100000>;
+			read-only;
+		};
+
+		partition@100000 {
+			label = "uImage";
+			reg = <0x0100000 0x500000>;
+		};
+
+		partition@600000 {
+			label = "ramdisk";
+			reg = <0x0600000 0x500000>;
+		};
+
+		partition@b00000 {
+			label = "image";
+			reg = <0x0b00000 0x6400000>;
+		};
+
+		partition@6f00000 {
+			label = "mini firmware";
+			reg = <0x6f00000 0xa00000>;
+		};
+
+		partition@7900000 {
+			label = "config";
+			reg = <0x7900000 0x500000>;
+		};
+
+		partition@7e00000 {
+			label = "my-dlink";
+			reg = <0x7e00000 0x200000>;
+		};
+	};
+};
+
+&mdio {
+	status = "okay";
+
+	ethphy0: ethernet-phy@0 {
+		reg = <0>;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	ethernet0-port@0 {
+		phy-handle = <&ethphy0>;
+	};
+};

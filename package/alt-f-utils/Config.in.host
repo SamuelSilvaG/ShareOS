@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HOST_ALT_F_UTILS
+	bool "host alt-f-utils (dns323-fw)"
+	help
+	  Host build of dns323-fw, used to create firmware images in
+	  the D-Link container format that the stock firmware, Alt-F
+	  and ShareOS can flash from their web interface.

@@ -1,0 +1,189 @@
+# ShareOS kernel fragment for the D-Link DNS-320L (applied on top of mvebu_v5_defconfig)
+#
+# Hard limit: the stock U-Boot reads only 3 MB (0x300000) of the uImage
+# partition, so uImage = zImage + DTB + 64 byte header must stay below that.
+# Everything not needed to boot and reach the network is a module; modules
+# are NOT part of the phase-1 initramfs (see post-build.sh).
+
+# --- Compression / size ------------------------------------------------------
+CONFIG_KERNEL_XZ=y
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+CONFIG_RD_XZ=y
+CONFIG_BLK_DEV_INITRD=y
+# CONFIG_RD_GZIP is not set
+# CONFIG_RD_BZIP2 is not set
+# CONFIG_RD_LZMA is not set
+# CONFIG_RD_LZO is not set
+# CONFIG_RD_LZ4 is not set
+# CONFIG_RD_ZSTD is not set
+# CONFIG_DEBUG_INFO is not set
+# CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is not set
+CONFIG_DEBUG_INFO_NONE=y
+# CONFIG_DEBUG_KERNEL is not set
+# CONFIG_DEBUG_FS is not set
+# CONFIG_KPROBES is not set
+# CONFIG_PROFILING is not set
+# CONFIG_IKCONFIG is not set
+# CONFIG_PREEMPT is not set
+CONFIG_PREEMPT_VOLUNTARY=y
+CONFIG_LOG_BUF_SHIFT=16
+
+# --- Boot: stock U-Boot passes ATAGs, DTB is appended to the zImage ----------
+CONFIG_ATAGS=y
+CONFIG_ARM_APPENDED_DTB=y
+CONFIG_ARM_ATAG_DTB_COMPAT=y
+CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND=y
+CONFIG_CMDLINE="console=ttyS0,115200 root=/dev/ram0 init=/init earlyprintk"
+CONFIG_CMDLINE_EXTEND=y
+CONFIG_KEXEC=y
+
+# --- Platform: only Kirkwood -------------------------------------------------
+CONFIG_ARCH_MVEBU=y
+CONFIG_MACH_KIRKWOOD=y
+# CONFIG_ARCH_ORION5X is not set
+# CONFIG_HIGHMEM is not set
+# CONFIG_PCI is not set
+# CONFIG_PCI_MVEBU is not set
+
+# --- Storage -----------------------------------------------------------------
+CONFIG_MTD=y
+CONFIG_MTD_BLOCK=y
+CONFIG_MTD_RAW_NAND=y
+CONFIG_MTD_NAND_ORION=y
+CONFIG_MTD_UBI=y
+CONFIG_UBIFS_FS=y
+CONFIG_SQUASHFS=y
+CONFIG_SQUASHFS_XZ=y
+CONFIG_OVERLAY_FS=y
+CONFIG_ATA=y
+CONFIG_SATA_MV=y
+# CONFIG_SATA_AHCI is not set
+CONFIG_BLK_DEV_SD=y
+CONFIG_BLK_DEV_LOOP=y
+CONFIG_EXT4_FS=y
+CONFIG_EXT2_FS=m
+CONFIG_VFAT_FS=m
+CONFIG_MSDOS_FS=m
+CONFIG_MD=y
+CONFIG_BLK_DEV_MD=m
+CONFIG_MD_RAID0=m
+CONFIG_MD_RAID1=m
+CONFIG_BLK_DEV_DM=m
+CONFIG_BTRFS_FS=m
+CONFIG_EXFAT_FS=m
+CONFIG_NTFS3_FS=m
+# CONFIG_MTD_CFI is not set
+# CONFIG_MTD_JEDECPROBE is not set
+# CONFIG_MTD_PHYSMAP is not set
+# CONFIG_MTD_M25P80 is not set
+# CONFIG_MTD_SPI_NOR is not set
+# CONFIG_JFFS2_FS is not set
+# CONFIG_CRAMFS is not set
+CONFIG_ISO9660_FS=m
+CONFIG_UDF_FS=m
+
+# --- USB ---------------------------------------------------------------------
+CONFIG_USB=y
+CONFIG_USB_EHCI_HCD=y
+CONFIG_USB_EHCI_HCD_ORION=y
+CONFIG_USB_STORAGE=m
+# CONFIG_USB_XHCI_HCD is not set
+# CONFIG_USB_STORAGE_DATAFAB is not set
+# CONFIG_USB_STORAGE_FREECOM is not set
+# CONFIG_USB_STORAGE_SDDR09 is not set
+# CONFIG_USB_STORAGE_SDDR55 is not set
+# CONFIG_USB_STORAGE_JUMPSHOT is not set
+CONFIG_USB_PRINTER=m
+
+# --- Network -----------------------------------------------------------------
+CONFIG_NET=y
+CONFIG_INET=y
+CONFIG_IPV6=y
+CONFIG_PACKET=y
+CONFIG_UNIX=y
+CONFIG_MV643XX_ETH=y
+CONFIG_MVMDIO=y
+# Alt-F runs the PHY with the generic driver (MARVELL_PHY was not set);
+# keep it as a module so the A3 Gigabit behaviour can be compared.
+CONFIG_MARVELL_PHY=m
+# CONFIG_IP_PNP is not set
+# CONFIG_NET_DSA is not set
+# CONFIG_NET_SWITCHDEV is not set
+# CONFIG_NET_DSA_MV88E6060 is not set
+# CONFIG_NET_DSA_MV88E6XXX is not set
+# CONFIG_R8169 is not set
+# CONFIG_WLAN is not set
+# CONFIG_WIRELESS is not set
+# CONFIG_CFG80211 is not set
+# CONFIG_MAC80211 is not set
+# CONFIG_LIBERTAS is not set
+# CONFIG_MWL8K is not set
+# CONFIG_ROOT_NFS is not set
+CONFIG_NETFILTER=y
+CONFIG_NF_TABLES=m
+CONFIG_NFS_FS=m
+CONFIG_NFSD=m
+CONFIG_SMB_SERVER=m
+CONFIG_CIFS=m
+
+# --- Board peripherals -------------------------------------------------------
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_8250_RUNTIME_UARTS=2
+CONFIG_SERIAL_OF_PLATFORM=y
+CONFIG_INPUT_EVDEV=y
+CONFIG_KEYBOARD_GPIO=y
+CONFIG_GPIO_CDEV=y
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+CONFIG_LEDS_GPIO=y
+CONFIG_LEDS_TRIGGERS=y
+CONFIG_LEDS_TRIGGER_TIMER=y
+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
+CONFIG_LEDS_TRIGGER_DISK=y
+CONFIG_REGULATOR=y
+CONFIG_REGULATOR_FIXED_VOLTAGE=y
+CONFIG_RTC_CLASS=y
+CONFIG_RTC_DRV_MV=y
+CONFIG_WATCHDOG=y
+CONFIG_ORION_WATCHDOG=y
+CONFIG_MV_XOR=y
+CONFIG_CRYPTO_DEV_MARVELL_CESA=m
+CONFIG_I2C=y
+CONFIG_I2C_MV64XXX=y
+CONFIG_I2C_CHARDEV=m
+# CONFIG_SPI is not set
+# CONFIG_EEPROM_AT24 is not set
+# CONFIG_MMC is not set
+# CONFIG_SOUND is not set
+# CONFIG_SND is not set
+# CONFIG_FB is not set
+# CONFIG_DRM is not set
+# CONFIG_STAGING is not set
+# CONFIG_HID is not set
+# CONFIG_SENSORS_ADT7475 is not set
+# CONFIG_SENSORS_G762 is not set
+# CONFIG_SENSORS_LM63 is not set
+# CONFIG_SENSORS_LM85 is not set
+# CONFIG_POWER_RESET_QNAP is not set
+# CONFIG_RTC_DRV_RS5C372 is not set
+# CONFIG_RTC_DRV_PCF8563 is not set
+# CONFIG_RTC_DRV_S35390A is not set
+CONFIG_SENSORS_LM75=m
+CONFIG_HWMON=y
+CONFIG_THERMAL=y
+
+# --- Base system -------------------------------------------------------------
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_TMPFS=y
+CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_MODULES=y
+CONFIG_MODULE_UNLOAD=y
+CONFIG_NLS_UTF8=y
+CONFIG_NLS_CODEPAGE_437=m
+CONFIG_NLS_CODEPAGE_850=m
+CONFIG_NLS_ISO8859_1=m
+CONFIG_NLS_ISO8859_15=m
+CONFIG_MAGIC_SYSRQ=y
