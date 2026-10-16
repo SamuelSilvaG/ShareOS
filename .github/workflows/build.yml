@@ -2,13 +2,18 @@ name: build
 
 on:
   push:
-    branches: [main, 'phase*']
+    branches: [main]
     tags: ['v*']
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# one build per branch/PR; a newer push cancels the running one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   firmware:
@@ -19,7 +24,7 @@ jobs:
       matrix:
         board: [dns320l]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # version.sh uses git describe
 
