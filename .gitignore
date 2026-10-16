@@ -1,3 +1,7 @@
 /buildroot/
 /output/
 /dl/
+/defaults
+/sqimage
+/kernel
+/initramfs
