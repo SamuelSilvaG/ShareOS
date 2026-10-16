@@ -65,7 +65,7 @@ in the Alt-F SVN, versus the trunk (r3935, kernel 4.14.268) ShareOS forked from:
 
 | Boot-relevant item | Release 1.0 | trunk | ShareOS |
 |---|---|---|---|
-| DNS-320L device tree | – | identical to 1.0 | ported from it (Linux 6.x paths) |
+| DNS-320L device tree | reference | identical to 1.0 | ported from it (Linux 6.x paths) |
 | Kernel image | zImage + appended DTB, uImage `-a/-e 0x8000`, no mach-id prologue | same | same |
 | Initramfs | uImage ramdisk `-a 0x800000` (squashfs "sqall") | same (UBI variant) | same header, cpio.xz content |
 | Size limits | 3 MB kernel / 3 MB initramfs | same | same, checked at build time |
