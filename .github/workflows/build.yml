@@ -48,7 +48,7 @@ jobs:
       - name: Collect images
         run: |
           mkdir -p artifacts
-          cp output/${{ matrix.board }}/images/ShareOS-*.bin* artifacts/
+          cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 artifacts/
           cp output/${{ matrix.board }}/images/modules.tar.xz artifacts/modules-${{ matrix.board }}.tar.xz
           ls -l artifacts
 

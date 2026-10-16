@@ -12,7 +12,9 @@ nächsten Neustart läuft wieder das geflashte Alt-F.
 
 1. Firmware-Datei `ShareOS-<version>-DNS-320L-rev-Ax.bin` herunterladen
    (GitHub Actions-Artefakt oder Release) und die `.sha256` prüfen.
-2. In Alt-F: **System → Firmware**, Datei hochladen.
+2. In Alt-F: **System → Firmware**, die `.bin` hochladen. Das optionale
+   Prüfsummen-Feld erwartet eine **SHA1**-Datei: dort die `.sha1` angeben
+   (nicht die `.sha256`) oder das Feld leer lassen.
 3. **„TryIt“** wählen (nicht „FlashIt“!) und bestätigen.
 4. Die Box startet neu in ShareOS. Die **blaue USB-LED blinkt** im Herzschlag-Takt,
    sobald ShareOS läuft.

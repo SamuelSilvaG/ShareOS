@@ -63,5 +63,7 @@ cmp "$T/initramfs" "$B/urootfs"
 "$MKIMAGE" -l "$T/initramfs" >/dev/null
 
 (cd "$B" && sha256sum "$OUT" > "$OUT.sha256")
+# Alt-F's firmware page accepts an optional *.sha1 file next to the .bin
+(cd "$B" && sha1sum "$OUT" > "${OUT%.bin}.sha1")
 "$FW" -f "$B/$OUT" || true
 echo "post-image: created $B/$OUT"
