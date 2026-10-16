@@ -1,0 +1,19 @@
+#!/bin/sh
+# uhttpd – web server for the ShareOS interface; /ubus = JSON-RPC to rpcd
+PID=/var/run/uhttpd.pid
+case "$1" in
+	start)
+		printf "Starting uhttpd: "
+		start-stop-daemon -S -q -b -m -p $PID -x /usr/bin/uhttpd -- \
+			-f -h /www -r ShareOS -p 80 \
+			-u /ubus -U /var/run/ubus/ubus.sock \
+			-t 60 -T 30 -k 20 -A 1 -n 3 -N 100 -R -S -D \
+			&& echo "OK" || echo "FAIL"
+		;;
+	stop)
+		printf "Stopping uhttpd: "
+		start-stop-daemon -K -q -p $PID && echo "OK" || echo "FAIL"
+		;;
+	restart) "$0" stop; sleep 1; "$0" start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

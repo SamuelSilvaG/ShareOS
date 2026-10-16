@@ -1,0 +1,17 @@
+config BR2_PACKAGE_SHAREOS_CORE
+	bool "shareos-core"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_UCI
+	select BR2_PACKAGE_UBUS
+	select BR2_PACKAGE_UCODE
+	select BR2_PACKAGE_RPCD
+	select BR2_PACKAGE_UHTTPD
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LIBCURL_CURL
+	select BR2_PACKAGE_CA_CERTIFICATES
+	select BR2_PACKAGE_MTD
+	select BR2_PACKAGE_ALT_F_UTILS # dns323-fw
+	help
+	  ShareOS backend: UCI defaults, rpcd ucode plugin (shareos.system,
+	  shareos.update), ACLs, init scripts for ubusd/rpcd/uhttpd, the
+	  GitHub release updater (shareos-update) and the web root.

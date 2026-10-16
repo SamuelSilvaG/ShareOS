@@ -1,0 +1,8 @@
+# ShareOS settings (UCI). Edit with: uci set shareos.update.channel=beta && uci commit shareos
+
+config update 'update'
+	# GitHub repository that publishes the firmware releases
+	option repo 'UniqueDroid/ShareOS'
+	# stable = releases only, beta = releases and pre-releases
+	option channel 'stable'
+	option api 'https://api.github.com'

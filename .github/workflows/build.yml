@@ -16,6 +16,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  backend-tests:
+    # fast checks of the ucode backend (updater) without a firmware build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake libjson-c-dev u-boot-tools curl python3
+      - name: Fetch buildroot (for pinned libubox version)
+        run: make buildroot
+      - name: Build ucode for the host (same commits as the firmware)
+        run: tests/build-host-ucode.sh "$HOME/hostroot"
+      - name: Build dns323-fw
+        run: gcc -O2 -D_GNU_SOURCE -o "$HOME/dns323-fw" src/alt-f-utils/dns323-fw.c
+      - name: Updater tests
+        run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-update.sh "$HOME/hostroot/bin/ucode" --synthetic "$HOME/dns323-fw"
+
   firmware:
     runs-on: ubuntu-24.04
     timeout-minutes: 300

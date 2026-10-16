@@ -1,0 +1,21 @@
+{
+	"shareos-admin": {
+		"description": "ShareOS administration",
+		"read": {
+			"ubus": {
+				"shareos.system": [ "info" ],
+				"shareos.update": [ "check", "status" ],
+				"uci": [ "get", "state", "configs" ]
+			},
+			"uci": [ "shareos" ]
+		},
+		"write": {
+			"ubus": {
+				"shareos.system": [ "reboot" ],
+				"shareos.update": [ "download", "apply", "cancel" ],
+				"uci": [ "set", "add", "delete", "commit", "revert", "apply", "confirm", "rollback" ]
+			},
+			"uci": [ "shareos" ]
+		}
+	}
+}

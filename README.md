@@ -20,13 +20,15 @@ installing from the vendor web interface.
 | Build system | buildroot 2009.08 fork | buildroot 2026.02 LTS, `BR2_EXTERNAL` tree |
 | Toolchain | GCC 7.4, uClibc-ng | GCC 14, musl |
 | Kernel | 4.14 (EOL) | 6.18 LTS |
-| Configuration | scattered files, shell CGIs | UCI + ubus/rpcd/ucode (planned) |
-| Updates | manual upload | GitHub Releases (planned) |
+| Configuration | scattered files, shell CGIs | UCI + ubus/rpcd/ucode |
+| Updates | manual upload | GitHub Releases (verified, not yet tested on hw) |
 
-The phase-1 image is a **minimal test system** (SSH, hardware check) to
-validate the new kernel and board support on real hardware. It has no web
-interface yet. See [docs/TEST-PHASE1.md](docs/TEST-PHASE1.md) for how to
-try it from Alt-F *without flashing*.
+The current image is a **test system**: SSH, a hardware check and the new
+backend (UCI, ubus, rpcd + ucode, uhttpd) with the GitHub release updater –
+see [docs/BACKEND.md](docs/BACKEND.md). The web interface is still a test
+page. On the DNS-320L, testing on real hardware needs the serial console,
+see [docs/HARDWARE-DNS320L.md](docs/HARDWARE-DNS320L.md); the backend can be
+run on a build host with qemu (`tests/run-stack-qemu.sh`).
 
 ## Layout
 
@@ -36,6 +38,8 @@ board/dlink/dns320l/     device tree, kernel fragment, rootfs overlay, image scr
 package/                 ShareOS buildroot packages
 src/alt-f-utils/         Alt-F device tools (MCU daemon, dns323-fw, sysctrl)
 patches/                 hashes/patches for buildroot packages
+src/shareos-core/        backend: rpcd ucode plugin, updater, UCI defaults, init scripts
+tests/                   host tests (updater, qemu stack)
 scripts/                 helper scripts
 legacy/alt-f/            the original Alt-F tree, kept for reference
 ```

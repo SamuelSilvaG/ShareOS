@@ -55,6 +55,20 @@ BR2_PACKAGE_LIBGPIOD2=y
 BR2_PACKAGE_LIBGPIOD2_TOOLS=y
 BR2_PACKAGE_ALT_F_UTILS=y
 
+# --- Core stack (phase 3): UCI config, ubus, rpcd + ucode backend, uhttpd ---
+BR2_PACKAGE_UCI=y
+BR2_PACKAGE_UBUS=y
+BR2_PACKAGE_UCODE=y
+BR2_PACKAGE_RPCD=y
+BR2_PACKAGE_UHTTPD=y
+BR2_PACKAGE_SHAREOS_CORE=y
+# HTTPS client with certificate checking for the GitHub updater
+BR2_PACKAGE_MBEDTLS=y
+BR2_PACKAGE_LIBCURL=y
+BR2_PACKAGE_LIBCURL_CURL=y
+BR2_PACKAGE_LIBCURL_MBEDTLS=y
+BR2_PACKAGE_CA_CERTIFICATES=y
+
 # --- Images: initramfs (cpio.xz) for the 'ramdisk' partition ---
 BR2_TARGET_ROOTFS_CPIO=y
 BR2_TARGET_ROOTFS_CPIO_XZ=y

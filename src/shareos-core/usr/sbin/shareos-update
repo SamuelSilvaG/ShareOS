@@ -1,0 +1,367 @@
+#!/usr/bin/ucode -S
+//
+// ShareOS firmware updater – GitHub Releases
+//
+//   shareos-update check [stable|beta]   list releases for this box (JSON)
+//   shareos-update download <tag>        download + verify into /tmp (JSON state)
+//   shareos-update apply <tag>           flash a verified download (kernel + initramfs)
+//   shareos-update status                current state (JSON)
+//   shareos-update cancel                forget a download
+//
+// Everything prints one JSON object on stdout; the rpcd plugin
+// (/usr/share/rpcd/ucode/shareos.uc) uses the same commands.
+//
+// Safety checks before flashing:
+//   - SHA-256 of the image against the .sha256 published with the release
+//   - D-Link container signature must match this box (dns323-fw -f)
+//   - kernel and initramfs must each fit the 3 MB the stock U-Boot reads
+//   - every written partition is read back and compared
+//
+'use strict';
+
+import { readfile, writefile, mkdir, stat, unlink, rename, popen } from 'fs';
+import { cursor } from 'uci';
+
+// SHAREOS_ROOT lets the test suite run this against a fake root on a build host
+const ROOT = getenv('SHAREOS_ROOT') ?? '';
+const STATE_DIR = ROOT + '/tmp/shareos-update';
+const STATE = STATE_DIR + '/state.json';
+const UBOOT_MAX = 3145728;          // bytes U-Boot copies from uImage/ramdisk
+const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10' ];
+
+// fw name -> D-Link signature string reported by dns323-fw -f
+const SIGNATURES = {
+	'DNS-320L-rev-Ax': 'DNS320L'
+};
+
+function shq(s) {
+	return "'" + replace(s, "'", "'\\''") + "'";
+}
+
+function capture(argv) {
+	let p = popen(join(' ', map(argv, shq)) + ' 2>&1', 'r');
+	if (!p)
+		return { rc: -1, out: '' };
+	let out = p.read('all') ?? '';
+	let rc = p.close();
+	return { rc, out };
+}
+
+function release_info() {
+	let r = {};
+	for (let line in split(readfile(ROOT + '/etc/shareos-release') ?? '', '\n')) {
+		let m = match(line, /^([A-Z_]+)="?([^"]*)"?$/);
+		if (m)
+			r[m[1]] = m[2];
+	}
+	return r;
+}
+
+function config() {
+	let c = cursor(ROOT + '/etc/config');
+	return {
+		repo: c.get('shareos', 'update', 'repo') ?? 'UniqueDroid/ShareOS',
+		channel: c.get('shareos', 'update', 'channel') ?? 'stable',
+		api: c.get('shareos', 'update', 'api') ?? 'https://api.github.com'
+	};
+}
+
+function load_state() {
+	let d = readfile(STATE);
+	let s = d ? json(d) : null;
+	return type(s) == 'object' ? s : { state: 'idle' };
+}
+
+function save_state(s) {
+	mkdir(STATE_DIR);
+	s.updated = time();
+	writefile(STATE + '.tmp', sprintf('%J', s));
+	rename(STATE + '.tmp', STATE);
+	return s;
+}
+
+function out(o) {
+	print(sprintf('%J\n', o));
+	return o;
+}
+
+function fail(s, msg) {
+	s.state = 'error';
+	s.error = msg;
+	save_state(s);
+	out(s);
+	exit(1);
+}
+
+// "1.2.3", "v1.2.3-beta.1", dev builds "0.0-20261016-abcdef"
+function vparse(v) {
+	let m = match(v ?? '', /^v?([0-9]+)\.([0-9]+)(\.([0-9]+))?(-(.+))?$/);
+	if (!m)
+		return null;
+	return { n: [ +m[1], +m[2], +(m[4] ?? 0) ], pre: m[6] };
+}
+
+function vcmp(a, b) {
+	let x = vparse(a), y = vparse(b);
+	if (!x || !y)
+		return x ? 1 : (y ? -1 : 0);
+	for (let i = 0; i < 3; i++)
+		if (x.n[i] != y.n[i])
+			return x.n[i] < y.n[i] ? -1 : 1;
+	if (x.pre == y.pre) return 0;
+	if (!x.pre) return 1;           // release > pre-release / dev build
+	if (!y.pre) return -1;
+	return x.pre < y.pre ? -1 : 1;
+}
+
+function fetch_releases(cfg) {
+	let r = capture([ ...CURL, '--max-time', '20',
+		'-H', 'Accept: application/vnd.github+json',
+		`${cfg.api}/repos/${cfg.repo}/releases?per_page=30` ]);
+	if (r.rc != 0)
+		return null;
+	let list = json(r.out);
+	return type(list) == 'array' ? list : null;
+}
+
+function releases_for_box(list, fwname, channel) {
+	let found = [];
+	let re_bin = regexp('^ShareOS-.+-' + fwname + '\\.bin$');
+	let re_sum = regexp('^ShareOS-.+-' + fwname + '\\.bin\\.sha256$');
+
+	for (let x in list) {
+		if (x.draft || (x.prerelease && channel != 'beta'))
+			continue;
+		let bin = null, sum = null;
+		for (let a in x.assets) {
+			if (match(a.name, re_bin)) bin = a;
+			else if (match(a.name, re_sum)) sum = a;
+		}
+		if (!bin || !sum)
+			continue;
+		push(found, {
+			tag: x.tag_name,
+			version: ltrim(x.tag_name, 'v'),
+			prerelease: !!x.prerelease,
+			date: x.published_at,
+			notes: x.body ?? '',
+			url: x.html_url,
+			file: bin.name,
+			size: bin.size,
+			bin_url: bin.browser_download_url,
+			sha_url: sum.browser_download_url
+		});
+	}
+	return sort(found, (a, b) => vcmp(b.version, a.version));
+}
+
+function cmd_check(channel) {
+	let cfg = config();
+	let rel = release_info();
+	channel = channel ?? cfg.channel;
+	let s = load_state();
+
+	if (!rel.SHAREOS_FWNAME)
+		fail(s, 'unknown firmware name (/etc/shareos-release)');
+
+	let list = fetch_releases(cfg);
+	if (list == null)
+		fail(s, 'cannot fetch releases from ' + cfg.api + ' (' + cfg.repo + ')');
+
+	let found = releases_for_box(list, rel.SHAREOS_FWNAME, channel);
+	let latest = found[0];
+
+	s.check = {
+		time: time(),
+		channel,
+		repo: cfg.repo,
+		releases: found,
+		latest: latest?.tag,
+		update_available: !!latest && vcmp(latest.version, rel.SHAREOS_VERSION) > 0
+	};
+	if (s.state == 'error') {
+		s.state = 'idle';
+		delete s.error;
+	}
+	save_state(s);
+	return out({
+		current: rel.SHAREOS_VERSION,
+		fwname: rel.SHAREOS_FWNAME,
+		...s.check
+	});
+}
+
+function find_release(s, tag) {
+	for (let r in s.check?.releases ?? [])
+		if (r.tag == tag)
+			return r;
+	return null;
+}
+
+function verify_image(s, dir, rel) {
+	let fwname = release_info().SHAREOS_FWNAME;
+
+	// SHA-256 from the release
+	let want = match(readfile(dir + '/fw.sha256') ?? '', /^([0-9a-f]{64})/);
+	if (!want)
+		fail(s, 'checksum file is invalid');
+	let have = match(capture([ 'sha256sum', dir + '/fw.bin' ]).out, /^([0-9a-f]{64})/);
+	if (!have || have[1] != want[1])
+		fail(s, 'SHA-256 mismatch – download is corrupt or was tampered with');
+
+	// D-Link container signature must match this box
+	let info = capture([ 'dns323-fw', '-f', dir + '/fw.bin' ]);
+	if (info.rc != 0)
+		fail(s, 'cannot inspect firmware container: ' + trim(info.out));
+	let sig = match(info.out, /signature="([^"]+)"/);
+	if (!sig || sig[1] != SIGNATURES[fwname])
+		fail(s, sprintf('firmware is for "%s", this box needs "%s"', sig?.[1] ?? '?', SIGNATURES[fwname] ?? '?'));
+
+	// split into kernel and initramfs (dns323-fw checks the internal checksums)
+	unlink(dir + '/kernel');
+	unlink(dir + '/initramfs');
+	let sp = capture([ 'dns323-fw', '-s', '-q', '-k', dir + '/kernel', '-i', dir + '/initramfs', dir + '/fw.bin' ]);
+	if (sp.rc != 0)
+		fail(s, 'firmware container is damaged: ' + trim(sp.out));
+
+	for (let part in [ 'kernel', 'initramfs' ]) {
+		let st = stat(dir + '/' + part);
+		if (!st || st.size == 0)
+			fail(s, part + ' missing in firmware');
+		if (st.size > UBOOT_MAX)
+			fail(s, sprintf('%s is %d bytes, the stock U-Boot only loads %d', part, st.size, UBOOT_MAX));
+	}
+	return true;
+}
+
+function cmd_download(tag) {
+	let s = load_state();
+	let rel = find_release(s, tag);
+	if (!rel)
+		fail(s, 'unknown release ' + (tag ?? '(none)') + ' – run check first');
+
+	let dir = STATE_DIR + '/dl';
+	mkdir(STATE_DIR);
+	mkdir(dir);
+	unlink(dir + '/fw.bin');
+	unlink(dir + '/fw.bin.part');
+
+	s.state = 'downloading';
+	s.release = rel;
+	delete s.error;
+	save_state(s);
+
+	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.sha256', rel.sha_url ]).rc != 0)
+		fail(s, 'download of the checksum failed');
+	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.bin.part', rel.bin_url ]).rc != 0)
+		fail(s, 'download of the firmware failed');
+	rename(dir + '/fw.bin.part', dir + '/fw.bin');
+
+	s.state = 'verifying';
+	save_state(s);
+	verify_image(s, dir, rel);
+
+	s.state = 'ready';
+	save_state(s);
+	return out(s);
+}
+
+function mtd_by_name(name) {
+	for (let line in split(readfile(ROOT + '/proc/mtd') ?? '', '\n')) {
+		let m = match(line, /^(mtd[0-9]+): ([0-9a-f]+) [0-9a-f]+ "([^"]+)"/);
+		if (m && m[3] == name)
+			return { dev: '/dev/' + m[1], size: hex(m[2]) };
+	}
+	return null;
+}
+
+function flash_part(s, file, name) {
+	let mtd = mtd_by_name(name);
+	let st = stat(file);
+	if (!mtd)
+		fail(s, 'flash partition "' + name + '" not found');
+	if (st.size > mtd.size)
+		fail(s, name + ': image larger than the partition');
+
+	s.step = 'erase ' + name;
+	save_state(s);
+	let r = capture([ 'flash_erase', '-q', mtd.dev, '0', '0' ]);
+	if (r.rc != 0)
+		fail(s, 'flash_erase ' + name + ': ' + trim(r.out));
+
+	s.step = 'write ' + name;
+	save_state(s);
+	r = capture([ 'nandwrite', '-q', '-p', mtd.dev, file ]);
+	if (r.rc != 0)
+		fail(s, 'nandwrite ' + name + ': ' + trim(r.out));
+
+	s.step = 'verify ' + name;
+	save_state(s);
+	let back = file + '.readback';
+	r = capture([ 'nanddump', '-q', '-l', '' + st.size, '-f', back, mtd.dev ]);
+	if (r.rc != 0 || capture([ 'cmp', '-n', '' + st.size, file, back ]).rc != 0)
+		fail(s, name + ': read-back differs after writing – DO NOT REBOOT, flash again');
+	unlink(back);
+}
+
+function cmd_apply(tag) {
+	let s = load_state();
+	let dir = STATE_DIR + '/dl';
+
+	if (s.state != 'ready' || s.release?.tag != tag)
+		fail(s, 'release ' + (tag ?? '(none)') + ' is not downloaded and verified');
+
+	let model = trim(replace(readfile(ROOT + '/proc/device-tree/model') ?? '', '\0', ''));
+	let fwname = release_info().SHAREOS_FWNAME;
+	if (!SIGNATURES[fwname] || index(model, 'DNS-320L') < 0)
+		fail(s, 'refusing to flash: unexpected board "' + model + '"');
+
+	// re-check right before writing; /tmp could have been touched
+	verify_image(s, dir, s.release);
+
+	s.state = 'flashing';
+	save_state(s);
+	flash_part(s, dir + '/kernel', 'uImage');
+	flash_part(s, dir + '/initramfs', 'ramdisk');
+
+	delete s.step;
+	s.state = 'flashed';
+	s.flashed = { tag: s.release.tag, time: time() };
+	save_state(s);
+	return out(s);
+}
+
+function cmd_status() {
+	let s = load_state();
+	if (s.state == 'downloading') {
+		let st = stat(STATE_DIR + '/dl/fw.bin.part') ?? stat(STATE_DIR + '/dl/fw.bin');
+		s.progress = { bytes: st?.size ?? 0, total: s.release?.size ?? 0 };
+	}
+	s.current = release_info().SHAREOS_VERSION;
+	return out(s);
+}
+
+function cmd_cancel() {
+	let s = load_state();
+	if (s.state == 'flashing')
+		fail(s, 'cannot cancel while flashing');
+	for (let f in [ 'fw.bin', 'fw.bin.part', 'fw.sha256', 'kernel', 'initramfs' ])
+		unlink(STATE_DIR + '/dl/' + f);
+	s.state = 'idle';
+	delete s.release;
+	delete s.error;
+	save_state(s);
+	return out(s);
+}
+
+let cmd = ARGV[0];
+switch (cmd) {
+case 'check':    cmd_check(ARGV[1]); break;
+case 'download': cmd_download(ARGV[1]); break;
+case 'apply':    cmd_apply(ARGV[1]); break;
+case 'status':   cmd_status(); break;
+case 'cancel':   cmd_cancel(); break;
+default:
+	warn('usage: shareos-update check [stable|beta] | download <tag> | apply <tag> | status | cancel\n');
+	exit(2);
+}

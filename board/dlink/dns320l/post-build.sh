@@ -14,7 +14,8 @@ VERSION="$("$TOP_DIR/scripts/version.sh")"
 cat > "$TARGET_DIR/etc/shareos-release" <<EOF
 SHAREOS_VERSION="$VERSION"
 SHAREOS_BOARD="dns320l"
-SHAREOS_STAGE="phase1-test"
+SHAREOS_FWNAME="DNS-320L-rev-Ax"
+SHAREOS_STAGE="dev"
 EOF
 
 # Kernel modules: the 'ramdisk' partition is limited to 3 MB by the stock
