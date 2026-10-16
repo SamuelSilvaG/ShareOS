@@ -103,8 +103,9 @@ CONFIG_PACKET=y
 CONFIG_UNIX=y
 CONFIG_MV643XX_ETH=y
 CONFIG_MVMDIO=y
-# Alt-F runs the PHY with the generic driver (MARVELL_PHY was not set);
-# keep it as a module so the A3 Gigabit behaviour can be compared.
+# Alt-F runs the PHY with the generic driver (MARVELL_PHY was not set) and
+# reaches 1000 Mbit/s full duplex on a rev A3 board (verified 2026-10-16).
+# Keep the Marvell driver as a module only, so the generic driver binds.
 CONFIG_MARVELL_PHY=m
 # CONFIG_IP_PNP is not set
 # CONFIG_NET_DSA is not set
