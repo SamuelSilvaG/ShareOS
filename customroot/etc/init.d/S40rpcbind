@@ -1,0 +1,23 @@
+#!/bin/sh
+
+DESC="Universal addresses to RPC program number mapper"
+NAME=rpcbind
+
+RC_PIDFILE=/var/run/$NAME.pid
+RC_MAKE_PID=1
+RC_START_BG=1
+
+RPCBIND_OPTS="-f"
+
+. /etc/init.d/common
+
+# remove possible leftovers from previous firmware
+rm -f /etc/init.d/S40portmap
+
+case "$1" in
+	start) start $NAME -- $RPCBIND_OPTS ;;
+	stop) stop $NAME ;;
+	status) status $NAME ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart" ;;
+esac

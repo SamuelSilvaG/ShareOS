@@ -1,0 +1,7 @@
+config BR2_PACKAGE_OPENSSL_COMPAT
+	bool "openssl-compat"
+	select BR2_PACKAGE_ZLIB
+	help
+	  Libraries from openssl-1.0.2, needed for binaries incompatible with openssl-1.1.1
+
+	  https://www.openssl.org/

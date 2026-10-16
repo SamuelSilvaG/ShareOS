@@ -1,0 +1,10 @@
+Package: rpcbind
+Description: 	  A server that converts RPC program numbers into universal addresses
+Version: 0.2.3
+Depends: libtirpc, ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://sourceforge.net/projects/rpcbind
+Maintainer: jcard

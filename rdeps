@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#set -x
+
+CWD=$PWD
+
+rdeps() {
+	pf=$1
+	if test "$pf" = "kernel-modules"; then return; fi
+	if ! grep -q ^BR2_PACKAGE_$(echo $pf | tr '[:lower:]-' '[:upper:]_')=y $CWD/.config; then return; fi
+	
+	#if ! test -f $CWD/ipkgfiles/$1.control; then return; fi
+	#if test "$pf" = "kernel-modules"; then pf="$pf-$arch"; fi
+	
+	echo $pf $(awk '/Version:/{print $2}' $CWD/ipkgfiles/$pf.control)
+	deps=$(awk '/Depends:/{for (i=2; i<=NF; i++) print $i}' $CWD/ipkgfiles/$pf.control)
+	for i in $deps; do
+		#p=${i%%,}
+		#if ! test "$p" = "ipkg"; then rdeps $p; fi
+		rdeps ${i%%,}
+	done
+}
+
+if test "$board" = "dns327"; then arch="armv7"; else arch="armv5"; fi
+
+rdeps $1 | sort -u

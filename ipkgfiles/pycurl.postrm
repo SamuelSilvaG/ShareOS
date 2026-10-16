@@ -1,0 +1,3 @@
+#!/bin/sh
+
+find /usr/lib/python2.7/site-packages/curl -name \*.py[co] -exec rm {} \;

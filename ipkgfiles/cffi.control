@@ -1,0 +1,9 @@
+Package: cffi
+Depends: libffi, python, ipkg
+Version: 1.13.0
+Description: Foreign Function Interface for Python calling C code
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://cffi.readthedocs.io
+Maintainer: jcard

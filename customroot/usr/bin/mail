@@ -1,0 +1,75 @@
+#!/bin/sh
+
+#set -x
+
+usage() {
+	echo "Usage: mail [-s subject | -r from_address | -a attach_file ] to_address
+	
+	Send an e-mail. Message body is read from standard input, terminated with a CTRL-D
+	at the beginning of a line when writing from the console."
+	exit 1
+}
+
+if test $# = 0 ;then
+	usage
+fi
+
+args=$(getopt -o s:r:a: -- "$@") 2>/dev/null
+if test $? = 1; then usage; fi
+eval set -- "$args"
+
+for i; do
+	#echo "--> $i"
+	case $i in
+		-s) shift; subject="$1"; shift;;
+		-r) shift; from="$1"; shift;;
+		-a) shift; filename="$1"; shift;;
+		--) shift; to="$1"; shift;;
+	esac
+done
+
+if test -z "$to"; then usage; fi
+
+if test -z "$from"; then
+	from=$(grep '^from' /etc/msmtprc | cut -f2)	
+	if test -z "$from"; then
+		echo "Mail not setup, use webUI menu Setup->Mail"
+		exit 1
+	fi
+fi
+
+boundary="_====_$(uuidgen -t)_====_"
+
+(
+cat<<-EOF
+	To: $to
+	From: $from
+	Subject: $subject
+	Content-Type: multipart/mixed; boundary="$boundary"
+	Mime-Version: 1.0
+
+	--$boundary
+	Content-Type: text/plain; charset=UTF-8
+
+EOF
+
+cat
+
+if test -n "$filename" -a -f "$filename" -a -r "$filename"; then
+	cat<<-EOF2
+	
+		--$boundary
+		Content-Transfer-Encoding: base64
+		Content-Type: application/octet-stream; name=$(basename $filename)
+		Content-Disposition: attachment; filename=$(basename $filename)
+
+		$(openssl base64 -e -base64 -in $filename)
+	
+	EOF2
+fi
+
+echo --${boundary}--
+
+) | msmtp -t
+
+exit $?

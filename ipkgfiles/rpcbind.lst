@@ -1,0 +1,3 @@
+./etc/init.d/S40rpcbind
+./usr/bin/rpcbind
+./usr/bin/rpcinfo

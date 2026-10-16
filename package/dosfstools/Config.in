@@ -1,0 +1,12 @@
+config BR2_PACKAGE_DOSFSTOOLS
+	bool "dosfstools"
+	help
+	  Tools for creating and checking DOS FAT filesystems.
+
+	  http://sources.buildroot.net
+
+config BR2_PACKAGE_DOSFSTOOLS_OPTIM
+	string "dosfstools optim"
+	depends on BR2_PACKAGE_DOSFSTOOLS
+	help
+	  Compile optimization options (-Os, -O2)

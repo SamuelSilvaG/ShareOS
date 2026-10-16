@@ -1,0 +1,192 @@
+undo commit 96cb4342382290c935d933a08feb57d6d0183071 which generates a kernel panic
+
+net: mvmdio: allow up to three clocks to be specified for orion-mdio
+Allow up to three clocks to be specified and enabled for the orion-mdio
+interface, which are required for this interface to be accessible on
+Armada 8k platforms.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+
+------------------------------------------------------------------------
+On a DNS-323-rev-B1 D-Link NAS box, with a Marvell MV88F5182-A2 SoC,
+linux-4.16.7 configured for a multi-platform armv5 Marvell Orion without
+device tree, panics on of_clk_get() called from orion_mdio_probe().
+
+If MV643XX_ETH and MVMDIO are not configured and build, the kernel boots
+fine and userland works, obviously without ethernet. I can also test
+proposed patches on a DNS-323-rev-A1 box (MV88F5181-B1).
+
+This problem exibits also on linux-4.14.39, and know working
+configurations are linux-4.4.131 and linux-4.9.98. linux-4.4.86 is being
+used on Alt-F, a free alternative firmware for the DLINK
+DNS-320/320L/321/323/325/327L [1]
+
+The DNS-323 has three hardware revision levels boards, probed, and has
+not a DT capable u-boot.
+
+...
+libphy: Fixed MDIO Bus: probed
+Unable to handle kernel NULL pointer dereference at virtual address 0000000c
+pgd = (ptrval)
+[0000000c] *pgd=00000000
+Internal error: Oops: 5 [#1] ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.7 #5
+Hardware name: D-Link DNS-323
+PC is at of_clk_get+0x14/0x60
+LR is at orion_mdio_probe+0x110/0x2c4
+pc : [<c022e528>]    lr : [<c02bbb08>]    psr: 60000053
+sp : c3819c50  ip : c3819cb8  fp : c3819cb4
+r10: c0548998  r9 : c0548aa0  r8 : c0548988
+r7 : c0905280  r6 : c0905000  r5 : 00000000  r4 : 00000000
+r3 : c08fece0  r2 : c057bb08  r1 : 00000000  r0 : 00000000
+Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment user
+Control: a005317f  Table: 00004000  DAC: 00000055
+Process swapper (pid: 1, stack limit = 0x(ptrval))
+Stack: (0xc3819c50 to 0xc381a000)
+9c40:                                     c0548aa0 c0548998 c3819c84 c3819c68
+9c60: c0012108 c0011e68 c01fca1c c0548998 c08fecd0 f1072004 c08fecc0 c08fecc0
+9c80: c08fecd0 fe072004 c3819cb4 c3819c98 c01fca34 c025a2ac 00000000 c0548998
+9ca0: 00000000 00000000 c3819cf4 c3819cb8 c02bbb08 c022e524 00000000 c0548998
+9cc0: 00000000 c05489a0 c055bbcc c055bbb8 c0548998 00000000 c055bbcc c0579884
+9ce0: c0510798 00000000 c3819d0c c3819cf8 c02590e0 c02bba08 c0548998 00000000
+9d00: c3819d44 c3819d10 c02578d4 c02590ac c3819d2c c3819d20 c0548a58 00000000
+9d20: c0548998 c05489cc c055bbcc c055bbcc c0569210 00000000 c3819d64 c3819d48
+9d40: c0257ad0 c0257768 00000000 00000000 c3819d68 c0257a44 c3819d8c c3819d68
+9d60: c0255ec4 c0257a54 c3833f6c c38375f0 c08fb980 c055bbcc 00000000 c0558a70
+9d80: c3819d9c c3819d90 c02574e4 c0255e7c c3819dc4 c3819da0 c02565f4 c02574d4
+9da0: c04a8b67 c3819db0 c055bbcc c0545480 00000007 c052ad98 c3819ddc c3819dc8
+9dc0: c0257fbc c025652c c3819e08 c0545480 c3819dec c3819de0 c0258f34 c0257f24
+9de0: c3819dfc c3819df0 c052adb0 c0258f0c c3819f54 c3819e00 c000a474 c052ada8
+9e00: c3819e6c c3819e10 00000000 c04096fc 00000001 00000000 00000000 00000000
+9e20: 00000001 00000001 00000000 c380a000 014000c0 c3836c80 0fffffff c380a000
+9e40: c3819e6c c0553a34 20000053 0fffffff 00000000 014000c0 00000000 c3819e74
+9e60: c3819e9c c3819e70 c040578c c040542c 014080c0 00000094 c3836ca0 c3836c80
+9e80: c3837da0 c05726e4 00000000 00000000 c3819eb4 c3819ea0 c01030e4 00000000
+9ea0: c3836c80 00000003 c3819ee4 c3819eb8 c01031ac 60000053 c3819ee8 00000000
+9ec0: 00000003 c054b86c 00000000 00000000 c3819f04 c3819ee0 c04021cc c0412698
+9ee0: c3819f04 c3819ef0 c0030000 c041274c c050ec3c c050ec3c c3819f54 c3819f08
+9f00: c00305d0 c05107a8 00000006 00000006 0000005d c050e4f8 20000053 c3ffce60
+9f20: 00000000 c3ffce56 00000000 c0545480 c053f440 c0536048 00000007 0000005d
+9f40: c0569210 00000000 c3819f94 c3819f58 c05106bc c000a364 00000006 00000006
+9f60: 00000000 c0510798 00000000 00000000 c0417220 00000000 00000000 00000000
+9f80: 00000000 00000000 c3819fac c3819f98 c0417234 c05105d0 00000000 00000000
+9fa0: 00000000 c3819fb0 c00090d0 c0417230 00000000 00000000 00000000 00000000
+9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+Backtrace:
+[<c022e514>] (of_clk_get) from [<c02bbb08>] (orion_mdio_probe+0x110/0x2c4)
+ r5:00000000 r4:00000000
+[<c02bb9f8>] (orion_mdio_probe) from [<c02590e0>] (platform_drv_probe+0x44/0x74)
+ r10:00000000 r9:c0510798 r8:c0579884 r7:c055bbcc r6:00000000 r5:c0548998
+ r4:c055bbb8
+[<c025909c>] (platform_drv_probe) from [<c02578d4>] (driver_probe_device+0x17c/0x2ec)
+ r5:00000000 r4:c0548998
+[<c0257758>] (driver_probe_device) from [<c0257ad0>] (__driver_attach+0x8c/0xb0)
+ r10:00000000 r8:c0569210 r7:c055bbcc r6:c055bbcc r5:c05489cc r4:c0548998
+[<c0257a44>] (__driver_attach) from [<c0255ec4>] (bus_for_each_dev+0x58/0xa0)
+ r6:c0257a44 r5:c3819d68 r4:00000000
+[<c0255e6c>] (bus_for_each_dev) from [<c02574e4>] (driver_attach+0x20/0x28)
+ r7:c0558a70 r6:00000000 r5:c055bbcc r4:c08fb980
+[<c02574c4>] (driver_attach) from [<c02565f4>] (bus_add_driver+0xd8/0x1ec)
+[<c025651c>] (bus_add_driver) from [<c0257fbc>] (driver_register+0xa8/0xec)
+ r7:c052ad98 r6:00000007 r5:c0545480 r4:c055bbcc
+[<c0257f14>] (driver_register) from [<c0258f34>] (__platform_driver_register+0x38/0x4c)
+ r5:c0545480 r4:c3819e08
+[<c0258efc>] (__platform_driver_register) from [<c052adb0>] (orion_mdio_driver_init+0x18/0x20)
+[<c052ad98>] (orion_mdio_driver_init) from [<c000a474>] (do_one_initcall+0x120/0x1e0)
+[<c000a354>] (do_one_initcall) from [<c05106bc>] (kernel_init_freeable+0xfc/0x1d8)
+ r10:00000000 r8:c0569210 r7:0000005d r6:00000007 r5:c0536048 r4:c053f440
+[<c05105c0>] (kernel_init_freeable) from [<c0417234>] (kernel_init+0x14/0x104)
+ r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0417220
+ r4:00000000
+[<c0417220>] (kernel_init) from [<c00090d0>] (ret_from_fork+0x14/0x24)
+Exception stack(0xc3819fb0 to 0xc3819ff8)
+9fa0:                                     00000000 00000000 00000000 00000000
+9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+ r4:00000000
+Code: e92dd830 e24cb004 e24dd050 e3510000 (e590500c)
+---[ end trace d7e19ee84cbea244 ]---
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+
+---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+
+random: fast init done
+
+--- a/drivers/net/ethernet/marvell/mvmdio.c-orig	2018-05-26 19:09:08.451657487 +0100
++++ b/drivers/net/ethernet/marvell/mvmdio.c	2018-05-26 19:10:21.219572773 +0100
+@@ -64,7 +64,7 @@
+ 
+ struct orion_mdio_dev {
+ 	void __iomem *regs;
+-	struct clk *clk[3];
++	struct clk *clk;
+ 	/*
+ 	 * If we have access to the error interrupt pin (which is
+ 	 * somewhat misnamed as it not only reflects internal errors
+@@ -279,7 +279,7 @@
+ 	struct resource *r;
+ 	struct mii_bus *bus;
+ 	struct orion_mdio_dev *dev;
+-	int i, ret;
++	int ret;
+ 
+ 	type = (enum orion_mdio_bus_type)of_device_get_match_data(&pdev->dev);
+ 
+@@ -319,12 +319,9 @@
+ 
+ 	init_waitqueue_head(&dev->smi_busy_wait);
+ 
+-	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
+-		dev->clk[i] = of_clk_get(pdev->dev.of_node, i);
+-		if (IS_ERR(dev->clk[i]))
+-			break;
+-		clk_prepare_enable(dev->clk[i]);
+-	}
++	dev->clk = devm_clk_get(&pdev->dev, NULL);
++	if (!IS_ERR(dev->clk))
++		clk_prepare_enable(dev->clk);
+ 
+ 	dev->err_interrupt = platform_get_irq(pdev, 0);
+ 	if (dev->err_interrupt > 0 &&
+@@ -364,14 +361,8 @@
+ out_mdio:
+ 	if (dev->err_interrupt > 0)
+ 		writel(0, dev->regs + MVMDIO_ERR_INT_MASK);
+-
+-	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
+-		if (IS_ERR(dev->clk[i]))
+-			break;
+-		clk_disable_unprepare(dev->clk[i]);
+-		clk_put(dev->clk[i]);
+-	}
+-
++	if (!IS_ERR(dev->clk))
++		clk_disable_unprepare(dev->clk);
+ 	return ret;
+ }
+ 
+@@ -379,18 +370,12 @@
+ {
+ 	struct mii_bus *bus = platform_get_drvdata(pdev);
+ 	struct orion_mdio_dev *dev = bus->priv;
+-	int i;
+ 
+ 	if (dev->err_interrupt > 0)
+ 		writel(0, dev->regs + MVMDIO_ERR_INT_MASK);
+ 	mdiobus_unregister(bus);
+-
+-	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
+-		if (IS_ERR(dev->clk[i]))
+-			break;
+-		clk_disable_unprepare(dev->clk[i]);
+-		clk_put(dev->clk[i]);
+-	}
++	if (!IS_ERR(dev->clk))
++		clk_disable_unprepare(dev->clk);
+ 
+ 	return 0;
+ }

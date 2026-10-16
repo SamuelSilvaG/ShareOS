@@ -1,0 +1,114 @@
+#!/bin/sh
+
+DESC="Create SSL certificates"
+NAME=sslcert
+TYPE=required
+
+SERRORL=/var/log/systemerror.log
+
+MISC_CONF=/etc/misc.conf
+
+CERTS_DIR=/etc/ssl/certs
+BOX_CA_KEY=$CERTS_DIR/rootCA.key
+BOX_CA_CRT=$CERTS_DIR/rootCA.crt
+
+BOX_PEM=$CERTS_DIR/server.pem
+BOX_CRT=$CERTS_DIR/server.crt
+BOX_KEY=$CERTS_DIR/server.key
+BOX_CSR=$CERTS_DIR/server.csr
+BOX_CNF=/etc/ssl/server.cnf
+
+. $MISC_CONF
+
+. /etc/init.d/common
+
+if test -z "$SSL_CERT_BITS"; then
+	SSL_CERT_BITS=256 # EC by default, equivalent to 3072 bit RSA
+	sed -i '/^SSL_CERT_BITS=/d' $MISC_CONF
+	echo SSL_CERT_BITS=\"$SSL_CERT_BITS\" >> $MISC_CONF
+fi
+
+if test "$SSL_CERT_BITS" -ge 1024; then
+	SSL_CERT_TYPE="rsa"
+	SSL_CERT_ARGS="-newkey $SSL_CERT_TYPE:$SSL_CERT_BITS"
+else
+	SSL_CERT_TYPE="ec"
+	case "$SSL_CERT_BITS" in
+		224) SSL_CERT_ARGS="-newkey $SSL_CERT_TYPE -pkeyopt ec_paramgen_curve:secp224r1" ;;
+		256) SSL_CERT_ARGS="-newkey $SSL_CERT_TYPE -pkeyopt ec_paramgen_curve:prime256v1" ;;
+		384) SSL_CERT_ARGS="-newkey $SSL_CERT_TYPE -pkeyopt ec_paramgen_curve:secp384r1" ;;
+	esac
+fi
+
+# FIXME: the certificate is generated when the host name is still a generic one,
+# and a new one is not generated when the host name is changed.
+
+case "$1" in
+	start)
+
+	echo -n "Starting $NAME: "
+
+	eval $(ifconfig eth0 | awk '/inet addr/ { printf("hostip=%s netmask=%s", \
+		substr($2, 6), substr($4, 6))}')
+	eval $(ipcalc -n $hostip $netmask) # eval NETWORK
+
+	export HOST=$(hostname) HOSTFQDN=$(hostname -f) HOSTIP=$(hostname -i) DOMAIN="$(hostname -d)"\
+		BOX=$(cat /tmp/board) NETWORK="$NETWORK/$netmask" SSL_CERT_BITS
+	
+	# create the rootCA cert and key in one step
+	if ! test -s $BOX_CA_CRT -a -s $BOX_CA_KEY; then
+		echo -n "Creating Alt-F root CA to import on browsers..."
+		REQNAME=req_dname_ca openssl req -x509 -new -nodes -sha256 -days 7300 \
+			$SSL_CERT_ARGS -keyout $BOX_CA_KEY -out $BOX_CA_CRT \
+			-extensions v3_ca -config $BOX_CNF
+		# openssl rsa -des3 -in $BOX_CA_KEY -out $BOX_CA_KEY # FIXME should be passwd protected
+	fi
+
+	# use the issuer CN to determine compatibility?: openssl x509 -noout -in /etc/ssl/certs/server.crt -issuer -nameopt use_quote issuer=O=Alt-F, CN=Alt-F fake root CA
+
+	# pem saved on flash on 1.0 (and openssl-1.1k-1), no crt/key, generate them
+	if test -s $BOX_PEM -a ! -s $BOX_CRT -a ! -s $BOX_KEY; then
+		sed -n '/BEGIN CERTIFICATE/,/END CERTIFICATE/p' $BOX_PEM > $BOX_CRT
+        sed -n '/BEGIN .*PRIVATE KEY/,/END .*PRIVATE KEY/p' $BOX_PEM > $BOX_KEY
+        touch -c -r $BOX_PEM $BOX_CRT $BOX_KEY
+	
+	# openssl-1.1k, crt/key saved on flash, generate pem
+	elif test ! -s $BOX_PEM -a -s $BOX_CRT -a -s $BOX_KEY \
+		-o $BOX_PEM -ot $BOX_CRT; then
+			cat $BOX_KEY $BOX_CRT > $BOX_PEM
+			touch -c -r $BOX_CRT $BOX_PEM
+	
+	# no pem or crt/key, create a new CA signed certificate
+	elif ! test -s $BOX_CRT -a -s $BOX_KEY -a -s $BOX_PEM; then
+		# meanwhile the rootCA key might have been password protected...
+		if openssl $SSL_CERT_TYPE -in $BOX_CA_KEY -noout -passin pass:$RANDOM >& /dev/null; then
+			echo -n "Creating box certificate and signing it with the Alt-F rootCA..."
+
+			# create box private key and sign request in one step
+			REQNAME=req_dname openssl req -new -nodes -sha256 $SSL_CERT_ARGS \
+				-keyout $BOX_KEY -out $BOX_CSR -config $BOX_CNF
+
+			# CA sign the certificate sign request
+			REQNAME=req_dname openssl x509 -req -days 365 -sha256 \
+				-CA $BOX_CA_CRT -CAkey $BOX_CA_KEY -CAcreateserial \
+				-in $BOX_CSR -out $BOX_CRT \
+				-extensions v3_req -extfile $BOX_CNF
+			cat $BOX_KEY $BOX_CRT > $BOX_PEM
+		else
+			emsg="The root CA key is password protected or inexistent, can't create box certificate. Use Setup->Certificates in the webUI."
+			echo -n "$emsg "
+			echo "<li>$emsg</li>" >> $SERRORL
+		fi        
+	fi
+	
+	chmod og-w $BOX_CRT $BOX_KEY $BOX_CA_KEY $BOX_CA_CRT
+	chmod og-rw $BOX_PEM $BOX_KEY $BOX_CA_KEY
+	echo "OK."
+	;;
+
+	stop) echo "Stopping $NAME: OK." ;;
+	status) echo "$NAME stopped"; exit 1 ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart" ;;
+esac
+

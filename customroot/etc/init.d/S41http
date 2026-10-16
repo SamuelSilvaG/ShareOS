@@ -1,0 +1,44 @@
+#!/bin/sh
+
+DESC="Administrative HTTP server"
+NAME=httpd
+TYPE=net
+
+CONF_INETD=/etc/inetd.conf
+MISC_CONF=/etc/misc.conf
+HTTPD_LOGF=/var/log/httpd.log
+HTTPD_LOG=false
+STUNNEL_BIN=/usr/bin/stunnel
+INETD_CONF=/etc/inetd.conf
+
+. $MISC_CONF
+
+HTTPD_PORT=${HTTPD_PORT:-80}
+OPTS="-h /usr/www -p $HTTPD_PORT"
+
+sinit() {
+	touch $HTTPD_LOGF
+	chmod go-rw $HTTPD_LOGF
+	
+	if test -x $STUNNEL_BIN && ! grep -q '^https' $INETD_CONF; then
+		cat<<-EOF >> $INETD_CONF
+			https	stream	tcp	nowait	root	$STUNNEL_BIN	stunnel /etc/stunnel/stunnel-https.conf     # Secure Administrative HTTPS server
+		EOF
+		rcinetd reload
+	fi
+	# don't add http, to keep it at inetd.conf start (inetd might crash on incorrect conf) 
+}
+
+. /etc/init.d/common
+
+if check_inetd http || check_inetd http_alt; then            
+	exit 2
+fi
+
+case "$1" in
+	start) start $NAME -- "$OPTS" ;;
+	stop)   stop $NAME ;;
+	status) status $NAME ;;
+	restart) restart $NAME ;;
+	*)  usage $0 "start|stop|status|restart|init" ;;
+esac

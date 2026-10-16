@@ -1,0 +1,9 @@
+Package: rsync
+Description: File transfer program to keep remote files in sync.
+Version: 3.3.0
+Depends: ipkg, popt, libiconv, openssl
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://rsync.samba.org
+Maintainer: jcard

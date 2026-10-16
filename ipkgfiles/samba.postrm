@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sed -i "\|/usr/sbin/swat|d" /etc/inetd.conf
+rcinetd reload
+
+rm -f /sbin/rcsmb

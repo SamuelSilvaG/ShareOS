@@ -1,0 +1,10 @@
+Package: samba
+Description: Samba server supporting ACL and samba modules.
+Depends: ipkg, acl, popt, zlib, wsdd2
+Conflicts: samba4
+Version: 3.6.25-1
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://www.samba.org
+Maintainer: jcard

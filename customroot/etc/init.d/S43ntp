@@ -1,0 +1,55 @@
+#! /bin/sh
+
+DESC="Network Time Protocol Daemon"
+TYPE=net
+NAME=ntpd
+
+. /etc/init.d/common
+
+CONF=/etc/ntp.conf
+CONFM=/etc/misc.conf
+
+# remove adjtime method, ntpd is now builtin in busybox
+if grep -q ^NTPD_DAEMON $CONFM; then
+	sed -i -e '/^NTPD_DAEMON/d' -e '/NTPD_BOOT/d' -e '/NTPD_CRON/d' $CONFM
+	cron remove "/usr/sbin/adjtime"
+fi
+
+. $CONFM
+
+get_servers() {
+	servers=""
+	while read arg server cmt; do
+		if test "$arg" = "server" -a "$server" != "127.127.1.0"; then
+			servers="$servers -p $server"
+		fi
+	done < $CONF
+	if test -z "$servers"; then
+		echo "$NAME: No NTP server configured, exiting."
+		exit 1
+	fi
+	echo $servers
+}
+
+case "$1" in
+	start)
+		ntpservers=$(get_servers)
+#		if ! test -x /usr/bin/sntp; then
+#			OPTS="-l $ntpservers"
+#		fi
+		if test "$NTPD_SERVER" = "yes"; then
+			OPTS="-l"
+			avahi add ntp
+		fi
+		adjtimex -qf 0  # if != 0 affects ntpd drift calculation 
+		start $NAME -- $OPTS $ntpservers
+		;;
+
+	stop)
+		stop $NAME
+		avahi remove ntp
+		;;
+	restart) restart $NAME ;;
+	status) status $NAME ;;
+	*) usage $0 "start|stop|status|restart" ;;
+esac

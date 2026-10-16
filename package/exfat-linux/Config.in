@@ -1,0 +1,7 @@
+config BR2_PACKAGE_EXFAT_LINUX
+	bool "exfat-linux"
+	help
+	  exFAT filesystem module for Linux kernel is a backport of the latest Linux mainline's exFAT drivers by Samsung
+
+	  https://github.com/arter97/exfat-linux
+

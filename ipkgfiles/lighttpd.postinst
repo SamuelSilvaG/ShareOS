@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ln -sf /usr/sbin/rcscript /sbin/rclighttpd
+rclighttpd init
+return 0

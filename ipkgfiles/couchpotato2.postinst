@@ -1,0 +1,32 @@
+#!/bin/sh
+
+SITE=https://github.com/RuudBurger/CouchPotatoServer/tarball
+CBPROG=/ShareOS/opt/CouchPotato2
+TBALL=master
+
+if ! wget --progress=dot:mega -O /tmp/$TBALL $SITE/$TBALL; then
+	rm -f /tmp/$TBALL
+	echo "Downloading of CouchPotato2 from its homepage page failed."
+	exit 1
+fi
+
+mkdir -p $CBPROG
+if ! tar -C /ShareOS/opt -xzf /tmp/$TBALL >& /dev/null; then
+	rm -f /tmp/$TBALL
+	echo "Extraction of CouchPotato2 failed."
+	exit 1
+fi
+rm -f /tmp/$TBALL
+
+( cd /opt/CouchPotato-CouchPotatoServer-*; cp -a  . $CBPROG )
+rm -rf /ShareOS/opt/CouchPotato-CouchPotatoServer-*
+
+echo "pip installing pyopenssl..."
+pip install pyopenssl
+
+echo "Python byte compiling..."
+python -m compileall /opt/CouchPotato2 >& /dev/null
+
+ln -sf /usr/sbin/rcscript /sbin/rccouchpotato2
+rccouchpotato2 status
+return 0

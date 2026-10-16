@@ -1,0 +1,10 @@
+Package: fontconfig
+Description: a library for font customization and configuration.
+Version: 2.13.1
+Depends: expat, bzip2, freetype, e2fsprogs, ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://www.fontconfig.org
+Maintainer: jcard

@@ -1,0 +1,32 @@
+#! /bin/sh
+
+DESC="rsync server"
+NAME=rsync
+TYPE=net
+
+CONF=/etc/rsyncd.conf
+CONF_INETD=/etc/inetd.conf
+OPTS="--daemon"
+
+sinit() {
+	if ! grep -q '^rsync' $CONF_INETD; then
+		cat<<-EOF >> $CONF_INETD
+			rsync	stream	tcp	nowait	root	/usr/bin/rsync	rsyncd --daemon --config=/etc/rsyncd.conf	# Rsync server
+		EOF
+		rcinetd reload
+	fi
+}
+
+. /etc/init.d/common
+
+if check_inetd rsync; then
+	exit 2
+fi
+
+case "$1" in
+	start) start $NAME -- $OPTS ;;
+	stop) stop $NAME ;;
+	status) status $NAME ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart|init" ;;
+esac

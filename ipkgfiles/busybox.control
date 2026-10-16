@@ -1,0 +1,10 @@
+Package: busybox
+Description: The Swiss Army Knife of embedded Linux.  It slices, it dices, it makes Julian Fries.
+Version: 1.20.2-3
+Depends: ipkg
+Architecture: arm
+Priority: required
+Essential: yes
+Section: admin
+Source: https://busybox.net
+Maintainer: jcard

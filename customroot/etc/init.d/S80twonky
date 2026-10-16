@@ -1,0 +1,44 @@
+#!/bin/sh -e
+
+NAME=twonky
+DESC=" Twonky Server is a DLNA/UPnP-AV server."
+TYPE=user
+NEED_ALTF_DIR=1
+
+CONF_TWONKY=/etc/$NAME
+LOG_TWONKY=/var/log/$NAME
+
+RC_USER=$NAME
+RC_USERN=36
+RC_GROUP=multimedia
+RC_GROUPN=80
+RC_DESC="twonky daemon"
+
+RC_PIDFILE=/var/run/$NAME.pid
+RC_START_BG=y
+RC_MAKE_PID=y
+
+TWONKY_ARGS="-appdata /var/lib/twonky \
+	-inifile $CONF_TWONKY/$NAME.conf \
+	-logfile $LOG_TWONKY/$NAME.log"
+
+. /etc/init.d/common
+
+mkdir -p $LOG_TWONKY $CONF_TWONKY
+
+check_user /var/lib/$RC_USER $LOG_TWONKY $CONF_TWONKY
+
+case "$1" in
+	start) 
+		export LD_LIBRARY_PATH=/opt/twonky
+		start /opt/twonky/twonkyserver --chuid $RC_USER:$RC_GROUP -- $TWONKY_ARGS 
+		;;
+
+	stop) stop $NAME ;;
+	status)	status $NAME ;;
+	restart) restart $NAME ;;
+	*)
+		echo "Usage: $0 {start|stop|status|restart}"
+		exit 1
+		;;
+esac

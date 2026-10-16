@@ -1,0 +1,9 @@
+Package: mdadm
+Description: Utility for managing RAID hardware.
+Version: 4.3
+Depends: ipkg
+Architecture: arm
+Priority: required
+Section: admin
+Source: https://kernel.org/pub/linux/utils/raid/mdadm
+Maintainer: jcard

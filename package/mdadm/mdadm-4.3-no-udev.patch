@@ -1,0 +1,13 @@
+--- mdadm-4.3/udev.c-orig	2024-05-26 16:09:39.022044733 +0100
++++ mdadm-4.3/udev.c	2024-05-26 16:10:37.454467956 +0100
+@@ -26,8 +26,9 @@
+ #include	<signal.h>
+ #include	<limits.h>
+ #include	<syslog.h>
++#ifndef NO_LIBUDEV
+ #include	<libudev.h>
+-
++#endif
+ static char *unblock_path;
+ 
+ /*

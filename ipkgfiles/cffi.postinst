@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# python postinst might not be run yet...
+python -m compileall /usr/lib/python2.7/site-packages/cffi >& /dev/null
+
+return 0

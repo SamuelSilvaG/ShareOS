@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sed -i '\|/usr/bin/stunnel|d' /etc/inetd.conf
+
+ln -sf /usr/sbin/rcscript /sbin/rcstunnel
+rcstunnel init

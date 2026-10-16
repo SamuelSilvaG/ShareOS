@@ -1,0 +1,5 @@
+#!/bin/sh
+
+PVER=2.7
+
+find /usr/lib/python$PVER/site-packages/duplicity -name \*.py[co] -exec rm {} \;

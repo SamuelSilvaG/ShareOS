@@ -1,0 +1,132 @@
+#!/bin/sh
+
+DESC="User/Group Disk Quotas"
+NAME=quota
+TYPE=sys
+
+. /etc/init.d/common
+. /etc/misc.conf
+
+fs=$(grep -E '(ext2|ext3|ext4)' /proc/mounts | cut -d" " -f1)
+qopts="(usrquota|usrjquota|grpquota|grpjquota)"
+
+CCMD="/usr/sbin/warnquota.sh"
+
+# to remove after 1.1. verbatim copy of cron() from /etc/init.d/common
+# $1-add/remove/status [$2-"cron specs"] $3-"CMD args"
+CRONF=/var/spool/cron/crontabs/root
+cron() {
+	if test $# = 3; then cmd="$3"; else cmd="$2"; fi
+	
+	if test "$1" = "add"; then
+		TF=$(mktemp -t)
+		crontab -l > $TF 2> /dev/null
+		sed -i "\|$cmd.*#!# Alt-F cron$|d" $TF
+		if test $# = 3; then
+			tspec="$2"
+		else # once a week
+			dt=$RANDOM
+			min=$((dt % 60))
+			hour=$((dt % 24))
+			wday=$((dt % 7))
+			tspec="$min $hour * * $wday"		
+		fi
+		
+		echo "$tspec $cmd #!# Alt-F cron" >> $TF
+		touch -r $CRONF $TF
+		crontab $TF 2> /dev/null
+		touch -r $TF $CRONF
+		rm $TF
+		if ! rccron status >& /dev/null; then
+			rccron start # required to handle crontabs
+		fi
+	
+	elif test "$1" = "remove"; then
+		TF=$(mktemp -t)
+		crontab -l > $TF 2> /dev/null
+		sed -i "\|$2.*#!# Alt-F cron$|d" $TF
+		touch -r $CRONF $TF
+		crontab $TF 2> /dev/null
+		touch -r $TF $CRONF
+		rm $TF
+		if ! test -s $CRONF; then
+			rccron stop # no crontab, cron not required
+		fi
+
+		
+	elif test "$1" = "status"; then
+		if ! rccron status >& /dev/null; then
+			echo "$NAME stopped"
+			return 1
+		elif crontab -l 2>/dev/null | grep -q "$2.*#!# Alt-F cron$"; then
+			rccron start >& /dev/null # required to handle the crontab
+			echo -e "$DESC\n$NAME running"
+			return 0
+		else
+			echo -e "$DESC\n$NAME stopped"
+			return 1
+		fi
+	fi
+}
+
+istart() {
+	echo -n "Starting $NAME: "
+	for i in $fs; do
+		dev=$(basename $i)
+		if grep -qE "^$i.*$qopts" /proc/mounts; then
+			if quotaon -p $i >& /dev/null; then
+				quotaon -ug $i
+			fi
+		fi
+	done
+	
+	tspec="$(($RANDOM % 60)) $(($RANDOM % 24)) * * *";
+	cron add "$tspec" $CCMD
+	$CCMD # check quotas now
+	
+	omsg 0
+}
+
+istop() {
+	echo -n "Stopping $NAME: "
+	for i in $fs; do
+		dev=$(basename $i)
+		if grep -qE "^$i.*$qopts" /proc/mounts; then
+			if ! quotaon -p $i >& /dev/null; then
+				quotaoff -ug $i
+			fi
+		fi
+	done
+	cron remove $CCMD
+	omsg 0
+}
+
+istatus() {
+	if test -z "$fs"; then
+		echo "$NAME: No ext2/3/4 filesystem was found."
+		return 1
+	fi
+	act=0;
+	for i in $fs; do
+		dev=$(basename $i)
+		if grep -qE "^$i.*$qopts" /proc/mounts; then
+			if quotaon -p $i >& /dev/null; then
+				echo "quota on $dev is not active"
+			else
+				act=$((act+1))
+				echo "quota on $dev is active"
+			fi
+		else
+			echo "quota on $dev is not enabled" 
+		fi
+	done
+	if test "$act" != "0"; then return 0; else return 1; fi
+}
+
+case "$1" in
+	start) istart ;;
+	stop) istop ;;
+	status) istatus ;;
+	restart) restart $NAME ;;
+	*)  usage $0 "start|stop|status|restart" ;;
+esac

@@ -1,0 +1,9 @@
+Package: sickbeard
+Description: The ultimate PVR application that searches for and manages your TV shows
+Version: 2017-12-03
+Depends: python, cheetah, cryptography, git, ipkg
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://sickbeard.com
+Maintainer: jcard

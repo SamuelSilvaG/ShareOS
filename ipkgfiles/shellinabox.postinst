@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ln -sf /usr/sbin/rcscript /sbin/rcshellinabox
+
+# create user and its home dir
+rcshellinabox status
+
+return 0

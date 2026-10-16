@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# they say stable is production ready
+#https://github.com/pyload/pyload/archive/stable.tar.gz
+
+SITE=https://github.com/pyload/pyload/archive
+#VER=v0.4.9
+VER=stable
+SOURCE=$VER.tar.gz
+TBALL=pyload-$SOURCE
+
+PYLPROG=/ShareOS/opt/pyLoad
+
+if ! wget --progress=dot:mega -O /tmp/$TBALL $SITE/$SOURCE; then
+	rm -f /tmp/$TBALL
+	echo "Downloading of pyLoad from its homepage failed."
+	exit 1
+fi
+
+mkdir -p /ShareOS/opt
+if ! tar -C /ShareOS/opt -xzf /tmp/$TBALL >& /dev/null; then
+	rm -f /tmp/$TBALL
+	echo "Extraction of pyLoad failed."
+	exit 1
+fi
+rm -f /tmp/$TBALL
+
+if test -d $PYLPROG; then rm -rf $PYLPROG; fi
+mv /ShareOS/opt/pyload-$VER $PYLPROG
+#mv $PYLPROG/module/Utils.py $PYLPROG/module/utils.py
+sed -i '/<input type="submit" value="Login" class="button" \/>/a \
+<p><em>Initial<\/em> Username\/Password: admin\/admin<\/p>' \
+$PYLPROG//module/web/templates/default/login.html
+
+#pip install cryptography
+
+ln -sf /usr/sbin/rcscript /sbin/rcpyload
+
+rcpyload status # fails (must be configured first), so must return OK for ipk to succeed
+return 0

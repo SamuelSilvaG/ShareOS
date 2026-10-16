@@ -1,0 +1,9 @@
+Package: dropbear
+Description: A small SSH2 server designed for small memory environments.
+Version: 2024.85
+Depends: ipkg
+Architecture: arm
+Priority: required
+Section: admin
+Source: https://matt.ucc.asn.au/dropbear/dropbear.html
+Maintainer: jcard

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# convert from /etc/misc.conf to /etc/modules for compatibility
+
+CONF_MISC=/etc/misc.conf
+CONF_MOD=/etc/modules
+
+mod="MODLOAD_IPV6 MODLOAD_CRYPTODEV MODLOAD_CESA"
+
+for i in $mod; do
+	if grep -q "^$i=y" $CONF_MISC; then
+		case $i in
+			MODLOAD_IPV6) j=ipv6;;
+			MODLOAD_CRYPTODEV) j=cryptodev;;
+			MODLOAD_CESA) j=marvell_cesa;;
+		esac
+		sed -i "/^$j/d" $CONF_MOD
+		echo $j >> $CONF_MOD
+	fi
+
+	if grep -q $i $CONF_MISC; then
+		sed -i "/$i/d" $CONF_MISC
+	fi
+done

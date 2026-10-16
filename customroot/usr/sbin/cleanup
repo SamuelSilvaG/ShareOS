@@ -1,0 +1,25 @@
+#!/bin/sh
+# cleanup logs and other files
+# If a running process has not the log file open in APPEND mode,
+# it will regrow to its previous size on next write.
+# if the file becomes sparse, it will not occupy disk nor memory space.
+ 
+# truncate logs:
+maxsize=32768 # bytes
+
+for i in $(find /var/log/ -name \*.log -o -name log.\* -o -name \*_log); do
+	#if test "$(basename $i .old)" != "$(basename $i)"; then continue; fi
+	if test "${i%.old}" != "$i"; then continue; fi
+	if test "$(stat -c %s $i)" -gt "$maxsize"; then
+		cp $i $i.old
+		dd if=/dev/null of=$i 2> /dev/null # truncate to zero
+	fi
+done
+
+# delete cups temporary ppd data if not accessed for more than one hour
+CUPS_PPDT=/var/cache/cups/ppds.dat
+if test -f $CUPS_PPDT; then
+	if test "$(stat -c %X $CUPS_PPDT)" -lt $(expr $(date +%s) - 3600); then
+		rm $CUPS_PPDT
+	fi
+fi

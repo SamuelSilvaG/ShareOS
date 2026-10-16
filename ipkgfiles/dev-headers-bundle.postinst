@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# to generate file list after a new lib or lib upgrade, and make a new dev-bundle-header.release
+# (cd $STAGING; find ./usr/include -type f | sort) > po
+# for i in $(cat po); do
+#	if ! grep -q $i ipkgfiles/dev-bundle.lst; then echo $i; fi
+# done > ipkgfiles/dev-bundle-headers.lst
+
+# FIXME: incomplete package file list
+# /usr/bin/*-config and /usr/lib/pkg-config, at least needs also to be included
+# and its paths adjusted for the target at install time.
+
+# for the python extensions, from $STAGING/usr/bin are needed
+# sed -i -e 's|'$STAGING'||g' -e 's|--sysroot=/||g' -e 's|-isysroot||g'  -e 's|arm-linux-uclibcgnueabi-||g' \
+# /usr/bin/curl-config /usr/bin/xslt-config /usr/bin/xml2-config

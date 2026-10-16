@@ -1,0 +1,139 @@
+#!/bin/sh
+
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+# heavily modified for Alt-F by jcard
+
+[ -z "$1" ] && logger -st udhcpc "$0: Error, should be called from udhcpc" && exit 1
+
+#debug=true
+
+RESOLV_CONF=/etc/resolv.conf
+DNSMASQ_R=/etc/dnsmasq-resolv
+NTP_CONF=/etc/ntp.conf
+SMB_CONF=/etc/samba/smb.conf
+HOSTS_CONF=/etc/hosts
+HTTPD_CONF=/etc/httpd.conf
+
+MODFILES="$HOSTS_CONF $RESOLV_CONF $SMB_CONF $HTTPD_CONF $NTP_CONF"
+FLG_MSG="#!# in use by dnsmasq, don't change"
+
+# record current date on modifiable files
+for i in $MODFILES; do
+	if test -f $i; then
+		touch -r $i /tmp/$(basename $i)
+	fi
+done
+		
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+	deconfig)
+		logger -st udhcpc "Deconfiguring $interface"
+		/sbin/ifconfig $interface 0.0.0.0
+		;;
+
+	renew|bound)
+		if test -n "$debug"; then
+			logger -st udhcpc "udhcpc args: $*"
+			logger -st udhcpc "udhcpc environment:"
+			for i in $(env); do logger -st udhcpc "   $i"; done
+			env > /tmp/dhcp-env
+		fi
+		
+		logger -st udhcpc "$*: Using $ip for $lease seconds"
+		
+		# evaluate NETWORK
+		eval $(ipcalc -n "$ip" "$subnet")
+
+		if test -z "$domain"; then domain="localnet"; fi
+
+		if test -n "$mtu"; then MTU="mtu $mtu"
+		elif test -n "$IF_MTU"; then MTU="mtu $IF_MTU"
+		else MTU="mtu 1500"
+		fi
+
+		/sbin/ifconfig $interface $ip $BROADCAST $NETMASK $MTU
+
+		hname=$(hostname)
+		logger -st udhcpc "Updating $HOSTS_CONF: $ip $hname.$domain $hname"
+		if fnm=$(hostname -f); then
+			sed -i '/^[^#].*'$fnm'/d' $HOSTS_CONF
+		fi
+		echo -ne "$ip\t$hname.$domain\t$hname\n" >> $HOSTS_CONF
+
+		logger -st udhcpc "Updating $HTTPD_CONF: allow $NETWORK/$subnet"
+		sed -i "s|^A:.*#!# Allow local net.*$|A:$NETWORK/$subnet #!# Allow local net|" $HTTPD_CONF
+
+		logger -st udhcpc "Updating $SMB_CONF: allow $NETWORK/${subnet}"
+		sed -i "s|hosts allow = \([^ ]*\) \([^ ]*\)\(.*$\)|hosts allow = 127. $NETWORK/${subnet}\3|" $SMB_CONF
+
+		# ntp servers: ntpsrv=IP1 IP2 ... IPN 
+		if test -n "$ntpsrv"; then
+			logger -st udhcpc "Updating $NTP_CONF: set NTP servers"
+			sed -i '/^server.*#!# DHCP/d' $NTP_CONF
+			#echo "server 127.127.1.0" >> $NTP_CONF
+			for srv in $ntpsrv; do
+				hn=$(nslookup $srv 2> /dev/null | awk '/Name:/{getline; print $4}')
+				if test -n "$hn"; then srv=$hn; fi
+				if grep -q "$srv #!# DHCP" $NTP_CONF; then continue; fi
+				echo "server $srv #!# DHCP" >> $NTP_CONF
+			 done
+			 #sort -u -o $NTP_CONF $NTP_CONF
+		fi
+		
+		if test -n "$router"; then
+			while route del default gw 0.0.0.0 dev $interface 2>/dev/null; do true; done
+			msg="adding route"
+			for i in $router ; do
+				msg="$msg $i"
+				route add default gw $i dev $interface
+			done
+			logger -st udhcpc "Updating $interface default route: $msg"
+		fi
+
+		if grep -q "$FLG_MSG" $RESOLV_CONF; then
+			cmt="#!"; ldns="nameserver 127.0.0.1"; dnsmasq_flg=1
+		else
+			cmt=""; ldns=""; FLG_MSG=""
+		fi
+
+		echo -n > $RESOLV_CONF-
+		echo $FLG_MSG >> $RESOLV_CONF-
+		echo search $domain >> $RESOLV_CONF-
+		# local nameserver first
+		echo $ldns >> $RESOLV_CONF-
+		# DHCP supplied nameservers follow
+		msg="adding nameservers"
+		for i in $dns ; do
+			msg="$msg $i"
+			sed -i "/[[:space:]]$i[[:space:]]*/d" $RESOLV_CONF- $RESOLV_CONF
+			echo "${cmt}nameserver $i #!# DHCP" >> $RESOLV_CONF-
+		done
+		# and finally user supplied nameservers
+		sed -i '/#!# DHCP/d' $RESOLV_CONF
+		sed -n "/^${cmt}nameserver/p" $RESOLV_CONF >> $RESOLV_CONF-
+		mv $RESOLV_CONF- $RESOLV_CONF
+
+		if test -n "$dnsmasq_flg"; then
+			cp $RESOLV_CONF $DNSMASQ_R
+			sed -i -e "/$FLG_MSG/d" -e "/127.0.0.1/d" -e 's/^#!//' 	$DNSMASQ_R
+			if rcdnsmasq status >& /dev/null; then
+				rcdnsmasq reload  >& /dev/null
+			fi
+		fi
+
+		logger -st udhcpc "Updating $RESOLV_CONF: $msg"
+		;;
+esac
+
+# recover dates on modified files
+for i in $MODFILES; do
+	tfile=/tmp/$(basename $i)
+	if test -f $i -a -f $tfile; then
+		touch -r $tfile $i
+		rm $tfile
+	fi
+done
+
+exit 0

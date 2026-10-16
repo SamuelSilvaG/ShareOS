@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# wrapper to upnpc, caching IGD url and skipping lengthy uPnP discovery
+
+UPNPC_DIR=/var/cache/upnpc
+UPNPC_CACHE=$UPNPC_DIR/root-desc
+UPNPC_CACHE_TIME=300
+
+mkdir -p $UPNPC_DIR
+
+if ! echo $* | grep -q -w -- -u; then
+	if test -s $UPNPC_CACHE; then
+		if test $(expr $(date +%s) - $(date +%s -r $UPNPC_CACHE)) -lt $UPNPC_CACHE_TIME; then
+			opt="-u $(cat $UPNPC_CACHE)"
+		else
+			rm -f $UPNPC_CACHE
+		fi
+	fi
+fi
+
+a=$(upnpc $opt "$@")
+st=$?
+
+igdip=$(echo "$a" | sed -n '/^Found valid IGD/s|.*//\(.*\):.*|\1|p')
+if test -n "$igdip"; then
+	desc=$(echo "$a" | sed -n '/'$igdip'/s/.*desc:[[:space:]]*\(.*\)/\1/p')
+	if test -n "$desc"; then
+		echo $desc > $UPNPC_CACHE
+	else
+		touch $UPNPC_CACHE
+	fi
+fi
+
+echo "$a"
+return $st
+

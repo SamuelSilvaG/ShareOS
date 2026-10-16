@@ -1,0 +1,9 @@
+Package: portmap
+Description: The standard portmapper for RPC services.
+Version: 6.0.0
+Depends: ipkg, kernel-modules
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://ftp.debian.org/debian/pool/main/p/portmap
+Maintainer: jcard

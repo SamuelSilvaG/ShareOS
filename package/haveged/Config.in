@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HAVEGED
+	bool "haveged"
+	help
+	  An entropy source daemon. Easy-to-use, unpredictable random number generator
+	  based upon an adaptation of the HAVEGE algorithm
+
+	  https://www.issihosts.com/haveged

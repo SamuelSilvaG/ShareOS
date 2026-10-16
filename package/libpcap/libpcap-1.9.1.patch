@@ -1,0 +1,15 @@
+--- libpcap-1.9.1/pcap-linux.c-orig	2020-08-13 16:08:36.664315036 +0100
++++ libpcap-1.9.1/pcap-linux.c	2020-08-13 16:12:29.504319789 +0100
+@@ -2747,8 +2747,12 @@
+ 
+ 				case ARPHRD_IRDA:
+ 				case ARPHRD_IEEE80211:
++#ifdef ARPHRD_IEEE80211_PRISM  /* From Linux 2.4.18 */
+ 				case ARPHRD_IEEE80211_PRISM:
++#endif
++#ifdef ARPHRD_IEEE80211_RADIOTAP
+ 				case ARPHRD_IEEE80211_RADIOTAP:
++#endif
+ #ifdef ARPHRD_IEEE802154
+ 				case ARPHRD_IEEE802154:
+ #endif

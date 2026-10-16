@@ -1,0 +1,22 @@
+--- samba4-4.15.13/source3/auth/user_util.c-orig	2023-08-28 18:06:11.759770665 +0100
++++ samba4-4.15.13/source3/auth/user_util.c	2023-08-28 18:07:08.390708317 +0100
+@@ -135,7 +135,7 @@
+
+ bool user_in_netgroup(TALLOC_CTX *ctx, const char *user, const char *ngname)
+ {
+-#ifdef HAVE_NETGROUP
++#if defined (HAVE_NETGROUP) && defined(HAVE_INNETGR)
+ 	char nis_domain_buf[256];
+ 	const char *nis_domain = NULL;
+ 	char *lowercase_user = NULL;
+--- samba4-4.15.13/lib/util/access.c-orig	2023-08-28 17:15:03.601658837 +0100
++++ samba4-4.15.13/lib/util/access.c	2023-08-28 18:05:58.504019340 +0100
+@@ -115,7 +115,7 @@
+ 			return true;
+ 		}
+ 	} else if (tok[0] == '@') { /* netgroup: look it up */
+-#ifdef HAVE_NETGROUP
++#if defined (HAVE_NETGROUP) && defined(HAVE_INNETGR)
+ 		DATA_BLOB tmp;
+ 		char *mydomain = NULL;
+ 		char *hostname = NULL;

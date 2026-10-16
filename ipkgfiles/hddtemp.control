@@ -1,0 +1,9 @@
+Package: hddtemp
+Description: Read disks temperature
+Version: 0.3-beta15-1
+Depends: ipkg, libiconv, gettext
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://savannah.nongnu.org/projects/hddtemp
+Maintainer: jcard

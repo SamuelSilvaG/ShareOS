@@ -1,0 +1,37 @@
+#!/bin/sh
+
+VER=2.3.1
+TBALL=$VER.tar.gz
+#SITE=http://master.dl.sourceforge.net/project/sabnzbdplus/sabnzbdplus/$VER
+SITE=https://github.com/sabnzbd/sabnzbd/archive
+
+SABPROG=/ShareOS/opt/SABnzbd
+SABPROG2=/ShareOS/opt/sabnzbd
+
+if ! wget --progress=dot:mega -O /tmp/$TBALL $SITE/$TBALL; then
+	rm -f /tmp/$TBALL
+	echo "Downloading of SABnzbd from its homepage page failed."
+	exit 1
+fi
+
+mkdir -p $SABPROG
+if ! tar -C /ShareOS/opt -xzf /tmp/$TBALL >& /dev/null; then
+	rm -f /tmp/$TBALL
+	echo "Extraction of SABnzbd failed."
+	exit 1
+fi
+rm -f /tmp/$TBALL
+
+cp -a $SABPROG2-$VER/* $SABPROG
+rm -rf $SABPROG2-$VER
+
+python -O -m compileall $SABPROG >& /dev/null
+ln -sf /usr/sbin/rcscript /sbin/rcsabnzbd
+
+rcsabnzbd status
+
+cp /etc/ssl/certs/server.key /etc/ssl/certs/sabnzbd.key  
+cp /etc/ssl/certs/server.crt /etc/ssl/certs/sabnzbd.crt 
+chown sabnzbd /etc/ssl/certs/sabnzbd.*
+
+return 0

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+DESC="Demo iptables init script"
+TYPE=net
+NAME=iptables
+
+CONF_DIR=/etc/iptables
+CONF=$CONF_DIR/firewall
+
+. /etc/init.d/common
+
+# Make directories
+mkdir -p $CONF_DIR
+# create empty configuration
+if ! test -e $CONF; then touch $CONF; fi
+
+case "$1" in
+	save) iptables-save > $CONF ;; # save current in use rules
+	start|restart) iptables-restore $CONF ;; # loads saved rules, flushing first existing ones
+	stop) iptables -F ;; # flushed all rules from all tables
+	status) return 1 ;; # use "iptables -L -n | grep -q 'my matching rule'" instead
+	*) usage $0 "save|start|stop|status|restart" ;;
+esac

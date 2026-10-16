@@ -1,0 +1,9 @@
+Package: pycurl
+Description: Python interface to libcurl
+Version: 7.43.0.2
+Depends: python, libcurl, ipkg
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://pycurl.sourceforge.net/
+Maintainer: jcard

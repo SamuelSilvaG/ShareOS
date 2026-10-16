@@ -1,0 +1,146 @@
+#!/bin/sh
+
+NAME=power
+DESC="Power Up/Down/Recovery Settings"
+REQUIRE="cron" # actually is cron() that implements require()
+
+. /etc/init.d/common
+
+. /etc/misc.conf
+
+# this is not intended to be a user script, it is only convenient. It should only be executed once
+# - at boot, to setup the powerdown cron entry and the next powerup alarm if necessary
+# - and at powerdown, to set the next powerup alarm if necessary
+# there are some possible issues: the next alarm elapses while the box is up and power fails
+# before the alarm is re-armed, power is not available when the alarm triggers, etc.
+#
+#POWERUP_ALARM_REPEAT=+1d # set to current alarm value plus N days or month
+#POWERUP_ALARM_SET="1 3 18 30" # if disabled, set to month day hour minute
+#POWERUP_AFTER_POWER_FAIL=1 # auto powerup after power fail. Default, recommended
+#POWERUP_ON_WOL=1 # powerup on WOL (wake on lan). Not working
+#POWERDOWN_SET="0 21 * * 1,15" # cron entry for sheduled power down
+#
+# The DNS-325/DNS-320-Ax/DNR-322L have the equivalent of
+# POWERUP_AFTER_POWER_FAIL, which is set unconditionaly at rcS
+
+CMD="/usr/sbin/poweroff"
+
+if ! grep -qE "DNS-320-Bx|DNS-320L|DNS-327L" /tmp/board; then
+	echo "$NAME: options not supported on this box"
+	return 1
+fi
+
+cronset() {
+	if test -n "$POWERDOWN_SET"; then
+		cron add "$POWERDOWN_SET" $CMD
+	else
+		cron remove $CMD
+	fi
+}
+
+rearm() {
+	if test -n "$POWERUP_AFTER_POWER_FAIL"; then
+		dns320l-daemon -x EnablePowerRecovery > /dev/null
+	else
+		dns320l-daemon -x DisablePowerRecovery > /dev/null
+	fi
+
+	if test -n "$POWERUP_ON_WOL"; then
+		dns320l-daemon -x EnableWOL > /dev/null
+	else
+		dns320l-daemon -x  DisableWOL > /dev/null
+	fi
+
+	if test -z "$POWERUP_ALARM_SET" -o -z "$POWERUP_ALARM_REPEAT"; then
+		dns320l-daemon -x writealarm disable > /dev/null
+	else
+		# alarm might be disabled, set it
+		if test -n "$POWERUP_ALARM_SET"; then
+			if dns320l-daemon -x readalarm | grep -q disabled; then
+				dns320l-daemon -x writealarm "$POWERUP_ALARM_SET" > /dev/null
+			fi
+		fi
+
+		# alarm migh have elapsed, advance it to next event
+		if test -n "$POWERUP_ALARM_REPEAT"; then
+			res=$(dns320l-daemon -x readalarm)
+			rl=$( expr ${#POWERUP_ALARM_REPEAT} - 2)
+			if test "${POWERUP_ALARM_REPEAT:1:$rl}" -gt 0; then
+				while echo "$res"| grep -q 'elapsed'; do
+					res=$(dns320l-daemon -x writealarm "$POWERUP_ALARM_REPEAT")
+				done
+			fi
+			echo $res
+		fi
+	fi
+}
+
+case "$1" in
+	start)
+		cronset
+		rearm
+		echo "Starting $NAME: OK."
+		;;
+	stop)
+		cron remove $CMD
+		rearm
+		echo "Stopping $NAME: OK."
+		;;
+	status)
+		echo "$DESC"
+		#Wakeup alarm disabled
+		#Wakeup alarm set to: 2023-12-04 02:17
+		alarm_res=$(dns320l-daemon -x readalarm)
+		if $(echo $alarm_res | grep -q 'disabled'); then
+			alarm_st=1
+			echo -e "Schedule Power Up:\tNOT set"
+		else
+			alarm_st=0
+			alarm=$(echo $alarm_res | cut -d':' -f2-3)
+			echo -e "Scheduled Power Up:\tset to $alarm"
+		fi
+		#echo "$alarm_res"
+
+		crontab -l | grep -q $CMD; spd_st=$?
+		if test $spd_st = 0; then
+			spd_res="Scheduled Power Down:\tset to \"$(crontab -l | grep $CMD | cut -d" " -f1-5)\""
+		else
+			spd_res="Scheduled Power Down:\tNOT set"
+		fi
+		echo -e "$spd_res"
+
+		dns320l-daemon -x GetPowerRecoveryState | grep -q 128; apr_st=$?
+		if test $apr_st = 0; then
+			apr_res="Power Up after Power Cut:\tset"
+		else
+			apr_res="Power Up after Power Cut:\tNOT set"
+		fi
+		echo -e "$apr_res"
+
+		dns320l-daemon -x GetWOLState | grep -q 1; wol_st=$?
+		if test $wol_st = 0; then
+			wol_res="Power Up on Lan:\tset"
+		else
+			wol_res="Power Up on Lan:\tNOT set"
+		fi
+		echo -e "$wol_res"
+
+#		if test $alarm_st = 0  -o $spd_st = 0 -o  $apr_st = 0 -o $wol_st = 0; then
+		if test $spd_st = 0; then # only scheduled power down affects return value
+			echo "$NAME running"
+			return 0
+		else
+			echo "$NAME stopped"
+			return 1
+		fi
+		;;
+	restart)
+		echo -n "Restarting $NAME: "
+		# just stop it, init will relaunch it
+		stop dns320l-daemon
+		sleep 3
+		cronset
+		rearm
+		;;
+	*) usage $0 "start|stop|status|restart" ;;
+esac

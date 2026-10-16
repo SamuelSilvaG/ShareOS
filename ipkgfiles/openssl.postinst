@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if ! grep -q  rootCA.key /etc/settings; then
+	cat <<-EOF >> /etc/settings
+		/etc/ssl/certs/rootCA.crt
+		/etc/ssl/certs/rootCA.key
+		/etc/ssl/certs/stunnel.pem
+		/etc/ssl/certs/vsftpd.pem
+	EOF
+	sed -i -e '/server.crt/d' -e '/server.key/d' /etc/settings
+fi
+	
+if ! grep -q ^Certificates /usr/www/cgi-bin/Setup.men; then
+	echo "Certificates|certs.cgi" >> /usr/www/cgi-bin/Setup.men
+fi

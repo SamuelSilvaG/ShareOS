@@ -1,0 +1,226 @@
+#!/bin/sh
+
+#set -x
+
+DESC="A secure, fast, compliant and very flexible web-server"
+TYPE=net
+NAME=lighttpd
+
+NEED_ALTF_DIR=1
+RC_USER=$NAME
+RC_USERN=35
+RC_GROUP=network
+RC_GROUPN=81
+RC_DESC="Lighttpd daemon"
+
+CONF_DIR=/etc/$NAME
+LOG_DIR=/var/log/$NAME 
+HOME_DIR=/var/lib/$NAME
+SOCK_DIR=$HOME_DIR/sockets
+ALPN_DIR=$HOME_DIR/tls-alpn
+
+CONF_LIGHTY=$CONF_DIR/$NAME.conf
+
+SECR_DIGST=/etc/$NAME/$NAME-digest.user
+SECR_RSYNC=/etc/rsyncd.secrets
+
+SSL_CERTS=/etc/ssl/certs
+LIGHTY_PEM=$SSL_CERTS/$NAME.pem
+BOX_PEM=$SSL_CERTS/server.pem
+
+CRON_CMD="/sbin/rclighttpd openports"
+
+digs_pass() {
+		realm="WebDAV"
+		while read ln; do
+			user=$(echo $ln | cut -d: -f1)
+			pass=$(echo $ln | cut -d: -f2)
+			if test -z "$user" -o -z "$pass" -o "${user:0:1}" = "#"; then continue; fi
+			hash=$(echo -n "$user:$realm:$pass" | md5sum | cut -b -32)
+			echo "$user:$realm:$hash" 
+		done < $SECR_RSYNC
+}
+
+sinit() {
+	# too early to call check_user()
+	if ! grep -q ^$RC_GROUP:x:$RC_GROUPN: /etc/group; then
+		addgroup -S -g $RC_GROUPN $RC_GROUP
+	fi
+	if ! id $RC_USER >& /dev/null; then
+		adduser -S -g "$RC_DESC" -G $RC_GROUP -u $RC_USERN -h /var/lib/$RC_USER $RC_USER
+	fi
+
+	if test -s $SECR_RSYNC; then
+		if ! test -e $SECR_DIGST; then touch $SECR_DIGST; fi
+		if test ! -s $SECR_DIGST -o $SECR_RSYNC -nt $SECR_DIGST; then
+			digs_pass > $SECR_DIGST
+			chown $RC_USER:$RC_GROUP $SECR_DIGST
+			chmod go-rwx $SECR_DIGST
+		fi
+	fi
+
+ 	if test -e $BOX_PEM -a ! -e $LIGHTY_PEM; then
+ 		ln -sf $BOX_PEM $LIGHTY_PEM
+ 	fi
+
+# 	ext_domain=$(sed -n 's/^var.ext_domain[[:space:]]*=[[:space:]]*"\([a-zA-Z0-9.-]*\)".*/\1/p' $CONF_LIGHTY)
+# 	if grep -q '^include.*ssl.conf' $CONF_LIGHTY; then ssl_en=y; fi
+# 	
+# 	if test -n "$ssl_en" -a \
+# 		! -f $SSL_CERTS/$ext_domain.crt -a ! -f $SSL_CERTS/$ext_domain.key; then
+# 		# using intranet cert for Lets Encript tls-alpn handshake.
+# 		# use cp not ln, as acme.sh uses cat to preserve perms.
+# 		cp $SSL_CERTS/server.crt $SSL_CERTS/$ext_domain.crt
+# 		cp $SSL_CERTS/server.key $SSL_CERTS/$ext_domain.key
+# 		cp $SSL_CERTS/rootCA.crt $SSL_CERTS/$ext_domain-ca.crt # hack
+# 	fi
+}
+
+. /etc/init.d/common
+
+for i in $LOG_DIR $SOCK_DIR $ALPN_DIR; do
+	if ! test -d $i; then
+		mkdir -p $i
+	fi
+done
+
+check_user $LOG_DIR $HOME_DIR $CONF_LIGHTY
+
+# compat. conf files are not updated on a package update! This requires a re-install!
+if ! grep -q '^var.http_port' $CONF_LIGHTY; then
+	echo "$NAME: configuration files format have changed, you have to unistall and reinstall $NAME. Only configuration files will be affected."
+	exit 1
+fi
+
+if test "$(sed -n 's|^var.server_root.*=.*"\(.*\)"|\1|p' $CONF_LIGHTY)" = "/Public"; then
+	echo "$NAME: you have to configure $NAME first."
+	exit 1
+fi
+
+# slow, internet based, migh disappear... but working since 2004!
+PORT_CHECKER=https://www.canyouseeme.org
+# $1-external port
+canyouseeme() {
+	if test -n "$1"; then
+		ok_res='color="green"><b>Success:</b>'
+		err_res='color="red"><b>Error:</b>'
+		res=$(wget -q --post-data port=$1 -O - $PORT_CHECKER)
+		if echo "$res" | grep -q $ok_res; then
+			echo " port $1 IS accessible from the internet."
+		elif  echo "$res" | grep -q $err_res; then
+			echo " port $1 is NOT accessible from the internet."
+			return 1
+		else
+			echo " Error: can't determine port $1 status."
+			return 1
+		fi
+	fi
+}
+
+# # If ISP blocks port might give false positives, as it only goes to the router.
+# # The router needs to support "Hairpinning", see wikipedia. faster but doubtful
+# # $1-external port
+# canyouseeme() {
+#     if test -n "$1"; then
+#     
+# 		PROTO=http
+# 		if test "$1" = 443; then PROTO=https; fi
+# 
+# 		if wget -q --no-check-certificate $PROTO://$ext_ip -O /dev/null; then
+# 			echo " port $1 IS accessible from the internet."
+# 			return 0
+# 		else
+# 			echo " port $1 is NOT accessible from the internet."
+# 		fi
+#     fi
+#     return 1
+# }
+
+router_ports() {
+	http_port=$(sed -n 's/^var.http_port[[:space:]]*=[[:space:]]*\([[:digit:]]*\).*/\1/p' $CONF_LIGHTY)
+	ext_http_port=$(sed -n 's/^var.ext_http_port[[:space:]]*=[[:space:]]*\([[:digit:]]*\).*/\1/p' $CONF_LIGHTY)
+	ext_http_en=$(sed -n 's/.*var.ext_http_en[[:space:]]*=[[:space:]]*"\(.*\)".*/\1/p' $CONF_LIGHTY)
+
+	https_port=$(sed -n 's/^var.https_port[[:space:]]*=[[:space:]]*\([[:digit:]]*\).*/\1/p' $CONF_LIGHTY)
+	ext_https_port=$(sed -n 's/^var.ext_https_port[[:space:]]*=[[:space:]]*\([[:digit:]]*\).*/\1/p' $CONF_LIGHTY)
+	ext_https_en=$(sed -n 's/.*var.ext_https_en[[:space:]]*=[[:space:]]*"\(.*\)".*/\1/p' $CONF_LIGHTY)
+}
+
+# $1-enable $2-external, $3-internal $4-desc
+open_port() {
+	if test "$1" = "yes" -a -n "$2" -a -n "$3" -a -n "$4"; then
+		# ip port external_port protocol
+		upnpcc -e "$4" -a $(hostname -i) $3 $2 TCP > /dev/null
+	fi
+}
+
+# $1-port
+close_port() {
+	if test -n "$1"; then
+		upnpcc -d $1 TCP > /dev/null
+	fi
+}
+
+open_router_ports() {
+	router_ports	
+	open_port $ext_http_en $ext_http_port $http_port "Alt-F lighttpd (HTTP)"
+	open_port $ext_https_en $ext_https_port $https_port "Alt-F lighttpd (HTTPS)"
+}
+
+# FIXME: If config is changed after ports are open, can't close them. Can't fix
+close_router_ports() {
+	router_ports
+	close_port $ext_http_port
+	close_port $ext_https_port
+}
+
+check() {
+	echo
+	status $NAME
+	st=$?
+	echo
+	
+	ext_ip=$(upnpcc -s | sed -n 's/^ExternalIPAddress = \(.*\)/\1/p')
+	ext_domain=$(nslookup $ext_ip | awk '/^Address.*'$ext_ip'/{print $4}');
+	if test -n "$ext_domain"; then
+		emsg="assigned do DNS host \"${ext_domain}\"."
+	else
+		emsg="not DNS assigned!"
+	fi
+	echo -e "External IP: \"$ext_ip\" $emsg\n"
+	
+	router_ports
+	echo "Router forwarded ports:"
+	upnpcc -l | grep -- '->'
+
+	if test "$st" = 0; then
+		echo -e "\nInternet accessible ports:"
+		canyouseeme $ext_http_port
+		st=$((st+$?))
+		canyouseeme $ext_https_port
+		st=$((st+$?))
+	fi
+	
+	return $st
+}
+
+case "$1" in
+	start)
+		open_router_ports
+		cron add "$(date +"%M %k") * * *" "$CRON_CMD"
+		start $NAME -- -f $CONF_LIGHTY
+		;;
+	stop) # stop server and close ports
+		stop $NAME
+		cron remove "$CRON_CMD"
+		close_router_ports
+		;;
+	sstop) stop $NAME ;; # stop only server
+	status) status $NAME ;;
+	check) check ;;
+	openports) open_router_ports ;;
+	closeports) close_router_ports ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|sstop|status|restart|check|init|openports|closeports" ;;
+esac
+

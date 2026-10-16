@@ -1,0 +1,170 @@
+--- wget-1.21.3/src/progress.c-orig	2022-05-30 18:03:34.332185443 +0100
++++ wget-1.21.3/src/progress.c	2022-05-30 18:05:17.706332399 +0100
+@@ -1375,7 +1375,8 @@
+ #endif
+   if (params)
+     {
+-      for (const char *param = params; *param; )
++		char *param;
++      for (*param = params; *param; )
+         {
+           if (!strncmp (param, "force", 5))
+             current_impl_locked = 1;
+--- wget-1.21.3/lib/regcomp.c-orig	2022-05-30 17:57:19.042877823 +0100
++++ wget-1.21.3/lib/regcomp.c	2022-05-30 17:57:43.958445120 +0100
+@@ -2717,7 +2717,8 @@
+     }
+ 
+   /* Build the table for single byte characters.  */
+-  for (wchar_t wc = 0; wc < SBC_MAX; ++wc)
++  wchar_t wc;
++  for (wc = 0; wc < SBC_MAX; ++wc)
+     {
+       if (start_wc <= wc && wc <= end_wc)
+         bitset_set (sbcset, wc);
+--- wget-1.21.3/lib/regexec.c-orig	2022-05-30 17:58:44.349383493 +0100
++++ wget-1.21.3/lib/regexec.c	2022-05-30 17:59:25.140652299 +0100
+@@ -1216,7 +1216,8 @@
+ 
+       /* Pick a valid destination, or return -1 if none is found.  */
+       Idx dest_node = -1;
+-      for (Idx i = 0; i < edests->nelem; i++)
++	  Idx i;
++      for (i = 0; i < edests->nelem; i++)
+ 	{
+ 	  Idx candidate = edests->elems[i];
+ 	  if (!re_node_set_contains (cur_nodes, candidate))
+--- wget-1.21.3/lib/tempname.c-orig	2022-05-30 18:01:31.742382916 +0100
++++ wget-1.21.3/lib/tempname.c	2022-05-30 18:38:30.046331938 +0100
+@@ -295,7 +295,8 @@
+ 
+   for (count = 0; count < attempts; ++count)
+     {
+-      for (size_t i = 0; i < x_suffix_len; i++)
++		size_t i;
++      for (i = 0; i < x_suffix_len; i++)
+         {
+           if (vdigits == 0)
+             {
+--- wget-1.21.3/lib/md4.c-orig	2022-05-30 18:20:32.645800684 +0100
++++ wget-1.21.3/lib/md4.c	2022-05-30 18:21:51.636382905 +0100
+@@ -201,9 +201,9 @@
+ #define G(x, y, z) (((x) & (y)) | ((x) & (z)) | ((y) & (z)))
+ #define H(x, y, z) ((x) ^ (y) ^ (z))
+ #define rol(x, n) (((x) << (n)) | ((uint32_t) (x) >> (32 - (n))))
+-#define R1(a,b,c,d,k,s) a=rol(a+F(b,c,d)+x[k],s);
+-#define R2(a,b,c,d,k,s) a=rol(a+G(b,c,d)+x[k]+K1,s);
+-#define R3(a,b,c,d,k,s) a=rol(a+H(b,c,d)+x[k]+K2,s);
++#define RR1(a,b,c,d,k,s) a=rol(a+F(b,c,d)+x[k],s);
++#define RR2(a,b,c,d,k,s) a=rol(a+G(b,c,d)+x[k]+K1,s);
++#define RR3(a,b,c,d,k,s) a=rol(a+H(b,c,d)+x[k]+K2,s);
+ 
+ /* Process LEN bytes of BUFFER, accumulating context into CTX.
+    It is assumed that LEN % 64 == 0.  */
+@@ -239,58 +239,58 @@
+         }
+ 
+       /* Round 1.  */
+-      R1 (A, B, C, D, 0, 3);
+-      R1 (D, A, B, C, 1, 7);
+-      R1 (C, D, A, B, 2, 11);
+-      R1 (B, C, D, A, 3, 19);
+-      R1 (A, B, C, D, 4, 3);
+-      R1 (D, A, B, C, 5, 7);
+-      R1 (C, D, A, B, 6, 11);
+-      R1 (B, C, D, A, 7, 19);
+-      R1 (A, B, C, D, 8, 3);
+-      R1 (D, A, B, C, 9, 7);
+-      R1 (C, D, A, B, 10, 11);
+-      R1 (B, C, D, A, 11, 19);
+-      R1 (A, B, C, D, 12, 3);
+-      R1 (D, A, B, C, 13, 7);
+-      R1 (C, D, A, B, 14, 11);
+-      R1 (B, C, D, A, 15, 19);
++      RR1 (A, B, C, D, 0, 3);
++      RR1 (D, A, B, C, 1, 7);
++      RR1 (C, D, A, B, 2, 11);
++      RR1 (B, C, D, A, 3, 19);
++      RR1 (A, B, C, D, 4, 3);
++      RR1 (D, A, B, C, 5, 7);
++      RR1 (C, D, A, B, 6, 11);
++      RR1 (B, C, D, A, 7, 19);
++      RR1 (A, B, C, D, 8, 3);
++      RR1 (D, A, B, C, 9, 7);
++      RR1 (C, D, A, B, 10, 11);
++      RR1 (B, C, D, A, 11, 19);
++      RR1 (A, B, C, D, 12, 3);
++      RR1 (D, A, B, C, 13, 7);
++      RR1 (C, D, A, B, 14, 11);
++      RR1 (B, C, D, A, 15, 19);
+ 
+       /* Round 2.  */
+-      R2 (A, B, C, D, 0, 3);
+-      R2 (D, A, B, C, 4, 5);
+-      R2 (C, D, A, B, 8, 9);
+-      R2 (B, C, D, A, 12, 13);
+-      R2 (A, B, C, D, 1, 3);
+-      R2 (D, A, B, C, 5, 5);
+-      R2 (C, D, A, B, 9, 9);
+-      R2 (B, C, D, A, 13, 13);
+-      R2 (A, B, C, D, 2, 3);
+-      R2 (D, A, B, C, 6, 5);
+-      R2 (C, D, A, B, 10, 9);
+-      R2 (B, C, D, A, 14, 13);
+-      R2 (A, B, C, D, 3, 3);
+-      R2 (D, A, B, C, 7, 5);
+-      R2 (C, D, A, B, 11, 9);
+-      R2 (B, C, D, A, 15, 13);
++      RR2 (A, B, C, D, 0, 3);
++      RR2 (D, A, B, C, 4, 5);
++      RR2 (C, D, A, B, 8, 9);
++      RR2 (B, C, D, A, 12, 13);
++      RR2 (A, B, C, D, 1, 3);
++      RR2 (D, A, B, C, 5, 5);
++      RR2 (C, D, A, B, 9, 9);
++      RR2 (B, C, D, A, 13, 13);
++      RR2 (A, B, C, D, 2, 3);
++      RR2 (D, A, B, C, 6, 5);
++      RR2 (C, D, A, B, 10, 9);
++      RR2 (B, C, D, A, 14, 13);
++      RR2 (A, B, C, D, 3, 3);
++      RR2 (D, A, B, C, 7, 5);
++      RR2 (C, D, A, B, 11, 9);
++      RR2 (B, C, D, A, 15, 13);
+ 
+       /* Round 3.  */
+-      R3 (A, B, C, D, 0, 3);
+-      R3 (D, A, B, C, 8, 9);
+-      R3 (C, D, A, B, 4, 11);
+-      R3 (B, C, D, A, 12, 15);
+-      R3 (A, B, C, D, 2, 3);
+-      R3 (D, A, B, C, 10, 9);
+-      R3 (C, D, A, B, 6, 11);
+-      R3 (B, C, D, A, 14, 15);
+-      R3 (A, B, C, D, 1, 3);
+-      R3 (D, A, B, C, 9, 9);
+-      R3 (C, D, A, B, 5, 11);
+-      R3 (B, C, D, A, 13, 15);
+-      R3 (A, B, C, D, 3, 3);
+-      R3 (D, A, B, C, 11, 9);
+-      R3 (C, D, A, B, 7, 11);
+-      R3 (B, C, D, A, 15, 15);
++      RR3 (A, B, C, D, 0, 3);
++      RR3 (D, A, B, C, 8, 9);
++      RR3 (C, D, A, B, 4, 11);
++      RR3 (B, C, D, A, 12, 15);
++      RR3 (A, B, C, D, 2, 3);
++      RR3 (D, A, B, C, 10, 9);
++      RR3 (C, D, A, B, 6, 11);
++      RR3 (B, C, D, A, 14, 15);
++      RR3 (A, B, C, D, 1, 3);
++      RR3 (D, A, B, C, 9, 9);
++      RR3 (C, D, A, B, 5, 11);
++      RR3 (B, C, D, A, 13, 15);
++      RR3 (A, B, C, D, 3, 3);
++      RR3 (D, A, B, C, 11, 9);
++      RR3 (C, D, A, B, 7, 11);
++      RR3 (B, C, D, A, 15, 15);
+ 
+       A = ctx->A += A;
+       B = ctx->B += B;

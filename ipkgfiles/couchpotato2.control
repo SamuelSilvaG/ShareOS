@@ -1,0 +1,9 @@
+Package: couchpotato2
+Description: Searches and manages your movies
+Version: 2017-12-03
+Depends: python, lxml, cryptography, git
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://github.com/RuudBurger/CouchPotatoServer
+Maintainer: jcard

@@ -1,0 +1,5 @@
+#!/bin/sh
+# make inittab execute this on ttyS0
+
+cd /root && HOME=/root exec /bin/sh -l
+

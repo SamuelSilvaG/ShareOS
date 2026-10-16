@@ -1,0 +1,9 @@
+Package: kernel-modules
+Description: Aditional linux kernel modules for the DNS-320/320L/321/323/325
+Version: 4.14.268
+Depends: ipkg
+Architecture: armv5
+Priority: required
+Section: admin
+Source: https://kernel.org
+Maintainer: jcard

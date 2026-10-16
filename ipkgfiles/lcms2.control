@@ -1,0 +1,11 @@
+Package: lcms2
+Description: Little Color Management Software (CMS) intends to be an OPEN
+	  SOURCE small-footprint color management engine
+Version: 2.13-1
+Depends: ipkg, jpeg, tiff, zlib
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://www.littlecms.com/
+Maintainer: jcard

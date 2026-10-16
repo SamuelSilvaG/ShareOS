@@ -1,0 +1,75 @@
+#!/bin/sh
+
+DESC="The MySQL Open Source Database System"
+TYPE=sys
+NAME=mysqld
+
+RC_USER=mysql
+RC_USERN=28
+RC_GROUP=mysql
+RC_GROUPN=35
+RC_DESC="mysql daemon"
+
+MYSQL_HOMED=/var/lib/$RC_USER
+MYSQL_RUND=/var/run/$RC_USER
+MYSQL_LOGD=/var/log/$RC_USER
+MYSQL_LOG=$MYSQL_LOGD/$NAME.log
+MYSQL_CONFD=/etc/mysql
+MYSQL_CONF=$MYSQL_CONFD/my.cnf
+MYSQL_OPTS="--log-error=$MYSQL_LOG --general_log_file=$MYSQL_LOG --general_log=0"
+
+SSL_CERTS=/etc/ssl/certs
+SERRORL=/var/log/systemerror.log
+
+RC_PIDFILE=$MYSQL_RUND/$NAME.pid
+RC_START_BG=yes
+
+MYSQL_DIRS="$MYSQL_RUND $MYSQL_LOGD $MYSQL_CONFD"
+
+sinit() {
+	for i in $MYSQL_DIRS; do
+		if ! test -d $i; then mkdir -p $i; fi
+	done
+	# too early to call check_user()? see S52lighttpd
+	check_user $MYSQL_DIRS
+	
+	if ! test -f $SSL_CERTS/mysql.key; then
+		cp $SSL_CERTS/server.key $SSL_CERTS/mysql.key
+		chown mysql $SSL_CERTS/mysql.key
+	fi
+
+	if ! test -d $MYSQL_HOMED/$RC_USER; then
+		echo "Creating MySQL system tables..."
+		mysql_install_db --user=$RC_USER --datadir=$MYSQL_HOMED
+	fi
+}
+
+. /etc/init.d/common
+
+case "$1" in
+	start)
+		if ! status $NAME >& /dev/null; then
+			start mysqld_safe -- --pid-file=$RC_PIDFILE $MYSQL_OPTS
+			sleep 1
+		else
+			omsg 0
+			return 0;
+		fi
+		
+		if mysql -Be "" >& /dev/null; then		
+			emsg="<li>Assign a password to your $NAME root user.</li>"
+			pass=$(sed -n 's/^[[:space:]]*password[[:space:]]*=[[:space:]]*\(.*\)/\1/p' $MYSQL_CONF)
+			if test -z "$pass"; then
+				if ! grep -q "$emsg" $SERRORL; then 
+					echo "$emsg" >> $SERRORL
+				fi
+			else
+				sed -i '\|'"$emsg"'|d' $SERRORL 2> /dev/null
+			fi
+		fi
+		;;
+	stop) stop $NAME ;;
+	status) status $NAME ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart|init" ;;
+esac

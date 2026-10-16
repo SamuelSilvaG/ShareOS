@@ -1,0 +1,9 @@
+Package: openssl-compat
+Description: Libraries from openssl-1.0.2, needed for binaries imcompatible with openssl-1.1.1
+Version: 1.0.2u
+Depends: zlib, ipkg
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://www.openssl.org/
+Maintainer: jcard

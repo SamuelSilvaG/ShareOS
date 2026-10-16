@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if ! grep -q dropbear_ed25519_host_key /etc/settings; then
+	cat <<-EOF >> /etc/settings
+		/etc/dropbear/dropbear_ed25519_host_key
+	EOF
+fi
+	
+update-alternatives --install /usr/bin/scp scp /usr/bin/scp-dropbear 10
+update-alternatives --install /usr/bin/ssh ssh /usr/bin/ssh-dropbear 10

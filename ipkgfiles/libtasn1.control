@@ -1,0 +1,10 @@
+Package: libtasn1
+Description: ASN.1 library
+Version: 4.18.0
+Depends: ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://www.gnu.org/software/libtasn1
+Maintainer: jcard

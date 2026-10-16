@@ -1,0 +1,27 @@
+#! /bin/sh
+
+DESC="Cleanup log files every hour."
+TYPE=sys
+NAME=cleanup
+REQUIRE="cron" # actually is cron() that implements require()
+
+. /etc/init.d/common
+
+CMD="/usr/sbin/cleanup"
+
+
+case "$1" in
+	start)
+		cron add "$((RANDOM % 60)) * * * *" $CMD
+		$CMD
+		echo "Starting $NAME: OK."
+		;;
+	stop)
+		cron remove $CMD
+		echo "Stopping $NAME: OK."
+		;;
+	status) cron status $CMD ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart"
+		;;
+esac

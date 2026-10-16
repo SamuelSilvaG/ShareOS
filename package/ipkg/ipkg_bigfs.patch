@@ -1,0 +1,86 @@
+--- ipkg-0.99.163/ipkg_conf.c	2006-04-17 23:20:44.000000000 +0100
++++ /home/jcard/Alt-F/alt-f-sf/build/build_arm/ipkg-0.99.163/ipkg_conf.c	2021-08-07 16:54:52.597114464 +0100
+@@ -237,6 +237,9 @@
+      if (args->force_defaults) {
+ 	  conf->force_defaults = 1;
+      }
++     if (args->force_space) {
++      conf->force_space = 1;
++     }
+      if (args->force_overwrite) {
+ 	  conf->force_overwrite = 1;
+      }
+--- ipkg-0.99.163/ipkg_install.c	2006-03-30 14:50:24.000000000 +0100
++++ /home/jcard/Alt-F/alt-f-sf/build/build_arm/ipkg-0.99.163/ipkg_install.c	2021-08-07 19:45:13.935974858 +0100
+@@ -513,18 +513,18 @@
+      *    my diddling with the .ipk file size below isn't going to cut it.
+      * 3) return a proper error code instead of 1
+      */
+-     int comp_size, blocks_available;
+-    
++     long long comp_size, blocks_available; // in 1KiB block size
++	 
++	 /* fprintf(stdout, "force-space=%i pkg->installed_size=%s avail=%llu path=%s\n",
++			 conf->force_space, pkg->installed_size, get_available_blocks(conf->default_dest->root_dir), conf->default_dest->root_dir); */
++	 
+      if (!conf->force_space && pkg->installed_size != NULL) {
+ 	  blocks_available = get_available_blocks(conf->default_dest->root_dir);
+ 
+ 	  comp_size = strtoul(pkg->installed_size, NULL, 0);
+-	  /* round up a blocks count without doing fancy-but-slow casting jazz */ 
+-	  comp_size = (int)((comp_size + 1023) / 1024);
+-
+-	  if (comp_size >= blocks_available) {
++	  if ((comp_size + 1) >= blocks_available) {
+ 	       ipkg_message(conf, IPKG_ERROR,
+-			    "Only have %d available blocks on filesystem %s, pkg %s needs %d\n", 
++			    "Only have %llu available 1KB blocks on filesystem %s, pkg %s needs %llu\n", 
+ 			    blocks_available, conf->default_dest->root_dir, pkg->name, comp_size);
+ 	       return ENOSPC;
+ 	  }
+--- ipkg-0.99.163/ipkg_utils.c	2006-02-06 08:13:02.000000000 +0000
++++ /home/jcard/Alt-F/alt-f-sf/build/build_arm/ipkg-0.99.163/ipkg_utils.c	2021-08-07 19:49:13.239639682 +0100
+@@ -19,6 +19,7 @@
+ #include <errno.h>
+ #include <ctype.h>
+ #include <sys/vfs.h>
++#include <sys/statvfs.h>
+ 
+ #include "ipkg_utils.h"
+ #include "pkg.h"
+@@ -26,16 +27,19 @@
+ 
+ void print_pkg_status(pkg_t * pkg, FILE * file);
+ 
+-int get_available_blocks(char * filesystem)
++/* number of max 1KiB blocks in fs
++ * 10TB: 10*10^12; 10TB 1KB blocks: 10^13/2^10 = 9765625000; bits needed: ln(x)/ln(2) = 33 bits
++ * needs a long long */
++long long get_available_blocks(char * filesystem)
+ {
+-     struct statfs sfs;
++     struct statvfs sfs;
+ 
+-     if(statfs(filesystem, &sfs)){
+-	  fprintf(stderr, "bad statfs\n");
++     if(statvfs(filesystem, &sfs)){
++	  fprintf(stderr, "bad statvfs\n");
+ 	  return 0;
+      }
+      /*    fprintf(stderr, "reported fs type %x\n", sfs.f_type); */
+-     return ((sfs.f_bavail * sfs.f_bsize) / 1024);
++     return ((sfs.f_bavail * sfs.f_frsize) / 1024);
+ }
+ 
+ char **read_raw_pkgs_from_file(const char *file_name)
+--- ipkg-0.99.163/ipkg_utils.h	2006-02-06 08:13:02.000000000 +0000
++++ /home/jcard/Alt-F/alt-f-sf/build/build_arm/ipkg-0.99.163/ipkg_utils.h	2021-08-06 18:49:53.306922851 +0100
+@@ -20,7 +20,7 @@
+ 
+ #include "pkg.h"
+ 
+-int get_available_blocks(char * filesystem);
++long long get_available_blocks(char * filesystem);
+ char **read_raw_pkgs_from_file(const char *file_name);
+ char **read_raw_pkgs_from_stream(FILE *fp);
+ char *trim_alloc(char * line);

@@ -1,0 +1,8 @@
+Package: ipkg
+Version: 0.99.163-4
+Description: The Itsy Package Installer from handhelds.org
+Architecture: arm
+Priority: required
+Section: admin
+Source: https://handhelds.org/moin/moin.cgi/Ipkg
+Maintainer: jcard

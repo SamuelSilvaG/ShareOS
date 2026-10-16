@@ -1,0 +1,23 @@
+#!/bin/sh
+
+DESC="WSD/LLMNR Discovery/Name Service Daemon"
+NAME=wsdd2
+TYPE=net
+
+RC_PIDFILE=/var/run/$NAME.pid
+RC_MAKE_PID=yes
+RC_START_BG=-b
+
+OPTS="-b vendor:D-Link,vendorurl:https%3A//dlink.com,\
+model:$(cat /tmp/board),presentationurl:http%3A//$(hostname -f)"
+
+. /etc/init.d/common
+
+case "$1" in
+	start) start $NAME -- $OPTS ;;
+	stop)	stop $NAME ;;
+	status)	status $NAME ;;
+	reload) reload $NAME ;;
+	restart) restart $NAME ;;
+	*)  usage $0 "start|stop|status|restart|reload" ;;
+esac

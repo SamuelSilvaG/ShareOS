@@ -1,0 +1,95 @@
+#!/bin/sh
+
+DESC="SMB/Samba Server"
+TYPE=net
+NAME=smbd
+
+SMB_OPTS=-D
+NAME2=nmbd
+NMB_OPTS=-D
+SMB_CONF=/etc/samba/smb.conf
+SMB_PRIV=/var/lib/samba/private
+CONF_INETD=/etc/inetd.conf
+SWAT_BIN=/usr/sbin/swat
+STUNNEL_BIN=/usr/bin/stunnel
+
+REQUIRE=wsdd2
+
+RETVAL=0
+
+sinit() {
+	# Make directories
+	for i in lib cache log run; do
+		if ! test -d $i; then mkdir -p /var/$i/samba; fi
+	done
+	if ! test -d $SMB_PRIV; then mkdir -p $SMB_PRIV; fi
+
+	# add or delete swat from inetd.conf
+	if $(nmbd -V | grep -q '3.6'); then
+		if ! grep -q $SWAT_BIN $CONF_INETD; then
+			ch=y
+			cat<<-EOF >> $CONF_INETD
+				swat	stream	tcp	nowait	root	$SWAT_BIN	swat	# Samba Administrative HTTP server
+			EOF
+		fi
+		if test -x $STUNNEL_BIN && ! grep -q ^swats $CONF_INETD; then
+			ch=y
+			cat<<-EOF >> $CONF_INETD
+				swats	stream	tcp	nowait	root	$STUNNEL_BIN	stunnel /etc/stunnel/stunnel-swats.conf     # Secure Samba Administrative HTTPS server
+			EOF
+		fi
+	else
+		if grep -q $SWAT_BIN $CONF_INETD; then
+			ch=y
+			sed -i "\|$SWAT_BIN|d" $CONF_INETD
+		fi
+		if grep -q ^swats $CONF_INETD; then
+			ch=y
+			sed -i "/^swats/d" $CONF_INETD
+		fi
+	fi
+	
+	if test -n "$ch"; then
+		rcinetd reload
+	fi
+}
+
+istart() {
+	start $NAME2 -- $NMB_OPTS
+	st=$?
+
+	start $NAME -- $SMB_OPTS
+	st=$((st+$?))
+
+	avahi add smb
+
+	return $st
+}	
+
+istop() {
+	stop $NAME
+	st=$?
+
+	stop $NAME2
+	st=$((st+$?))
+
+	avahi remove smb
+	
+	return $st
+}	
+
+if ! test -f $SMB_CONF; then
+	echo "smb: no configuration file found."
+	exit 1
+fi
+
+. /etc/init.d/common
+
+case "$1" in
+	start) istart ;;
+	stop) istop ;;
+	restart) restart $NAME ;;
+	reload) reload $NAME ;;
+	status) status $NAME ;;
+	*) usage $0 "start|stop|status|restart|reload|init" ;;
+esac

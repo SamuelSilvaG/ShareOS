@@ -1,0 +1,9 @@
+Package: cups
+Version: 2.3.3op2
+Description: The Common Unix Printing System
+Depends: ipkg, jpeg-libs, libpng, tiff, libusb1
+Architecture: arm
+Priority: optional
+Section: printing
+Source: https://www.cups.org
+Maintainer: jcard

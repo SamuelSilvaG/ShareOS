@@ -1,0 +1,55 @@
+#!/bin/sh
+
+DESC="A web based terminal emulator server"
+NAME=shellinaboxd
+TYPE=net
+
+RC_USER=shellinabox
+RC_USERN=70
+RC_GROUP=shellinabox
+RC_GROUPN=204
+RC_DESC="shellinabox user"
+
+PID_DIR=/var/run/$NAME
+RC_PIDFILE=$PID_DIR/$NAME.pid
+
+RC_START_BG=y
+
+MISC_CONF=/etc/misc.conf
+CONFF=/etc/shellinabox.conf
+SIBCERT=/etc/ssl/certs/shellinabox.pem
+
+. $MISC_CONF
+. $CONFF
+
+. /etc/init.d/common
+
+if ! test -d "$PID_DIR"; then mkdir -p "$PID_DIR"; fi
+
+check_user $PID_DIR
+
+if ! test -s $SIBCERT; then
+	echo "$NAME certificate does not exists, use the webUI."
+	return 1
+fi
+
+#DEBUGOPT=-d
+
+case "$1" in
+	start)
+		# open fd 5 for reading certificate and pass it to shellinabox. 
+		# This way it will not try to create self-signed certificates 
+		# not even when the request has SNI (server name indication)
+		
+		OPTS="$DEBUGOPT --port=${PORT:-4200} --pidfile=$RC_PIDFILE \
+			--user=$RC_USER --group=$RC_GROUP --cert-fd=5"
+
+		exec 5< $SIBCERT
+		start $NAME -- $OPTS
+		exec 5>&-
+		;;
+	stop)	stop $NAME ;;
+	status)	status $NAME ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart" ;;
+esac

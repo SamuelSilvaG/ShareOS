@@ -1,0 +1,4 @@
+./etc/init.d/S31usbid
+./usr/bin/update_usbid.sh
+./usr/sbin/lsusb
+./usr/share/usb.ids.gz

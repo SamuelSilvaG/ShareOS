@@ -1,0 +1,12 @@
+--- iperf3-3.9/src/iperf_udp.c-orig	2021-03-30 03:43:10.118388277 +0100
++++ iperf3-3.9/src/iperf_udp.c	2021-03-30 03:43:13.957415266 +0100
+@@ -61,6 +61,9 @@
+ # endif
+ #endif
+ 
++#define htobe64(n) (n)
++#define be64toh(n) (n)
++
+ /* iperf_udp_recv
+  *
+  * receives the data for UDP

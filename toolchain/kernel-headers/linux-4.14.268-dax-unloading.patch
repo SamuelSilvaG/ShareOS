@@ -1,0 +1,58 @@
+--- a/drivers/dax/super.c-orig	2018-10-29 18:57:46.925001990 +0000
++++ b/drivers/dax/super.c	2018-10-29 19:24:24.527034086 +0000
+@@ -609,7 +609,55 @@
+ {
+ 	kern_unmount(dax_mnt);
+ 	unregister_filesystem(&dax_fs_type);
++	/*
++	 * dax is used by device mapper, but BUGs at kmem_cache_destroy() on dax module unloading,
++	 * even when not used, e.g. modprobe dax; modprobe -r dax, so avoid that,
++	 * even with memory leaking...
++	 * 
++# rmmod dax
++=============================================================================
++BUG dax_cache (Not tainted): Objects remaining in dax_cache on __kmem_cache_shutdown()
++-----------------------------------------------------------------------------
++
++Disabling lock debugging due to kernel taint
++INFO: Slab 0xc3fe5880 objects=19 used=1 fp=0xc35c5d40 flags=0x8100
++CPU: 0 PID: 1171 Comm: rmmod Tainted: G    B           4.14.78 #2
++Hardware name: D-Link DNS-321/323
++Backtrace: 
++Function entered at [<c000d8fc>] from [<c000da24>]
++ r7:c35c4000 r6:c38dbdc0 r5:00008100 r4:c3fe5880
++Function entered at [<c000da0c>] from [<c036e7dc>]
++Function entered at [<c036e7bc>] from [<c00a3b0c>]
++Function entered at [<c00a3aa0>] from [<c00a7b10>]
++ r3:c0958980 r2:c03bdfb4
++ r6:c38dbdc0 r5:c3fe5880 r4:c38dbdc0
++Function entered at [<c00a79dc>] from [<c0085d58>]
++ r10:00000000 r9:c0974000 r8:c000a568 r7:00000081 r6:c0975f44 r5:be9d6ca0
++ r4:c38dbdc0
++Function entered at [<c0085d1c>] from [<bf0bd278>]
++ r4:bf0bdc60
++Function entered at [<bf0bd24c>] from [<bf0bd95c>]
++Function entered at [<bf0bd934>] from [<c0060eec>]
++Function entered at [<c0060da0>] from [<c000a380>]
++ r6:be9d6ca0 r5:00000880 r4:b6fdf8f8
++INFO: Object 0xc35c4000 @offset=0
++kmem_cache_destroy dax_cache: Slab cache still has objects
++CPU: 0 PID: 1171 Comm: rmmod Tainted: G    B           4.14.78 #2
++Hardware name: D-Link DNS-321/323
++Backtrace: 
++Function entered at [<c000d8fc>] from [<c000da24>]
++ r7:00000081 r6:c0975f44 r5:be9d6ca0 r4:c38dbdc0
++Function entered at [<c000da0c>] from [<c036e7dc>]
++Function entered at [<c036e7bc>] from [<c0085df4>]
++Function entered at [<c0085d1c>] from [<bf0bd278>]
++ r4:bf0bdc60
++Function entered at [<bf0bd24c>] from [<bf0bd95c>]
++Function entered at [<bf0bd934>] from [<c0060eec>]
++Function entered at [<c0060da0>] from [<c000a380>]
++ r6:be9d6ca0 r5:00000880 r4:b6fdf8f8
++
+ 	kmem_cache_destroy(dax_cache);
++	*/
+ }
+ 
+ static int __init dax_fs_init(void)

@@ -1,0 +1,21 @@
+config BR2_PACKAGE_CUPS_FILTERS
+	bool "cups-filters"
+	select BR2_PACKAGE_TIFF
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_PNG
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_BZIP2
+	select BR2_PACKAGE_FREETYPE
+	select BR2_PACKAGE_FONTCONFIG
+	select BR2_PACKAGE_LIBERATION
+	select BR2_PACKAGE_LCMS2
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_QPDF
+	select BR2_PACKAGE_AVAHI
+	select BR2_PACKAGE_CUPS
+	select BR2_PACKAGE_DBUS
+	help
+	  This project provides backends, filters, and other software that was once part of the core CUPS distribution but is no longer maintained by Apple Inc.
+	  
+	  https://github.com/OpenPrinting/cups-filters
+

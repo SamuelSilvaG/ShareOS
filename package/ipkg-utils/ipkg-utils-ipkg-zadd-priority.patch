@@ -1,0 +1,32 @@
+--- ipkg-utils-050831-host/ipkg.py-orig	2022-03-29 18:36:14.965876705 +0100
++++ ipkg-utils-050831-host/ipkg.py	2022-03-29 18:48:13.837205438 +0100
+@@ -129,6 +129,7 @@
+         self.version = 'none'
+         self.parsed_version = None
+         self.architecture = None
++        self.priority = None
+         self.maintainer = None
+         self.source = None
+         self.description = None
+@@ -294,6 +295,12 @@
+     def get_architecture(self):
+         return self.architecture
+ 
++    def set_priority(self, priority):
++        self.priority = priority
++
++    def get_priority(self, priority):
++        self.priority = priority
++	
+     def set_maintainer(self, maintainer):
+         self.maintainer = maintainer
+ 
+@@ -439,6 +446,8 @@
+             out = out + 'Section: %s\n' % self.section
+         if self.architecture:
+             out = out + 'Architecture: %s\n' % self.architecture
++        if self.priority:
++            out = out + 'Priority: %s\n' % self.priority
+         if self.maintainer:
+             out = out + 'Maintainer: %s\n' % self.maintainer
+         if self.md5:

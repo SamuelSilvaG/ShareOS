@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# only on preinst is the exit status taken in account and installation aborted
+# for other scripts it is printed but ignored
+
+# args: install, install <version>, upgrade <old_version>
+preinst() {
+	#exit 1 aborts install
+	true
+}
+
+# args: configure
+postinst() {
+	if ! grep -q '|exfat)' /usr/sbin/hot.sh; then
+		sed -i 's,|ext4),|ext4|exfat),' /usr/sbin/hot.sh 
+	fi
+	if ! grep -q 'exfat' /usr/bin/plabel; then
+		sed -i '/vfat)/a exfat) prog=exfatlabel ;;' /usr/bin/plabel
+	fi
+}
+
+# args: remove
+prerm() {
+	true
+}
+
+# args: remove
+postrm() {
+	if grep -q '|exfat)' /usr/sbin/hot.sh; then
+		sed -i 's/|exfat//' /usr/sbin/hot.sh 
+	fi
+	if ! grep -q 'exfat' /usr/bin/plabel; then
+		sed -i '/exfat/d' /usr/bin/plabel
+	fi
+}
+
+script=$(basename $0)
+args="$@"
+
+echo "script=$script args=\"$@\""
+
+case $script in
+	*.preinst|preinst) preinst ;;
+	*.postinst) postinst ;;
+	*.prerm) prerm ;;
+	*.postrm) postrm ;;
+esac	
+

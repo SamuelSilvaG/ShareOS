@@ -1,0 +1,57 @@
+--- samba4-4.15.7/source3/printing/queue_process.c-orig	2022-06-02 01:39:40.134505278 +0100
++++ samba4-4.15.7/source3/printing/queue_process.c	2022-06-04 18:00:49.132547041 +0100
+@@ -21,7 +21,9 @@
+ */
+ 
+ #include "includes.h"
++#ifdef HAVE_SPAWN_H
+ #include <spawn.h>
++#endif
+ #include "smbd/globals.h"
+ #include "include/messages.h"
+ #include "lib/util/util_process.h"
+@@ -343,6 +345,31 @@
+ 	return NULL;
+ }
+ 
++/* jc: uclibc-0.9.30 does not has posix_spawn(),
++ * add minimal (non-existing attr and action) posix_spawn().
++ */
++#ifndef HAVE_SPAWN_H
++
++#define SPAWN_ERROR	127
++
++static int
++posix_spawn(pid_t *pid, const char *file,
++	char *const argv[], char *const envp[])
++{
++	pid_t new_pid = fork();
++
++	if (new_pid) {
++		if (new_pid < 0)
++			return errno;
++		if (pid)
++			*pid = new_pid;
++		return 0;
++	}
++
++	execve(file, argv, envp);
++	_exit(SPAWN_ERROR);
++}
++#endif
+ /****************************************************************************
+ main thread of the background lpq updater
+ ****************************************************************************/
+@@ -384,8 +411,11 @@
+ 	if (argv == NULL) {
+ 		goto nomem;
+ 	}
+-
++#ifdef HAVE_SPAWN_H
+ 	ret = posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
++#else
++	ret = posix_spawn(&pid, argv[0], argv, environ);
++#endif
+ 	if (ret == -1) {
+ 		goto fail;
+ 	}

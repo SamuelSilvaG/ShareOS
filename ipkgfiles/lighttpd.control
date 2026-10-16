@@ -1,0 +1,9 @@
+Package: lighttpd
+Description: A secure, fast, compliant and very flexible web-server
+Version: 1.4.64
+Depends: ipkg, pcre2, openssl, libiconv, xz-libs, sqlite-libs, libxml2, zlib, miniupnpc
+Architecture: arm
+Priority: optional
+Section: networking
+Source: https://www.lighttpd.net
+Maintainer: jcard

@@ -1,0 +1,10 @@
+Package: cups-filters
+Description: This project provides backends, filters, and other software that was part of the CUPS distribution
+Version: 1.28.15
+Depends: avahi, qpdf, libglib2, lcms2, freetype, fontconfig, liberation, tiff, zlib, bzip2, ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://github.com/OpenPrinting/cups-filters
+Maintainer: jcard

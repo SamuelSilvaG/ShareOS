@@ -1,0 +1,10 @@
+./usr/bin/ipkg
+./usr/bin/ipkg-cl
+./usr/bin/update-alternatives
+./usr/share/ipkg
+./usr/share/ipkg/intercept
+./usr/share/ipkg/intercept/depmod
+./usr/share/ipkg/intercept/ldconfig
+./usr/share/ipkg/intercept/update-modules
+./usr/www/cgi-bin/packages_ipkg.cgi
+./usr/www/cgi-bin/packages_ipkg_proc.cgi

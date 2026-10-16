@@ -1,0 +1,11 @@
+Package: qpdf
+Description: QPDF is a command-line program that does structural,
+	  content- preserving transformations on PDF files.
+Version: 10.5.0
+Depends: jpeg, zlib, ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://qpdf.sourceforge.net/
+Maintainer: jcard

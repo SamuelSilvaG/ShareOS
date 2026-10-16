@@ -1,0 +1,11 @@
+Package: dev-headers-bundle
+Depends: ipkg
+Version: 0.1
+Description: All non dev-bundle libraries header files.
+	  Needed libraries packages needs to be separately installed.
+Depends: dev-bundle
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://gcc.gnu.org
+Maintainer: jcard

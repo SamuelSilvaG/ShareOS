@@ -1,0 +1,32 @@
+#! /bin/sh
+
+DESC="AFP (Apple Filling Protocol) Server"
+TYPE=net
+NAME=netatalk
+NEED_ALTF_DIR=1
+
+REQUIRE=avahi_daemon
+RC_PIDFILE=/var/run/$NAME.pid
+
+NETATALK_CONF=/etc/afp.conf
+NETATALK_DIR=/var/lib/$NAME
+
+. /etc/init.d/common
+
+if ! test -d $NETATALK_DIR/CNID; then
+	mkdir -p $NETATALK_DIR/CNID
+fi
+
+if grep -qE '^[^#].*[[:space:]]*=[[:space:]]*/(Public|Backup|home)' $NETATALK_CONF ; then
+	echo "$NAME: you have to configure $NAME first."
+	exit 1
+fi
+
+case "$1" in
+	start)	start $NAME	;;
+	stop)	stop $NAME ;;
+	status)	status $NAME ;;
+	restart) restart $NAME ;;
+	reload) reload $NAME ;;
+	*) usage $0 "start|stop|status|restart|reload" ;;
+esac

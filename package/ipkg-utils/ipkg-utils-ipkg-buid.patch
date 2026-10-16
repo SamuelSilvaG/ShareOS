@@ -1,0 +1,26 @@
+--- ipkg-utils-050831-host/ipkg-build	2005-08-31 15:24:45.000000000 +0100
++++ ipkg-utils-050831-host/ipkg-build	2021-01-19 19:55:01.283383106 +0000
+@@ -226,8 +226,8 @@
+ mkdir $tmp_dir
+ 
+ echo $CONTROL > $tmp_dir/tarX
+-( cd $pkg_dir && tar $ogargs -X $tmp_dir/tarX -czf $tmp_dir/data.tar.gz . )
+-( cd $pkg_dir/$CONTROL && tar $ogargs -czf $tmp_dir/control.tar.gz . )
++( cd $pkg_dir && tar --format=oldgnu --format=oldgnu $ogargs -X $tmp_dir/tarX -czf $tmp_dir/data.tar.gz . )
++( cd $pkg_dir/$CONTROL && tar --format=oldgnu --format=oldgnu $ogargs -czf $tmp_dir/control.tar.gz . )
+ rm $tmp_dir/tarX
+ 
+ echo "2.0" > $tmp_dir/debian-binary
+@@ -237,10 +237,10 @@
+ if [ "$outer" = "ar" ] ; then
+   ( cd $tmp_dir && ar -crf $pkg_file ./debian-binary ./data.tar.gz ./control.tar.gz )
+ else
+-  ( cd $tmp_dir && tar -zcf $pkg_file ./debian-binary ./data.tar.gz ./control.tar.gz )
++  ( cd $tmp_dir && tar --format=oldgnu --format=oldgnu -zcf $pkg_file ./debian-binary ./data.tar.gz ./control.tar.gz )
+ fi
+ 
+ rm $tmp_dir/debian-binary $tmp_dir/data.tar.gz $tmp_dir/control.tar.gz
+ rmdir $tmp_dir
+ 
+-echo "Packaged contents of $pkg_dir into $pkg_file"
++##echo "Packaged contents of $pkg_dir into $pkg_file"

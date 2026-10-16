@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# python postinst might not be run yet...
+python -m compileall /usr/lib/python2.7/site-packages/yenc.py >& /dev/null
+return 0

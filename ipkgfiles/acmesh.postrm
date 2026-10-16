@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ACME_CONF=/etc/acme.sh
+
+rm -rf /usr/bin/acme.sh # $ACME_CONF

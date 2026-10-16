@@ -1,0 +1,8 @@
+# list of modules to load that are not autoloading or coldplugged
+
+# sd_mod is not a builtin module due to lack of flash space
+# when the kernel is compiled for performance, since kernel 4.14.256.
+# So it has to be loaded, otherwise disks are not recognized.
+# after some jigsaw work it now fits, but looks like it still needs to be loaded?
+# set CONFIG_BLK_DEV_SD to y in kernel config
+# sd_mod

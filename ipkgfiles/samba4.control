@@ -1,0 +1,13 @@
+Package: samba4
+Description: Provides secure, stable and fast file and print services
+	  for all clients using the SMB/CIFS protocol, such as all
+	  versions of DOS, Windows, OS/2, Linux and many others.
+Version: 4.15.13
+Depends: acl, pcre, readline, ncurses-panel, ncurses-form, libglib2, dbus, avahi, icu, zlib, popt, gnutls, e2fsprogs, ipkg
+Conflicts: samba
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://www.samba.org/
+Maintainer: jcard

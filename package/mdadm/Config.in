@@ -1,0 +1,12 @@
+config BR2_PACKAGE_MDADM
+	bool "mdadm"
+	help
+	  Utility for managing RAID hardware.
+
+	  https://kernel.org/pub/linux/utils/raid/mdadm
+
+config BR2_PACKAGE_MDADM_OPTIM
+	string "mdadm optim"
+	depends on BR2_PACKAGE_MDADM
+	help
+	  Compile optimization options (-Os, -O2)

@@ -1,0 +1,13 @@
+comment "opkg needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR
+
+config BR2_PACKAGE_OPKG_LEDE
+	bool "opkg"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR # libarchive
+	help
+	  opkg-lede is opwnwrt fork of Yocto opkg. It is a lightweight package management system, based on ipkg. It is intended for use on embedded Linux devices.
+
+	  https://git.openwrt.org/opkg-lede.git
+

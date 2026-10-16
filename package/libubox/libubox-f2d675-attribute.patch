@@ -1,0 +1,11 @@
+--- libubox-f2d675/uloop.h-orig	2022-04-26 19:22:55.713711543 +0100
++++ libubox-f2d675/uloop.h	2022-04-26 19:23:06.961507286 +0100
+@@ -92,7 +92,7 @@
+ int uloop_timeout_add(struct uloop_timeout *timeout);
+ int uloop_timeout_set(struct uloop_timeout *timeout, int msecs);
+ int uloop_timeout_cancel(struct uloop_timeout *timeout);
+-int uloop_timeout_remaining(struct uloop_timeout *timeout) __attribute__((deprecated("use uloop_timeout_remaining64")));
++int uloop_timeout_remaining(struct uloop_timeout *timeout);
+ int64_t uloop_timeout_remaining64(struct uloop_timeout *timeout);
+ 
+ int uloop_process_add(struct uloop_process *p);

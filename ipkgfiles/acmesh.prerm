@@ -1,0 +1,4 @@
+#!/bin/sh
+
+acme.sh --uninstall-cronjob
+acme.sh --deactivate-account

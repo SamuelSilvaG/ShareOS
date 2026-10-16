@@ -1,0 +1,12 @@
+--- strace-4.5.18/signal.c-orig	2022-06-27 15:45:10.421796990 +0100
++++ strace-4.5.18/signal.c	2022-06-27 15:50:29.109045820 +0100
+@@ -1040,6 +1040,9 @@
+ 
+ #ifndef SVR4
+ 
++# define sigmask(sig) \
++  (((unsigned long) 1) << ((unsigned)((sig) - 1) % (8 * sizeof (unsigned long))))
++
+ int
+ sys_sigsetmask(tcp)
+ struct tcb *tcp;

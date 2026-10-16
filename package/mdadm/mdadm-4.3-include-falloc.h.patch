@@ -1,0 +1,10 @@
+--- mdadm-4.3/Create.c-orig	2024-05-26 16:59:03.045300705 +0100
++++ mdadm-4.3/Create.c	2024-05-26 17:46:41.160021444 +0100
+@@ -28,6 +28,7 @@
+ #include	"md_p.h"
+ #include	<ctype.h>
+ #include	<fcntl.h>
++#include	<linux/falloc.h>
+ #include	<signal.h>
+ #include	<sys/signalfd.h>
+ #include	<sys/wait.h>

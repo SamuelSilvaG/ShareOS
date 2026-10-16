@@ -1,0 +1,5 @@
+./usr/sbin/dump.exfat
+./usr/sbin/exfatlabel
+./usr/sbin/fsck.exfat
+./usr/sbin/mkfs.exfat
+./usr/sbin/tune.exfat

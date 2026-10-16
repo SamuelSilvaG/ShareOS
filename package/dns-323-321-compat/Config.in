@@ -1,0 +1,4 @@
+config BR2_PACKAGE_DNS_323_321_COMPAT
+	bool "dns-323-321-compat"
+	help
+	  Meta package that installs aditional on-disk packages for the DNS-323/321, packages that were previously included in the base firmware

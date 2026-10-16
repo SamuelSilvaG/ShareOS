@@ -1,0 +1,46 @@
+#! /bin/sh
+
+DESC="Backup Service"
+TYPE=sys
+NAME=backup
+REQUIRE="cron" # actually is cron() that implements require()
+
+CONF=/etc/backup.conf
+CMD="/usr/bin/backup"
+
+. /etc/init.d/common
+
+istart() {
+	IFS=";"
+	while read id type runas host mac srcpath dstpath when at log rest; do
+		if test -z "$id" -o -z "$type" -o -z "$runas" -o -z "$srcpath" \
+			-o -z "$dstpath" -o -z "$when" -o -z "$at" -o -z "$log"; then continue; fi
+		if test "${id:0:1}" = "#"; then continue; fi
+		if test "${when:0:1}" = "d"; then
+			mday=${when:1}
+			when='*'
+		else
+			mday='*'
+		fi
+		cron add "0 $at $mday * $when" "$CMD $id"
+	done < $CONF
+}
+
+case "$1" in
+	start)
+		if ! test -f $CONF; then
+			echo "$0: no configuration file, exiting"
+			return 1
+		fi
+
+		istart $NAME
+		echo "Starting $NAME: OK."
+		;;
+	stop)
+		cron remove $CMD
+		echo "Stopping $NAME: OK."
+		;;
+	status) cron status $CMD ;;
+	restart|reload) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart|reload" ;;
+esac

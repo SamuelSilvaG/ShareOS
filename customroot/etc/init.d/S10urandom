@@ -1,0 +1,54 @@
+#! /bin/sh
+#
+# urandom: saves in flash memory the random seed for the next boot
+
+NAME=urandom
+TYPE=required
+
+RNDDIR=/var/run
+RNDFILE=$RNDDIR/random-seed
+
+. /etc/init.d/common
+
+if ! test -d $RNDDIR; then mkdir -p $RNDDIR; fi
+
+if test -d /var/lib/misc; then rm -rf /var/lib/misc; fi # remove ancillary (rcurandon)
+
+case "$1" in
+	start)
+		echo -n "Starting $NAME: "
+		# Load and then save 512 bytes, which is the size of the entropy pool
+		if loadsave_settings -gr; then
+			cat $RNDFILE > /dev/urandom
+		else
+			logger -st urandom "Missing random-seed"
+		fi
+
+		dd if=/dev/urandom of=$RNDFILE count=1 >& /dev/null
+		chmod og-rwx $RNDFILE
+		loadsave_settings -sr
+
+		echo "OK."
+		;;
+
+	stop)
+		echo -n "Stopping $NAME: "
+		# Carry a random seed from shut-down to start-up;
+		dd if=/dev/urandom of=$RNDFILE count=1 >& /dev/null
+		chmod og-rwx $RNDFILE
+		loadsave_settings -sr
+		echo "OK."
+		;;
+
+	status)
+		if test -f $RNDFILE; then
+			echo "$NAME started"
+		else
+			echo "$NAME stopped"
+			exit 1
+		fi
+		;;
+
+	restart) restart $NAME ;;
+	*)  usage $0 "start|stop|status|restart" ;;
+esac

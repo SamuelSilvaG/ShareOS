@@ -1,0 +1,37 @@
+
+diff -ru davfs2-1.4.7-orig/src/webdav.c davfs2-1.4.7/src/webdav.c
+--- davfs2-1.4.7-orig/src/webdav.c	2012-07-19 12:27:51.000000000 +0100
++++ davfs2-1.4.7/src/webdav.c	2013-02-23 00:05:16.323500045 +0000
+@@ -1957,20 +1957,17 @@
+         printf("\n");
+         printf(_("  fingerprint: %s"), digest);
+         printf("\n");
+-            printf(_("You only should accept this certificate, if you can\n"
+-                     "verify the fingerprint! The server might be faked\n"
+-                     "or there might be a man-in-the-middle-attack.\n"));
+-            printf(_("Accept certificate for this session? [y,N] "));
+-            char *s = NULL;
+-            size_t n = 0;
+-            ssize_t len = 0;
+-            len = getline(&s, &n, stdin);
+-            if (len < 0)
+-                abort();
+-            if (rpmatch(s) > 0)
+-                ret = 0;
+-            free(s);
+-    } 
++        printf(_("You only should accept this certificate, if you can\n"
++                 "verify the fingerprint! The server might be faked\n"
++                 "or there might be a man-in-the-middle-attack.\n"));
++        printf(_("Accept certificate for this session? [y,N] "));
++        char yesno[3];
++        fflush(stdout);
++        if (fgets(yesno, sizeof(yesno), stdin) == NULL) 
++            abort();
++        if (yesno[0] == 'y' || yesno[0] == 'Y') 
++            ret = 0;
++    }
+ 
+     if (failures & NE_SSL_NOTYETVALID)
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_ERR),
+

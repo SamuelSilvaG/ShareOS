@@ -1,0 +1,21 @@
+--- ipkg-0.99.163/pkg.c-orig	2022-03-29 19:53:20.304651980 +0100
++++ ipkg-0.99.163/pkg.c	2022-03-30 19:05:56.813253506 +0100
+@@ -485,6 +485,10 @@
+      line = pkg_formatted_field(pkg, "Essential"); /* @@@@ should be removed in future release. *//* I do not agree with this Pigi*/
+      strncat(buff ,line, strlen(line));
+      free(line);
++	 
++	 line = pkg_formatted_field(pkg, "Priority");
++     strncat(buff ,line, strlen(line));
++     free(line);
+ 
+      line = pkg_formatted_field(pkg, "Architecture");
+      strncat(buff ,line, strlen(line));
+@@ -751,6 +755,7 @@
+                snprintf(temp, (strlen(pkg->name)+11), "Package: %s\n", pkg->name);
+ 	  } else if (strcasecmp(field, "Priority") == 0) {
+ 	       /* Priority */
++		   if (pkg->priority == NULL) pkg->priority = strdup("optional");
+                temp = (char *)realloc(temp,strlen(pkg->priority)+12);
+                if ( temp == NULL ){
+ 	          fprintf(stderr, "%s: out of memory\n", __FUNCTION__);

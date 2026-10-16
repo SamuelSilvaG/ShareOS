@@ -1,0 +1,6 @@
+./usr/bin/fix-qdf
+./usr/bin/qpdf
+./usr/bin/zlib-flate
+./usr/lib/libqpdf.so
+./usr/lib/libqpdf.so.28
+./usr/lib/libqpdf.so.28.5.0

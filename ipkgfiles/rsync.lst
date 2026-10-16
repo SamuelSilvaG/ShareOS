@@ -1,0 +1,7 @@
+./etc/init.d/S63rsyncd
+./etc/rsyncd.conf
+./usr/bin/rsync
+./usr/bin/rsync-ssl
+./usr/www/cgi-bin/rsync.cgi
+./usr/www/cgi-bin/rsyncd.cgi
+./usr/www/cgi-bin/rsync_proc.cgi

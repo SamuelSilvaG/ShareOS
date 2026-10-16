@@ -1,0 +1,9 @@
+Package: iperf3
+Description: A TCP, UDP, and SCTP network bandwidth measurement tool
+Version: 3.9
+Depends: ipkg
+Architecture: arm
+Priority: optional
+Section: networking
+Source: https://github.com/esnet/iperf
+Maintainer: jcard

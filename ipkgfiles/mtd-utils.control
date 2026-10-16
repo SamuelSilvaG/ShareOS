@@ -1,0 +1,10 @@
+Package: mtd-utils
+Description: mtd and jffs utilities
+Version: 2.0.2
+Depends: lzo, ipkg
+Architecture: arm
+Priority: required
+Essential: yes
+Section: admin
+Source: https://www.linux-mtd.infradead.org
+Maintainer: jcard

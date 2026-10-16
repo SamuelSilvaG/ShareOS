@@ -1,0 +1,9 @@
+Package: smartmontools
+Description: Control and monitor storage systems using S.M.A.R.T.
+Version: 6.6
+Depends: ipkg
+Architecture: arm
+Priority: required
+Section: admin
+Source: https://smartmontools.org
+Maintainer: jcard

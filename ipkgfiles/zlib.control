@@ -1,0 +1,9 @@
+Package: zlib
+Description: Standard (de)compression library. Used by things like gzip and libpng.
+Version: 1.3.1
+Depends: ipkg
+Architecture: arm
+Priority: required
+Section: libraries
+Source: https://zlib.net
+Maintainer: jcard

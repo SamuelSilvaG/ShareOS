@@ -1,0 +1,12 @@
+--- btrfs-progs-4.5.3/btrfs-convert.c-orig	2024-05-31 19:15:38.917657228 +0100
++++ btrfs-progs-4.5.3/btrfs-convert.c	2024-05-31 19:16:11.045057379 +0100
+@@ -831,8 +831,7 @@
+ {
+ 	size_t value_size = entry->e_value_size;
+ 
+-	if (entry->e_value_block != 0 || value_size > size ||
+-	    entry->e_value_offs + value_size > size)
++	if (value_size > size || entry->e_value_offs + value_size > size)
+ 		return -EIO;
+ 	return 0;
+ }

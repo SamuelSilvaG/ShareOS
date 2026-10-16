@@ -1,0 +1,10 @@
+Package: duplicity
+Description: Duplicity backs directories by producing encrypted tar-format volumes
+	  and uploading them to a remote or local file server.
+Version: 0.8.16
+Depends: ipkg, python, pynacl, bcrypt, cryptography, librsync, gnupg, pycrypto, lftp, ncftp
+Architecture: arm
+Priority: optional
+Section: interpreters
+Source: https://gitlab.com/duplicity/duplicity
+Maintainer: jcard

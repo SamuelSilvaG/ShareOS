@@ -1,0 +1,24 @@
+#! /bin/sh
+
+DESC="Update USB IDs once a week"
+TYPE=net
+NAME=usbid
+REQUIRE="cron" # actually is cron() that implements require()
+
+. /etc/init.d/common
+
+CMD="/usr/bin/update_usbid.sh"
+
+case "$1" in
+	start)
+		cron add $CMD
+		echo "Starting $NAME: OK."
+		;;
+	stop)
+		cron remove $CMD
+		echo "Stopping $NAME: OK."
+		;;
+	restart) restart $NAME ;;
+	status) cron status $CMD ;;
+	*) usage $0 "start|stop|status|restart" ;;
+esac

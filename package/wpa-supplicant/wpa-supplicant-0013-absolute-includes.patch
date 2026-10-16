@@ -1,0 +1,11 @@
+--- wpa-supplicant-2.9-orig/src/drivers/drivers.mk-orig	2022-06-17 19:54:57.350417024 +0100
++++ wpa-supplicant-2.9/src/drivers/drivers.mk	2022-06-17 19:55:10.406187520 +0100
+@@ -159,7 +159,7 @@
+ ifdef CONFIG_LIBNL32
+   DRV_LIBS += -lnl-3
+   DRV_LIBS += -lnl-genl-3
+-  DRV_CFLAGS += -DCONFIG_LIBNL20 -I/usr/include/libnl3
++  DRV_CFLAGS += -DCONFIG_LIBNL20
+ ifdef CONFIG_LIBNL3_ROUTE
+   DRV_LIBS += -lnl-route-3
+   DRV_CFLAGS += -DCONFIG_LIBNL3_ROUTE

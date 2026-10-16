@@ -1,0 +1,9 @@
+Package: php
+Description: A widely-used general-purpose scripting language
+Version: 5.4.34-4
+Depends: ipkg, bzip2, netsnmp, jpeg, libpng, libxml2, ncurses, libcurl, libmcrypt, libnl, xz-libs, mysql-libs, sqlite-libs
+Architecture: arm
+Priority: optional
+Section: interpreters
+Source: https://www.php.net
+Maintainer: jcard

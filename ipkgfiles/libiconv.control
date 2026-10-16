@@ -1,0 +1,9 @@
+Package: libiconv
+Description: A unicode conversion library
+Version: 1.17
+Depends: ipkg
+Architecture: arm
+Priority: required
+Section: admin
+Source: https://ftp.gnu.org/pub/gnu/libiconv
+Maintainer: jcard

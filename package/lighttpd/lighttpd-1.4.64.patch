@@ -1,0 +1,122 @@
+--- lighttpd-1.4.64/src/fdevent.c-orig	2022-01-26 17:01:20.410826401 +0000
++++ lighttpd-1.4.64/src/fdevent.c	2022-01-22 19:15:49.913988998 +0000
+@@ -278,6 +278,29 @@
+  #endif
+ }
+ 
++/* uclibc-0.9.30.3 using buildroot cross-toolchain does not has accept4
++ * As lighttpd is single threaded, this patch should be OK
++ */
++int accept4( int sockfd, struct sockaddr *addr, socklen_t *addrlen, int iflags) {
++    int fd = accept(sockfd, addr, addrlen);
++    if (fd >= 0) {
++		if (iflags & SOCK_CLOEXEC) {
++			int flags = fcntl(fd, F_GETFD);
++			if (flags == -1)
++				return -1;
++			if (fcntl(fd, F_SETFD, flags | O_CLOEXEC) == -1)
++				return -1;
++		}
++		if (iflags & SOCK_NONBLOCK) {
++			int flags = fcntl(fd, F_GETFL);
++			if (flags == -1)
++				return -1;
++			if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)
++				return -1;
++		}		
++    }
++    return fd;
++}
+ 
+ int fdevent_accept_listenfd(int listenfd, struct sockaddr *addr, size_t *addrlen) {
+ 	int fd;
+--- lighttpd-1.4.64/src/stat_cache.c-orig	2022-01-22 20:05:05.928072938 +0000
++++ lighttpd-1.4.64/src/stat_cache.c	2022-01-22 20:29:22.023584497 +0000
+@@ -146,7 +146,7 @@
+         inotify_rm_watch(*(fd), *(wd))
+ #define fam_watch_mask ( IN_ATTRIB | IN_CREATE | IN_DELETE | IN_DELETE_SELF \
+                        | IN_MODIFY | IN_MOVE_SELF | IN_MOVED_FROM \
+-                       | IN_EXCL_UNLINK | IN_ONLYDIR )
++                       | IN_ONLYDIR )
+                      /*(note: follows symlinks; not providing IN_DONT_FOLLOW)*/
+ #define FAMMonitorDirectory(fd, fn, wd, userData) \
+         ((*(wd) = inotify_add_watch(*(fd), (fn), (fam_watch_mask))) < 0)
+@@ -569,6 +569,30 @@
+ 	return HANDLER_GO_ON;
+ }
+ 
++/*  
++  uclibc does not has pipe2() neither inotify_init1()
++  The uclibc version in use also does not have fdtimer, a patch was applied
++*/
++#define IN_CLOEXEC O_CLOEXEC
++#define IN_NONBLOCK O_NONBLOCK
++
++int inotify_init1(int flags) {
++	int ret, nflags = 0;
++
++	ret = inotify_init();
++
++	if (flags & IN_NONBLOCK)
++		nflags = O_NONBLOCK;
++
++	if (flags & IN_CLOEXEC)
++		nflags |= FD_CLOEXEC;
++
++	if (fcntl(ret, F_SETFD, fcntl(ret, F_GETFD) | nflags) == -1)
++		ret = -1;
++
++	return ret;
++}
++
+ static stat_cache_fam * stat_cache_init_fam(fdevents *ev, log_error_st *errh) {
+ 	stat_cache_fam *scf = calloc(1, sizeof(*scf));
+ 	force_assert(scf);
+--- lighttpd-1.4.64/src/ls-hpack/lshpack.c-orig	2022-01-26 16:59:23.221024535 +0000
++++ lighttpd-1.4.64/src/ls-hpack/lshpack.c	2022-01-25 18:17:23.094171014 +0000
+@@ -682,6 +682,7 @@
+  * We do it for gcc and clang.  Other compilers get slightly slower code, where
+  * unnecessary initialization is performed.
+  */
++/*
+ #if __GNUC__
+ #pragma GCC diagnostic ignored "-Wunknown-pragmas"
+ #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+@@ -689,7 +690,7 @@
+ #pragma GCC diagnostic ignored "-Wunknown-warning-option"
+ #endif
+ #endif
+-
++*/
+ 
+ static int
+ lshpack_enc_huff_encode (const unsigned char *src,
+@@ -700,13 +701,15 @@
+     uintptr_t bits;  /* OK not to initialize this variable */
+     unsigned bits_used = 0, adj;
+     struct encode_el cur_enc_code;
++	/*
+ #if __GNUC__ && !defined(__COVERITY__)
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+ #pragma GCC diagnostic ignored "-Wuninitialized"
+ #else
++*/
+     bits = 0;
+-#endif
++//#endif
+ #if LS_HPACK_USE_LARGE_TABLES
+     const struct henc *henc;
+     uint16_t idx;
+@@ -817,9 +820,10 @@
+         return p_dst - dst;
+     else
+         return -1;
+-#if __GNUC__
++/*#if __GNUC__
+ #pragma GCC diagnostic pop
+ #endif
++*/
+ }
+ 
+ 

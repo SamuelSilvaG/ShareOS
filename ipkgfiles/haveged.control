@@ -1,0 +1,9 @@
+Package: haveged
+Description: An entropy source daemon. Random Number Generator based on the HAVEGE algorithm.
+Version: 1.9.18
+Depends: ipkg
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://www.issihosts.com/haveged
+Maintainer: jcard

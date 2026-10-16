@@ -1,0 +1,123 @@
+--- samba4-4.15.7/source3/include/includes.h-orig	2022-06-01 23:45:56.137824759 +0100
++++ samba4-4.15.7/source3/include/includes.h	2022-06-01 23:47:11.052479638 +0100
+@@ -1,21 +1,21 @@
+ #ifndef _INCLUDES_H
+ #define _INCLUDES_H
+-/* 
++/*
+    Unix SMB/CIFS implementation.
+    Machine customisation and include handling
+    Copyright (C) Andrew Tridgell 1994-1998
+    Copyright (C) 2002 by Martin Pool <mbp@samba.org>
+-   
++
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+-   
++
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+-   
++
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@@ -140,7 +140,7 @@
+ #ifdef LARGE_SMB_DEV_T
+ #define SDEV_T_VAL(p, ofs, v) (SIVAL((p),(ofs),(v)&0xFFFFFFFF), SIVAL((p),(ofs)+4,(v)>>32))
+ #define DEV_T_VAL(p, ofs) ((SMB_DEV_T)(((uint64_t)(IVAL((p),(ofs))))| (((uint64_t)(IVAL((p),(ofs)+4))) << 32)))
+-#else 
++#else
+ #define SDEV_T_VAL(p, ofs, v) (SIVAL((p),(ofs),v),SIVAL((p),(ofs)+4,0))
+ #define DEV_T_VAL(p, ofs) ((SMB_DEV_T)(IVAL((p),(ofs))))
+ #endif
+@@ -162,7 +162,7 @@
+ #ifdef LARGE_SMB_INO_T
+ #define SINO_T_VAL(p, ofs, v) SBVAL(p, ofs, v)
+ #define INO_T_VAL(p, ofs) ((SMB_INO_T)BVAL(p, ofs))
+-#else 
++#else
+ #define SINO_T_VAL(p, ofs, v) SBVAL(p, ofs, ((uint64_t)(v)) & UINT32_MAX)
+ #define INO_T_VAL(p, ofs) ((SMB_INO_T)(IVAL((p),(ofs))))
+ #endif
+@@ -217,8 +217,10 @@
+ 	uint32_t	st_ex_iflags;
+ };
+ 
++#ifndef SMB_STRUCT_STAT_DEF
++#define SMB_STRUCT_STAT_DEF
+ typedef struct stat_ex SMB_STRUCT_STAT;
+-
++#endif
+ enum timestamp_set_resolution {
+ 	TIMESTAMP_SET_SECONDS = 0,
+ 	TIMESTAMP_SET_MSEC,
+--- samba4-4.15.7/source3/include/vfs.h-orig	2022-06-01 23:50:29.911673058 +0100
++++ samba4-4.15.7/source3/include/vfs.h	2022-06-01 23:56:01.097778990 +0100
+@@ -1,4 +1,4 @@
+-/* 
++/*
+    Unix SMB/CIFS implementation.
+    VFS structures and parameters
+    Copyright (C) Jeremy Allison                         1999-2005
+@@ -506,7 +506,9 @@
+ 	 */
+ 	uint64_t lock_failure_offset;
+ } files_struct;
+-
++#ifndef FILES_STRUCT_DEF
++#define FILES_STRUCT_DEF
++#endif
+ /*
+  * The fsp flags "is_pathref" and "is_fsa"
+  * =======================================
+@@ -747,8 +749,8 @@
+ 
+ 	name_compare_entry *hide_list; /* Per-share list of files to return as hidden. */
+ 	name_compare_entry *veto_list; /* Per-share list of files to veto (never show). */
+-	name_compare_entry *veto_oplock_list; /* Per-share list of files to refuse oplocks on. */       
+-	name_compare_entry *aio_write_behind_list; /* Per-share list of files to use aio write behind on. */       
++	name_compare_entry *veto_oplock_list; /* Per-share list of files to refuse oplocks on. */
++	name_compare_entry *aio_write_behind_list; /* Per-share list of files to use aio write behind on. */
+ 	struct trans_state *pending_trans;
+ 
+ 	struct rpc_pipe_client *spoolss_pipe;
+@@ -1171,7 +1173,7 @@
+ 			     uint32_t in_len,
+ 			     uint8_t **_out_data,
+ 			     uint32_t max_out_len,
+-			     uint32_t *out_len); 
++			     uint32_t *out_len);
+ 
+ 	NTSTATUS (*fget_dos_attributes_fn)(struct vfs_handle_struct *handle,
+ 					   struct files_struct *fsp,
+@@ -1719,7 +1721,7 @@
+ 				      SMB_ACL_TYPE_T type,
+ 				      TALLOC_CTX *mem_ctx);
+ int smb_vfs_call_sys_acl_blob_get_fd(struct vfs_handle_struct *handle,
+-				     struct files_struct *fsp, 	
++				     struct files_struct *fsp,
+ 				     TALLOC_CTX *mem_ctx,
+ 				     char **blob_description,
+ 				     DATA_BLOB *blob);
+--- samba4-4.15.7/source3/param/loadparm.h-orig	2022-06-01 23:45:32.402250953 +0100
++++ samba4-4.15.7/source3/param/loadparm.h	2022-06-01 23:50:06.332119668 +0100
+@@ -26,8 +26,14 @@
+ #include <regex.h>
+ 
+ /* Forward declarations */
++#ifndef SMB_STRUCT_STAT_DEF
++#define SMB_STRUCT_STAT_DEF
+ typedef struct stat_ex SMB_STRUCT_STAT;
++#endif
++#ifndef FILES_STRUCT_DEF
++#define FILES_STRUCT_DEF
+ typedef struct files_struct files_struct;
++#endif
+ struct smbd_server_connection;
+ struct security_descriptor;
+ 

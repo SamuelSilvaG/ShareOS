@@ -1,0 +1,9 @@
+config BR2_PACKAGE_CRYPTOGRAPHY
+	bool "cryptography"
+	select BR2_PACKAGE_PYTHON
+	select BR2_PACKAGE_CFFI
+	select BR2_PACKAGE_OPENSSL
+	help
+	  Provides cryptographic recipes and primitives to Python developers
+
+	  https://pypi.python.org/pypi/cryptography

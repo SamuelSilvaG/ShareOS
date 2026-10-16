@@ -1,0 +1,6 @@
+config BR2_PACKAGE_EXFATPROGS
+	bool "exfatprogs"
+	help
+	  A set of utilities for creating, checking, dumping and labelling exFAT file system.
+
+	  https://github.com/exfatprogs/exfatprogs

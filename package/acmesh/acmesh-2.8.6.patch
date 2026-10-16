@@ -1,0 +1,92 @@
+--- acmesh-2.8.6/acme.sh	2020-05-04 01:41:37.000000000 +0100
++++ acmesh-2.8.6/acme.sh	2020-06-24 17:44:16.755296685 +0100
+@@ -2291,7 +2291,7 @@
+ 
+ # _starttlsserver  san_a  san_b port content _ncaddr acmeValidationv1
+ _starttlsserver() {
+-  _info "Starting tls server."
++  _info "Creating alpn challenge certificate."
+   san_a="$1"
+   san_b="$2"
+   port="$3"
+@@ -2326,6 +2326,14 @@
+     return 1
+   fi
+ 
++  if [ -n "$_challengecertpath" ]; then
++    mkdir -p $_challengecertpath
++    cat $TLS_KEY > $_challengecertpath/$san_a.key.pem
++    cat $TLS_CERT > $_challengecertpath/$san_a.crt.pem
++    return 0
++  fi
++
++  _info "Starting alpn tls server."
+   __S_OPENSSL="${ACME_OPENSSL_BIN:-openssl} s_server -www -cert $TLS_CERT  -key $TLS_KEY "
+   if [ "$opaddr" ]; then
+     __S_OPENSSL="$__S_OPENSSL -accept $opaddr:$port"
+@@ -3246,13 +3254,20 @@
+       fi
+       _checkport="$Le_HTTPPort"
+     elif [ "$_currentRoot" = "$W_ALPN" ]; then
+-      _info "Standalone alpn mode."
+-      if [ -z "$Le_TLSPort" ]; then
+-        Le_TLSPort=443
++      if [ -z "$_challengecertpath" ]; then
++        _challengecertpath=$(_readdomainconf Le_ChallengeCertPath)
++      fi
++      if [ -z "$_challengecertpath" ]; then
++        _info "Standalone alpn mode."
++        if [ -z "$Le_TLSPort" ]; then
++          Le_TLSPort=443
++        else
++          _savedomainconf "Le_TLSPort" "$Le_TLSPort"
++        fi
++        _checkport="$Le_TLSPort"
+       else
+-        _savedomainconf "Le_TLSPort" "$Le_TLSPort"
++        _info "webserver alpn mode."
+       fi
+-      _checkport="$Le_TLSPort"
+     fi
+ 
+     if [ "$_checkport" ]; then
+@@ -4651,7 +4666,7 @@
+ 
+   if [ "$Le_LinkCert" ]; then
+     _info "$(__green "Cert success.")"
+-    cat "$CERT_PATH"
++    #cat "$CERT_PATH"
+ 
+     _info "Your cert is in $(__green " $CERT_PATH ")"
+ 
+@@ -4715,6 +4730,10 @@
+   [ -f "$CA_CERT_PATH" ] && _info "The intermediate CA cert is in $(__green " $CA_CERT_PATH ")"
+   [ -f "$CERT_FULLCHAIN_PATH" ] && _info "And the full chain certs is there: $(__green " $CERT_FULLCHAIN_PATH ")"
+ 
++  if [ -n "$_challengecertpath" ]; then
++    _savedomainconf "Le_ChallengeCertPath" "$_challengecertpath"
++  fi
++  
+   Le_CertCreateTime=$(_time)
+   _savedomainconf "Le_CertCreateTime" "$Le_CertCreateTime"
+ 
+@@ -6233,7 +6252,7 @@
+   --output-insecure                 Output all the sensitive messages. By default all the credentials/sensitive messages are hidden from the output/debug/log for security.
+   --webroot, -w  /path/to/webroot   Specifies the web root folder for web root mode.
+   --standalone                      Use standalone mode.
+-  --alpn                            Use standalone alpn mode.
++  --alpn [path to webserver challenge dir]  Use standalone alpn mode or create webserver challenge certificates
+   --stateless                       Use stateless mode, see: $_STATELESS_WIKI
+   --apache                          Use apache mode.
+   --dns [dns_cf|dns_dp|dns_cx|/path/to/api/file]   Use dns mode or dns api.
+@@ -6648,6 +6667,10 @@
+         fi
+         ;;
+       --alpn)
++        if [ "$2" ] && ! _startswith "$2" "-"; then
++          _challengecertpath="$2"
++          shift
++        fi
+         wvalue="$W_ALPN"
+         if [ -z "$_webroot" ]; then
+           _webroot="$wvalue"

@@ -1,0 +1,10 @@
+--- libglib2-2.30.3/gio/gdbusmessage.c	2012-03-11 21:43:28.000000000 +0000
++++ libglib2-2.30.3/gio/gdbusmessage.c	2022-06-08 18:14:18.698679983 +0100
+@@ -29,6 +29,7 @@
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #ifdef HAVE_SYS_MKDEV_H
+ #include <sys/mkdev.h>
+ #endif

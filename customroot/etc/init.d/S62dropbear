@@ -1,0 +1,47 @@
+#!/bin/sh
+
+DESC="Light SSH/SFTP server"
+NAME=dropbear
+TYPE=net
+
+DB_DIR=/etc/dropbear
+OPTS=""
+
+sinit() {
+	mkdir -p $DB_DIR
+	
+	# generate dropbear keys with default size
+	for i in dss rsa ecdsa ed25519; do
+		if ! test -e $DB_DIR/dropbear_${i}_host_key; then
+			echo "$NAME: generating $i key... "
+			dropbearkey -t $i -f $DB_DIR/dropbear_${i}_host_key \
+				1> $DB_DIR/dropbear_${i}_host_key.tmp 2> /dev/null
+		elif ! test -s $DB_DIR/dropbear_${i}_host_key.pub; then
+			dropbearkey -y -f $DB_DIR/dropbear_${i}_host_key \
+				> $DB_DIR/dropbear_${i}_host_key.tmp
+		fi
+		if test -e $DB_DIR/dropbear_${i}_host_key.tmp; then
+			sed -n "/$i/p" $DB_DIR/dropbear_${i}_host_key.tmp \
+			> $DB_DIR/dropbear_${i}_host_key.pub
+			#grep Fingerprint $DB_DIR/dropbear_${i}_host_key.tmp \
+			#	> $DB_DIR/dropbear_${i}_host_key.fpr
+			rm -f $DB_DIR/dropbear_${i}_host_key.tmp
+		fi
+	done
+	
+	umask 077
+}
+
+. /etc/init.d/common
+
+if check_inetd ssh dropbear || check_inetd ssh_alt dropbear;then
+	exit 2
+fi
+
+case "$1" in
+	start) start $NAME -- $OPTS ;;
+	stop) stop $NAME ;;
+	status)	status $NAME ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart|init" ;;
+esac

@@ -1,0 +1,657 @@
+--- ipkg-utils-050831-host/ipkg.py	2005-03-03 15:11:53.000000000 +0000
++++ ipkg-utils-050831-host/ipkg.py	2021-01-25 15:22:26.519569684 +0000
+@@ -42,8 +42,11 @@
+ import commands
+ from stat import ST_SIZE
+ 
++
+ class Version:
++
+     """A class for holding parsed package version information."""
++
+     def __init__(self, epoch, version):
+         self.epoch = epoch
+         self.version = version
+@@ -52,125 +55,162 @@
+         selfversion = self.version
+         refversion = ref.version
+         while 1:
+-            ## first look for non-numeric version component
++
++            # # first look for non-numeric version component
++
+             selfm = re.match('([^0-9]*)(.*)', selfversion)
+-            #print 'selfm', selfm.groups()
++
++            # print 'selfm', selfm.groups()
++
+             (selfalpha, selfversion) = selfm.groups()
+             refm = re.match('([^0-9]*)(.*)', refversion)
+-            #print 'refm', refm.groups()
++
++            # print 'refm', refm.groups()
++
+             (refalpha, refversion) = refm.groups()
+-            if (selfalpha > refalpha):
++            if selfalpha > refalpha:
+                 return 1
+-            elif (selfalpha < refalpha):
++            elif selfalpha < refalpha:
+                 return -1
+-            ## now look for numeric version component
+-            (selfnum, selfversion) = re.match('([0-9]*)(.*)', selfversion).groups()
+-            (refnum, refversion) = re.match('([0-9]*)(.*)', refversion).groups()
+-            #print 'selfnum', selfnum, selfversion
+-            #print 'refnum', refnum, refversion
+-            if (selfnum != ''):
++
++            # # now look for numeric version component
++
++            (selfnum, selfversion) = re.match('([0-9]*)(.*)',
++                    selfversion).groups()
++            (refnum, refversion) = re.match('([0-9]*)(.*)',
++                    refversion).groups()
++
++            # print 'selfnum', selfnum, selfversion
++            # print 'refnum', refnum, refversion
++
++            if selfnum != '':
+                 selfnum = int(selfnum)
+             else:
+                 selfnum = -1
+-            if (refnum != ''):
++            if refnum != '':
+                 refnum = int(refnum)
+             else:
+                 refnum = -1
+-            if (selfnum > refnum):
++            if selfnum > refnum:
+                 return 1
+-            elif (selfnum < refnum):
++            elif selfnum < refnum:
+                 return -1
+             if selfversion == '' and refversion == '':
+                 return 0
+ 
+     def compare(self, ref):
+-        if (self.epoch > ref.epoch):
++        if self.epoch > ref.epoch:
+             return 1
+-        elif (self.epoch < ref.epoch):
++        elif self.epoch < ref.epoch:
+             return -1
+         else:
+             return self._versioncompare(ref)
+ 
++
+ def parse_version(versionstr):
+     epoch = 0
++
+     # check for epoch
++
+     m = re.match('([0-9]*):(.*)', versionstr)
+     if m:
+         (epochstr, versionstr) = m.groups()
+         epoch = int(epochstr)
+     return Version(epoch, versionstr)
+ 
++
+ class Package:
++
+     """A class for creating objects to manipulate (e.g. create) ipkg
+        packages."""
++
+     def __init__(self, fn=None):
+-	self.package = None
+-	self.version = 'none'
+-	self.parsed_version = None
+-	self.architecture = None
+-	self.maintainer = None
+-	self.source = None
+-	self.description = None
+-	self.depends = None
+-	self.provides = None
+-	self.replaces = None
+-	self.conflicts = None
++        self.package = None
++        self.version = 'none'
++        self.parsed_version = None
++        self.architecture = None
++        self.maintainer = None
++        self.source = None
++        self.description = None
++        self.depends = None
++        self.provides = None
++        self.replaces = None
++        self.conflicts = None
+         self.recommends = None
+-	self.suggests = None
+-	self.section = None
++        self.suggests = None
++        self.section = None
+         self.filename_header = None
+-	self.file_list = []
++        self.file_list = []
+         self.md5 = None
+         self.size = None
+         self.installed_size = None
+         self.filename = None
+         self.isdeb = 0
+ 
+-	if fn:
++        if fn:
++
+             # see if it is deb format
+-            f = open(fn, "r")
++
++            f = open(fn, 'r')
+             magic = f.read(4)
+             f.close()
+-            if (magic == "!<ar"):
++            if magic == '!<ar':
+                 self.isdeb = 1
+ 
+             # compute the MD5.
+-            f = open(fn, "r")
++
++            f = open(fn, 'r')
+             sum = md5.new()
+             while 1:
+                 data = f.read(1024)
+-                if not data: break
++                if not data:
++                    break
+                 sum.update(data)
+             f.close()
+             if sys.version[:1] > '2':
++
+                 # when using Python 2.0 or newer
+-                self.md5 = sum.hexdigest() 
++
++                self.md5 = sum.hexdigest()
+             else:
+-                self.md5 = string.join(map((lambda x:"%02x" % ord(x)),sum.digest()),'')
++                self.md5 = string.join(map(lambda x: '%02x' % ord(x),
++                        sum.digest()), '')
+             stat = os.stat(fn)
+             self.size = stat[ST_SIZE]
+             self.filename = os.path.basename(fn)
+-	    ## sys.stderr.write("  extracting control.tar.gz from %s\n"% (fn,)) 
++
++        # # sys.stderr.write("  extracting control.tar.gz from %s\n"% (fn,))
++
+             if self.isdeb:
+-                control = os.popen("ar p "+fn+" control.tar.gz | tar xfzO - '*control'","r")
++                control = os.popen('ar p ' + fn
++                                   + " control.tar.gz | tar xfzO - './control'"
++                                   , 'r')
+             else:
+-                control = os.popen("tar xfzO "+fn+" '*control.tar.gz' | tar xfzO - '*control'","r")
++                control = os.popen('tar xfzO ' + fn
++                                   + " './control.tar.gz' | tar xfzO - './control'"
++                                   , 'r')
+             line = control.readline()
+             while 1:
+-                if not line: break
++                if not line:
++                    break
+                 line = string.rstrip(line)
+                 lineparts = re.match(r'([\w-]*?):\s*(.*)', line)
+-		if lineparts:
++                if lineparts:
+                     name = string.lower(lineparts.group(1))
+-		    value = lineparts.group(2)
+-		    while 1:
+-			line = control.readline()
+-			if not line: break
+-			if line[0] != ' ': break
++                    value = lineparts.group(2)
++                    while 1:
++                        line = control.readline()
++                        if not line:
++                            break
++                        if line[0] != ' ':
++                            break
+                         line = string.rstrip(line)
+-			value = value + '\n' + line
++                        value = value + '\n' + line
++
++                    if name == 'installed-size':
++                        self.installed_size = value
+                     # don't allow package to override its own filename
+-                    if name == "filename":
++                    elif name == 'filename':
+                         self.filename_header = value
+                     else:
+                         if self.__dict__.has_key(name):
+@@ -179,25 +219,29 @@
+                     line = control.readline()
+             control.close()
+             if self.isdeb:
+-                data = os.popen("ar p "+fn+" data.tar.gz | tar tfz -","r")
++                data = os.popen('ar p ' + fn
++                                + ' data.tar.gz | tar tfz -', 'r')
+             else:
+-                data = os.popen("tar xfzO "+fn+" '*data.tar.gz' | tar tfz -","r")
++                data = os.popen('tar xfzO ' + fn
++                                + " '*data.tar.gz' | tar tfz -", 'r')
+             while 1:
+                 line = data.readline()
+-                if not line: break
++                if not line:
++                    break
+                 self.file_list.append(string.rstrip(line))
+             data.close()
+ 
+-	self.scratch_dir = None
+-	self.file_dir = None
+-	self.meta_dir = None
++        self.scratch_dir = None
++        self.file_dir = None
++        self.meta_dir = None
+ 
+     def read_control(self, control):
+         import os
+ 
+         line = control.readline()
+         while 1:
+-            if not line: break
++            if not line:
++                break
+             line = string.rstrip(line)
+             lineparts = re.match(r'([\w-]*?):\s*(.*)', line)
+             if lineparts:
+@@ -205,158 +249,160 @@
+                 value = lineparts.group(2)
+                 while 1:
+                     line = control.readline()
+-                    if not line: break
+-                    if line[0] != ' ': break
++                    if not line:
++                        break
++                    if line[0] != ' ':
++                        break
+                     value = value + '\n' + line
+                 if name == 'size':
+                     self.size = int(value)
+                 elif self.__dict__.has_key(name):
+                     self.__dict__[name] = value
+                 if line[0] == '\n':
+-                    return # consumes one blank line at end of package descriptoin
++                    return   # consumes one blank line at end of package descriptoin
+             else:
+                 line = control.readline()
+                 pass
+-        return    
++        return
+ 
+     def _setup_scratch_area(self):
+-	self.scratch_dir = "%s/%sipkg" % (tempfile.gettempdir(),
+-					   tempfile.gettempprefix())
+-	self.file_dir = "%s/files" % (self.scratch_dir)
+-	self.meta_dir = "%s/meta" % (self.scratch_dir)
+-
+-	os.mkdir(self.scratch_dir)
+-	os.mkdir(self.file_dir)
+-	os.mkdir(self.meta_dir)
++        self.scratch_dir = '%s/%sipkg' % (tempfile.gettempdir(),
++                tempfile.gettempprefix())
++        self.file_dir = '%s/files' % self.scratch_dir
++        self.meta_dir = '%s/meta' % self.scratch_dir
++
++        os.mkdir(self.scratch_dir)
++        os.mkdir(self.file_dir)
++        os.mkdir(self.meta_dir)
+ 
+     def set_package(self, package):
+-	self.package = package
++        self.package = package
+ 
+     def get_package(self):
+-	return self.package
+-		
++        return self.package
++
+     def set_version(self, version):
+-	self.version = version
++        self.version = version
+         self.parsed_version = parse_version(version)
+ 
+     def get_version(self):
+-	return self.version
++        return self.version
+ 
+     def set_architecture(self, architecture):
+-	self.architecture = architecture
++        self.architecture = architecture
+ 
+     def get_architecture(self):
+-	return self.architecture
++        return self.architecture
+ 
+     def set_maintainer(self, maintainer):
+-	self.maintainer = maintainer
++        self.maintainer = maintainer
+ 
+     def get_maintainer(self):
+-	return self.maintainer
++        return self.maintainer
+ 
+     def set_source(self, source):
+-	self.source = source
++        self.source = source
+ 
+     def get_source(self):
+-	return self.source
++        return self.source
+ 
+     def set_description(self, description):
+-	self.description = description
++        self.description = description
+ 
+     def get_description(self):
+-	return self.description
++        return self.description
+ 
+     def set_depends(self, depends):
+-	self.depends = depends
++        self.depends = depends
+ 
+     def get_depends(self, depends):
+-	return self.depends
++        return self.depends
+ 
+     def set_provides(self, provides):
+-	self.provides = provides
++        self.provides = provides
+ 
+     def get_provides(self, provides):
+-	return self.provides
++        return self.provides
+ 
+     def set_replaces(self, replaces):
+-	self.replaces = replaces
++        self.replaces = replaces
+ 
+     def get_replaces(self, replaces):
+-	return self.replaces
++        return self.replaces
+ 
+     def set_conflicts(self, conflicts):
+-	self.conflicts = conflicts
++        self.conflicts = conflicts
+ 
+     def get_conflicts(self, conflicts):
+-	return self.conflicts
++        return self.conflicts
+ 
+     def set_suggests(self, suggests):
+-	self.suggests = suggests
++        self.suggests = suggests
+ 
+     def get_suggests(self, suggests):
+-	return self.suggests
++        return self.suggests
+ 
+     def set_section(self, section):
+-	self.section = section
++        self.section = section
+ 
+     def get_section(self, section):
+-	return self.section
++        return self.section
+ 
+     def get_file_list(self):
+-	return self.file_list
++        return self.file_list
+ 
+     def write_package(self, dirname):
+         buf = self.render_control()
+-	file = open("%s/control" % self.meta_dir, 'w')
+-	file.write(buf)
++        file = open('%s/control' % self.meta_dir, 'w')
++        file.write(buf)
+ 
+-	self._setup_scratch_area()
+-	cmd = "cd %s ; tar cvfz %s/control.tar.gz control" % (self.meta_dir,
+-							      self.scratch_dir)
++        self._setup_scratch_area()
++        cmd = 'cd %s ; tar cvfz %s/control.tar.gz control' \
++            % (self.meta_dir, self.scratch_dir)
+ 
+-	cmd_out, cmd_in, cmd_err = os.popen3(cmd)
+-	
+-	while cmd_err.readline() != "":
+-	    pass
++        (cmd_out, cmd_in, cmd_err) = os.popen3(cmd)
+ 
+-	cmd_out.close()
+-	cmd_in.close()
+-	cmd_err.close()
++        while cmd_err.readline() != '':
++            pass
+ 
+-	bits = "control.tar.gz"
++        cmd_out.close()
++        cmd_in.close()
++        cmd_err.close()
+ 
+-	if self.file_list:
+-		cmd = "cd %s ; tar cvfz %s/data.tar.gz" % (self.file_dir,
+-					   		   self.scratch_dir)
++        bits = 'control.tar.gz'
+ 
+-		cmd_out, cmd_in, cmd_err = os.popen3(cmd)
++        if self.file_list:
++            cmd = 'cd %s ; tar cvfz %s/data.tar.gz' % (self.file_dir,
++                    self.scratch_dir)
+ 
+-		while cmd_err.readline() != "":
+-		    pass
++            (cmd_out, cmd_in, cmd_err) = os.popen3(cmd)
++
++            while cmd_err.readline() != '':
++                pass
+ 
+-		cmd_out.close()
+-		cmd_in.close()
+-		cmd_err.close()
++            cmd_out.close()
++            cmd_in.close()
++            cmd_err.close()
+ 
+-		bits = bits + " data.tar.gz"
++            bits = bits + ' data.tar.gz'
+ 
+-	file = "%s_%s_%s.ipk" % (self.package, self.version, self.architecture)
+-	cmd = "cd %s ; tar cvfz %s/%s %s" % (self.scratch_dir,
+-					     dirname,
+-					     file,
+-					     bits)
++        file = '%s_%s_%s.ipk' % (self.package, self.version,
++                                 self.architecture)
++        cmd = 'cd %s ; tar cvfz %s/%s %s' % (self.scratch_dir, dirname,
++                file, bits)
+ 
+-	cmd_out, cmd_in, cmd_err = os.popen3(cmd)
++        (cmd_out, cmd_in, cmd_err) = os.popen3(cmd)
+ 
+-	while cmd_err.readline() != "":
+-	    pass
++        while cmd_err.readline() != '':
++            pass
+ 
+-	cmd_out.close()
+-	cmd_in.close()
+-	cmd_err.close()
++        cmd_out.close()
++        cmd_in.close()
++        cmd_err.close()
+ 
+     def compare_version(self, ref):
+         """Compare package versions of self and ref"""
++
+         if not self.version:
+             print 'No version for package %s' % self.package
+         if not ref.version:
+@@ -368,39 +414,62 @@
+         return self.parsed_version.compare(ref.parsed_version)
+ 
+     def __repr__(self):
+-	out = ""
++        out = ''
+ 
+-	# XXX - Some checks need to be made, and some exceptions
+-	#       need to be thrown. -- a7r
++    # XXX - Some checks need to be made, and some exceptions
++    #       need to be thrown. -- a7r
+ 
+-        if self.package: out = out + "Package: %s\n" % (self.package)
+-        if self.version: out = out + "Version: %s\n" % (self.version)
+-        if self.depends: out = out + "Depends: %s\n" % (self.depends)
+-        if self.provides: out = out + "Provides: %s\n" % (self.provides)
+-        if self.replaces: out = out + "Replaces: %s\n" % (self.replaces)
+-        if self.conflicts: out = out + "Conflicts: %s\n" % (self.conflicts)
+-        if self.suggests: out = out + "Suggests: %s\n" % (self.suggests)
+-        if self.recommends: out = out + "Recommends: %s\n" % (self.recommends)
+-        if self.section: out = out + "Section: %s\n" % (self.section)
+-        if self.architecture: out = out + "Architecture: %s\n" % (self.architecture)
+-        if self.maintainer: out = out + "Maintainer: %s\n" % (self.maintainer)
+-        if self.md5: out = out + "MD5Sum: %s\n" % (self.md5)
+-        if self.size: out = out + "Size: %d\n" % int(self.size)
+-        if self.installed_size: out = out + "InstalledSize: %d\n" % int(self.installed_size)
+-        if self.filename: out = out + "Filename: %s\n" % (self.filename)
+-        if self.source: out = out + "Source: %s\n" % (self.source)
+-        if self.description: out = out + "Description: %s\n" % (self.description)
+-	out = out + "\n"
++        if self.package:
++            out = out + 'Package: %s\n' % self.package
++        if self.version:
++            out = out + 'Version: %s\n' % self.version
++        if self.depends:
++            out = out + 'Depends: %s\n' % self.depends
++        if self.provides:
++            out = out + 'Provides: %s\n' % self.provides
++        if self.replaces:
++            out = out + 'Replaces: %s\n' % self.replaces
++        if self.conflicts:
++            out = out + 'Conflicts: %s\n' % self.conflicts
++        if self.suggests:
++            out = out + 'Suggests: %s\n' % self.suggests
++        if self.recommends:
++            out = out + 'Recommends: %s\n' % self.recommends
++        if self.section:
++            out = out + 'Section: %s\n' % self.section
++        if self.architecture:
++            out = out + 'Architecture: %s\n' % self.architecture
++        if self.maintainer:
++            out = out + 'Maintainer: %s\n' % self.maintainer
++        if self.md5:
++            out = out + 'MD5Sum: %s\n' % self.md5
++        if self.size:
++            out = out + 'Size: %d\n' % int(self.size)
++        if self.installed_size:
++            out = out + 'Installed-Size: %d\n' \
++                % int(self.installed_size)
++        if self.filename:
++            out = out + 'Filename: %s\n' % self.filename
++        if self.source:
++            out = out + 'Source: %s\n' % self.source
++        if self.description:
++            out = out + 'Description: %s\n' % self.description
++        out = out + '\n'
+ 
+-	return out
++        return out
+ 
+     def __del__(self):
+-	# XXX - Why is the `os' module being yanked out before Package objects
+-	#       are being destroyed?  -- a7r
++
++    # XXX - Why is the `os' module being yanked out before Package objects
++    #       are being destroyed?  -- a7r
++
+         pass
+ 
++
+ class Packages:
++
+     """A currently unimplemented wrapper around the ipkg utility."""
++
+     def __init__(self):
+         self.packages = {}
+         return
+@@ -408,10 +477,10 @@
+     def add_package(self, pkg):
+         package = pkg.package
+         arch = pkg.architecture
+-        name = ("%s:%s" % (package, arch))
+-        if (not self.packages.has_key(name)):
++        name = '%s:%s' % (package, arch)
++        if not self.packages.has_key(name):
+             self.packages[name] = pkg
+-        
++
+         if pkg.compare_version(self.packages[name]) >= 0:
+             self.packages[name] = pkg
+             return 0
+@@ -419,7 +488,7 @@
+             return 1
+ 
+     def read_packages_file(self, fn):
+-        f = open(fn, "r")
++        f = open(fn, 'r')
+         while 1:
+             pkg = Package()
+             pkg.read_control(f)
+@@ -427,16 +496,16 @@
+                 self.add_package(pkg)
+             else:
+                 break
+-        f.close()    
++        f.close()
+         return
+ 
+     def write_packages_file(self, fn):
+-        f = open(fn, "w")
++        f = open(fn, 'w')
+         names = self.packages.keys()
+         names.sort()
+         for name in names:
+             f.write(self.packages[name].__repr__())
+-        return    
++        return
+ 
+     def keys(self):
+         return self.packages.keys()
+@@ -444,19 +513,19 @@
+     def __getitem__(self, key):
+         return self.packages[key]
+ 
+-if __name__ == "__main__":
++
++if __name__ == '__main__':
+     package = Package()
+ 
+-    package.set_package("FooBar")
+-    package.set_version("0.1-fam1")
+-    package.set_architecture("arm")
+-    package.set_maintainer("Testing <testing@testing.testing>")
+-    package.set_depends("libc")
+-    package.set_description("A test of the APIs.")
++    package.set_package('FooBar')
++    package.set_version('0.1-fam1')
++    package.set_architecture('arm')
++    package.set_maintainer('Testing <testing@testing.testing>')
++    package.set_depends('libc')
++    package.set_description('A test of the APIs.')
+ 
+-    print "<"
++    print '<'
+     sys.stdout.write(package)
+-    print ">"
+-
+-    package.write_package("/tmp")
++    print '>'
+ 
++    package.write_package('/tmp')

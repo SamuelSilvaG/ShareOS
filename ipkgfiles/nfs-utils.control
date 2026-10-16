@@ -1,0 +1,9 @@
+Package: nfs-utils
+Description: The NFS Linux kernel server.
+Version: 1.3.4
+Depends: ipkg, libtirpc, rpcbind, kernel-modules
+Architecture: arm
+Priority: optional
+Section: admin
+Source: https://sourceforge.net/projects/nfs
+Maintainer: jcard

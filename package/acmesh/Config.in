@@ -1,0 +1,8 @@
+config BR2_PACKAGE_ACMESH
+	bool "acmesh"
+	select BR2_PACKAGE_LIGHTTPD
+	select BR2_PACKAGE_OPENSSL
+	help
+	  Simplest shell script for Let's Encrypt free certificate client.
+
+	  https://github.com/acmesh-official/acme.sh

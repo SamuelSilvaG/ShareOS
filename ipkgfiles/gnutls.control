@@ -1,0 +1,11 @@
+Package: gnutls
+Description: GnuTLS is a secure communications library implementing the SSL
+	  and TLS protocols and technologies around them.
+Version: 3.7.4
+Depends: nettle, libunistring, libtasn1, ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://www.gnutls.org
+Maintainer: jcard

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+ACME_DIR=/usr/share/acme.sh
+ACME_CONF=/etc/acme.sh
+
+cd /tmp
+cp $ACME_DIR/acme.sh .
+
+if ! ./acme.sh --install --home $ACME_DIR --config-home $ACME_CONF \
+	--log /var/log/acme.sh.log --noprofile; then
+	echo "Installation of acme.sh failed."
+	rm acme.sh
+	return 1
+fi
+
+# shortcut in /usr/bin
+cat <<- EOF > /usr/bin/acme.sh
+	#!/bin/sh
+	exec $ACME_DIR/acme.sh --home $ACME_DIR --config-home $ACME_CONF "\$@"
+EOF
+chmod +x /usr/bin/acme.sh
+
+rm acme.sh

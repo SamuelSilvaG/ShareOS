@@ -1,0 +1,12 @@
+--- samba-large-3.6.25/source3/param/loadparm.c-orig	2022-04-21 18:50:45.338416998 +0100
++++ samba-large-3.6.25/source3/param/loadparm.c	2022-04-21 18:53:39.550879899 +0100
+@@ -5325,7 +5325,8 @@
+ 	Globals.max_log_size = 5000;
+ 	Globals.max_open_files = max_open_files();
+ 	Globals.open_files_db_hash_size = SMB_OPEN_DATABASE_TDB_HASH_SIZE;
+-	Globals.maxprotocol = PROTOCOL_NT1;
++	//Globals.maxprotocol = PROTOCOL_NT1;
++	Globals.maxprotocol = PROTOCOL_SMB2;
+ 	Globals.minprotocol = PROTOCOL_CORE;
+ 	Globals.security = SEC_USER;
+ 	Globals.paranoid_server_security = True;

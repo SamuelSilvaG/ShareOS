@@ -1,0 +1,7 @@
+#!/bin/sh
+
+sed -i '\|/usr/sbin/vsftpd|d' /etc/inetd.conf
+
+ln -sf /usr/sbin/rcscript /sbin/rcvsftpd
+rcvsftpd init
+return 0

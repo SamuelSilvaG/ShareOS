@@ -1,0 +1,9 @@
+Package: kernel-modules
+Description: Aditional linux kernel modules for the DNS-327L
+Version: 4.14.268
+Depends: ipkg
+Architecture: armv7
+Priority: required
+Section: admin
+Source: https://kernel.org
+Maintainer: jcard

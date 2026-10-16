@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -rf /ShareOS/opt/CouchPotato2
+
+deluser couchpotato2 >& /dev/null
+delgroup TV >& /dev/null
+rm -f /sbin/rccouchpotato2

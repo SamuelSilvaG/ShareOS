@@ -1,0 +1,26 @@
+#! /bin/sh
+
+DESC="Check the RSS feed for News, Files or Packages once a week."
+TYPE=sys
+NAME=news
+REQUIRE="cron" # actually is cron() that implements require()
+
+. /etc/init.d/common
+
+CMD="/usr/bin/news.sh"
+
+case "$1" in
+	start)
+		cron add $CMD
+		$CMD
+		echo "Starting $NAME: OK."
+		;;
+	stop)
+		cron remove $CMD
+		echo "Stopping $NAME: OK."
+		;;
+	status) cron status $CMD ;;
+	restart) restart $NAME ;;
+	*) usage $0 "start|stop|status|restart"
+		;;
+esac

@@ -1,0 +1,9 @@
+Package: sabyenc
+Description: Python yEnc package optimized for use within SABnzbd
+Version: 3.3.6
+Depends: python, ipkg
+Architecture: arm
+Priority: optional
+Section: interpreters
+Source: https://github.com/sabnzbd/sabyenc
+Maintainer: jcard

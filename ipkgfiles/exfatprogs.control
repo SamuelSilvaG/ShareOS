@@ -1,0 +1,10 @@
+Package: exfatprogs
+Description: A set of utilities for creating, checking, dumping and labelling exFAT file system.
+Version: 1.1.3
+Depends: ipkg
+Architecture: arm
+Priority: optional
+Essential: no
+Section: admin
+Source: https://github.com/exfatprogs/exfatprogs
+Maintainer: jcard
