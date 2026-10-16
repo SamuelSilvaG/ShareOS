@@ -5,6 +5,13 @@ Userland (musl, aktuelles BusyBox), SSH und ein Hardware-Check. Es hat noch
 keine Weboberfläche. Ziel ist nur, zu prüfen, ob die neue Basis auf dem
 DNS-320L sauber läuft.
 
+> **Stand 2026-10-16:** Auf dem DNS-320L ist „TryIt“ in Alt-F ausgegraut, und
+> kexec funktioniert dort generell nicht (auch nicht mit Alt-Fs eigenem Kernel).
+> Ein Test ohne serielle Konsole ist damit nicht möglich – siehe
+> [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md). Der Weg unten gilt für Boxen, auf
+> denen TryIt verfügbar ist; auf dem DNS-320L wird über die serielle Konsole
+> getestet (Start aus dem RAM per TFTP, ohne Flashen).
+
 ## Sicherer Weg: „TryIt“ in Alt-F
 
 Alt-F kann eine Firmware starten, **ohne sie zu flashen** (per kexec). Nach dem
