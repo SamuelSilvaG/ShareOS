@@ -57,3 +57,26 @@ The JP1 serial header is not populated (3.3 V TTL, 115200 8N1, GND/TX/RX);
 a pin header pressed into the holes works without soldering for diagnostics.
 With the console, ShareOS can be started from RAM via `rcvr`/TFTP or
 `tftpboot` + `bootm` without touching the flash.
+
+## Comparison with Alt-F Release 1.0 (the version on the test box)
+
+Checked against `tags/Release-1.0` (r3795, kernel 4.4.86) and `branches/1.0.1`
+in the Alt-F SVN, versus the trunk (r3935, kernel 4.14.268) ShareOS forked from:
+
+| Boot-relevant item | Release 1.0 | trunk | ShareOS |
+|---|---|---|---|
+| DNS-320L device tree | – | identical to 1.0 | ported from it (Linux 6.x paths) |
+| Kernel image | zImage + appended DTB, uImage `-a/-e 0x8000`, no mach-id prologue | same | same |
+| Initramfs | uImage ramdisk `-a 0x800000` (squashfs "sqall") | same (UBI variant) | same header, cpio.xz content |
+| Size limits | 3 MB kernel / 3 MB initramfs | same | same, checked at build time |
+| D-Link signature | prod 0, cust 8, model 11, sub 1, ver 1, type 6 | same | same |
+| Extra image | squashfs sqimage appended (`sqsplit`) | UBI image (`ubisplit`) | none yet |
+| Kernel options | ATAGS, ARM_APPENDED_DTB, ATAG_DTB_COMPAT(+CMDLINE_EXTEND), CMDLINE_EXTEND, CPU_FEROCEON_OLD_ID, CACHE_FEROCEON_L2, AUTO_ZRELADDR, KERNEL_XZ | same | same |
+
+So the trunk was not "unbootable" (the Alt-F author ran 4.14.78 on his
+DNS-320 boxes), and ShareOS uses the same boot contract as Release 1.0.
+
+kexec: the Alt-F author states "For the DNS-320L/325 kexec is not working"
+(groups.google.com/g/alt-f/c/PPXssiwm7mo) – consistent with our test where
+even Alt-F's own kernel hangs. Our failed kexec attempts therefore say
+nothing about whether the ShareOS kernel boots from U-Boot.
