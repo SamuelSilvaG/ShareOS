@@ -33,7 +33,7 @@ CONFIG_ATAGS=y
 CONFIG_ARM_APPENDED_DTB=y
 CONFIG_ARM_ATAG_DTB_COMPAT=y
 CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND=y
-CONFIG_CMDLINE="console=ttyS0,115200 root=/dev/ram0 init=/init earlyprintk"
+CONFIG_CMDLINE="console=ttyS0,115200 root=/dev/ram0 init=/init earlyprintk panic=10"
 CONFIG_CMDLINE_EXTEND=y
 CONFIG_KEXEC=y
 
@@ -211,3 +211,11 @@ CONFIG_KALLSYMS=y
 # CONFIG_NAMESPACES is not set
 # CONFIG_PROFILING is not set
 # CONFIG_FTRACE is not set
+
+# --- Diagnostics without a serial console -------------------------------------
+# Kernel messages over UDP: pass e.g.
+#   netconsole=6666@<box-ip>/eth0,6666@<pc-ip>/<pc-mac or ff:ff:ff:ff:ff:ff>
+# on the command line (Alt-F: /boot/cmdline). panic=10 reboots after a crash.
+CONFIG_NETCONSOLE=y
+CONFIG_NETPOLL=y
+CONFIG_PRINTK_TIME=y

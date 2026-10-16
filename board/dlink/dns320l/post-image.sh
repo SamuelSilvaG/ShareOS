@@ -67,3 +67,18 @@ cmp "$T/initramfs" "$B/urootfs"
 (cd "$B" && sha1sum "$OUT" > "${OUT%.bin}.sha1")
 "$FW" -f "$B/$OUT" || true
 echo "post-image: created $B/$OUT"
+
+# kexec test bundle: start the test system from a running Alt-F without
+# flashing (Alt-F disables its "TryIt" button on Kirkwood boxes)
+KDIR="$(ls -d "$BUILD_DIR"/linux-[0-9]* | grep -v headers | head -1)"
+KT="$B/shareos-kexec-test"
+rm -rf "$KT" && mkdir -p "$KT"
+cp "$KDIR/arch/arm/boot/zImage" "$KT/zImage"
+cp "$KDIR/arch/arm/boot/dts/kirkwood-dns320l.dtb" "$KT/"
+cp "$B/rootfs.cpio.xz" "$KT/rootfs.arm.sqmtd"
+cp "$BOARD_DIR/kexec-test/shareos-kexec-test.sh" "$BOARD_DIR/kexec-test/README.txt" "$KT/"
+(cd "$KT" && sha256sum zImage kirkwood-dns320l.dtb rootfs.arm.sqmtd > SHA256SUMS)
+TAR="shareos-kexec-test-${VERSION}.tar"
+tar -C "$B" -cf "$B/$TAR" shareos-kexec-test
+rm -rf "$KT"
+echo "post-image: created $B/$TAR"
