@@ -16,7 +16,9 @@ DNSFW=$(realpath "$(command -v "$DNSFW")")
 TOP=$(cd "$(dirname "$0")/.." && pwd)
 SCRIPT="$TOP/src/shareos-core/usr/sbin/shareos-update"
 
+[ "$FW" = "--synthetic" ] || FW=$(realpath "$FW")
 T=$(mktemp -d)
+cd "$T"          # dns323-fw drops helper files into the working directory
 SRV=
 trap 'kill $SRV 2>/dev/null; rm -rf "$T"' EXIT
 
