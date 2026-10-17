@@ -49,3 +49,12 @@ for p in aead_demo benchmark cert_req cipher_aead_demo crl_app crypt_and_hash cr
 	strerror udp_proxy udp_proxy_wrapper.sh zeroize; do
 	rm -f "$TARGET_DIR/usr/bin/$p"
 done
+
+# busybox nslookup cannot read resolv.conf lines with a trailing comment, and
+# udhcpc tags its lines with "# <interface>". The box has one interface, so
+# write plain lines and replace all DNS lines on renew instead.
+DS="$TARGET_DIR/usr/share/udhcpc/default.script"
+if [ -f "$DS" ]; then
+	sed -i -e 's/ # \$interface" >> \$RESOLV_CONF/" >> $RESOLV_CONF/' \
+		-e 's/grep -vE "# \$interface\\\$" \$RESOLV_CONF/grep -vE "^(nameserver|search|domain) " $RESOLV_CONF/' "$DS"
+fi

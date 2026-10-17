@@ -1,0 +1,112 @@
+#!/bin/sh
+#
+# shareos-net – network of the box (eth0) from UCI /etc/config/network
+#
+#   shareos-net start | stop | restart
+#   shareos-net apply [seconds]   restart with the new settings; if nobody
+#                                 confirms within the time (default 120 s),
+#                                 the previous settings come back
+#   shareos-net confirm           keep the new settings
+#
+# Before "apply", the caller copies the old /etc/config/network to
+# /etc/shareos/network.rollback. State for the web interface is kept in
+# /tmp/shareos-net (pending, result).
+#
+PATH=${SHAREOS_TEST_PATH:+$SHAREOS_TEST_PATH:}/usr/sbin:/usr/bin:/sbin:/bin
+ROOT=${SHAREOS_ROOT:-}
+CONF=$ROOT/etc/config/network
+IFACES=$ROOT/etc/network/interfaces
+RESOLV=$ROOT/etc/resolv.conf
+ROLLBACK=$ROOT/etc/shareos/network.rollback
+ST=$ROOT/tmp/shareos-net
+IF=eth0
+
+log() { logger -t shareos-net "$*"; echo "$*"; }
+
+get() { uci -q ${ROOT:+-c $ROOT/etc/config} get network.lan.$1; }
+
+write_config() {
+	proto=$(get proto)
+	mkdir -p "$(dirname "$IFACES")"
+	{
+		echo "# written by shareos-net from /etc/config/network – edit there"
+		echo "auto lo"
+		echo "iface lo inet loopback"
+		echo
+		echo "auto $IF"
+		if [ "$proto" = static ]; then
+			echo "iface $IF inet static"
+			echo "  address $(get ipaddr)"
+			echo "  netmask $(get netmask)"
+			gw=$(get gateway); [ -n "$gw" ] && echo "  gateway $gw"
+		else
+			echo "iface $IF inet dhcp"
+			echo "  pre-up /etc/network/nfs_check"
+			echo "  wait-delay 15"
+			echo "  hostname \$(hostname)"
+		fi
+	} > "$IFACES.new" && mv "$IFACES.new" "$IFACES"
+}
+
+write_resolv() {
+	[ "$(get proto)" = static ] || return 0
+	dns=$(get dns)
+	[ -n "$dns" ] || dns=$(get gateway)
+	: > "$RESOLV.new"
+	for d in $dns; do echo "nameserver $d" >> "$RESOLV.new"; done
+	cat "$RESOLV.new" > "$RESOLV"; rm -f "$RESOLV.new"
+}
+
+start() {
+	mkdir -p $ROOT/run/network
+	write_config
+	ifup -a
+	rc=$?
+	write_resolv
+	return $rc
+}
+
+stop() {
+	ifdown -a 2>/dev/null
+	# take down what ifdown might have missed (e.g. an address set by hand)
+	ip addr flush dev $IF 2>/dev/null
+	return 0
+}
+
+apply() {
+	timeout=${1:-120}
+	mkdir -p $ST
+	rm -f $ST/confirmed $ST/result
+	echo "$(( $(date +%s) + timeout ))" > $ST/pending
+	# let the web request that started this get its answer first
+	sleep 2
+	log "applying new network settings ($(get proto) $(get ipaddr)), confirm within $timeout s"
+	stop; start
+	end=$(( $(date +%s) + timeout ))
+	while [ "$(date +%s)" -lt "$end" ]; do
+		if [ -e $ST/confirmed ]; then
+			rm -f $ST/pending $ST/confirmed "$ROLLBACK"
+			echo ok > $ST/result
+			log "new network settings confirmed"
+			return 0
+		fi
+		sleep 1
+	done
+	log "no confirmation – restoring the previous network settings"
+	if [ -s "$ROLLBACK" ]; then
+		cp "$ROLLBACK" "$CONF" && rm -f "$ROLLBACK"
+	fi
+	stop; start
+	rm -f $ST/pending
+	echo rolledback > $ST/result
+	return 1
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	restart) stop; start ;;
+	apply) apply "$2" ;;
+	confirm) [ -e $ST/pending ] && touch $ST/confirmed ;;
+	*) sed -n '3,14s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

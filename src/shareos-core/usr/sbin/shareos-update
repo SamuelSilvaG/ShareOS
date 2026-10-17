@@ -35,7 +35,9 @@ const ROOT = getenv('SHAREOS_ROOT') ?? '';
 const STATE_DIR = ROOT + '/tmp/shareos-update';
 const STATE = STATE_DIR + '/state.json';
 const UBOOT_MAX = 3145728;          // bytes U-Boot copies from uImage/ramdisk
-const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10' ];
+const CA = '/etc/ssl/certs/ca-certificates.crt';
+const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10',
+	...(stat(CA) ? [ '--cacert', CA ] : []) ];
 
 const BOARDS = {                    // fwname -> string in the device-tree model
 	'DNS-320L-rev-Ax': 'DNS-320L'
@@ -127,10 +129,13 @@ function fetch_releases(cfg) {
 	let r = capture([ ...CURL, '--max-time', '20',
 		'-H', 'Accept: application/vnd.github+json',
 		`${cfg.api}/repos/${cfg.repo}/releases?per_page=30` ]);
-	if (r.rc != 0)
-		return null;
+	if (r.rc != 0) {
+		// first curl message line, e.g. "curl: (6) Could not resolve host: api.github.com"
+		let m = match(r.out, /curl: \([0-9]+\)[^\n]*/);
+		return { error: m ? m[0] : 'curl exit ' + r.rc };
+	}
 	let list = json(r.out);
-	return type(list) == 'array' ? list : null;
+	return type(list) == 'array' ? list : { error: 'unexpected answer from GitHub' };
 }
 
 function releases_for_box(list, fwname, channel) {
@@ -174,8 +179,8 @@ function cmd_check(channel) {
 		fail(s, 'unknown firmware name (/etc/shareos-release)');
 
 	let list = fetch_releases(cfg);
-	if (list == null)
-		fail(s, 'cannot fetch releases from ' + cfg.api + ' (' + cfg.repo + ')');
+	if (type(list) != 'array')
+		fail(s, 'cannot fetch releases from ' + cfg.api + ' (' + cfg.repo + '): ' + list.error);
 
 	let found = releases_for_box(list, rel.SHAREOS_FWNAME, channel);
 	let latest = found[0];
@@ -380,11 +385,14 @@ function cmd_apply(tag) {
 	if (mounted_on('/overlay') != 'ubifs')
 		fail(s, 'not running from flash (no UBIFS on /overlay) – use shareos-install-ubi');
 
-	// re-check right before writing; /tmp could have been touched
+	// re-check right before writing; /tmp could have been touched. This takes
+	// a while on the box, so report it as the first step of flashing.
+	s.state = 'flashing';
+	s.step = 'check bundle';
+	save_state(s);
 	verify_image(s, dir, s.release);
 	let x = dir + '/x';
 
-	s.state = 'flashing';
 	s.step = 'stage rootfs';
 	save_state(s);
 	let up = ROOT + '/overlay/upgrade';

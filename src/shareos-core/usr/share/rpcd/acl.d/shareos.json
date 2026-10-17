@@ -46,11 +46,15 @@
 					"status",
 					"zones",
 					"altf"
+				],
+				"shareos.net": [
+					"get"
 				]
 			},
 			"uci": [
 				"shareos",
-				"storage"
+				"storage",
+				"network"
 			]
 		},
 		"write": {
@@ -63,7 +67,8 @@
 					"set_hostname"
 				],
 				"shareos.service": [
-					"action"
+					"action",
+					"autostart"
 				],
 				"shareos.storage": [
 					"setup",
@@ -100,6 +105,10 @@
 				"shareos.setup": [
 					"apply",
 					"reset"
+				],
+				"shareos.net": [
+					"set",
+					"confirm"
 				]
 			},
 			"uci": [

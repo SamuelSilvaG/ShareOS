@@ -2,7 +2,8 @@
 //
 //   shareos.system   info | log | reboot | poweroff | factory_reset |
 //                    set_password | set_hostname
-//   shareos.service  list | action
+//   shareos.service  list | action | autostart
+//   shareos.net      get | set | confirm   (network with automatic rollback)
 //   shareos.update   check | status | download | apply | cancel
 //
 // Long-running update steps run as a separate process (shareos-update) so
@@ -13,6 +14,10 @@ import { readfile, writefile, popen, glob, stat, readlink, symlink, unlink } fro
 import { cursor } from 'uci';
 
 const UPDATER = '/usr/sbin/shareos-update';
+const NET = '/usr/sbin/shareos-net';
+const NET_ST = '/tmp/shareos-net';
+const NET_ROLLBACK = '/etc/shareos/network.rollback';
+const NET_TIMEOUT = 120;     // s until unconfirmed network settings are rolled back
 
 // services the UI may show and control: init script -> process name
 const SERVICES = {
@@ -27,6 +32,15 @@ const SERVICES = {
 };
 // services that must not be stopped from the UI (it would cut itself off)
 const ESSENTIAL = { uhttpd: true, rpcd: true, ubus: true, board: true };
+
+// services not started at boot (UCI shareos.autostart.disabled) as a set
+function autostart_off() {
+	let l = cursor().get('shareos', 'autostart', 'disabled') ?? [];
+	if (type(l) != 'array') l = split(l, ' ');
+	let o = {};
+	for (let n in l) if (n != '') o[n] = true;
+	return o;
+}
 
 function shq(s) {
 	return "'" + replace(s, "'", "'\\''") + "'";
@@ -278,9 +292,71 @@ function spawn_storage(args) {
 
 const CERT = '/usr/sbin/shareos-cert';
 
+const THEMES = { dark: 1, light: 1, system: 1 };
+const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
+
 function ui_settings() {
 	let c = cursor();
-	return { lang: c.get('shareos', 'ui', 'lang') ?? 'en', logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0' };
+	let theme = c.get('shareos', 'ui', 'theme'), accent = c.get('shareos', 'ui', 'accent');
+	return {
+		lang: c.get('shareos', 'ui', 'lang') ?? 'en',
+		logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0',
+		theme: THEMES[theme] ? theme : 'dark',
+		accent: ACCENTS[accent] ? accent : 'blue'
+	};
+}
+
+/* ---------- network ---------- */
+
+function ip4_ok(a) {
+	let m = match(a ?? '', /^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/);
+	if (!m) return false;
+	for (let i = 1; i <= 4; i++) if (+m[i] > 255) return false;
+	return true;
+}
+
+function pow2(n) {
+	let v = 1;
+	for (let i = 0; i < n; i++) v *= 2;
+	return v;
+}
+
+function ip4_num(a) {
+	let p = split(a, '.');
+	return ((+p[0] * 256 + +p[1]) * 256 + +p[2]) * 256 + +p[3];
+}
+
+// prefix length of a netmask, null if the mask is not contiguous
+function mask_prefix(m) {
+	if (!ip4_ok(m)) return null;
+	let n = ip4_num(m), bits = 0;
+	for (let i = 31; i >= 0; i--) {
+		let b = int(n / (pow2(i))) % 2;
+		if (b == 1 && bits == 31 - i) bits++;
+		else if (b == 1) return null;
+	}
+	return bits;
+}
+
+function net_settings() {
+	let c = cursor();
+	let dns = c.get('network', 'lan', 'dns') ?? '';
+	if (type(dns) == 'array') dns = join(' ', dns);
+	return {
+		proto: c.get('network', 'lan', 'proto') == 'static' ? 'static' : 'dhcp',
+		ipaddr: c.get('network', 'lan', 'ipaddr') ?? '',
+		netmask: c.get('network', 'lan', 'netmask') ?? '255.255.255.0',
+		gateway: c.get('network', 'lan', 'gateway') ?? '',
+		dns: filter(split(trim(dns), /[ ,]+/), (x) => x != '')
+	};
+}
+
+function net_state() {
+	let pending = read_int(NET_ST + '/pending');
+	return {
+		pending: pending != null ? { until: pending, left: (pending > time() ? pending - time() : 0) } : null,
+		result: read_trim(NET_ST + '/result')
+	};
 }
 
 function cert_info() {
@@ -399,7 +475,7 @@ return {
 		},
 
 		set: {
-			args: { lang: '', logo: false },
+			args: { lang: '', logo: false, theme: '', accent: '' },
 			call: function(req) {
 				let c = cursor();
 				c.set('shareos', 'ui', 'ui');   // section may be missing in configs from older versions
@@ -409,6 +485,14 @@ return {
 				}
 				if (req.args.logo != null)
 					c.set('shareos', 'ui', 'logo', req.args.logo ? '1' : '0');
+				if (req.args.theme) {
+					if (!THEMES[req.args.theme]) return { error: 'invalid theme' };
+					c.set('shareos', 'ui', 'theme', req.args.theme);
+				}
+				if (req.args.accent) {
+					if (!ACCENTS[req.args.accent]) return { error: 'invalid accent' };
+					c.set('shareos', 'ui', 'accent', req.args.accent);
+				}
 				c.commit('shareos');
 				return ui_settings();
 			}
@@ -578,7 +662,8 @@ return {
 					let s = SERVICES[name];
 					if (!init_script(name))
 						continue;
-					push(list, { name, label: s.label, desc: s.desc, running: running(s.proc), essential: !!ESSENTIAL[name] });
+					push(list, { name, label: s.label, desc: s.desc, running: running(s.proc), essential: !!ESSENTIAL[name],
+						autostart: !(name in autostart_off()) });
 				}
 				return { services: list };
 			}
@@ -602,6 +687,81 @@ return {
 				}
 				let r = sh(shq(script) + ' ' + act);
 				return { ok: r.rc == 0, output: trim(r.out), running: running(SERVICES[name].proc) };
+			}
+		},
+
+		autostart: {
+			args: { name: '', enabled: true },
+			call: function(req) {
+				let name = req.args.name;
+				if (!SERVICES[name] || !init_script(name)) return { error: 'unknown service' };
+				if (ESSENTIAL[name] && !req.args.enabled) return { error: 'this service is always started' };
+				let off = autostart_off();
+				if (req.args.enabled) delete off[name]; else off[name] = true;
+				let c = cursor();
+				c.set('shareos', 'autostart', 'autostart');
+				c.delete('shareos', 'autostart', 'disabled');
+				if (length(keys(off))) c.set('shareos', 'autostart', 'disabled', sort(keys(off)));
+				c.commit('shareos');
+				return { ok: true, name, autostart: !off[name] };
+			}
+		}
+	},
+
+	'shareos.net': {
+		get: {
+			call: function() {
+				return { ...net_settings(), ...net_state(), timeout: NET_TIMEOUT };
+			}
+		},
+
+		// takes effect at once; rolled back unless confirmed within NET_TIMEOUT
+		set: {
+			args: { proto: '', ipaddr: '', netmask: '', gateway: '', dns: [], confirm: false },
+			call: function(req) {
+				let a = req.args;
+				if (!a.confirm) return { error: 'confirm required' };
+				if (net_state().pending) return { error: 'a network change is still waiting for confirmation' };
+				if (!(a.proto in { dhcp: 1, static: 1 })) return { error: 'invalid mode' };
+				let dns = filter(a.dns ?? [], (x) => x != '');
+				let gw = a.gateway ?? '';
+				if (a.proto == 'static') {
+					if (!ip4_ok(a.ipaddr)) return { error: 'invalid IP address' };
+					let pfx = mask_prefix(a.netmask);
+					if (pfx == null || pfx < 8 || pfx > 30) return { error: 'invalid subnet mask' };
+					let net = (x) => int(ip4_num(x) / (pow2(32 - pfx)));
+					let host = ip4_num(a.ipaddr) % (pow2(32 - pfx));
+					if (host == 0 || host == pow2(32 - pfx) - 1) return { error: 'the IP address is the network or broadcast address' };
+					if (gw != '') {
+						if (!ip4_ok(gw)) return { error: 'invalid gateway' };
+						if (net(gw) != net(a.ipaddr)) return { error: 'the gateway is not in the same network' };
+						if (gw == a.ipaddr) return { error: 'gateway and IP address are the same' };
+					}
+					if (length(dns) > 3) return { error: 'at most 3 DNS servers' };
+					for (let d in dns) if (!ip4_ok(d)) return { error: 'invalid DNS server ' + d };
+				}
+				system('mkdir -p /etc/shareos && cp /etc/config/network ' + NET_ROLLBACK);
+				let c = cursor();
+				c.set('network', 'lan', 'interface');
+				c.set('network', 'lan', 'ifname', 'eth0');
+				c.set('network', 'lan', 'proto', a.proto);
+				if (a.proto == 'static') {
+					c.set('network', 'lan', 'ipaddr', a.ipaddr);
+					c.set('network', 'lan', 'netmask', a.netmask);
+					c.set('network', 'lan', 'gateway', gw);
+					c.set('network', 'lan', 'dns', join(' ', dns));
+				}
+				c.commit('network');
+				system(sprintf('rm -f %s/result; start-stop-daemon -S -b -x %s -- apply %d', NET_ST, NET, NET_TIMEOUT));
+				return { ok: true, timeout: NET_TIMEOUT, address: a.proto == 'static' ? a.ipaddr : null };
+			}
+		},
+
+		confirm: {
+			call: function() {
+				if (!net_state().pending) return { ok: true, pending: false };
+				system(NET + ' confirm');
+				return { ok: true };
 			}
 		}
 	},

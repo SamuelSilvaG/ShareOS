@@ -1,0 +1,8 @@
+#!/bin/sh
+# network (eth0) from UCI /etc/config/network, see shareos-net
+case "$1" in
+	start) printf "Starting network: "; /usr/sbin/shareos-net start >/dev/null 2>&1 && echo "OK" || echo "FAIL" ;;
+	stop) printf "Stopping network: "; /usr/sbin/shareos-net stop >/dev/null 2>&1 && echo "OK" || echo "FAIL" ;;
+	restart|reload) /usr/sbin/shareos-net restart ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

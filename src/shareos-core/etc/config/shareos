@@ -12,6 +12,10 @@ config ui 'ui'
 	option logo '1'
 	# language of the web interface for everyone: en, de, ... (www/i18n/)
 	option lang 'en'
+	# look for everyone: theme dark | light | system (follows the computer),
+	# accent blue | green | red | white
+	option theme 'dark'
+	option accent 'blue'
 
 config web 'web'
 	# HTTPS on port 443 (a self-signed certificate is created on first boot)
@@ -41,3 +45,7 @@ config led 'led'
 config setup 'setup'
 	# 0 = show the first-run wizard after the next login
 	option done '0'
+
+config autostart 'autostart'
+	# services that are not started at boot (names as in /etc/init.d/S??<name>)
+	#list disabled 'crond'

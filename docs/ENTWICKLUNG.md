@@ -60,6 +60,13 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 15:00–15:44 | Die Weboberfläche ist nach jedem Start weg. Fehlersuche mit Jan und Konrad. Claude stellt den Absturz im Emulator nach: Jede Browser-Anfrage mit `If-Modified-Since` bringt `uhttpd` zum Absturz (musl-`strptime` mit `%Z`). Behoben mit einem Patch. |
 | 15:51 | Die Festplatten werden erkannt. Die beim Portieren korrigierte SATA-Stromleitung (gpio0 24 statt Alt-Fs gpio1 24) ist damit bestätigt. |
 | 16:00 | **Speicher**: Assistent und manuelle Verwaltung (ext4, RAID 1, SMART, Ruhezustand, Swap, Apps-Bereich). |
+| 16:45 | Englische Oberfläche über Sprachdateien, HTTPS mit selbstsigniertem Zertifikat, Ersteinrichtungs-Assistent mit Alt-F-Übernahme, Lüfter- und LED-Einstellungen. |
+| 17:20 | Die Speicher-Tests mit virtuellen Platten finden einen echten Fehler: Bei zwei einzelnen Platten landete die zweite unter dem Namen der ersten. Behoben, bevor er auf die Box kam. |
+| 18:13 | Alles geht nach `main`; Jan legt das erste Release `v0.1.0-beta.1` an, GitHub baut das Update-Paket. |
+| 18:26 | Die Box erreicht GitHub nicht: „certificate is not correctly signed“. Erster Verdacht von Claude (Netzwerk fängt HTTPS ab) ist falsch. Jans Ausgabe zeigt Googles echtes Zertifikat. Ursache: buildroot gibt curl mit mbedTLS keinen Pfad zu den CA-Zertifikaten. Workaround per `/root/.curlrc`, Fix im Build. |
+| 20:15 | **Erstes Online-Update auf echter Hardware:** Die Box lädt `0.1.0-beta.1` von GitHub, prüft es, schreibt Kernel und Startsystem, installiert das System beim Neustart. Ersteinrichtung läuft ohne Probleme. |
+| 20:18 | Jans Rückmeldung: Nach „Installieren“ sieht man nichts. Claude baut einen Fortschrittsbalken mit den einzelnen Schritten. |
+| 20:31 | Neue Vorgaben von Jan: Menü nach „Haupt-Funktion“ (Dienste → Autostart, System → Netzwerk), Kachel-/Tabellenansicht je Bereich, Hell/Dunkel/System, Logo und Browser-Symbol in der Akzentfarbe. Netzwerk-Einstellungen mit automatischem Rückfall, damit man sich nicht aussperrt. |
 
 ## Bemerkenswerte Problemlösungen
 
@@ -67,12 +74,16 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 - **Kein Flashen ohne Rückweg:** Erst lief ShareOS im RAM, dann vom Netzwerk, dann stand das System im Flash und erst zuletzt der Kernel. Jeder Schritt hatte einen Rückweg (Alt-F-Sicherung, D-Link-Rettungssystem, Rettungsmodus).
 - **U-Boot ohne Doku:** Die Abbruchsequenz und der Rückfall auf das Rettungssystem bei defektem Image hat Claude aus dem Verhalten und dem Speicherabbild erschlossen.
 - **Hardware-Detail im Device Tree:** Alt-F schaltete die SATA-Stromversorgung über den falschen GPIO-Controller. Claude hat das beim Portieren erkannt, die Platten haben es bestätigt.
+- **Netzwerk ändern ohne Aussperren:** Eine neue IP gilt sofort, die Box wartet aber 2 Minuten auf eine Bestätigung von der neuen Adresse. Kommt keine, stellt sie die alten Einstellungen wieder her (wie bei OpenWrt). Die Oberfläche öffnet die neue Adresse selbst und bestätigt.
 - **Absturz, der nur im echten Browser auftritt:** Die Absicherung (automatischer Neustart von uhttpd, Protokoll) kam zuerst. Die eigentliche Ursache war ein Fehler in der C-Bibliothek, den Claude im Emulator nachgestellt und gezielt umgangen hat.
 
 ## Die Oberfläche
 
-Standard ist das dunkelblaue Design mit Logo. Grün, Rot, Weiß und Hell sind
-wählbar, das Logo lässt sich abschalten. Die Oberfläche gibt es auf Deutsch und
+Standard ist das dunkelblaue Design mit Logo. Hell, Dunkel oder „wie das
+Betriebssystem“ sowie die Akzentfarben Blau, Grün, Rot und Weiß gelten für alle
+Nutzer. Logo und Browser-Symbol nehmen die Akzentfarbe an, das Logo lässt sich
+abschalten. Jeder Bereich mit Kacheln hat rechts in der Kopfzeile einen
+Schalter für die Tabellenansicht. Die Oberfläche gibt es auf Deutsch und
 Englisch.
 
 | Anmeldung | Übersicht |
@@ -87,9 +98,21 @@ Englisch.
 |---|---|
 | ![Firmware](images/gui-firmware.png) | ![Darstellung](images/gui-darstellung.png) |
 
-| Englisch | Handy |
+| Netzwerk mit Rückfall, HTTPS | Dienste → Autostart |
 |---|---|
-| ![Englisch](images/gui-en-overview.png) | ![Handy](images/gui-handy.png) |
+| ![Netzwerk](images/gui-netzwerk.png) | ![Autostart](images/gui-autostart.png) |
+
+| Tabellenansicht | Akzentfarben, Hell und Dunkel |
+|---|---|
+| ![Tabellenansicht](images/gui-tabelle.png) | ![Farben](images/gui-farben.png) |
+
+| Update mit Fortschritt | Englisch |
+|---|---|
+| ![Update](images/gui-update-progress.png) | ![Englisch](images/gui-en-overview.png) |
+
+| Handy | |
+|---|---|
+| ![Handy](images/gui-handy.png) | |
 
 *Screenshots mit Beispieldaten (`tests/mock-ubus.py`): zwei 4-TB-Platten als
 Spiegel und ein verfügbares Update.*
