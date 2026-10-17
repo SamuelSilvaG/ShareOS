@@ -164,3 +164,12 @@ the DHCP address, `shareos-check` shows all link modes and the PHY.
   U-Boot boots ShareOS on its own (no TFTP, no console needed).
 - Clean shutdown: UBIFS mounts without recovery after `reboot`.
 - Alt-F backups of mtd1/mtd2 are taken to `/root/boot-backup` once.
+
+## Update path and disks (2026-10-17, build 0a3cff2)
+
+- Staged system update (`/overlay/upgrade`, installed by the initramfs on the
+  next boot) works on hardware; settings in the overlay survive.
+- SATA power regulator on **gpio0 24** confirmed: both disks spin up and are
+  detected (Alt-F's `&gpio1 24` was wrong for mpp24).
+- uhttpd crashed on every `If-Modified-Since` request (musl `strptime %Z`
+  with unset `tzname`); patched in `patches/uhttpd/`.
