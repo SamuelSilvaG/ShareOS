@@ -10,6 +10,7 @@
 'use strict';
 
 import { readfile, writefile, popen, glob, stat } from 'fs';
+import { cursor } from 'uci';
 
 const UPDATER = '/usr/sbin/shareos-update';
 
@@ -157,6 +158,122 @@ function init_script(name) {
 	return length(s) == 1 ? s[0] : null;
 }
 
+
+/* ---------- storage ---------- */
+
+const STORAGE = '/usr/sbin/shareos-storage';
+const SMART_DIR = '/tmp/shareos-storage';
+const SMART_MAX_AGE = 1800;     // s; SMART reads keep disks awake, so cache them
+
+function valid_name(n) { return type(n) == 'string' && match(n, /^[a-z0-9][a-z0-9_-]{0,15}$/); }
+function valid_disk(d) { return type(d) == 'string' && match(d, /^sd[a-z]$/) && stat('/sys/block/' + d); }
+
+function lsblk() {
+	let r = sh('lsblk -J -b -o NAME,TYPE,SIZE,FSTYPE,LABEL,UUID,MOUNTPOINT,MODEL,SERIAL,TRAN,RM,ROTA');
+	let j = null;
+	try { j = json(r.out); } catch (e) { }
+	return j?.blockdevices ?? [];
+}
+
+function smart_read(disk, refresh) {
+	let cache = SMART_DIR + '/smart-' + disk + '.json';
+	let st = stat(cache);
+	if (!refresh && st && time() - st.mtime < SMART_MAX_AGE) {
+		let c = null;
+		try { c = json(readfile(cache)); } catch (e) { }
+		if (c) return c;
+	}
+	if (!refresh && !st)
+		return null;
+	// -n standby: do not wake a sleeping disk just for SMART
+	let r = sh('smartctl -j -n standby -H -A -i /dev/' + disk);
+	let j = null;
+	try { j = json(r.out); } catch (e) { }
+	if (!j)
+		return { error: 'no SMART data' };
+	if (j.smartctl?.exit_status == 2 && match(r.out, /standby|STANDBY|sleep/))
+		return { standby: true };
+	let attr = {};
+	for (let a in j.ata_smart_attributes?.table ?? [])
+		attr[a.id] = a.raw?.value;
+	let res = {
+		time: time(),
+		passed: j.smart_status?.passed,
+		temperature: j.temperature?.current,
+		power_on_hours: j.power_on_time?.hours,
+		power_cycles: j.power_cycle_count,
+		reallocated: attr[5],
+		pending: attr[197],
+		uncorrectable: attr[198],
+		model: j.model_name,
+		serial: j.serial_number,
+		firmware: j.firmware_version,
+		rpm: j.rotation_rate
+	};
+	system('mkdir -p ' + SMART_DIR);
+	writefile(cache, sprintf('%J', res));
+	return res;
+}
+
+function mdstat() {
+	let arrays = {};
+	let cur = null;
+	for (let line in split(readfile('/proc/mdstat') ?? '', '\n')) {
+		let m = match(line, /^(md[0-9]+) : (\S+) (\S+) (.*)$/);
+		if (m) {
+			cur = { name: m[1], state: m[2], level: m[3], members: map(split(trim(m[4]), ' '), (x) => replace(x, /\[[0-9]+\](\(.\))?/, '')) };
+			arrays[m[1]] = cur;
+			continue;
+		}
+		if (!cur) continue;
+		let h = match(line, /\[([0-9]+)\/([0-9]+)\] \[([U_]+)\]/);
+		if (h) { cur.disks = +h[1]; cur.active = +h[2]; cur.health = h[3]; }
+		let p = match(line, /(resync|recovery|check|reshape) *= *([0-9.]+)%.*finish=([0-9.]+min)/);
+		if (p) { cur.sync = { action: p[1], percent: +p[2], finish: p[3] }; }
+		let d = match(line, /(resync|recovery)=DELAYED/);
+		if (d) cur.sync = { action: d[1], percent: 0, delayed: true };
+	}
+	return arrays;
+}
+
+function storage_job() {
+	let j = {};
+	for (let line in split(readfile(SMART_DIR + '/job') ?? '', '\n')) {
+		let m = match(line, /^([a-z]+)=(.*)$/);
+		if (m) j[m[1]] = m[2];
+	}
+	if (j.state == 'running' && !stat(SMART_DIR + '/lock')) {
+		j.state = 'error';
+		j.error = j.error ?? 'job ended unexpectedly';
+	}
+	return length(j) ? j : null;
+}
+
+function volumes() {
+	let list = [];
+	let c = cursor();
+	let mounts = readfile('/proc/mounts') ?? '';
+	c.foreach('storage', 'volume', function(s) {
+		let name = s['.name'];
+		let dev = s.uuid ? trim(sh('blkid -U ' + shq(s.uuid)).out) : null;
+		let mp = '/mnt/' + name;
+		let mounted = index(mounts, ' ' + mp + ' ') >= 0;
+		let v = { name, uuid: s.uuid, fstype: s.fstype, layout: s.layout, enabled: s.enabled != '0',
+			device: dev && length(dev) ? dev : null, mountpoint: mp, mounted };
+		if (mounted) {
+			let f = split(trim(split(sh('df -k ' + shq(mp)).out, '\n')[1] ?? ''), /\s+/);
+			if (length(f) >= 4) { v.size = +f[1] * 1024; v.used = +f[2] * 1024; v.avail = +f[3] * 1024; }
+		}
+		push(list, v);
+	});
+	return list;
+}
+
+function spawn_storage(args) {
+	system(sprintf('start-stop-daemon -S -b -x %s -- %s', STORAGE, join(' ', map(args, shq))));
+	return { started: true };
+}
+
 return {
 	'shareos.system': {
 		info: {
@@ -297,6 +414,92 @@ return {
 				}
 				let r = sh(shq(script) + ' ' + act);
 				return { ok: r.rc == 0, output: trim(r.out), running: running(SERVICES[name].proc) };
+			}
+		}
+	},
+
+
+	'shareos.storage': {
+		status: {
+			call: function() {
+				let disks = [];
+				for (let d in lsblk()) {
+					if (d.type != 'disk' || !match(d.name, /^sd[a-z]$/)) continue;
+					d.smart = smart_read(d.name, false);
+					push(disks, d);
+				}
+				let c = cursor();
+				return {
+					disks,
+					arrays: mdstat(),
+					volumes: volumes(),
+					spindown: +(c.get('storage', 'global', 'spindown') ?? 0),
+					job: storage_job()
+				};
+			}
+		},
+
+		smart: {
+			args: { disk: '' },
+			call: function(req) {
+				if (!valid_disk(req.args.disk))
+					return { error: 'unknown disk' };
+				return smart_read(req.args.disk, true);
+			}
+		},
+
+		setup: {
+			// layout mirror: name + disks[2]; layout single: volumes [{name, disk}]
+			args: { layout: '', name: '', disks: [], volumes: [], confirm: false },
+			call: function(req) {
+				let a = req.args;
+				if (a.confirm !== true)
+					return { error: 'confirm must be true' };
+				let j = storage_job();
+				if (j?.state == 'running')
+					return { error: 'a storage job is already running' };
+				if (a.layout == 'mirror') {
+					if (!valid_name(a.name)) return { error: 'invalid name' };
+					if (type(a.disks) != 'array' || length(a.disks) != 2 || a.disks[0] == a.disks[1] ||
+					    !valid_disk(a.disks[0]) || !valid_disk(a.disks[1]))
+						return { error: 'a mirror needs two different disks' };
+					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], '--yes' ]);
+				}
+				if (a.layout == 'single') {
+					if (type(a.volumes) != 'array' || !length(a.volumes))
+						return { error: 'no disks given' };
+					let args = [ 'setup', 'single' ], seen = {};
+					for (let v in a.volumes) {
+						if (!valid_name(v?.name) || !valid_disk(v?.disk) || seen[v.name] || seen[v.disk])
+							return { error: 'invalid name or disk' };
+						seen[v.name] = seen[v.disk] = true;
+						push(args, v.name + '=' + v.disk);
+					}
+					push(args, '--yes');
+					return spawn_storage(args);
+				}
+				return { error: 'unknown layout' };
+			}
+		},
+
+		volume: {
+			args: { name: '', action: '' },
+			call: function(req) {
+				let n = req.args.name, act = req.args.action;
+				if (!valid_name(n)) return { error: 'invalid name' };
+				if (!(act in { mount: 1, umount: 1, forget: 1 })) return { error: 'unknown action' };
+				let r = sh(STORAGE + ' ' + act + ' ' + shq(n));
+				return r.rc == 0 ? { ok: true } : { error: trim(r.out) || act + ' failed' };
+			}
+		},
+
+		spindown: {
+			args: { minutes: 0 },
+			call: function(req) {
+				let m = +req.args.minutes;
+				if (m < 0 || m > 330) return { error: 'invalid value' };
+				let r = sh(STORAGE + ' spindown ' + m);
+				return r.rc == 0 ? { ok: true, minutes: m } : { error: trim(r.out) };
 			}
 		}
 	},

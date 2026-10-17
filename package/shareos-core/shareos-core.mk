@@ -13,6 +13,9 @@ SHAREOS_CORE_DEPENDENCIES = uci ubus ucode rpcd uhttpd libcurl alt-f-utils
 define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/shareos $(TARGET_DIR)/etc/config/shareos
 	$(INSTALL) -D -m 0600 $(@D)/etc/config/rpcd $(TARGET_DIR)/etc/config/rpcd
+	$(INSTALL) -D -m 0644 $(@D)/etc/config/storage $(TARGET_DIR)/etc/config/storage
+	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S20storage $(TARGET_DIR)/etc/init.d/S20storage
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-storage $(TARGET_DIR)/usr/sbin/shareos-storage
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S12ubus $(TARGET_DIR)/etc/init.d/S12ubus
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S13rpcd $(TARGET_DIR)/etc/init.d/S13rpcd
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S50uhttpd $(TARGET_DIR)/etc/init.d/S50uhttpd

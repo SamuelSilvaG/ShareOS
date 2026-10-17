@@ -164,6 +164,24 @@ function confirmDlg(title, text, okLabel, danger = false) {
 	});
 }
 
+function promptDlg(title, text, value, okLabel) {
+	return new Promise((resolve) => {
+		const d = document.createElement('dialog');
+		d.className = 'dlg';
+		d.innerHTML = html`<form method="dialog"><h3>${title}</h3><p>${text}</p>
+			<label class="f" style="margin-bottom:16px"><input name="v" value="${value}" maxlength="16" required></label>
+			<div class="acts"><button class="btn ghost" type="button" value="no">Abbrechen</button>
+			<button class="btn primary" type="submit" value="yes">${okLabel}</button></div></form>`.s;
+		$('#app').append(d);
+		let result = null;
+		$('button[value=no]', d).addEventListener('click', () => d.close());
+		$('form', d).addEventListener('submit', () => { result = $('input', d).value.trim(); });
+		d.addEventListener('close', () => { d.remove(); resolve(result); });
+		d.showModal();
+		$('input', d).select();
+	});
+}
+
 let coverEl = null;
 function cover(title, text) {
 	uncover();
@@ -238,7 +256,7 @@ async function tick() {
 		}
 		S.info = info;
 		renderHeader();
-		if (S.route.tab === 'uebersicht' || S.route.tab === 'speicher') renderMain();
+		if (S.route.tab === 'uebersicht') renderMain();
 	} catch (e) {
 		if (e.code === 'offline') renderHeader(true);
 	}
@@ -438,27 +456,7 @@ const VIEWS = {
 		</section>`;
 	},
 
-	speicher() {
-		const i = S.info;
-		if (!i) return html``;
-		return html`
-		<section class="sec">
-			<h2 class="gh">LAUFWERKE</h2>
-			${diskCards(i)}
-		</section>
-		<section class="sec">
-			<h2 class="gh">INTERNER FLASH <span>128 MB NAND · UBI</span></h2>
-			<div class="tw"><table class="t" style="min-width:560px">
-				<thead><tr><th>BEREICH</th><th>EINGEHÄNGT</th><th>BELEGT</th><th style="width:30%">AUSLASTUNG</th></tr></thead>
-				<tbody>${(i.filesystems || []).map((f) => html`<tr>
-					<td><b>${fsLabel[f.mount] || f.mount}</b><div class="mut" style="font-size:12px">${f.source}</div></td>
-					<td><code>${f.mount}</code></td>
-					<td>${fmtBytes(f.used)} / ${fmtBytes(f.size)}</td>
-					<td><div class="bar"><i class="${pct(f.used, f.size) > 90 ? 'crit' : pct(f.used, f.size) > 75 ? 'warn' : ''}" style="width:${pct(f.used, f.size).toFixed(0)}%"></i></div></td></tr>`)}
-				</tbody></table></div>
-		</section>
-		${planned('Speicherverwaltung', 'Phase 4', ['Partitionieren und Formatieren (ext4, Btrfs, exFAT, NTFS)', 'RAID 1 / 0 / JBOD mit mdadm', 'SMART-Werte und Selbsttests', 'Platten-Ruhezustand und Lüfter nach Plattentemperatur', 'Verschlüsselung (LUKS)'])}`;
-	},
+	speicher: () => storageView(),
 
 	freigaben: () => planned('Freigaben, Benutzer & Gruppen', 'Phase 4', ['Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA', 'Benutzer & Gruppen mit Rechten pro Freigabe', 'Netzlaufwerke einbinden (CIFS/NFS)', 'Backup-Jobs (rsync)'], I.folder),
 	apps: () => planned('Apps & Pakete', 'Phase 4', ['Paketquelle (opkg-Feed) über GitHub', 'Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange', 'Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte'], I.box),
@@ -504,6 +502,225 @@ async function loadServices() {
 		S.services = (await rpc('shareos.service', 'list')).services;
 		if (S.route.tab === 'dienste' || S.route.tab === 'uebersicht') renderMain();
 	} catch (e) { if (e.code !== 'auth') toast('Dienste: ' + e.message, true); }
+}
+
+
+/* ---------- storage (Speicher) ---------------------------------------------- */
+
+const LAYOUT_TXT = { mirror: 'Spiegel (RAID 1)', single: 'Einzelnes Laufwerk' };
+const SPINDOWN = [[0, 'nie'], [10, '10 Minuten'], [20, '20 Minuten'], [30, '30 Minuten'], [60, '1 Stunde'], [120, '2 Stunden']];
+
+function arrayOf(st, dev) {
+	const name = (dev || '').replace('/dev/', '');
+	return st?.arrays?.[name] || null;
+}
+
+function diskUse(st, d) {
+	// what is on a disk: ShareOS volume / RAID member / foreign file system / empty
+	const parts = d.children || [];
+	if (!parts.length && !d.fstype) return { empty: true, txt: 'leer' };
+	const txt = parts.map((p) => {
+		if (p.fstype === 'linux_raid_member') {
+			const md = (p.children || [])[0];
+			return `RAID-Mitglied${md ? ' von ' + md.name : ''}${p.label ? ' (' + p.label.replace(/^.*:/, '') + ')' : ''}`;
+		}
+		return [p.name, p.fstype || 'ohne Dateisystem', p.label, p.mountpoint ? '→ ' + p.mountpoint : ''].filter(Boolean).join(' · ');
+	});
+	return { empty: false, txt: txt.join(' | ') || d.fstype };
+}
+
+function smartLine(sm) {
+	if (!sm) return html`<span class="mut">SMART noch nicht gelesen</span>`;
+	if (sm.standby) return html`<span class="mut">schläft (SMART beim nächsten Aufwachen)</span>`;
+	if (sm.error) return html`<span class="mut">${sm.error}</span>`;
+	const bad = (sm.reallocated || 0) + (sm.pending || 0) + (sm.uncorrectable || 0);
+	return html`<span class="tag ${sm.passed === false || bad ? 'err' : 'ok'}">SMART ${sm.passed === false ? 'FEHLER' : bad ? 'WARNUNG' : 'OK'}</span>
+		${sm.temperature != null ? html` · ${sm.temperature} °C` : ''}
+		${sm.power_on_hours != null ? html` · ${Math.round(sm.power_on_hours / 24)} Tage Laufzeit` : ''}
+		${bad ? html` · <span style="color:var(--red)">${sm.reallocated || 0} umgelagert, ${sm.pending || 0} schwebend</span>` : ''}`;
+}
+
+function storageView() {
+	const st = S.storage, i = S.info || {};
+	if (!st) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Laufwerke …</span></div></div>`;
+	const job = st.job;
+	const running = job?.state === 'running';
+	return html`
+	${running ? html`<div class="banner" style="border-color:var(--dim)"><div class="spin" style="margin:0;width:20px;height:20px"></div><span><b>Einrichtung läuft</b> – ${job.step || ''}. Box nicht ausschalten.</span></div>` : ''}
+	${job?.state === 'error' ? html`<div class="banner">${svg(I.warn)}<span><b>Einrichtung fehlgeschlagen:</b> ${job.error}</span></div>` : ''}
+	${S.wiz ? wizardView(st) : ''}
+	<section class="sec">
+		<h2 class="gh">VOLUMES <span>${st.volumes.length ? st.volumes.length + ' eingerichtet' : 'noch keine'}</span></h2>
+		${st.volumes.length ? html`<div class="grid">${st.volumes.map((v) => volumeCard(st, v, running))}</div>`
+			: html`<div class="panel"><div class="empty">${svg(I.info)}<div><span>Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.</span>
+				<div class="acts" style="margin-top:12px">${S.wiz ? '' : html`<button class="btn primary" type="button" data-act="wiz-start" ${running || !st.disks.length ? 'disabled' : ''}>Speicher einrichten</button>`}</div></div></div></div>`}
+	</section>
+	<section class="sec">
+		<h2 class="gh">LAUFWERKE <span>${st.disks.length} erkannt</span></h2>
+		${st.disks.length ? html`<div class="grid">${st.disks.map((d) => diskCard(st, d, running))}</div>` : diskCards(i)}
+	</section>
+	<section class="sec">
+		<h2 class="gh">EINSTELLUNGEN</h2>
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">RUHEZUSTAND</span></div>
+				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>PLATTEN ABSCHALTEN NACH</span><select id="spindown">
+					${SPINDOWN.map(([m, t]) => html`<option value="${m}"${st.spindown === m ? raw(' selected') : ''}>${t}</option>`)}
+					${SPINDOWN.some(([m]) => m === st.spindown) ? '' : html`<option value="${st.spindown}" selected>${st.spindown} Minuten</option>`}
+				</select></label></div>
+				<p class="note">Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).</p>
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">NEU EINRICHTEN</span></div>
+				<p class="mut" style="margin:0 0 12px;font-size:13px">Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.</p>
+				<button class="btn" type="button" data-act="wiz-start" ${running || !st.disks.length || S.wiz ? 'disabled' : ''}>Assistent starten</button>
+			</div>
+		</div>
+	</section>
+	<section class="sec">
+		<h2 class="gh">INTERNER FLASH <span>128 MB NAND · UBI</span></h2>
+		<div class="tw"><table class="t" style="min-width:560px">
+			<thead><tr><th>BEREICH</th><th>EINGEHÄNGT</th><th>BELEGT</th><th style="width:30%">AUSLASTUNG</th></tr></thead>
+			<tbody>${(i.filesystems || []).map((f) => html`<tr>
+				<td><b>${fsLabel[f.mount] || f.mount}</b><div class="mut" style="font-size:12px">${f.source}</div></td>
+				<td><code>${f.mount}</code></td>
+				<td>${fmtBytes(f.used)} / ${fmtBytes(f.size)}</td>
+				<td><div class="bar"><i class="${pct(f.used, f.size) > 90 ? 'crit' : pct(f.used, f.size) > 75 ? 'warn' : ''}" style="width:${pct(f.used, f.size).toFixed(0)}%"></i></div></td></tr>`)}
+			</tbody></table></div>
+	</section>`;
+}
+
+function volumeCard(st, v, running) {
+	const md = arrayOf(st, v.device);
+	const degraded = md && md.health && md.health.includes('_');
+	const p = pct(v.used, v.size);
+	return html`<div class="card${v.mounted ? '' : ' off'}">
+		<div class="icon">${svg(I.disk)}<span class="dot ${!v.mounted ? 'down' : degraded ? 'warn' : 'up'}"></span></div>
+		<div class="info">
+			<div class="name">${v.name}</div>
+			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
+			${v.mounted ? html`<div class="bar" style="margin-top:10px"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}
+			${md ? html`<div class="desc" style="margin-top:8px">${md.name}: ${degraded ? html`<span style="color:var(--amber)">eine Platte fehlt (${md.health})</span>` : html`beide Platten aktiv (${md.health || '?'})`}</div>` : ''}
+			${md?.sync ? html`<div class="desc" style="margin-top:6px">${md.sync.action === 'resync' ? 'Erst-Synchronisierung' : md.sync.action === 'recovery' ? 'Wiederherstellung' : 'Prüfung'}: ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %' + (md.sync.finish ? ' · noch ' + fmtMin(md.sync.finish) : '')}</div>
+				<div class="bar" style="margin-top:6px"><i class="warn" style="width:${md.sync.percent}%"></i></div>` : ''}
+			<div class="ip">${v.mountpoint}${v.device ? ' · ' + v.device : ' · Dateisystem nicht gefunden'}</div>
+			<div class="acts" style="margin-top:12px">
+				${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
+					: html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="mount" ${running || !v.device ? 'disabled' : ''}>Einhängen</button>`}
+				<button class="btn sm ghost" type="button" data-act="vol" data-name="${v.name}" data-op="forget" ${running ? 'disabled' : ''}>Entfernen</button>
+			</div>
+		</div></div>`;
+}
+
+function fmtMin(s) {
+	const m = parseFloat(s);
+	if (!(m >= 0)) return s;
+	return m >= 90 ? `${(m / 60).toFixed(1).replace('.', ',')} h` : `${Math.round(m)} min`;
+}
+
+function diskCard(st, d, running) {
+	const use = diskUse(st, d);
+	const sm = d.smart;
+	return html`<div class="card">
+		<div class="icon">${svg(d.rm || d.tran === 'usb' ? I.usb : I.disk)}<span class="dot ${sm && !sm.standby && !sm.error && (sm.passed === false || sm.reallocated || sm.pending) ? 'warn' : 'up'}"></span></div>
+		<div class="info">
+			<div class="name">${d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</div>
+			<div class="desc">${d.model || 'unbekanntes Modell'} · ${fmtBytes(d.size)}${d.serial ? ' · ' + d.serial : ''}</div>
+			<div class="desc" style="margin-top:8px">${smartLine(sm)}</div>
+			<div class="ip">${use.txt}</div>
+			<div class="acts" style="margin-top:12px">
+				<button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
+				<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button>
+			</div>
+		</div></div>`;
+}
+
+/* --- setup wizard --- */
+
+function wizardView(st) {
+	const w = S.wiz;
+	const disks = st.disks.filter((d) => !d.rm && d.tran !== 'usb');
+	const chosen = st.disks.filter((d) => w.disks.includes(d.name));
+	const steps = ['Platten', 'Aufbau', 'Name', 'Bestätigen'];
+	const smallest = Math.min(...chosen.map((d) => d.size));
+	let body;
+	if (w.step === 0) {
+		body = html`<p class="mut" style="margin:0 0 12px;font-size:13px">Welche Platten sollen eingerichtet werden? <b style="color:var(--amber)">Alles auf diesen Platten wird gelöscht.</b></p>
+			<div style="display:grid;gap:8px">${(disks.length ? disks : st.disks).map((d) => { const u = diskUse(st, d); return html`
+				<label class="chk" style="align-items:flex-start"><input type="checkbox" class="wiz-disk" value="${d.name}"${w.disks.includes(d.name) ? raw(' checked') : ''}>
+				<span><b>${d.name}</b> · ${d.model || ''} · ${fmtBytes(d.size)}<br><span class="mut" style="font-size:12px">${u.empty ? 'leer' : 'enthält: ' + u.txt}</span></span></label>`; })}</div>`;
+	} else if (w.step === 1) {
+		const two = chosen.length === 2;
+		const opts = two
+			? [['mirror', 'Spiegel (RAID 1) – empfohlen', `Beide Platten enthalten dieselben Daten. Fällt eine aus, ist nichts verloren. Nutzbar: ${fmtBytes(smallest)}.`],
+				['single', 'Zwei getrennte Laufwerke', `Doppelter Platz (${fmtBytes(chosen.reduce((a, d) => a + d.size, 0))}), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk.`]]
+			: [['single', 'Einzelnes Laufwerk', `Die Platte wird ein Laufwerk mit ${fmtBytes(chosen[0]?.size)}. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten.`]];
+		if (!opts.some((o) => o[0] === w.layout)) w.layout = opts[0][0];
+		body = html`<div style="display:grid;gap:10px">${opts.map(([id, t, d]) => html`
+			<label class="panel" style="cursor:pointer;display:flex;gap:12px;align-items:flex-start;${w.layout === id ? 'border-color:var(--accent);box-shadow:var(--glow)' : ''}">
+				<input type="radio" name="wiz-layout" value="${id}"${w.layout === id ? raw(' checked') : ''} style="margin-top:4px;accent-color:var(--accent)">
+				<span><b class="name" style="font-size:14px">${t}</b><br><span class="mut" style="font-size:12px">${d}</span></span></label>`)}</div>`;
+	} else if (w.step === 2) {
+		const fields = w.layout === 'mirror' ? [['__mirror', 'NAME DES SPIEGELS']] : chosen.map((d) => [d.name, `NAME FÜR ${d.name.toUpperCase()} (${fmtBytes(d.size)})`]);
+		body = html`<div class="fields">${fields.map(([k, l]) => html`<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>`)}</div>
+			<p class="note">Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als <code>/mnt/&lt;name&gt;</code>; Freigaben legst du später darauf an.</p>`;
+	} else {
+		const vols = w.layout === 'mirror' ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(smallest)]]
+			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size)]);
+		body = html`<div class="tw"><table class="t" style="min-width:420px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th></tr></thead>
+			<tbody>${vols.map(([n, ds, sz]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td></tr>`)}</tbody></table></div>
+			<p class="note" style="color:var(--amber)">Beim Klick auf „Einrichten“ werden ${chosen.map((d) => d.name).join(' und ')} vollständig gelöscht.${w.layout === 'mirror' ? ' Die Erst-Synchronisierung läuft danach im Hintergrund (bei großen Platten mehrere Stunden); das Laufwerk ist sofort nutzbar.' : ''}</p>`;
+	}
+	return html`<section class="sec"><div class="panel" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">SPEICHER EINRICHTEN · ASSISTENT</span><button class="btn sm ghost ml" type="button" data-act="wiz-cancel">Abbrechen</button></div>
+		<div class="steps" style="margin-bottom:16px">${steps.map((n, k) => html`<div class="step ${k < w.step ? 'done' : k === w.step ? 'act' : ''}"><div class="n">${k + 1}${k < w.step ? ' ✓' : ''}</div>${n}</div>`)}</div>
+		${body}
+		<div class="acts" style="margin-top:16px;justify-content:space-between">
+			<button class="btn ghost" type="button" data-act="wiz-back" ${w.step === 0 ? 'disabled' : ''}>Zurück</button>
+			${w.step < 3 ? html`<button class="btn primary" type="button" data-act="wiz-next">Weiter</button>`
+				: html`<button class="btn danger" type="button" data-act="wiz-run">Einrichten</button>`}
+		</div></div></section>`;
+}
+
+function wizardCollect() {
+	const w = S.wiz;
+	if (!w) return;
+	if (w.step === 0) w.disks = [...document.querySelectorAll('.wiz-disk:checked')].map((x) => x.value);
+	if (w.step === 1) w.layout = $('input[name=wiz-layout]:checked')?.value || w.layout;
+	if (w.step === 2) document.querySelectorAll('.wiz-name').forEach((x) => { w.names[x.dataset.k] = x.value.trim().toLowerCase(); });
+}
+
+const NAME_RE = /^[a-z0-9][a-z0-9_-]{0,15}$/;
+
+function wizardCheck() {
+	const w = S.wiz, st = S.storage;
+	if (w.step === 0) {
+		if (!w.disks.length) return 'Bitte mindestens eine Platte auswählen.';
+		if (w.disks.length > 2) return 'Höchstens zwei Platten.';
+	}
+	if (w.step === 2) {
+		const keys = w.layout === 'mirror' ? ['__mirror'] : w.disks;
+		const names = keys.map((k) => w.names[k] || '');
+		if (names.some((n) => !NAME_RE.test(n))) return 'Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.';
+		if (new Set(names).size !== names.length) return 'Die Namen müssen verschieden sein.';
+		const taken = st.volumes.filter((v) => !(v.device || '').match(new RegExp('/dev/(' + w.disks.join('|') + ')|/dev/md'))).map((v) => v.name);
+		const clash = names.find((n) => taken.includes(n));
+		if (clash) return `Der Name „${clash}“ ist schon vergeben.`;
+	}
+	return null;
+}
+
+async function loadStorage() {
+	clearTimeout(S.stTimer);
+	S.stActive = true;
+	try {
+		S.storage = await rpc('shareos.storage', 'status');
+		if (S.route.tab === 'speicher' && !(S.wiz && S.wiz.step === 2) && !document.activeElement?.matches('select')) renderMain();
+		const busy = S.storage.job?.state === 'running' || Object.values(S.storage.arrays || {}).some((a) => a.sync);
+		if (S.route.tab === 'speicher') S.stTimer = setTimeout(loadStorage, busy ? 3000 : 15000);
+	} catch (e) {
+		if (e.code !== 'auth') { toast('Speicher: ' + e.message, true); S.stTimer = setTimeout(loadStorage, 15000); }
+	}
 }
 
 /* ---------- system sub pages ------------------------------------------------ */
@@ -697,6 +914,13 @@ const VIEWS_AFTER = {
 			});
 		}
 	},
+	speicher() {
+		if (!S.stActive) loadStorage();
+		$('#spindown')?.addEventListener('change', async (e) => {
+			try { await rpc('shareos.storage', 'spindown', { minutes: +e.target.value }); toast('Ruhezustand gespeichert.'); }
+			catch (err) { toast('Ruhezustand: ' + err.message, true); }
+		});
+	},
 	dienste() { if (!S.services) loadServices(); },
 	uebersicht() { if (!S.services) loadServices(); }
 };
@@ -752,6 +976,55 @@ const ACTIONS = {
 	logout,
 	accent(el) { S.accent = el.dataset.c; store.set('accent', S.accent); applyTheme(); renderMain(); },
 	check() { checkUpdates(); },
+	'wiz-start'() {
+		const disks = (S.storage?.disks || []).filter((d) => !d.rm && d.tran !== 'usb').map((d) => d.name);
+		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', names: { __mirror: 'daten' } };
+		renderMain();
+		window.scrollTo(0, 0);
+	},
+	'wiz-cancel'() { S.wiz = null; renderMain(); },
+	'wiz-back'() { wizardCollect(); S.wiz.step--; renderMain(); },
+	'wiz-next'() {
+		wizardCollect();
+		const err = wizardCheck();
+		if (err) { toast(err, true); return; }
+		const w = S.wiz;
+		if (w.step === 1 && w.layout === 'single') w.disks.forEach((d, k) => { if (!w.names[d]) w.names[d] = k ? 'daten' + (k + 1) : 'daten'; });
+		w.step++;
+		renderMain();
+	},
+	async 'wiz-run'() {
+		const w = S.wiz;
+		if (!await confirmDlg('Platten löschen und einrichten?', `${w.disks.join(' und ')} werden vollständig gelöscht. Das lässt sich nicht rückgängig machen.`, 'Löschen & einrichten', true)) return;
+		const args = w.layout === 'mirror'
+			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, confirm: true }
+			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d })), confirm: true };
+		try { await rpc('shareos.storage', 'setup', args); S.wiz = null; toast('Einrichtung gestartet.'); setTimeout(loadStorage, 1000); }
+		catch (e) { toast('Einrichten: ' + e.message, true); }
+	},
+	async format(el) {
+		const disk = el.dataset.disk;
+		const d = S.storage.disks.find((x) => x.name === disk);
+		const name = ((await promptDlg(`${disk} formatieren`, 'Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):', 'daten', 'Weiter')) || '').toLowerCase();
+		if (!name) return;
+		if (!NAME_RE.test(name)) { toast('Ungültiger Name.', true); return; }
+		if (!await confirmDlg(`${disk} löschen?`, `${disk} (${d?.model || ''}, ${fmtBytes(d?.size)}) wird vollständig gelöscht und als Laufwerk „${name}“ neu eingerichtet.`, 'Löschen & formatieren', true)) return;
+		try { await rpc('shareos.storage', 'setup', { layout: 'single', volumes: [{ name, disk }], confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
+		catch (e) { toast('Formatieren: ' + e.message, true); }
+	},
+	async smart(el) {
+		el.disabled = true;
+		try { await rpc('shareos.storage', 'smart', { disk: el.dataset.disk }); } catch (e) { toast('SMART: ' + e.message, true); }
+		loadStorage();
+	},
+	async vol(el) {
+		const { name, op } = el.dataset;
+		if (op === 'forget' && !await confirmDlg(`„${name}“ entfernen?`, 'Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.', 'Entfernen')) return;
+		try { await rpc('shareos.storage', 'volume', { name, action: op }); toast(`${name}: ${op === 'mount' ? 'eingehängt' : op === 'umount' ? 'ausgehängt' : 'entfernt'}`); }
+		catch (e) { toast(`${name}: ${e.message}`, true); }
+		loadStorage();
+	},
+
 	log() { loadLog(); },
 
 	async svc(el) {
@@ -811,9 +1084,14 @@ document.addEventListener('click', (e) => {
 	if (fn) { e.preventDefault(); fn(el); }
 });
 
+document.addEventListener('change', (e) => {
+	if (e.target.name === 'wiz-layout' && S.wiz) { wizardCollect(); renderMain(); }
+});
+
 window.addEventListener('hashchange', () => {
 	if (!S.sid || !$('#main')) return;
 	parseRoute();
+	if (S.route.tab !== 'speicher') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
 	renderTabs();
 	renderMain();
 	window.scrollTo(0, 0);

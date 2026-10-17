@@ -1,0 +1,276 @@
+#!/bin/sh
+#
+# shareos-storage – disks, RAID and volumes for ShareOS
+#
+#   shareos-storage boot | shutdown            (S20storage)
+#   shareos-storage setup mirror <name> <disk> <disk> --yes
+#   shareos-storage setup single <name>=<disk> [<name>=<disk>] --yes
+#                                              erase the disks and create volumes
+#   shareos-storage mount <name> | umount <name>
+#   shareos-storage forget <name>              unmount and remove from the config
+#   shareos-storage spindown <minutes>         0 = never
+#   shareos-storage job                        state of the last setup job
+#
+# Disks are given as sda, sdb, ... (whole disks). Volumes are ext4, mounted
+# at /mnt/<name> and stored in /etc/config/storage (UCI). Names: a-z, 0-9,
+# - and _, at most 16 characters (ext4 label limit).
+#
+# setup erases everything on the given disks – it refuses without --yes.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+JOBDIR=/tmp/shareos-storage
+JOB=$JOBDIR/job
+MDCONF=/etc/mdadm.conf
+
+log() { logger -t shareos-storage "$*"; echo "$*"; }
+die() { log "ERROR: $*"; job_set state error error "$*"; exit 1; }
+
+# --- job state (read by the rpcd plugin) ---------------------------------------
+job_set() {
+	[ -n "$IN_JOB" ] || return 0
+	while [ $# -ge 2 ]; do
+		grep -v "^$1=" $JOB > $JOB.tmp 2>/dev/null
+		echo "$1=$2" >> $JOB.tmp
+		mv $JOB.tmp $JOB
+		shift 2
+	done
+}
+job_start() {
+	mkdir -p $JOBDIR
+	if ! mkdir $JOBDIR/lock 2>/dev/null; then
+		echo "another storage job is running" >&2; exit 1
+	fi
+	trap 'rmdir $JOBDIR/lock 2>/dev/null' EXIT
+	IN_JOB=1
+	printf 'state=running\nstarted=%s\naction=%s\n' "$(date +%s)" "$*" > $JOB
+}
+step() { log "$*"; job_set step "$*"; }
+
+valid_name() { echo "$1" | grep -qE '^[a-z0-9][a-z0-9_-]{0,15}$'; }
+# SHAREOS_STORAGE_DISKS: other disk names for tests (e.g. 'loop[0-9]+')
+valid_disk() { echo "$1" | grep -qE "^(sd[a-z]${SHAREOS_STORAGE_DISKS:+|$SHAREOS_STORAGE_DISKS})\$" && [ -e /sys/block/$1 ]; }
+part1() { case "$1" in *[0-9]) echo /dev/${1}p1 ;; *) echo /dev/${1}1 ;; esac; }
+
+volume_dev() {   # name -> block device of the file system (by UUID)
+	u=$(uci -q get storage.$1.uuid) || return 1
+	blkid -U "$u" 2>/dev/null
+}
+
+is_mounted() { grep -q " $1 " /proc/mounts; }
+
+mount_volume() {
+	n=$1
+	[ "$(uci -q get storage.$n)" = volume ] || { echo "unknown volume $n" >&2; return 1; }
+	is_mounted /mnt/$n && return 0
+	dev=$(volume_dev $n) || { log "volume $n: file system not found"; return 1; }
+	fs=$(uci -q get storage.$n.fstype || echo ext4)
+	# a quick check only fixes what is safe to fix; a dirty file system is still mounted
+	[ "$fs" = ext4 ] && e2fsck -p "$dev" >/dev/null 2>&1
+	mkdir -p /mnt/$n
+	mount -t "$fs" -o noatime "$dev" /mnt/$n || { log "volume $n: mount failed"; return 1; }
+	log "volume $n mounted ($dev)"
+}
+
+umount_volume() {
+	is_mounted /mnt/$1 || return 0
+	sync
+	umount /mnt/$1 2>/dev/null || umount -l /mnt/$1 || return 1
+	log "volume $1 unmounted"
+}
+
+write_mdconf() {
+	{
+		echo "# written by shareos-storage"
+		echo "DEVICE partitions"
+		echo "HOMEHOST <ignore>"
+		mdadm --detail --scan 2>/dev/null
+	} > $MDCONF
+}
+
+# minutes -> hdparm -S value
+spindown_value() {
+	m=$1
+	if [ "$m" -le 0 ]; then echo 0
+	elif [ "$m" -le 20 ]; then echo $((m * 12))
+	else v=$((240 + (m + 29) / 30)); [ $v -gt 251 ] && v=251; echo $v
+	fi
+}
+
+apply_spindown() {
+	m=$(uci -q get storage.global.spindown || echo 0)
+	v=$(spindown_value "$m")
+	for d in /sys/block/sd?; do
+		[ -e "$d" ] || continue
+		[ "$(cat $d/removable 2>/dev/null)" = 1 ] && continue
+		hdparm -q -S "$v" /dev/${d##*/} 2>/dev/null
+	done
+}
+
+# stop everything ShareOS uses on a disk before it is erased
+release_disk() {
+	disk=$1
+	for n in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
+		dev=$(volume_dev $n)
+		[ -n "$dev" ] || continue
+		base=${dev#/dev/}
+		on_disk=0
+		case "$base" in
+			$disk*) on_disk=1 ;;
+			md*) ls /sys/block/$base/slaves 2>/dev/null | grep -q "^$disk" && on_disk=1 ;;
+		esac
+		if [ $on_disk = 1 ]; then
+			umount_volume $n || die "volume $n on $disk is busy"
+			uci delete storage.$n
+		fi
+	done
+	uci commit storage
+	# arrays that use a partition of this disk
+	for md in /sys/block/md*; do
+		[ -e "$md/slaves" ] || continue
+		if ls $md/slaves | grep -q "^$disk"; then
+			grep -q "^/dev/${md##*/} " /proc/mounts && umount /dev/${md##*/}
+			mdadm --stop /dev/${md##*/} >/dev/null 2>&1
+		fi
+	done
+	# any other mount of this disk (e.g. mounted by hand)
+	grep "^/dev/$disk" /proc/mounts | while read dev mp rest; do umount "$mp" || umount -l "$mp"; done
+	for p in /dev/${disk}[0-9]*; do
+		[ -e "$p" ] && mdadm --zero-superblock "$p" >/dev/null 2>&1
+	done
+}
+
+partition() {   # disk type(L|R) -> one GPT partition over the whole disk
+	disk=$1
+	wipefs -q -a /dev/$disk || die "wipefs $disk failed"
+	printf 'label: gpt\n,,%s\n' "$2" | sfdisk -q --wipe always --wipe-partitions always /dev/$disk >/dev/null \
+		|| die "partitioning $disk failed"
+	p=$(part1 $disk)
+	i=0
+	while [ ! -b $p ] && [ $i -lt 20 ]; do sleep 0.5; i=$((i + 1)); done
+	[ -b $p ] || die "partition $p did not appear"
+	wipefs -q -a $p
+}
+
+make_fs() {   # dev name
+	step "creating file system on $1"
+	mkfs.ext4 -F -q -L "$2" -m 1 -E lazy_itable_init=1,lazy_journal_init=1 "$1" || die "mkfs on $1 failed"
+}
+
+add_volume() {   # name dev layout
+	uuid=$(blkid -s UUID -o value "$2")
+	[ -n "$uuid" ] || die "no UUID on $2"
+	uci -q delete storage.$1
+	uci set storage.$1=volume
+	uci set storage.$1.uuid="$uuid"
+	uci set storage.$1.fstype=ext4
+	uci set storage.$1.layout="$3"
+	uci set storage.$1.enabled=1
+	uci commit storage
+	mount_volume $1 || die "mounting $1 failed"
+}
+
+free_md() {
+	i=0
+	while [ -e /sys/block/md$i ]; do i=$((i + 1)); done
+	echo /dev/md$i
+}
+
+# --- commands ---------------------------------------------------------------------
+cmd_setup() {
+	layout=$1; shift
+	yes=0; args=
+	for a; do [ "$a" = --yes ] && yes=1 || args="$args $a"; done
+	[ $yes = 1 ] || { echo "setup erases the disks – add --yes" >&2; exit 2; }
+	set -- $args
+	job_start "setup $layout $*"
+
+	case "$layout" in
+	mirror)
+		name=$1 d1=$2 d2=$3
+		valid_name "$name" || die "invalid name '$name'"
+		valid_disk "$d1" && valid_disk "$d2" && [ "$d1" != "$d2" ] || die "mirror needs two different disks"
+		uci -q get storage.$name >/dev/null && [ "$(uci -q get storage.$name)" = volume ] && \
+			{ dev=$(volume_dev $name); case "$dev" in /dev/$d1*|/dev/$d2*|/dev/md*) ;; *) die "volume $name exists" ;; esac; }
+		step "preparing $d1 and $d2"
+		release_disk $d1; release_disk $d2
+		step "partitioning $d1"; partition $d1 R
+		step "partitioning $d2"; partition $d2 R
+		md=$(free_md)
+		step "creating mirror $md"
+		mdadm --create $md --run --quiet --level=1 --raid-devices=2 --metadata=1.2 \
+			--name="$name" --bitmap=internal $(part1 $d1) $(part1 $d2) || die "mdadm --create failed"
+		write_mdconf
+		make_fs $md "$name"
+		add_volume "$name" $md mirror
+		;;
+	single)
+		[ $# -ge 1 ] || die "no disks given"
+		for v; do
+			n=${v%%=*} d=${v#*=}
+			valid_name "$n" || die "invalid name '$n'"
+			valid_disk "$d" || die "invalid disk '$d'"
+		done
+		for v; do
+			n=${v%%=*} d=${v#*=}
+			step "preparing $d"
+			release_disk $d
+			step "partitioning $d"; partition $d L
+			make_fs $(part1 $d) "$n"
+			add_volume "$n" $(part1 $d) single
+		done
+		write_mdconf
+		;;
+	*) die "unknown layout '$layout' (mirror|single)" ;;
+	esac
+	apply_spindown
+	job_set state done step "finished"
+	log "setup finished"
+}
+
+cmd_boot() {
+	if [ -s $MDCONF ]; then
+		mdadm --assemble --scan --config=$MDCONF >/dev/null 2>&1
+	else
+		mdadm --assemble --scan >/dev/null 2>&1
+	fi
+	rc=0
+	for n in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
+		[ "$(uci -q get storage.$n.enabled)" = 0 ] && continue
+		mount_volume $n || rc=1
+	done
+	apply_spindown
+	return $rc
+}
+
+cmd_shutdown() {
+	for n in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
+		umount_volume $n
+	done
+	mdadm --stop --scan >/dev/null 2>&1
+	return 0
+}
+
+case "$1" in
+	boot) cmd_boot ;;
+	shutdown) cmd_shutdown ;;
+	setup) shift; cmd_setup "$@" ;;
+	mount)
+		valid_name "$2" || exit 2
+		uci set storage.$2.enabled=1 && uci commit storage
+		mount_volume "$2" ;;
+	umount)
+		valid_name "$2" || exit 2
+		umount_volume "$2" || { echo "volume $2 is busy" >&2; exit 1; }
+		uci set storage.$2.enabled=0 && uci commit storage ;;
+	forget)
+		valid_name "$2" || exit 2
+		umount_volume "$2" || { echo "volume $2 is busy" >&2; exit 1; }
+		uci -q delete storage.$2; uci commit storage
+		rmdir /mnt/$2 2>/dev/null; true ;;
+	spindown)
+		echo "$2" | grep -qE '^[0-9]+$' || exit 2
+		uci set storage.global.spindown="$2" && uci commit storage
+		apply_spindown ;;
+	job) cat $JOB 2>/dev/null ;;
+	*) sed -n '3,19s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac
