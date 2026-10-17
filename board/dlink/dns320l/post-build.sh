@@ -27,3 +27,7 @@ install -D -m 0755 "$BOARD_DIR/initramfs/usr/sbin/shareos-install-ubi" "$TARGET_
 # Nothing in the test system needs these
 rm -rf "$TARGET_DIR/usr/share/man" "$TARGET_DIR/usr/share/doc" \
 	"$TARGET_DIR/usr/lib/pkgconfig" "$TARGET_DIR/usr/include"
+
+# clean UBIFS overlay on shutdown (runs after rcK, before umount -a)
+grep -q shareos-shutdown "$TARGET_DIR/etc/inittab" || \
+	sed -i 's|^::shutdown:/sbin/swapoff -a|&\n::shutdown:/usr/sbin/shareos-shutdown|' "$TARGET_DIR/etc/inittab"
