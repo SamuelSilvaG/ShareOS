@@ -166,7 +166,9 @@ function applyTheme() {
 	const app = $('#app');
 	app.className = 'sos acc-' + S.accent + (effTheme() === 'light' ? ' light' : '');
 	$('.scan', app).hidden = !S.scan;
-	document.body.style.background = getComputedStyle(app).getPropertyValue('--bg');
+	const bg = getComputedStyle(app).getPropertyValue('--bg').trim();
+	document.body.style.background = bg;
+	$('meta[name=theme-color]')?.setAttribute('content', bg || '#1b2433');
 	tintFavicon();
 }
 
@@ -1032,8 +1034,7 @@ function cloudSection(scope) {
 			</div>
 			<div class="panel">
 				<div class="ph"><span class="pt">HINWEISE</span></div>
-				<p class="mut" style="margin:0;font-size:13px;line-height:1.6">Zugangsdaten bleiben verschlüsselt auf der Box${scope === 'me' ? ' in deinem persönlichen Ordner' : ''}. Für Google Drive, OneDrive oder Dropbox auf dem PC <code>rclone config</code> ausführen und den fertigen Abschnitt hier einfügen.
-				Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie <code>2M</code> hält das Netz frei.${scope === 'me' ? ' Was du herunterlädst, zählt zu deinem Speicherlimit.' : ''}</p>
+				<p class="mut" style="margin:0;font-size:13px;line-height:1.6">Zugangsdaten bleiben verschlüsselt auf der Box${scope === 'me' ? ' in deinem persönlichen Ordner' : ''}. Für Google Drive, OneDrive oder Dropbox auf dem PC <code>rclone config</code> ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie <code>2M</code> hält das Netz frei.${scope === 'me' ? ' Was du herunterlädst, zählt zu deinem Speicherlimit.' : ''}</p>
 			</div>
 		</div>
 		${re ? remoteEditor(scope, re) : ''}
@@ -1637,7 +1638,9 @@ const SYS = {
 				<div id="restore-preview"></div>
 				<div class="acts" style="margin-top:12px"><button class="btn" type="submit">Prüfen</button></div>
 			</form>
-		</div>`;
+		</div>
+		<h2 class="gh" style="margin-top:22px">APP & WIDGETS</h2>
+		<div class="g2">${appPanel()}${widgetPanel()}</div>`;
 	},
 
 	hardware() {
@@ -1894,6 +1897,18 @@ const VIEWS_AFTER = {
 		}
 
 		if (sub === 'allgemein') {
+			if (!S.widget) loadWidget();
+			$('#app-install')?.addEventListener('click', async () => {
+				const ev = S.installEvt; if (!ev) return;
+				ev.prompt();
+				try { await ev.userChoice; } catch (e) { }
+				S.installEvt = null; renderMain();
+			});
+			$('#opt-widget')?.addEventListener('change', (e) => widgetSet({ enabled: e.target.checked }));
+			$('#widget-renew')?.addEventListener('click', async () => {
+				if (await confirmDlg('Neuen Schlüssel erzeugen?', 'Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.', 'Erzeugen', true)) widgetSet({ renew: true });
+			});
+			$('#widget-copy')?.addEventListener('click', () => copyText($('#widget-url').value));
 			$('#f-host').addEventListener('submit', async (e) => {
 				e.preventDefault();
 				try { await rpc('shareos.system', 'set_hostname', { hostname: e.target.hostname.value.trim() }); toast('Hostname gespeichert.'); tick(); }
@@ -2261,6 +2276,66 @@ function frEnd(next) {
 	S.info = null; tick();
 	if (next === 'storage') { S.wizAfterLoad = true; location.hash = '#/speicher'; }
 	else { location.hash = '#/uebersicht'; renderMain(); }
+}
+
+/* ---------- app (PWA) & widget status ---------- */
+
+// Chrome/Edge offer the install only over HTTPS with a trusted certificate
+window.addEventListener('beforeinstallprompt', (e) => {
+	e.preventDefault();
+	S.installEvt = e;
+	if (S.route?.tab === 'system' && S.route.sub === 'allgemein') renderMain();
+});
+window.addEventListener('appinstalled', () => { S.installEvt = null; toast('ShareOS ist als App installiert.'); });
+
+function appPanel() {
+	const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+	let state, note;
+	if (standalone) { state = html`<span class="tag ok ml">läuft als App</span>`; note = 'Diese Oberfläche läuft gerade als installierte App.'; }
+	else if (S.installEvt) { state = html`<span class="tag ok ml">bereit</span>`; note = 'Der Browser kann ShareOS als App mit eigenem Symbol installieren.'; }
+	else if (!window.isSecureContext) { state = html`<span class="tag ml">nur über HTTPS</span>`; note = html`Browser installieren Web-Apps nur über <b>HTTPS mit einem vertrauenswürdigen Zertifikat</b> (z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur <b>„Zum Startbildschirm hinzufügen“</b> – das legt ein Lesezeichen-Symbol an.`; }
+	else { state = html`<span class="tag ml">über das Browsermenü</span>`; note = html`Im Browsermenü <b>„App installieren“</b> bzw. <b>„Zum Startbildschirm hinzufügen“</b> wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.`; }
+	return html`<div class="panel">
+		<div class="ph"><span class="pt">ALS APP INSTALLIEREN</span>${state}</div>
+		<p class="note" style="margin-top:0">${note}</p>
+		<p class="note">Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle <b>Übersicht, Speicher, Freigaben, Firmware</b>. Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.</p>
+		${S.installEvt ? html`<div class="acts" style="margin-top:12px"><button class="btn primary" type="button" id="app-install">${svg(I.dl)}Als App installieren</button></div>` : ''}
+	</div>`;
+}
+
+function widgetUrl() {
+	return S.widget?.token ? location.origin + '/cgi-bin/status?token=' + S.widget.token : '';
+}
+
+function widgetPanel() {
+	const w = S.widget;
+	if (!w) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	return html`<div class="panel">
+		<div class="ph"><span class="pt">STATUS FÜR WIDGETS</span><span class="tag ml${w.enabled ? ' ok' : ''}">${w.enabled ? 'an' : 'aus'}</span></div>
+		<label class="chk"><input type="checkbox" id="opt-widget"${w.enabled ? raw(' checked') : ''}>Status-Adresse einschalten</label>
+		${w.enabled && w.token ? html`<div class="fields" style="grid-template-columns:1fr;margin-top:12px"><label class="f"><span>ADRESSE (GEHEIM HALTEN)</span><input id="widget-url" readonly value="${widgetUrl()}" style="font-family:var(--mono);font-size:12px"></label></div>
+			<div class="acts" style="margin-top:10px"><button class="btn sm" type="button" id="widget-copy">Kopieren</button><button class="btn sm ghost" type="button" id="widget-renew">Neuer Schlüssel</button><a class="btn sm ghost" href="${widgetUrl()}" target="_blank" rel="noopener">Öffnen ↗</a></div>` : ''}
+		<p class="note">Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (<code>ok</code>, <code>alerts</code>). Gedacht für Widget-Apps wie <b>KWGT</b> (Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.</p>
+	</div>`;
+}
+
+async function loadWidget() {
+	try { S.widget = await rpc('shareos.widget', 'get'); } catch (e) { S.widget = { enabled: false, token: '' }; }
+	if (S.route.tab === 'system' && S.route.sub === 'allgemein') renderMain();
+}
+
+async function widgetSet(a) {
+	try { S.widget = await rpc('shareos.widget', 'set', a); toast(a.renew ? 'Neuer Schlüssel erzeugt.' : a.enabled ? 'Status-Adresse eingeschaltet.' : 'Status-Adresse ausgeschaltet.'); }
+	catch (e) { toast('Widgets: ' + e.message, true); }
+	renderMain();
+}
+
+async function copyText(t) {
+	try { await navigator.clipboard.writeText(t); toast('Kopiert.'); }
+	catch (e) {
+		const i = $('#widget-url'); i?.select();
+		try { document.execCommand('copy'); toast('Kopiert.'); } catch (e2) { toast('Bitte die Adresse selbst markieren und kopieren.', true); }
+	}
 }
 
 async function loadWeb() {
@@ -2645,6 +2720,11 @@ setInterval(() => {
 }, 10000);
 
 /* ---------- start ----------------------------------------------------------- */
+
+// installable as an app (PWA) – browsers allow this only over HTTPS with a
+// trusted certificate (or on localhost); plain http just skips it
+if ('serviceWorker' in navigator && window.isSecureContext)
+	navigator.serviceWorker.register('sw.js').catch(() => {});
 
 (async function start() {
 	LANG = await loadUiSettings();

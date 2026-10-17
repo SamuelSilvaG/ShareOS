@@ -583,7 +583,146 @@
 		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "The settings are restored. Restart now so that everything applies?",
 		"Verschlüsselte Sicherung heruntergeladen.": "Encrypted backup downloaded.",
 		"Sicherung heruntergeladen.": "Backup downloaded.",
-		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "The backup is encrypted – please enter the password."
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "The backup is encrypted – please enter the password.",
+		"ADRESSE VON PAPERLESS": "PAPERLESS ADDRESS",
+		"PRÜFEN ALLE": "CHECK EVERY",
+		"NACH DEM HOCHLADEN": "AFTER UPLOAD",
+		"Datei löschen": "Delete file",
+		"aufheben (.paperless/done)": "keep (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "Send inbox folders automatically",
+		"Jetzt übertragen": "Send now",
+		"SO FUNKTIONIERT ES": "HOW IT WORKS",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "Create an API token in Paperless for each inbox (Profile → API token). The documents then belong to that Paperless user.",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "Put files (PDF, images, Office) into the inbox folder – from a PC or straight from the scanner.",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS uploads them through the Paperless API and shows whether Paperless accepted them.",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "Personal inboxes live in the personal folder (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": "); users can also enter their token themselves under “My ShareOS”. Shared inboxes use a share, e.g. for a scanner.",
+		"EINGÄNGE": "INBOXES",
+		"übernommen": "accepted",
+		"wird verarbeitet": "processing",
+		"Fehler": "Error",
+		"Protokoll": "Log",
+		"nichts wartend": "nothing waiting",
+		"Neuer Eingang": "New inbox",
+		"NEUER EINGANG": "NEW INBOX",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "personal (folder “Paperless” in the personal folder)",
+		"gemeinsam (Ordner einer Freigabe)": "shared (folder of a share)",
+		"API-TOKEN": "API TOKEN",
+		"aktiv": "active",
+		"Verbindung prüfen": "Test connection",
+		"aus Paperless: Profil → API-Token": "from Paperless: Profile → API token",
+		"API-TOKEN (LEER = BEHALTEN)": "API TOKEN (EMPTY = KEEP)",
+		"TAGS FÜR NEUE DOKUMENTE": "TAGS FOR NEW DOCUMENTS",
+		"Schließen": "Close",
+		"ZEIT": "TIME",
+		"DATEI": "FILE",
+		"MELDUNG": "MESSAGE",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "Nothing will be sent any more. The folder and the files in it are kept.",
+		"EINGANG": "INBOX",
+		"WARTEND": "WAITING",
+		"ZULETZT": "LAST",
+		"gemeinsam": "shared",
+		"Paperless → Profil → API-Token": "Paperless → Profile → API token",
+		"Paperless-Eingang gespeichert.": "Paperless inbox saved.",
+		"Übertragung gestartet.": "Transfer started.",
+		"MEIN EINGANG": "MY INBOX",
+		"MEIN API-TOKEN AUS PAPERLESS": "MY API TOKEN FROM PAPERLESS",
+		"Dateien aus meinem Eingang übertragen": "Send files from my inbox",
+		"Eingangsordner": "Inbox folder",
+		"ZULETZT ÜBERTRAGEN": "RECENTLY SENT",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "Nothing sent yet. Put files into the inbox folder – they reach Paperless within a few minutes.",
+		"KONTEN": "ACCOUNTS",
+		"Testen": "Test",
+		"Konto hinzufügen": "Add account",
+		"HINWEISE": "NOTES",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Credentials stay encrypted on the box. For Google Drive, OneDrive or Dropbox run",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "on a PC and paste the finished section here. Jobs run with little memory (2 transfers at a time); a bandwidth limit such as",
+		"hält das Netz frei.": "keeps the network free.",
+		"AUFTRÄGE": "JOBS",
+		"Jetzt starten": "Start now",
+		"Neuer Auftrag": "New job",
+		"NEUES CLOUD-KONTO": "NEW CLOUD ACCOUNT",
+		"SFTP (SSH-Server)": "SFTP (SSH server)",
+		"andere – rclone-Konfiguration einfügen": "other – paste rclone configuration",
+		"ADRESSE (WEBDAV-URL)": "ADDRESS (WEBDAV URL)",
+		"ANBIETER": "PROVIDER",
+		"PASSWORT / APP-PASSWORT": "PASSWORD / APP PASSWORD",
+		"Hinzufügen": "Add",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (EMPTY FOR AWS)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "SECTION FROM RCLONE.CONF (STARTS WITH [NAME])",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "The credentials are deleted. Jobs using this account stop working. Nothing is deleted in the cloud.",
+		"NEUER AUFTRAG": "NEW JOB",
+		"ORDNER AUF DEM NAS": "FOLDER ON THE NAS",
+		"CLOUD-KONTO": "CLOUD ACCOUNT",
+		"ORDNER IN DER CLOUD": "FOLDER IN THE CLOUD",
+		"RICHTUNG": "DIRECTION",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "Upload – copy to the cloud, nothing is deleted",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "Download – copy to the NAS, nothing is deleted",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "Mirror to the cloud – deletes in the cloud what is missing here",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "Mirror from the cloud – deletes here what is missing in the cloud",
+		"ZEITPLAN": "SCHEDULE",
+		"nur von Hand": "manual only",
+		"stündlich": "hourly",
+		"täglich um 2:30": "daily at 2:30",
+		"sonntags um 3:00": "Sundays at 3:00",
+		"eigene Zeit (cron)": "custom time (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "CRON TIME (MIN HOUR DAY MON WEEKDAY)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "BANDWIDTH (EMPTY = UNLIMITED)",
+		"Zeitplan aktiv": "Schedule active",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "Mirroring deletes on the target side what is missing on the source side – for plain backups choose “Upload”.",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "The job will not run any more. Files on the NAS and in the cloud stay as they are.",
+		"AUFTRAG": "JOB",
+		"VON → NACH": "FROM → TO",
+		"Spiegeln?": "Mirror?",
+		"Verstanden": "Understood",
+		"Gestoppt.": "Stopped.",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "Mirroring from the cloud deletes files on the NAS that are missing in the cloud.",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "Mirroring to the cloud deletes files in the cloud that are missing on the NAS.",
+		"MEINE CLOUD": "MY CLOUD",
+		"eigene Konten und Aufträge": "own accounts and jobs",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Credentials stay encrypted on the box in your personal folder. For Google Drive, OneDrive or Dropbox run",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": "keeps the network free. What you download counts towards your storage limit.",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "May create own cloud sync jobs (needs a personal folder)",
+		"APP & WIDGETS": "APP & WIDGETS",
+		"ALS APP INSTALLIEREN": "INSTALL AS AN APP",
+		"über das Browsermenü": "via the browser menu",
+		"läuft als App": "running as an app",
+		"bereit": "ready",
+		"nur über HTTPS": "HTTPS only",
+		"Diese Oberfläche läuft gerade als installierte App.": "This interface is running as an installed app.",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "The browser can install ShareOS as an app with its own icon.",
+		"Im Browsermenü": "In the browser menu choose",
+		"„App installieren“": "“Install app”",
+		"bzw.": "or",
+		"„Zum Startbildschirm hinzufügen“": "“Add to home screen”",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": ". With a self-signed certificate browsers do not offer the real installation.",
+		"Browser installieren Web-Apps nur über": "Browsers install web apps only over",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "HTTPS with a trusted certificate",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(e.g. Let's Encrypt, install it under SYSTEM → NETWORK). Over http:// Chrome's menu only offers",
+		"– das legt ein Lesezeichen-Symbol an.": "– that creates a bookmark icon.",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "On Android: long-press the app icon to open the shortcuts",
+		"Übersicht, Speicher, Freigaben, Firmware": "Overview, Storage, Shares, Firmware",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": ". Chrome offers no real home-screen widgets for web apps – use the status for widget apps on the right instead.",
+		"Als App installieren": "Install as an app",
+		"STATUS FÜR WIDGETS": "STATUS FOR WIDGETS",
+		"Status-Adresse einschalten": "Enable the status address",
+		"ADRESSE (GEHEIM HALTEN)": "ADDRESS (KEEP IT SECRET)",
+		"Kopieren": "Copy",
+		"Neuer Schlüssel": "New key",
+		"Öffnen ↗": "Open ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "Returns a short JSON answer without login: name, version, uptime, load, temperature, drive usage, RAID state and warnings (",
+		"). Gedacht für Widget-Apps wie": "). Meant for widget apps such as",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android), Home Assistant or your own scripts. Anyone who knows the address sees these values – nobody can change anything with it.",
+		"Status-Adresse eingeschaltet.": "Status address enabled.",
+		"Status-Adresse ausgeschaltet.": "Status address disabled.",
+		"Neuen Schlüssel erzeugen?": "Create a new key?",
+		"Erzeugen": "Create",
+		"Neuer Schlüssel erzeugt.": "New key created.",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "The old address stops working – widgets need the new one.",
+		"Kopiert.": "Copied.",
+		"Bitte die Adresse selbst markieren und kopieren.": "Please select and copy the address yourself.",
+		"ShareOS ist als App installiert.": "ShareOS is installed as an app.",
+		"· Mein ShareOS": "· My ShareOS"
 	},
 	"patterns": [
 		[
@@ -937,6 +1076,138 @@
 		[
 			"^jetzt: (.+)$",
 			"now: $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"last $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"$1 file(s) waiting"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"personal inbox of $1 · token $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"shared inbox · token $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"personal: $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"INBOX $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"LOG · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"Connection OK – $1 documents in Paperless."
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"Remove inbox “$1”?"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1: connection OK ($2 folders)."
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"Remove account “$1”?"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"Remove job “$1”?"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"Share $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"Share $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → Personal folder"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron: $1 · by $2"
+		],
+		[
+			"^von (\\S+)$",
+			"by $1"
+		],
+		[
+			"^Fehler · (.+)$",
+			"Error · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"running since $1"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"Job: $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"Account: $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"Inbox: $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"Fan: $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"Services: $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"Setup: $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"Format: $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"Install: $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"Standby: $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"Storage: $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"Language: $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"Channel: $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"Certificate: $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"Check failed: $1"
 		]
 	],
 	"words": [

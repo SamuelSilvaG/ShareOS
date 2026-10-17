@@ -103,6 +103,44 @@ keine Bestätigung (Tippfehler, falsches Netz), stellt die Box die alten
 Einstellungen wieder her. Notfalls: Werkseinstellungen (DHCP) über die serielle
 Konsole mit `shareos-factory-reset --yes`.
 
+## 7. Freigaben und Benutzer
+
+Unter **Freigaben → Benutzer** Konten anlegen (Rolle, persönlicher Ordner,
+Speicherlimit), unter **Freigaben → Freigaben** Ordner freigeben und Rechte je
+Benutzer oder Gruppe setzen. Windows: `\\<box>\<freigabe>`, macOS/Linux:
+`smb://<box>/<freigabe>`. Benutzer mit Web-Zugang sehen nach der Anmeldung
+„Mein ShareOS“ (eigener Speicher, Freigaben, Passwort, Paperless, Cloud).
+
+## 8. Paperless-ngx
+
+1. In Paperless: Profil → **API-Token** erzeugen.
+2. In ShareOS unter **Paperless** die Adresse eintragen (z. B. `http://192.168.1.20:8000`) und speichern.
+3. **Neuer Eingang**: persönlich (Ordner `Paperless` im persönlichen Ordner eines Benutzers) oder gemeinsam (Ordner einer Freigabe, z. B. für den Scanner), Token eintragen, **Verbindung prüfen**.
+4. Eine PDF in den Eingangsordner legen. Nach spätestens 2 Minuten (oder sofort mit **Jetzt übertragen**) erscheint sie im Protokoll als „wird verarbeitet“, dann „übernommen“ und in Paperless.
+
+Dateien, die Paperless ablehnt (z. B. Duplikate), landen in `.paperless/failed`
+im Eingangsordner. Ist Paperless nicht erreichbar, bleibt die Datei liegen und
+wird beim nächsten Lauf erneut gesendet.
+
+## 9. Cloud-Sync
+
+1. **Cloud → rclone installieren** (lädt rclone von GitHub, braucht einen eingerichteten Apps-Bereich).
+2. **Konto hinzufügen**: Nextcloud/WebDAV, S3 oder SFTP direkt; Google Drive, OneDrive, Dropbox: auf dem PC `rclone config` ausführen und den fertigen Abschnitt aus `rclone.conf` einfügen. **Testen** zeigt, ob die Anmeldung klappt.
+3. **Neuer Auftrag**: Ordner auf dem NAS, Konto, Ordner in der Cloud, Richtung (Hochladen ist die sichere Wahl, Spiegeln löscht auf der Zielseite), Zeitplan. **Jetzt starten** und das **Protokoll** ansehen.
+
+Benutzer dürfen eigene Konten und Aufträge anlegen, wenn im Benutzerkonto
+„Darf eigene Cloud-Sync-Aufträge anlegen“ gesetzt ist (braucht einen
+persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
+
+## 10. App und Widgets
+
+- **Als App:** Chrome und Edge bieten „App installieren“ nur über HTTPS mit einem vertrauenswürdigen Zertifikat an (z. B. Let's Encrypt, unter System → Netzwerk einspielen). Über http:// geht „Zum Startbildschirm hinzufügen“ (Lesezeichen-Symbol). Langes Drücken auf das App-Symbol zeigt die Kurzbefehle.
+- **Widgets:** Unter **System → Allgemein → Status für Widgets** einschalten und die Adresse kopieren. Sie liefert JSON, z. B.:
+  ```sh
+  curl "http://<box>/cgi-bin/status?token=<token>"
+  ```
+  In KWGT (Android) kann man die Werte mit `$wg("<adresse>", json, ".volumes[0].used_pct")$` anzeigen. **Neuer Schlüssel** macht die alte Adresse ungültig.
+
 ## Wenn etwas schiefgeht
 
 | Zeichen | Bedeutung / Abhilfe |

@@ -1,0 +1,21 @@
+#!/bin/sh
+# ShareOS status for widget apps (KWGT, Home Assistant, scripts, …)
+#   http://<nas>/cgi-bin/status?token=<token>
+# or the header "Authorization: Bearer <token>". Switch it on and get the
+# token under SYSTEM → ALLGEMEIN → Status für Widgets.
+tok=
+IFS='&'
+for kv in $QUERY_STRING; do
+	case "$kv" in token=*) tok=${kv#token=} ;; esac
+done
+unset IFS
+case "$HTTP_AUTHORIZATION" in "Bearer "*) tok=${HTTP_AUTHORIZATION#Bearer } ;; esac
+case "$tok" in *[!0-9a-f]*) tok= ;; esac
+
+out=$(ubus -t 20 call shareos.widget status "{\"token\":\"$tok\"}" 2>/dev/null)
+case "$out" in
+	*'"error": "disabled"'*) st='404 Not Found'; out='{"error":"disabled"}' ;;
+	''|*'"error"'*) st='403 Forbidden'; out='{"error":"denied"}'; sleep 1 ;;
+	*) st='200 OK' ;;
+esac
+printf 'Status: %s\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nAccess-Control-Allow-Origin: *\r\n\r\n%s\n' "$st" "$out"

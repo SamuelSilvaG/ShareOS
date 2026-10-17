@@ -103,6 +103,44 @@ confirmation (typo, wrong network) the box restores the old settings. Last
 resort: factory reset (DHCP) from the serial console with
 `shareos-factory-reset --yes`.
 
+## 7. Shares and users
+
+Create accounts under **Shares → Users** (role, personal folder, storage
+limit), share folders under **Shares → Shares** and set permissions per user or
+group. Windows: `\\<box>\<share>`, macOS/Linux: `smb://<box>/<share>`. Users
+with web access see "My ShareOS" after login (own storage, shares, password,
+Paperless, cloud).
+
+## 8. Paperless-ngx
+
+1. In Paperless: Profile → create an **API token**.
+2. In ShareOS under **Paperless** enter the address (e.g. `http://192.168.1.20:8000`) and save.
+3. **New inbox**: personal (folder `Paperless` in a user's personal folder) or shared (folder of a share, e.g. for the scanner), enter the token, **Test connection**.
+4. Put a PDF into the inbox folder. Within 2 minutes (or at once with **Send now**) the log shows "processing", then "accepted", and the document is in Paperless.
+
+Files Paperless rejects (e.g. duplicates) are moved to `.paperless/failed` in
+the inbox folder. If Paperless cannot be reached, the file stays and is sent on
+the next run.
+
+## 9. Cloud sync
+
+1. **Cloud → install rclone** (downloads rclone from GitHub, needs an apps area).
+2. **Add account**: Nextcloud/WebDAV, S3 or SFTP directly; Google Drive, OneDrive, Dropbox: run `rclone config` on a PC and paste the finished section from `rclone.conf`. **Test** shows whether the login works.
+3. **New job**: folder on the NAS, account, folder in the cloud, direction (upload is the safe choice, mirroring deletes on the target side), schedule. **Start now** and look at the **log**.
+
+Users may create their own accounts and jobs when "May create own cloud sync
+jobs" is set in their account (needs a personal folder). Their jobs run with
+their permissions.
+
+## 10. App and widgets
+
+- **As an app:** Chrome and Edge offer "Install app" only over HTTPS with a trusted certificate (e.g. Let's Encrypt, install it under System → Network). Over http:// "Add to home screen" works (bookmark icon). Long-pressing the app icon shows the shortcuts.
+- **Widgets:** enable under **System → General → Status for widgets** and copy the address. It returns JSON, e.g.:
+  ```sh
+  curl "http://<box>/cgi-bin/status?token=<token>"
+  ```
+  In KWGT (Android) values can be shown with `$wg("<address>", json, ".volumes[0].used_pct")$`. **New key** makes the old address invalid.
+
 ## If something goes wrong
 
 | Sign | Meaning / fix |

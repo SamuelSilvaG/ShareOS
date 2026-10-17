@@ -105,6 +105,20 @@ if [ "$CHECK" = "--check" ]; then
 	t "network: broadcast address rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.255","netmask":"255.255.255.0","confirm":true}')" "'broadcast' in d['result'][1]['error']"
 	t "network: bad DNS rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.5","netmask":"255.255.255.0","dns":["1.2.3"],"confirm":true}')" "'DNS' in d['result'][1]['error']"
 	t "network: confirm without change is harmless" "$(rpc $SID shareos.net confirm)" "d['result'][1]['ok']"
+	st() { curl -s -w '\n%{http_code}' "http://127.0.0.1:$PORT/cgi-bin/status$1" | python3 -c "import json,sys; b,c=sys.stdin.read().rsplit('\n',1); print(json.dumps({'c':int(c),'b':json.loads(b) if b.strip() else None}))"; }
+	t "widget status off by default" "$(st '?token=0123456789abcdef0123456789abcdef')" "d['c']==404"
+	W=$(rpc $SID shareos.widget set '{"enabled":true}')
+	t "widget status switched on, token created" "$W" "d['result'][1]['enabled'] and len(d['result'][1]['token'])==32"
+	TOK=$(printf '%s' "$W" | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][1]['token'])")
+	t "widget status: wrong token denied" "$(st '?token=0123456789abcdef0123456789abcdef')" "d['c']==403 and d['b']['error']=='denied'"
+	t "widget status: no token denied" "$(st '')" "d['c']==403"
+	t "widget status: right token answers" "$(st "?token=$TOK")" "d['c']==200 and d['b']['host'] and 'ok' in d['b'] and type(d['b']['volumes'])==list"
+	t "widget status: bearer header works" "$(curl -s -o /dev/null -w '{"c":%{http_code}}' -H "Authorization: Bearer $TOK" http://127.0.0.1:$PORT/cgi-bin/status)" "d['c']==200"
+	t "widget status: not callable anonymously over /ubus" "$(rpc $ZERO shareos.widget status "{\"token\":\"$TOK\"}")" "d['error']['code']==-32002"
+	t "widget: new token replaces the old one" "$(rpc $SID shareos.widget set '{"renew":true}' | python3 -c "import json,sys; t=json.load(sys.stdin)['result'][1]['token']; print(json.dumps({'new':t!='$TOK'}))")" "d['new']"
+	t "widget status: old token denied after renew" "$(st "?token=$TOK")" "d['c']==403"
+	t "app manifest served as JSON" "$(curl -s -o /dev/null -w '{"c":%{http_code},"t":"%{content_type}"}' http://127.0.0.1:$PORT/manifest.json)" "d['c']==200 and d['t'].startswith('application/json')"
+	t "service worker and icons served" "$(curl -s -o /dev/null -w '{"s":%{http_code},' http://127.0.0.1:$PORT/sw.js; curl -s -o /dev/null -w '"i":%{http_code}}' http://127.0.0.1:$PORT/icon-512.png)" "d['s']==200 and d['i']==200"
 	t "GUI assets served" "$(curl -s -o /dev/null -w '{"a":%{http_code},' http://127.0.0.1:$PORT/app.js; curl -s -o /dev/null -w '"c":%{http_code}}' http://127.0.0.1:$PORT/shareos.css)" "d['a']==200 and d['c']==200"
 	echo; [ $fails -eq 0 ] && echo "all checks passed" || { echo "$fails check(s) failed"; exit 1; }
 	exit 0

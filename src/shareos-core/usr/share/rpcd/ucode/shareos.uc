@@ -11,6 +11,7 @@
 //   shareos.paperless get | set_global | test | inbox_set | inbox_del | run | tags | log
 //   shareos.cloud    status | install | remotes | remote_add | remote_del | remote_test |
 //                    jobs | job_set | job_del | job_run | job_stop | job_log
+//   shareos.widget   get | set | status   (status page for widget apps, token protected)
 //   shareos.update   check | status | download | apply | cancel
 //
 // Long-running update steps run as a separate process (shareos-update) so
@@ -589,29 +590,6 @@ function password_ok(user, pass) {
 	return trim(r.out) == hash;
 }
 
-function me_info(u) {
-	let c = cursor();
-	let role = u == 'root' ? 'admin' : (c.get('accounts', u, 'role') ?? 'share');
-	let info = { name: u, role, fullname: u == 'root' ? 'Administrator' : (c.get('accounts', u, 'fullname') ?? ''),
-		groups: list_of(c.get('accounts', u, 'groups')), quota: +(c.get('accounts', u, 'quota') ?? 0) };
-	let home = c.get('accounts', u, 'home');
-	info.home = home ? { volume: home, path: '/mnt/' + home + '/home/' + u, smb: u } : null;
-	info.usage = quota_usage()[u] ?? [];
-	// shares this account can reach and how
-	let mine = [];
-	let tags = [ u, ...map(info.groups, (g) => '@' + g) ];
-	c.foreach('shares', 'share', (x) => {
-		let rw = list_of(x.rw), ro = list_of(x.ro), access = null;
-		for (let t in tags) { if (index(rw, t) >= 0) access = 'rw'; else if (!access && index(ro, t) >= 0) access = 'ro'; }
-		if (!access && x.guest == '1') access = 'ro';
-		if (access && x.smb == '1') push(mine, { name: x['.name'], access, comment: x.comment ?? '' });
-	});
-	info.shares = mine;
-	info.host = read_trim('/proc/sys/kernel/hostname');
-	info.cloud = me_cloud_allowed(u);
-	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
-	return info;
-}
 
 /* ---------- settings backup ---------- */
 
@@ -895,6 +873,88 @@ function cloud_log(c, name, n) {
 }
 
 function me_cloud_allowed(u) { return u != 'root' && cursor().get('accounts', u, 'cloud') == '1' && !!cursor().get('accounts', u, 'home'); }
+
+function me_info(u) {
+	let c = cursor();
+	let role = u == 'root' ? 'admin' : (c.get('accounts', u, 'role') ?? 'share');
+	let info = { name: u, role, fullname: u == 'root' ? 'Administrator' : (c.get('accounts', u, 'fullname') ?? ''),
+		groups: list_of(c.get('accounts', u, 'groups')), quota: +(c.get('accounts', u, 'quota') ?? 0) };
+	let home = c.get('accounts', u, 'home');
+	info.home = home ? { volume: home, path: '/mnt/' + home + '/home/' + u, smb: u } : null;
+	info.usage = quota_usage()[u] ?? [];
+	// shares this account can reach and how
+	let mine = [];
+	let tags = [ u, ...map(info.groups, (g) => '@' + g) ];
+	c.foreach('shares', 'share', (x) => {
+		let rw = list_of(x.rw), ro = list_of(x.ro), access = null;
+		for (let t in tags) { if (index(rw, t) >= 0) access = 'rw'; else if (!access && index(ro, t) >= 0) access = 'ro'; }
+		if (!access && x.guest == '1') access = 'ro';
+		if (access && x.smb == '1') push(mine, { name: x['.name'], access, comment: x.comment ?? '' });
+	});
+	info.shares = mine;
+	info.host = read_trim('/proc/sys/kernel/hostname');
+	info.cloud = me_cloud_allowed(u);
+	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
+	return info;
+}
+
+/* ---------- status for widget apps ---------- */
+
+function new_token() {
+	let r = readfile('/dev/urandom', 16) ?? '';
+	let t = '';
+	for (let i = 0; i < length(r); i++) t += sprintf('%02x', ord(r, i));
+	return t;
+}
+
+// compares without stopping at the first wrong character
+function same_token(a, b) {
+	if (type(a) != 'string' || type(b) != 'string' || length(a) != length(b) || length(a) < 16) return false;
+	let d = 0;
+	for (let i = 0; i < length(a); i++) d |= ord(a, i) ^ ord(b, i);
+	return d == 0;
+}
+
+function widget_status() {
+	let up = split(read_trim('/proc/uptime') ?? '0', ' ');
+	let load = split(read_trim('/proc/loadavg') ?? '', ' ');
+	let m = meminfo();
+	let t = read_int('/tmp/sys/temp1_input');
+	let alerts = [];
+	let vols = [];
+	for (let v in volumes()) {
+		let x = { name: v.name, mounted: v.mounted };
+		if (v.size) {
+			x.size = v.size; x.free = v.avail;
+			x.used_pct = int(v.used * 100 / v.size + 0.5);
+			if (x.used_pct >= 90) push(alerts, 'volume ' + v.name + ' ' + x.used_pct + '% full');
+		}
+		if (v.enabled && !v.mounted) push(alerts, 'volume ' + v.name + ' not mounted');
+		push(vols, x);
+	}
+	let raid = [];
+	for (let n, a in mdstat()) {
+		let x = { name: n, level: a.level, health: a.health, sync: a.sync?.percent };
+		if (a.health && index(a.health, '_') >= 0) push(alerts, n + ' degraded [' + a.health + ']');
+		push(raid, x);
+	}
+	if (t != null && t >= 55000) push(alerts, 'temperature ' + int(t / 1000) + ' °C');
+	let r = release();
+	return {
+		host: read_trim('/proc/sys/kernel/hostname'),
+		version: r.version ?? '',
+		time: time(),
+		uptime: int(+up[0]),
+		load: +load[0],
+		temp_c: t != null ? int(t / 100) / 10 : null,
+		fan_pwm: read_int('/tmp/sys/pwm1'),
+		mem_used_pct: m.memtotal ? int((m.memtotal - (m.memavailable ?? m.memfree)) * 100 / m.memtotal + 0.5) : null,
+		volumes: vols,
+		raid,
+		ok: !length(alerts),
+		alerts
+	};
+}
 
 return {
 	'shareos.ui': {
@@ -1893,6 +1953,40 @@ return {
 				let c = cursor();
 				if (c.get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
 				return { lines: cloud_log(c, req.args.name, 80) };
+			}
+		}
+	},
+
+	'shareos.widget': {
+		get: {
+			call: function() {
+				let c = cursor();
+				return { enabled: c.get('shareos', 'widget', 'enabled') == '1', token: c.get('shareos', 'widget', 'token') ?? '' };
+			}
+		},
+
+		set: {
+			// enabled: on/off; renew: new token (the old address stops working)
+			args: { enabled: false, renew: false },
+			call: function(req) {
+				let c = cursor();
+				c.set('shareos', 'widget', 'widget');
+				if (req.args.enabled != null) c.set('shareos', 'widget', 'enabled', req.args.enabled ? '1' : '0');
+				if (req.args.renew || !c.get('shareos', 'widget', 'token')) c.set('shareos', 'widget', 'token', new_token());
+				c.commit('shareos');
+				return { enabled: c.get('shareos', 'widget', 'enabled') == '1', token: c.get('shareos', 'widget', 'token') };
+			}
+		},
+
+		status: {
+			// called by /www/cgi-bin/status with the token from the address;
+			// no web login has it in its ACL
+			args: { token: '' },
+			call: function(req) {
+				let c = cursor();
+				if (c.get('shareos', 'widget', 'enabled') != '1') return { error: 'disabled' };
+				if (!same_token(req.args.token, c.get('shareos', 'widget', 'token'))) return { error: 'denied' };
+				return widget_status();
 			}
 		}
 	},

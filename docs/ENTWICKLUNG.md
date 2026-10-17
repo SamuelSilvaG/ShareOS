@@ -72,6 +72,16 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 23:05 | In Jans Protokoll fallen ECC-Fehler auf: `blkid`/`lsblk` lasen bei jeder Speicherabfrage auch die rohen Flash-Partitionen, darunter D-Links unlesbare „my-dlink“. Claude schaltet die Flash-Blockgeräte ab. |
 | 23:30 | **Freigaben (SMB/NFS), Benutzer, Gruppen, Speicherlimits, „Mein ShareOS“, Sichern/Wiederherstellen** (JSON, optional AES-256). Alt-F-Benutzer werden mitsamt Passwörtern übernommen. 52 Prüfungen im ARM-Emulator. |
 
+### Sonntag, 18.10.2026 – Paperless, Cloud und App
+
+| Zeit | Was passiert ist |
+|---|---|
+| 00:37 | Jan veröffentlicht `v0.1.0-beta.3` und geht schlafen: „Du kannst weiter in der Roadmap machen, Cloud, Paperless. Ich teste dann morgen früh.“ |
+| 01:00 | **Paperless-ngx**: Eingangsordner je Benutzer (im persönlichen Ordner) oder gemeinsam auf einer Freigabe, z. B. für einen Scanner. ShareOS lädt neue Dateien über die Paperless-API hoch, fragt das Ergebnis ab und zeigt es an. Benutzer tragen ihr Token selbst unter „Mein ShareOS“ ein. |
+| 01:00 | **Cloud-Sync mit rclone**: rclone wird bei Bedarf von GitHub geladen (mit Prüfsumme) und liegt im Apps-Bereich. Konten (WebDAV/Nextcloud, S3, SFTP oder ein Abschnitt aus `rclone.conf`) und Aufträge (hochladen, herunterladen, spiegeln) mit Zeitplan und Bandbreitengrenze – für das Gerät und, wenn erlaubt, für jeden Benutzer mit eigenen Zugangsdaten. 29 Prüfungen mit einem nachgebauten Paperless und einem lokalen WebDAV-Server. |
+| 01:20 | **Als App installierbar** (Symbol, Kurzbefehle) und eine **Status-Adresse für Widget-Apps** wie KWGT – Chrome bietet für Web-Apps keine Startbildschirm-Widgets. |
+| 01:40 | Beim erneuten Durchlauf aller Tests fällt auf: Seit dem Cloud-Umbau scheiterte die Anmeldung normaler Benutzer an einer Funktion, die im Skript erst weiter unten stand (ucode kennt kein Hoisting). Behoben, bevor es eine Box erreicht hat; eine neue Prüfung im CI findet solche Fälle künftig automatisch. |
+
 ## Bemerkenswerte Problemlösungen
 
 - **3-MB-Grenze des Bootloaders:** Der Kernel ist von 4,2 auf 2,4 MB geschrumpft, Treiber wurden in Module ausgelagert. Das Start-System umfasst nur 0,9 MB.
@@ -125,6 +135,14 @@ Englisch.
 | Update mit Fortschritt | Englisch |
 |---|---|
 | ![Update](images/gui-update-progress.png) | ![Englisch](images/gui-en-overview.png) |
+
+| Paperless | Cloud-Sync |
+|---|---|
+| ![Paperless](images/gui-paperless.png) | ![Cloud](images/gui-cloud.png) |
+
+| „Mein ShareOS“: Paperless und Cloud | App & Widgets |
+|---|---|
+| ![Mein ShareOS mit Paperless und Cloud](images/gui-mein-paperless-cloud.png) | ![App und Widgets](images/gui-app-widgets.png) |
 
 | Handy | |
 |---|---|
