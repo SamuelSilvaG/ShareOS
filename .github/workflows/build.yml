@@ -30,10 +30,8 @@ jobs:
         run: make buildroot
       - name: Build ucode for the host (same commits as the firmware)
         run: tests/build-host-ucode.sh "$HOME/hostroot"
-      - name: Build dns323-fw
-        run: gcc -O2 -D_GNU_SOURCE -o "$HOME/dns323-fw" src/alt-f-utils/dns323-fw.c
       - name: Updater tests
-        run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-update.sh "$HOME/hostroot/bin/ucode" --synthetic "$HOME/dns323-fw"
+        run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-update.sh "$HOME/hostroot/bin/ucode"
 
   firmware:
     runs-on: ubuntu-24.04
@@ -67,7 +65,7 @@ jobs:
       - name: Collect images
         run: |
           mkdir -p artifacts
-          cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 output/${{ matrix.board }}/images/shareos-netboot-*.tar artifacts/
+          cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 output/${{ matrix.board }}/images/ShareOS-*.sysupgrade.tar* artifacts/
           ls -l artifacts
 
       - uses: actions/upload-artifact@v4

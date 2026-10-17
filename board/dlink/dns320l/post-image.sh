@@ -72,10 +72,13 @@ cmp "$T/initramfs" "$B/urootfs"
 "$FW" -f "$B/$OUT" || true
 echo "post-image: created $B/$OUT"
 
-# netboot bundle: everything needed to run this build from RAM via TFTP
-# (U-Boot loads uImage + urootfs, the initramfs fetches rootfs.squashfs)
-NB="shareos-netboot-${VERSION}.tar"
-(cd "$B" && sha256sum uImage urootfs rootfs.squashfs > SHA256SUMS-netboot \
-	&& tar -cf "$NB" --transform 's/SHA256SUMS-netboot/SHA256SUMS/' uImage urootfs rootfs.squashfs SHA256SUMS-netboot)
-echo "post-image: created $B/$NB"
+# sysupgrade bundle: everything for an update from ShareOS (shareos-update)
+# and for a netboot via TFTP (U-Boot loads uImage + urootfs, the initramfs
+# fetches rootfs.squashfs). Published in GitHub Releases with its .sha256.
+SU="ShareOS-${VERSION}-${NAME}.sysupgrade.tar"
+cp "$TARGET_DIR/etc/shareos-release" "$B/shareos-release"
+(cd "$B" && sha256sum uImage urootfs rootfs.squashfs > SHA256SUMS \
+	&& rm -f "$SU" && tar -cf "$SU" uImage urootfs rootfs.squashfs shareos-release SHA256SUMS \
+	&& sha256sum "$SU" > "$SU.sha256")
+echo "post-image: created $B/$SU"
 echo "post-image: rootfs.squashfs $(stat -c %s "$B/rootfs.squashfs") bytes (UBI volume 'rootfs')"

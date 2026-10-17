@@ -4,22 +4,30 @@
 //
 //   shareos-update check [stable|beta]   list releases for this box (JSON)
 //   shareos-update download <tag>        download + verify into /tmp (JSON state)
-//   shareos-update apply <tag>           flash a verified download (kernel + initramfs)
+//   shareos-update apply <tag>           install a verified download, then reboot
 //   shareos-update status                current state (JSON)
 //   shareos-update cancel                forget a download
 //
 // Everything prints one JSON object on stdout; the rpcd plugin
 // (/usr/share/rpcd/ucode/shareos.uc) uses the same commands.
 //
-// Safety checks before flashing:
-//   - SHA-256 of the image against the .sha256 published with the release
-//   - D-Link container signature must match this box (dns323-fw -f)
-//   - kernel and initramfs must each fit the 3 MB the stock U-Boot reads
+// A release carries ShareOS-<version>-<fwname>.sysupgrade.tar (+ .sha256):
+// uImage, urootfs, rootfs.squashfs, shareos-release, SHA256SUMS.
+// apply writes kernel + initramfs into their flash partitions and stages
+// rootfs.squashfs in /overlay/upgrade; the new initramfs writes it into the
+// UBI volume 'rootfs' on the next boot (it is in use while running).
+// Settings and packages in /overlay stay.
+//
+// Safety checks:
+//   - SHA-256 of the bundle against the .sha256 published with the release
+//   - SHA256SUMS inside the bundle, fwname of the bundle = this box
+//   - U-Boot headers (magic, "ShareOS-" name), 3 MB limit of the stock U-Boot
+//   - squashfs magic and size against the UBI volume
 //   - every written partition is read back and compared
 //
 'use strict';
 
-import { readfile, writefile, mkdir, stat, unlink, rename, popen } from 'fs';
+import { readfile, writefile, mkdir, stat, unlink, rename, popen, glob } from 'fs';
 import { cursor } from 'uci';
 
 // SHAREOS_ROOT lets the test suite run this against a fake root on a build host
@@ -29,10 +37,11 @@ const STATE = STATE_DIR + '/state.json';
 const UBOOT_MAX = 3145728;          // bytes U-Boot copies from uImage/ramdisk
 const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10' ];
 
-// fw name -> D-Link signature string reported by dns323-fw -f
-const SIGNATURES = {
-	'DNS-320L-rev-Ax': 'DNS320L'
+const BOARDS = {                    // fwname -> string in the device-tree model
+	'DNS-320L-rev-Ax': 'DNS-320L'
 };
+const ROOTFS_MAX = 48 * 1048576;    // fallback when the UBI volume size is unknown
+const PARTS = [ 'uImage', 'urootfs', 'rootfs.squashfs' ];
 
 function shq(s) {
 	return "'" + replace(s, "'", "'\\''") + "'";
@@ -126,8 +135,8 @@ function fetch_releases(cfg) {
 
 function releases_for_box(list, fwname, channel) {
 	let found = [];
-	let re_bin = regexp('^ShareOS-.+-' + fwname + '\\.bin$');
-	let re_sum = regexp('^ShareOS-.+-' + fwname + '\\.bin\\.sha256$');
+	let re_bin = regexp('^ShareOS-.+-' + fwname + '\\.sysupgrade\\.tar$');
+	let re_sum = regexp('^ShareOS-.+-' + fwname + '\\.sysupgrade\\.tar\\.sha256$');
 
 	for (let x in list) {
 		if (x.draft || (x.prerelease && channel != 'beta'))
@@ -198,39 +207,81 @@ function find_release(s, tag) {
 	return null;
 }
 
+function parse_release(text) {
+	let r = {};
+	for (let line in split(text ?? '', '\n')) {
+		let m = match(line, /^([A-Z_]+)="?([^"]*)"?$/);
+		if (m)
+			r[m[1]] = m[2];
+	}
+	return r;
+}
+
+function rootfs_volume() {
+	for (let d in glob(ROOT + '/sys/class/ubi/ubi0_*')) {
+		if (trim(readfile(d + '/name') ?? '') == 'rootfs')
+			return { dev: '/dev/' + substr(d, rindex(d, '/') + 1), size: +trim(readfile(d + '/data_bytes') ?? '0') };
+	}
+	return null;
+}
+
+function check_uimage(s, file, label) {
+	let st = stat(file);
+	let head = readfile(file, 64) ?? '';
+	if (!st || length(head) < 64 || substr(head, 0, 4) != '\x27\x05\x19\x56')
+		fail(s, label + ' is not a U-Boot image');
+	let name = trim(replace(substr(head, 32, 32), '\0', ''));
+	if (substr(name, 0, 8) != 'ShareOS-')
+		fail(s, label + ': image name "' + name + '" is not ShareOS');
+	if (st.size > UBOOT_MAX)
+		fail(s, sprintf('%s is %d bytes, the stock U-Boot only loads %d', label, st.size, UBOOT_MAX));
+}
+
 function verify_image(s, dir, rel) {
 	let fwname = release_info().SHAREOS_FWNAME;
 
-	// SHA-256 from the release
+	// SHA-256 of the bundle from the release
 	let want = match(readfile(dir + '/fw.sha256') ?? '', /^([0-9a-f]{64})/);
 	if (!want)
 		fail(s, 'checksum file is invalid');
-	let have = match(capture([ 'sha256sum', dir + '/fw.bin' ]).out, /^([0-9a-f]{64})/);
+	let have = match(capture([ 'sha256sum', dir + '/fw.tar' ]).out, /^([0-9a-f]{64})/);
 	if (!have || have[1] != want[1])
 		fail(s, 'SHA-256 mismatch – download is corrupt or was tampered with');
 
-	// D-Link container signature must match this box
-	let info = capture([ 'dns323-fw', '-f', dir + '/fw.bin' ]);
-	if (info.rc != 0)
-		fail(s, 'cannot inspect firmware container: ' + trim(info.out));
-	let sig = match(info.out, /signature="([^"]+)"/);
-	if (!sig || sig[1] != SIGNATURES[fwname])
-		fail(s, sprintf('firmware is for "%s", this box needs "%s"', sig?.[1] ?? '?', SIGNATURES[fwname] ?? '?'));
+	// unpack
+	let x = dir + '/x';
+	capture([ 'rm', '-rf', x ]);
+	mkdir(x);
+	let r = capture([ 'tar', '-xf', dir + '/fw.tar', '-C', x ]);
+	if (r.rc != 0)
+		fail(s, 'bundle cannot be unpacked: ' + trim(r.out));
 
-	// split into kernel and initramfs (dns323-fw checks the internal checksums)
-	unlink(dir + '/kernel');
-	unlink(dir + '/initramfs');
-	let sp = capture([ 'dns323-fw', '-s', '-q', '-k', dir + '/kernel', '-i', dir + '/initramfs', dir + '/fw.bin' ]);
-	if (sp.rc != 0)
-		fail(s, 'firmware container is damaged: ' + trim(sp.out));
+	// made for this box?
+	let info = parse_release(readfile(x + '/shareos-release'));
+	if (info.SHAREOS_FWNAME != fwname)
+		fail(s, sprintf('firmware is for "%s", this box needs "%s"', info.SHAREOS_FWNAME ?? '?', fwname));
 
-	for (let part in [ 'kernel', 'initramfs' ]) {
-		let st = stat(dir + '/' + part);
-		if (!st || st.size == 0)
-			fail(s, part + ' missing in firmware');
-		if (st.size > UBOOT_MAX)
-			fail(s, sprintf('%s is %d bytes, the stock U-Boot only loads %d', part, st.size, UBOOT_MAX));
-	}
+	// checksums of the parts
+	let sums = readfile(x + '/SHA256SUMS') ?? '';
+	for (let p in PARTS)
+		if (!match(sums, regexp('[0-9a-f]{64}  ' + replace(p, '.', '\\.') + '(\n|$)')))
+			fail(s, 'SHA256SUMS does not cover ' + p);
+	r = capture([ 'sh', '-c', 'cd ' + shq(x) + ' && sha256sum -c SHA256SUMS' ]);
+	if (r.rc != 0)
+		fail(s, 'bundle is damaged (SHA256SUMS): ' + trim(r.out));
+
+	check_uimage(s, x + '/uImage', 'kernel');
+	check_uimage(s, x + '/urootfs', 'initramfs');
+
+	let sq = stat(x + '/rootfs.squashfs');
+	if (!sq || readfile(x + '/rootfs.squashfs', 4) != 'hsqs')
+		fail(s, 'rootfs.squashfs is not a squashfs image');
+	let vol = rootfs_volume();
+	let max = vol?.size || ROOTFS_MAX;
+	if (sq.size > max)
+		fail(s, sprintf('rootfs is %d bytes, the UBI volume holds %d', sq.size, max));
+
+	s.bundle = { version: info.SHAREOS_VERSION, rootfs: sq.size };
 	return true;
 }
 
@@ -243,8 +294,8 @@ function cmd_download(tag) {
 	let dir = STATE_DIR + '/dl';
 	mkdir(STATE_DIR);
 	mkdir(dir);
-	unlink(dir + '/fw.bin');
-	unlink(dir + '/fw.bin.part');
+	unlink(dir + '/fw.tar');
+	unlink(dir + '/fw.tar.part');
 
 	s.state = 'downloading';
 	s.release = rel;
@@ -253,9 +304,9 @@ function cmd_download(tag) {
 
 	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.sha256', rel.sha_url ]).rc != 0)
 		fail(s, 'download of the checksum failed');
-	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.bin.part', rel.bin_url ]).rc != 0)
+	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.tar.part', rel.bin_url ]).rc != 0)
 		fail(s, 'download of the firmware failed');
-	rename(dir + '/fw.bin.part', dir + '/fw.bin');
+	rename(dir + '/fw.tar.part', dir + '/fw.tar');
 
 	s.state = 'verifying';
 	save_state(s);
@@ -270,7 +321,7 @@ function mtd_by_name(name) {
 	for (let line in split(readfile(ROOT + '/proc/mtd') ?? '', '\n')) {
 		let m = match(line, /^(mtd[0-9]+): ([0-9a-f]+) [0-9a-f]+ "([^"]+)"/);
 		if (m && m[3] == name)
-			return { dev: '/dev/' + m[1], size: hex(m[2]) };
+			return { dev: ROOT + '/dev/' + m[1], size: hex(m[2]) };
 	}
 	return null;
 }
@@ -304,6 +355,15 @@ function flash_part(s, file, name) {
 	unlink(back);
 }
 
+function mounted_on(dir) {
+	for (let line in split(readfile(ROOT + '/proc/mounts') ?? '', '\n')) {
+		let f = split(line, ' ');
+		if (f[1] == dir)
+			return f[2];
+	}
+	return null;
+}
+
 function cmd_apply(tag) {
 	let s = load_state();
 	let dir = STATE_DIR + '/dl';
@@ -313,16 +373,39 @@ function cmd_apply(tag) {
 
 	let model = trim(replace(readfile(ROOT + '/proc/device-tree/model') ?? '', '\0', ''));
 	let fwname = release_info().SHAREOS_FWNAME;
-	if (!SIGNATURES[fwname] || index(model, 'DNS-320L') < 0)
+	if (!BOARDS[fwname] || index(model, BOARDS[fwname]) < 0)
 		fail(s, 'refusing to flash: unexpected board "' + model + '"');
+
+	// the system is replaced on the next boot from /overlay/upgrade
+	if (mounted_on('/overlay') != 'ubifs')
+		fail(s, 'not running from flash (no UBIFS on /overlay) – use shareos-install-ubi');
 
 	// re-check right before writing; /tmp could have been touched
 	verify_image(s, dir, s.release);
+	let x = dir + '/x';
 
 	s.state = 'flashing';
+	s.step = 'stage rootfs';
 	save_state(s);
-	flash_part(s, dir + '/kernel', 'uImage');
-	flash_part(s, dir + '/initramfs', 'ramdisk');
+	let up = ROOT + '/overlay/upgrade';
+	capture([ 'rm', '-rf', up ]);
+	mkdir(up);
+	let r = capture([ 'cp', x + '/rootfs.squashfs', up + '/rootfs.squashfs.part' ]);
+	let sum = match(capture([ 'sha256sum', up + '/rootfs.squashfs.part' ]).out, /^([0-9a-f]{64})/);
+	let want = match(readfile(x + '/SHA256SUMS'), /([0-9a-f]{64})  rootfs\.squashfs/);
+	if (r.rc != 0 || !sum || sum[1] != want[1]) {
+		capture([ 'rm', '-rf', up ]);
+		fail(s, 'cannot stage the system in /overlay (full?): ' + trim(r.out));
+	}
+	writefile(up + '/rootfs.squashfs.sha256', sum[1] + '  rootfs.squashfs\n');
+	writefile(up + '/version', (s.bundle?.version ?? tag) + '\n');
+	rename(up + '/rootfs.squashfs.part', up + '/rootfs.squashfs');
+	unlink(ROOT + '/overlay/upgrade-result');
+	system('sync');
+
+	flash_part(s, x + '/urootfs', 'ramdisk');
+	flash_part(s, x + '/uImage', 'uImage');
+	system('sync');
 
 	delete s.step;
 	s.state = 'flashed';
@@ -334,10 +417,16 @@ function cmd_apply(tag) {
 function cmd_status() {
 	let s = load_state();
 	if (s.state == 'downloading') {
-		let st = stat(STATE_DIR + '/dl/fw.bin.part') ?? stat(STATE_DIR + '/dl/fw.bin');
+		let st = stat(STATE_DIR + '/dl/fw.tar.part') ?? stat(STATE_DIR + '/dl/fw.tar');
 		s.progress = { bytes: st?.size ?? 0, total: s.release?.size ?? 0 };
 	}
 	s.current = release_info().SHAREOS_VERSION;
+	// written by the initramfs after installing a staged system
+	let res = trim(readfile(ROOT + '/overlay/upgrade-result') ?? '');
+	if (res != '')
+		s.last_upgrade = res;
+	if (stat(ROOT + '/overlay/upgrade/rootfs.squashfs'))
+		s.pending_reboot = true;
 	return out(s);
 }
 
@@ -345,8 +434,7 @@ function cmd_cancel() {
 	let s = load_state();
 	if (s.state == 'flashing')
 		fail(s, 'cannot cancel while flashing');
-	for (let f in [ 'fw.bin', 'fw.bin.part', 'fw.sha256', 'kernel', 'initramfs' ])
-		unlink(STATE_DIR + '/dl/' + f);
+	capture([ 'rm', '-rf', STATE_DIR + '/dl' ]);
 	s.state = 'idle';
 	delete s.release;
 	delete s.error;

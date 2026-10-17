@@ -51,6 +51,43 @@ net_up() {
 	udhcpc -i eth0 -t 10 -T 2 -n -q -s /usr/share/udhcpc/default.script -x hostname:shareos
 }
 
+# /overlay/factory-reset (shareos-factory-reset): drop all settings and packages
+factory_reset() {
+	[ -e /mnt/rw/factory-reset ] || return 0
+	log "factory reset: removing settings and packages"
+	rm -rf /mnt/rw/upper /mnt/rw/work /mnt/rw/factory-reset /mnt/rw/upgrade
+	sync
+}
+
+# /overlay/upgrade (shareos-update apply): write the staged system into the
+# UBI volume 'rootfs' while it is not in use. The staged file is removed only
+# after success, so an interrupted write is retried on the next boot.
+apply_upgrade() {
+	U=/mnt/rw/upgrade
+	[ -f $U/rootfs.squashfs ] || return 0
+	ver=$(cat $U/version 2>/dev/null)
+	want=$(cut -c1-64 $U/rootfs.squashfs.sha256 2>/dev/null)
+	have=$(sha256sum $U/rootfs.squashfs | cut -c1-64)
+	if [ -z "$want" ] || [ "$want" != "$have" ] || [ "$(head -c 4 $U/rootfs.squashfs)" != hsqs ]; then
+		log "upgrade: staged system is damaged, ignored"
+		echo "failed $ver: staged image damaged" > /mnt/rw/upgrade-result
+		rm -rf $U; sync
+		return 0
+	fi
+	log "upgrade: installing system $ver – do not switch off"
+	led dns320l:orange:usb timer
+	if ubiupdatevol "/dev/$ROOTVOL" $U/rootfs.squashfs; then
+		echo "ok $ver" > /mnt/rw/upgrade-result
+		rm -rf $U
+		log "upgrade: done"
+	else
+		echo "failed $ver: ubiupdatevol" > /mnt/rw/upgrade-result
+		log "upgrade: ubiupdatevol failed – will retry on the next boot"
+	fi
+	sync
+	led dns320l:orange:usb none
+}
+
 rescue() {
 	log "RESCUE MODE: $*"
 	led dns320l:orange:usb timer
@@ -97,14 +134,15 @@ else
 		[ "$(cat "$v/name" 2>/dev/null)" = rootfs ] && ROOTVOL=$(basename "$v")
 	done
 	[ -n "$ROOTVOL" ] || rescue "UBI volume 'rootfs' missing"
-	ubiblock --create "/dev/$ROOTVOL" || rescue "ubiblock failed"
-	mount -t squashfs -o ro "/dev/ubiblock${ROOTVOL#ubi}" /mnt/ro || rescue "cannot mount rootfs"
-	if [ -e /sys/class/ubi/ubi0 ] && mount -t ubifs ubi0:rootfs_data /mnt/rw 2>/dev/null; then
-		:
+	if mount -t ubifs ubi0:rootfs_data /mnt/rw 2>/dev/null; then
+		factory_reset
+		apply_upgrade
 	else
 		log "WARNING: rootfs_data not available, settings will not be kept"
 		mount -t tmpfs -o mode=0755 tmpfs /mnt/rw
 	fi
+	ubiblock --create "/dev/$ROOTVOL" || rescue "ubiblock failed"
+	mount -t squashfs -o ro "/dev/ubiblock${ROOTVOL#ubi}" /mnt/ro || rescue "cannot mount rootfs"
 fi
 
 mkdir -p /mnt/rw/upper /mnt/rw/work

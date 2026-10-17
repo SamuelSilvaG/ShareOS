@@ -86,7 +86,7 @@ persistent configuration (config partition, phase 3).
 ```sh
 # updater logic against a mock GitHub API (host ucode)
 tests/build-host-ucode.sh ~/hostroot
-LD_LIBRARY_PATH=~/hostroot/lib tests/test-update.sh ~/hostroot/bin/ucode --synthetic dns323-fw
+LD_LIBRARY_PATH=~/hostroot/lib tests/test-update.sh ~/hostroot/bin/ucode
 
 # the real ARM userland with qemu-user: ubusd + rpcd + uhttpd
 sudo tests/run-stack-qemu.sh output/dns320l 8080 --check   # smoke tests

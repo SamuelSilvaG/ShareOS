@@ -3,148 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ShareOS Backend-Test</title>
-<style>
-	:root { --bg:#0b0f0c; --fg:#c8f7d2; --dim:#6f9c79; --acc:#39ff88; --err:#ff5c5c; --line:#1e2a21; }
-	* { box-sizing: border-box; }
-	body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 "JetBrains Mono", ui-monospace, monospace; }
-	main { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
-	h1 { font-size: 18px; color: var(--acc); margin: 0 0 4px; }
-	p.sub { color: var(--dim); margin: 0 0 24px; }
-	section { border:1px solid var(--line); border-radius:6px; padding:16px; margin-bottom:16px; }
-	h2 { font-size: 14px; margin: 0 0 12px; color: var(--acc); }
-	input, select, button { font: inherit; background:#111813; color:var(--fg); border:1px solid var(--line); border-radius:4px; padding:6px 10px; }
-	button { cursor:pointer; border-color: var(--acc); color: var(--acc); }
-	button:disabled { opacity:.4; cursor:default; }
-	.row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
-	table { width:100%; border-collapse: collapse; }
-	td { padding:3px 0; vertical-align: top; } td:first-child { color:var(--dim); width: 34%; }
-	pre { white-space: pre-wrap; word-break: break-word; color: var(--dim); margin: 8px 0 0; }
-	.err { color: var(--err); }
-	.hidden { display:none; }
-</style>
+<title>ShareOS</title>
+<link rel="stylesheet" href="shareos.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23070b08'/%3E%3Cpath d='M4 5h8M4 8h8M4 11h5' stroke='%233dff8a' stroke-width='1.6'/%3E%3C/svg%3E">
 </head>
 <body>
-<main>
-	<h1>ShareOS · Backend-Test</h1>
-	<p class="sub">Prüfseite für uhttpd → /ubus → rpcd → shareos.uc. Die eigentliche Oberfläche folgt.</p>
-
-	<section id="login">
-		<h2>Anmelden</h2>
-		<div class="row">
-			<input id="user" value="root" autocomplete="username">
-			<input id="pass" type="password" placeholder="Passwort" autocomplete="current-password">
-			<button id="btnLogin">Anmelden</button>
-		</div>
-		<div id="loginMsg" class="err"></div>
-	</section>
-
-	<section id="sys" class="hidden">
-		<h2>System</h2>
-		<table id="sysTable"></table>
-		<div class="row" style="margin-top:8px"><button id="btnRefresh">Aktualisieren</button></div>
-	</section>
-
-	<section id="upd" class="hidden">
-		<h2>Firmware-Update (GitHub Releases)</h2>
-		<div class="row">
-			<select id="channel"><option value="stable">stabil</option><option value="beta">beta</option></select>
-			<button id="btnCheck">Nach Updates suchen</button>
-		</div>
-		<div class="row">
-			<select id="release" class="hidden"></select>
-			<button id="btnDownload" class="hidden">Herunterladen &amp; prüfen</button>
-			<button id="btnApply" class="hidden">Flashen</button>
-		</div>
-		<pre id="updOut"></pre>
-	</section>
-</main>
-<script>
-const $ = id => document.getElementById(id);
-const NOSESSION = '00000000000000000000000000000000';
-let sid = NOSESSION, rid = 1;
-
-async function ubus(object, method, params = {}) {
-	const r = await fetch('/ubus', {
-		method: 'POST', headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ jsonrpc: '2.0', id: rid++, method: 'call', params: [ sid, object, method, params ] })
-	});
-	const j = await r.json();
-	if (j.error) throw new Error(j.error.message);
-	const [code, data] = j.result;
-	if (code !== 0) throw new Error('ubus status ' + code);
-	return data ?? {};
-}
-
-const fmtBytes = b => b == null ? '–' : b > 1e9 ? (b / 1e9).toFixed(1) + ' GB' : (b / 1e6).toFixed(0) + ' MB';
-const fmtUp = s => { s = Math.floor(s); return `${Math.floor(s / 86400)} d ${Math.floor(s % 86400 / 3600)} h ${Math.floor(s % 3600 / 60)} min`; };
-
-async function refresh() {
-	const i = await ubus('shareos.system', 'info');
-	const e = i.network?.eth0 ?? {};
-	const rows = [
-		['Modell', i.model], ['Version', i.release?.version], ['Kernel', i.kernel],
-		['Laufzeit', fmtUp(i.uptime)], ['Last', (i.load ?? []).join(' ')],
-		['RAM frei', fmtBytes(i.memory?.memavailable) + ' von ' + fmtBytes(i.memory?.memtotal)],
-		['Temperatur', i.temperature != null ? (i.temperature / 1000) + ' °C' : '–'],
-		['Lüfter (PWM)', i.fan_pwm ?? '–'],
-		['eth0', `${e.ipv4?.address ?? '–'} · ${e.speed ?? '?'} Mbit/s · ${e.mac ?? ''}`],
-		['Platten', (i.disks ?? []).map(d => `${d.name}: ${d.model ?? ''} ${fmtBytes(d.size)}`).join(', ') || '–']
-	];
-	$('sysTable').innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v ?? '–'}</td></tr>`).join('');
-}
-
-let poll = null;
-async function showStatus() {
-	const s = await ubus('shareos.update', 'status');
-	let txt = `Status: ${s.state}`;
-	if (s.progress) txt += ` · ${fmtBytes(s.progress.bytes)} / ${fmtBytes(s.progress.total)}`;
-	if (s.step) txt += ` · ${s.step}`;
-	if (s.error) txt += `\nFehler: ${s.error}`;
-	if (s.state === 'flashed') txt += `\n${s.flashed.tag} ist geflasht. Neustart erforderlich.`;
-	$('updOut').textContent = txt;
-	$('btnApply').classList.toggle('hidden', s.state !== 'ready');
-	if (!['downloading', 'verifying', 'flashing'].includes(s.state)) { clearInterval(poll); poll = null; }
-}
-
-$('btnLogin').onclick = async () => {
-	try {
-		const r = await ubus('session', 'login', { username: $('user').value, password: $('pass').value });
-		sid = r.ubus_rpc_session;
-		$('login').classList.add('hidden');
-		$('sys').classList.remove('hidden'); $('upd').classList.remove('hidden');
-		await refresh(); await showStatus();
-	} catch (e) { $('loginMsg').textContent = 'Anmeldung fehlgeschlagen: ' + e.message; }
-};
-$('btnRefresh').onclick = refresh;
-
-$('btnCheck').onclick = async () => {
-	$('updOut').textContent = 'Frage GitHub ab …';
-	try {
-		const c = await ubus('shareos.update', 'check', { channel: $('channel').value });
-		if (c.state === 'error') { $('updOut').textContent = 'Fehler: ' + c.error; return; }
-		$('release').innerHTML = (c.releases ?? []).map(r =>
-			`<option value="${r.tag}">${r.tag}${r.prerelease ? ' (beta)' : ''} – ${(r.date ?? '').slice(0, 10)}</option>`).join('');
-		const has = (c.releases ?? []).length > 0;
-		$('release').classList.toggle('hidden', !has); $('btnDownload').classList.toggle('hidden', !has);
-		$('updOut').textContent = `Installiert: ${c.current}\nNeueste (${c.channel}): ${c.latest ?? 'keine'}` +
-			(c.update_available ? '\n→ Update verfügbar' : '');
-	} catch (e) { $('updOut').textContent = 'Fehler: ' + e.message; }
-};
-
-$('btnDownload').onclick = async () => {
-	const r = await ubus('shareos.update', 'download', { tag: $('release').value });
-	if (r.error) { $('updOut').textContent = 'Fehler: ' + r.error; return; }
-	poll = poll ?? setInterval(showStatus, 1000);
-};
-
-$('btnApply').onclick = async () => {
-	const tag = $('release').value;
-	if (!confirm(`${tag} jetzt in den Flash schreiben?\n\nDas lässt sich nicht rückgängig machen. Nicht ausschalten, bis „flashed“ angezeigt wird.`)) return;
-	const r = await ubus('shareos.update', 'apply', { tag, confirm: true });
-	if (r.error) { $('updOut').textContent = 'Fehler: ' + r.error; return; }
-	poll = poll ?? setInterval(showStatus, 1000);
-};
-</script>
+<div id="app" class="sos acc-green">
+  <div class="scan"></div>
+  <div class="wrap" id="root">
+    <noscript>Die ShareOS-Oberfläche braucht JavaScript.</noscript>
+  </div>
+  <div class="toast" id="toast" aria-live="polite"></div>
+</div>
+<script src="app.js"></script>
 </body>
 </html>

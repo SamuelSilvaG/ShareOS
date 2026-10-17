@@ -64,6 +64,16 @@ if [ "$CHECK" = "--check" ]; then
 	t "uci get shareos" "$(rpc $SID uci get '{"config":"shareos"}')" "d['result'][1]['values']['update']['repo']=='UniqueDroid/ShareOS'"
 	t "apply needs confirm" "$(rpc $SID shareos.update apply '{"tag":"v0"}')" "'confirm' in d['result'][1]['error']"
 	t "update status" "$(rpc $SID shareos.update status)" "'state' in d['result'][1]"
+	t "info: cpu, net counters, filesystems" "$(rpc $SID shareos.system info)" "d['result'][1]['cpu']['total']>0 and 'rx_bytes' in d['result'][1]['network']['eth0'] and 'filesystems' in d['result'][1]"
+	t "service list" "$(rpc $SID shareos.service list)" "any(x['name']=='uhttpd' and x['running'] for x in d['result'][1]['services'])"
+	t "essential service cannot be stopped" "$(rpc $SID shareos.service action '{"name":"rpcd","action":"stop"}')" "'cannot be stopped' in d['result'][1]['error']"
+	t "unknown service rejected" "$(rpc $SID shareos.service action '{"name":"../../bin/sh","action":"start"}')" "d['result'][1]['error']=='unknown service'"
+	t "log readable" "$(rpc $SID shareos.system log '{"lines":5,"source":"kernel"}')" "type(d['result'][1]['lines'])==list"
+	t "factory reset needs confirm" "$(rpc $SID shareos.system factory_reset)" "'confirm' in d['result'][1]['error']"
+	t "invalid hostname rejected" "$(rpc $SID shareos.system set_hostname '{"hostname":"bad name;x"}')" "d['result'][1]['error']=='invalid hostname'"
+	t "short password rejected" "$(rpc $SID shareos.system set_password '{"password":"abc"}')" "'too short' in d['result'][1]['error']"
+	t "anonymous service list denied" "$(rpc $ZERO shareos.service list)" "d['error']['code']==-32002"
+	t "GUI assets served" "$(curl -s -o /dev/null -w '{"a":%{http_code},' http://127.0.0.1:$PORT/app.js; curl -s -o /dev/null -w '"c":%{http_code}}' http://127.0.0.1:$PORT/shareos.css)" "d['a']==200 and d['c']==200"
 	echo; [ $fails -eq 0 ] && echo "all checks passed" || { echo "$fails check(s) failed"; exit 1; }
 	exit 0
 fi
