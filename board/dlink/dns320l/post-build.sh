@@ -10,12 +10,17 @@ BOARD_DIR="$(dirname "$0")"
 TOP_DIR="$(cd "$BOARD_DIR/../../.." && pwd)"
 
 VERSION="$("$TOP_DIR/scripts/version.sh")"
+case "$VERSION" in
+	0.0-*) STAGE=dev ;;          # untagged build
+	*-*) STAGE=beta ;;           # v1.2.0-beta.1, -rc.1 ...
+	*) STAGE=stable ;;
+esac
 
 cat > "$TARGET_DIR/etc/shareos-release" <<EOF
 SHAREOS_VERSION="$VERSION"
 SHAREOS_BOARD="dns320l"
 SHAREOS_FWNAME="DNS-320L-rev-Ax"
-SHAREOS_STAGE="dev"
+SHAREOS_STAGE="$STAGE"
 EOF
 
 # All kernel modules stay in the squashfs root; the small initramfs needs
