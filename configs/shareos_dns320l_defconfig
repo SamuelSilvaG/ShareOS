@@ -95,3 +95,8 @@ BR2_PACKAGE_HDPARM=y
 # mbedtls programs for the self-signed certificate)
 BR2_PACKAGE_USTREAM_SSL=y
 BR2_PACKAGE_MBEDTLS_PROGRAMS=y
+
+# shares and users (ksmbd, NFS, quota)
+BR2_PACKAGE_KSMBD_TOOLS=y
+BR2_PACKAGE_NFS_UTILS=y
+BR2_PACKAGE_QUOTA=y

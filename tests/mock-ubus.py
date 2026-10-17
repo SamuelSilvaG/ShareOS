@@ -9,6 +9,7 @@ The data imitates a DNS-320L with two disks, a mirror in initial sync and an
 update available.
 """
 import json
+import os
 import sys
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -18,6 +19,13 @@ WWW = Path(__file__).resolve().parent.parent / 'src/shareos-core/www'
 SID = 'c0ffee00c0ffee00c0ffee00c0ffee00'
 T0 = time.time()
 STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full_temp': 50, 'half_temp': 45}, 'led': {'status': 'heartbeat', 'power': 'on', 'disks': 'off'}, 'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False, 'theme': 'dark', 'accent': 'blue', 'autostart_off': ['crond'],
+         'users': {'jan': {'role': 'admin', 'fullname': 'Jan', 'groups': ['familie'], 'home': 'daten', 'quota': 0, 'web': True, 'pw': 'shareos'},
+                   'anna': {'role': 'user', 'fullname': 'Anna', 'groups': ['familie'], 'home': 'daten', 'quota': 200000, 'web': True, 'pw': 'anna123'},
+                   'tv': {'role': 'share', 'fullname': 'Fernseher', 'groups': ['medien'], 'home': '', 'quota': 0, 'web': True, 'pw': 'tv1234'}},
+         'groups': {'familie': 'Familie', 'medien': 'Mediengeräte'},
+         'shares': {'fotos': {'volume': 'daten', 'path': 'Fotos', 'comment': 'Familienfotos', 'smb': True, 'nfs': False, 'guest': False, 'rw': ['jan'], 'ro': ['@familie'], 'nfs_rw': False, 'nfs_hosts': []},
+                    'medien': {'volume': 'daten', 'path': 'Medien', 'comment': 'Filme und Musik', 'smb': True, 'nfs': True, 'guest': True, 'rw': ['jan'], 'ro': ['@medien'], 'nfs_rw': False, 'nfs_hosts': ['10.241.1.0/24']}},
+         'sessions': {},
          'net': {'proto': 'dhcp', 'ipaddr': '', 'netmask': '255.255.255.0', 'gateway': '', 'dns': []}, 'net_pending': None}
 
 DISK = lambda n, model, serial: {
@@ -72,9 +80,87 @@ RELEASES = [{'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1', 'prerelease': Tr
              'url': 'https://github.com/UniqueDroid/ShareOS/releases', 'notes': 'Erste Testversion'}]
 
 
+def accounts():
+    u = STATE['users']
+    users = [{'name': n, 'role': x['role'], 'fullname': x['fullname'], 'uid': 1000 + k, 'groups': x['groups'], 'home': x['home'],
+              'quota': x['quota'], 'web': x['web'],
+              'usage': [{'volume': 'daten', 'used': (k + 1) * 37_000_000_000, 'limit': x['quota'] * 1000000}] if x['home'] else []}
+             for k, (n, x) in enumerate(sorted(u.items()))]
+    groups = [{'name': g, 'desc': d, 'members': [n for n, x in u.items() if g in x['groups']]} for g, d in sorted(STATE['groups'].items())]
+    return {'users': users, 'groups': groups}
+
+
+def shares():
+    return {'shares': [{'name': n, **x, 'fullpath': f"/mnt/{x['volume']}/{x['path']}", 'mounted': True} for n, x in sorted(STATE['shares'].items())],
+            'workgroup': 'WORKGROUP', 'smb_enabled': True, 'nfs_enabled': True, 'smb_running': True, 'nfs_running': True}
+
+
+def me(user):
+    if user == 'root':
+        return {'name': 'root', 'role': 'admin', 'fullname': 'Administrator', 'groups': [], 'quota': 0, 'home': None, 'usage': [], 'shares': [], 'host': 'skynet-nas'}
+    x = STATE['users'][user]
+    mine = []
+    for n, sh in sorted(STATE['shares'].items()):
+        tags = [user] + ['@' + g for g in x['groups']]
+        acc = 'rw' if any(t in sh['rw'] for t in tags) else 'ro' if any(t in sh['ro'] for t in tags) or sh['guest'] else None
+        if acc:
+            mine.append({'name': n, 'access': acc, 'comment': sh['comment']})
+    return {'name': user, 'role': x['role'], 'fullname': x['fullname'], 'groups': x['groups'], 'quota': x['quota'],
+            'home': {'volume': x['home'], 'path': f"/mnt/{x['home']}/home/{user}", 'smb': user} if x['home'] else None,
+            'usage': [{'volume': 'daten', 'used': 61_500_000_000, 'limit': x['quota'] * 1000000}], 'shares': mine, 'host': 'skynet-nas'}
+
+
 def call(obj, method, args):
     if obj == 'session' and method == 'login':
-        return {'ubus_rpc_session': SID} if args.get('password') == 'shareos' else 6
+        user, pw = args.get('username'), args.get('password')
+        if user == 'root' and pw == 'shareos':
+            return {'ubus_rpc_session': SID}
+        x = STATE['users'].get(user)
+        if x and x['pw'] == pw and (x['role'] == 'admin' or (x['role'] == 'user' and x['web'])):
+            return {'ubus_rpc_session': SID}
+        return 6
+    if obj == 'shareos.me':
+        if method == 'bind':
+            STATE['sessions'][SID] = args['username']
+        u = STATE['sessions'].get(SID, 'root')
+        if method == 'passwd':
+            return {'ok': True}
+        return me(u)
+    if obj == 'shareos.accounts':
+        if method == 'add':
+            STATE['users'][args['name']] = {'role': args['role'], 'fullname': args.get('fullname', ''), 'groups': args.get('groups', []),
+                                            'home': args.get('home', ''), 'quota': args.get('quota', 0), 'web': args.get('web', True), 'pw': args.get('password')}
+        if method == 'set':
+            STATE['users'][args['name']].update({k: v for k, v in args.items() if k != 'name'})
+        if method == 'del':
+            STATE['users'].pop(args['name'], None)
+        if method == 'group_add':
+            STATE['groups'][args['name']] = args.get('desc', '')
+        if method == 'group_del':
+            STATE['groups'].pop(args['name'], None)
+        if method == 'import_altf':
+            return {'ok': True, 'imported': [], 'skipped': [], **accounts()}
+        return accounts() if method != 'passwd' else {'ok': True}
+    if obj == 'shareos.backup':
+        summary = {'version': '0.1.0-beta.2', 'host': 'skynet-nas', 'created': int(time.time()), 'users': sorted(STATE['users']),
+                   'shares': sorted(STATE['shares']), 'configs': ['shareos', 'storage', 'network', 'accounts', 'shares'], 'certificate': True}
+        if method == 'export':
+            enc = bool(args.get('password'))
+            return {'filename': 'shareos-skynet-nas-20261017-2330.json', 'encrypted': enc,
+                    'content': json.dumps({'shareos_backup': 1, 'encrypted': True, 'data': 'U09TMQ=='} if enc else {'shareos_backup': 1, **summary}), **summary}
+        try:
+            d = json.loads(args.get('content') or '')
+        except ValueError:
+            return {'error': 'not a ShareOS settings backup'}
+        if d.get('encrypted') and not args.get('password'):
+            return {'error': 'password required', 'encrypted': True}
+        return {'ok': True, 'reboot': True} if args.get('apply') else {'ok': True, 'preview': True, **summary}
+    if obj == 'shareos.shares':
+        if method == 'set':
+            STATE['shares'][args['name']] = {k: v for k, v in args.items() if k != 'name'}
+        if method == 'del':
+            STATE['shares'].pop(args['name'], None)
+        return shares()
     if obj == 'session':
         return {}
     if obj == 'shareos.ui':
@@ -149,14 +235,19 @@ def call(obj, method, args):
         if method == 'apply':
             STATE['apply_t'] = time.time()
             return {'started': True}
+        rel = {'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1'}
+        if method == 'status' and STATE.get('apply_t') and time.time() - STATE['apply_t'] < 2:
+            # like the real updater: just after the click it may still report 'ready'
+            return {'state': 'ready', 'current': '0.1.0-beta.1', 'release': rel}
         if method == 'status' and STATE.get('apply_t'):
             # walk through the flashing steps, 3 s each
             steps = ['check bundle', 'stage rootfs', 'erase ramdisk', 'write ramdisk', 'verify ramdisk', 'erase uImage', 'write uImage', 'verify uImage']
-            i = int((time.time() - STATE['apply_t']) / 3)
-            rel = {'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1'}
+            i = int((time.time() - STATE['apply_t'] - 2) / 3)
             if i < len(steps):
                 return {'state': 'flashing', 'step': steps[i], 'current': '0.1.0-beta.1', 'release': rel}
             return {'state': 'flashed', 'current': '0.1.0-beta.1', 'release': rel, 'pending_reboot': True}
+        if method == 'status' and os.environ.get('MOCK_UPDATE_READY'):
+            return {'state': 'ready', 'current': '0.1.0-beta.1', 'release': rel}
         check = {'time': int(time.time()), 'channel': STATE['channel'], 'repo': 'UniqueDroid/ShareOS', 'releases': RELEASES,
                  'latest': 'v0.2.0-beta.1', 'update_available': True}
         if method == 'check':

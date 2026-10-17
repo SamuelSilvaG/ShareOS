@@ -23,7 +23,7 @@ extract() {
 	mtd=$(sed -n 's/^mtd\([0-9]*\):.*"config"$/\1/p' /proc/mtd)
 	[ -n "$mtd" ] || die "no config partition"
 	modprobe jffs2 2>/dev/null
-	mount -t jffs2 -o ro /dev/mtdblock$mtd $X/mnt 2>/dev/null || { echo "found=0"; exit 0; }
+	mount -t jffs2 -o ro mtd$mtd $X/mnt 2>/dev/null || { echo "found=0"; exit 0; }
 	last=$(ls $X/mnt/set_*.tgz 2>/dev/null | sort | tail -1)
 	if [ -z "$last" ]; then umount $X/mnt; echo "found=0"; exit 0; fi
 	tar -xzf "$last" -C $X 2>/dev/null

@@ -1,0 +1,171 @@
+#!/bin/sh
+#
+# shareos-shares – SMB (ksmbd) and NFS shares from UCI /etc/config/shares
+#
+#   shareos-shares apply     create missing folders, write the ksmbd and NFS
+#                            configuration, (re)start or reload the services
+#   shareos-shares start | stop
+#   shareos-shares status    key=value lines for the web interface
+#
+# Access: SMB checks users and groups per share (valid/read/write lists);
+# folders are owned by root:users with mode 2775 so files stay usable for
+# every user the share admits. NFS has no accounts: clients are listed by
+# address/network, everything is written as nobody:users.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+SMBCONF=/etc/ksmbd/ksmbd.conf
+EXPORTS=/etc/exports
+
+log() { logger -t shareos-shares "$*"; echo "$*"; }
+
+shares() { uci -q show shares | sed -n "s/^shares\.\([^.=]*\)=share$/\1/p"; }
+get() { uci -q get shares."$1"."$2"; }
+on() { [ "$(get "$1" "$2")" = 1 ]; }
+global() { uci -q get shares.global."$1"; }
+
+share_path() {   # name -> absolute path (or nothing when the volume is unknown)
+	v=$(get "$1" volume)
+	[ -n "$v" ] && [ "$(uci -q get storage."$v")" = volume ] || return 1
+	p=$(get "$1" path); [ -n "$p" ] || p=$1
+	case "$p" in /*|*..*) return 1 ;; esac
+	echo "/mnt/$v/$p"
+}
+volume_mounted() { grep -q " /mnt/$1 " /proc/mounts; }
+
+ensure_folder() {   # path
+	[ -d "$1" ] && return 0
+	mkdir -p "$1" && chown root:users "$1" && chmod 2775 "$1"
+}
+
+# list of users/@groups for ksmbd (space separated)
+acl_list() { for x in $(get "$1" "$2"); do printf '%s ' "$x"; done; }
+
+write_smb() {
+	mkdir -p /etc/ksmbd
+	host=$(cat /proc/sys/kernel/hostname)
+	{
+		echo "; written by shareos-shares from /etc/config/shares – edit there"
+		echo "[global]"
+		echo "	workgroup = $(global workgroup || echo WORKGROUP)"
+		echo "	server string = ShareOS"
+		echo "	netbios name = $host"
+		echo "	map to guest = bad user"
+		echo "	guest account = nobody"
+		echo "	server min protocol = SMB2_10"
+		echo "	smb2 leases = yes"
+		# home folders: \\box\<user> for the logged-in user only
+		if uci -q show accounts | grep -q "\.home='[^']\+'"; then
+			echo
+			echo "[homes]"
+			echo "	comment = personal folder"
+			echo "	path = %H"
+			echo "	read only = no"
+			echo "	browseable = no"
+			echo "	guest ok = no"
+			echo "	create mask = 0600"
+			echo "	directory mask = 0700"
+		fi
+		for s in $(shares); do
+			on "$s" smb || continue
+			p=$(share_path "$s") || continue
+			v=$(get "$s" volume); volume_mounted "$v" || continue
+			rw=$(acl_list "$s" rw); ro=$(acl_list "$s" ro)
+			echo
+			echo "[$s]"
+			c=$(get "$s" comment); [ -n "$c" ] && echo "	comment = $c"
+			echo "	path = $p"
+			echo "	read only = yes"
+			echo "	browseable = yes"
+			if on "$s" guest; then
+				echo "	guest ok = yes"
+			else
+				echo "	guest ok = no"
+				echo "	valid users = $rw$ro"
+			fi
+			[ -n "$rw" ] && echo "	write list = $rw"
+			[ -n "$ro" ] && echo "	read list = $ro"
+			echo "	force group = users"
+			echo "	create mask = 0664"
+			echo "	directory mask = 2775"
+		done
+	} > $SMBCONF.new && mv $SMBCONF.new $SMBCONF
+}
+
+write_nfs() {
+	{
+		echo "# written by shareos-shares from /etc/config/shares – edit there"
+		for s in $(shares); do
+			on "$s" nfs || continue
+			p=$(share_path "$s") || continue
+			volume_mounted "$(get "$s" volume)" || continue
+			mode=ro; on "$s" nfs_rw && mode=rw
+			hosts=$(get "$s" nfs_hosts)
+			[ -n "$hosts" ] || continue
+			line="$p"
+			for h in $hosts; do line="$line $h($mode,sync,no_subtree_check,all_squash,anonuid=65534,anongid=100)"; done
+			echo "$line"
+		done
+	} > $EXPORTS.new && mv $EXPORTS.new $EXPORTS
+}
+
+smb_wanted() { [ "$(global smb || echo 1)" = 1 ] && grep -q '^\[' $SMBCONF 2>/dev/null && [ "$(grep -c '^\[' $SMBCONF)" -gt 1 -o -n "$(grep '^\[homes\]' $SMBCONF)" ]; }
+nfs_wanted() { [ "$(global nfs || echo 1)" = 1 ] && grep -q '^/' $EXPORTS 2>/dev/null; }
+
+smb_start() {
+	modprobe ksmbd 2>/dev/null
+	pidof ksmbd.mountd >/dev/null && return 0
+	ksmbd.mountd >/dev/null 2>&1 || log "ksmbd.mountd failed"
+}
+smb_stop() {
+	pidof ksmbd.mountd >/dev/null || return 0
+	ksmbd.control -s >/dev/null 2>&1
+	sleep 1
+	killall ksmbd.mountd 2>/dev/null
+	rmmod ksmbd 2>/dev/null
+}
+smb_reload() { ksmbd.control -r >/dev/null 2>&1 || { smb_stop; smb_start; }; }
+
+nfs_start() {
+	modprobe nfsd 2>/dev/null
+	# rpcbind and nfs are started here, not at boot (post-build renames them)
+	[ -x /etc/init.d/rpcbind ] && ! pidof rpcbind >/dev/null && /etc/init.d/rpcbind start >/dev/null 2>&1
+	if ! pidof rpc.mountd >/dev/null; then
+		[ -x /etc/init.d/nfs ] && /etc/init.d/nfs start >/dev/null 2>&1
+	fi
+	exportfs -ra 2>/dev/null
+}
+nfs_stop() {
+	[ -x /etc/init.d/nfs ] && pidof rpc.mountd >/dev/null && /etc/init.d/nfs stop >/dev/null 2>&1
+	return 0
+}
+
+cmd_apply() {
+	[ -f /etc/config/shares ] || : > /etc/config/shares
+	for s in $(shares); do
+		p=$(share_path "$s") || continue
+		volume_mounted "$(get "$s" volume)" && ensure_folder "$p"
+	done
+	write_smb
+	write_nfs
+	if smb_wanted; then pidof ksmbd.mountd >/dev/null && smb_reload || smb_start; else smb_stop; fi
+	if nfs_wanted; then nfs_start; else nfs_stop; fi
+	return 0
+}
+
+cmd_status() {
+	echo "smb=$(pidof ksmbd.mountd >/dev/null && echo 1 || echo 0)"
+	echo "nfs=$(pidof rpc.mountd >/dev/null && echo 1 || echo 0)"
+	for s in $(shares); do
+		p=$(share_path "$s") || { echo "share=$s:"; continue; }
+		v=$(get "$s" volume)
+		echo "share=$s:$p:$(volume_mounted "$v" && echo 1 || echo 0)"
+	done
+}
+
+case "$1" in
+	apply) cmd_apply ;;
+	start) cmd_apply ;;
+	stop) smb_stop; nfs_stop ;;
+	status) cmd_status ;;
+	*) sed -n '3,14s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

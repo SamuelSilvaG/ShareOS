@@ -1,0 +1,18 @@
+# SMB (ksmbd) and NFS shares – applied by shareos-shares
+# (web interface: Shares). Example:
+#
+# config share 'fotos'
+#	option volume 'daten'
+#	option path 'Fotos'          # folder on the volume
+#	option smb '1'
+#	option guest '0'             # 1 = everyone may read without a password
+#	list rw 'jan'                # users and @groups with write access
+#	list ro '@familie'           # users and @groups with read access
+#	option nfs '0'
+#	option nfs_rw '0'
+#	list nfs_hosts '192.168.1.0/24'
+
+config global 'global'
+	option workgroup 'WORKGROUP'
+	option smb '1'
+	option nfs '1'

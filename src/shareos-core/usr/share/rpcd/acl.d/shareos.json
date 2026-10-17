@@ -49,12 +49,23 @@
 				],
 				"shareos.net": [
 					"get"
+				],
+				"shareos.accounts": [
+					"list"
+				],
+				"shareos.shares": [
+					"list"
+				],
+				"shareos.me": [
+					"get"
 				]
 			},
 			"uci": [
 				"shareos",
 				"storage",
-				"network"
+				"network",
+				"accounts",
+				"shares"
 			]
 		},
 		"write": {
@@ -109,11 +120,54 @@
 				"shareos.net": [
 					"set",
 					"confirm"
+				],
+				"shareos.accounts": [
+					"add",
+					"set",
+					"passwd",
+					"del",
+					"group_add",
+					"group_del",
+					"import_altf"
+				],
+				"shareos.shares": [
+					"set",
+					"del",
+					"global"
+				],
+				"shareos.me": [
+					"bind",
+					"passwd"
+				],
+				"shareos.backup": [
+					"export",
+					"restore"
 				]
 			},
 			"uci": [
 				"shareos"
 			]
+		}
+	},
+	"shareos-user": {
+		"description": "Plain users: their own area (\"Mein ShareOS\")",
+		"read": {
+			"ubus": {
+				"shareos.me": [
+					"get"
+				],
+				"shareos.ui": [
+					"get"
+				]
+			}
+		},
+		"write": {
+			"ubus": {
+				"shareos.me": [
+					"bind",
+					"passwd"
+				]
+			}
 		}
 	}
 }
