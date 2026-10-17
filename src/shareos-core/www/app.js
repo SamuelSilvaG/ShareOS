@@ -569,6 +569,10 @@ function storageView() {
 					${SPINDOWN.some(([m]) => m === st.spindown) ? '' : html`<option value="${st.spindown}" selected>${st.spindown} Minuten</option>`}
 				</select></label></div>
 				<p class="note">Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).</p>
+				<dl class="kv" style="margin-top:14px">
+					<dt>Swap</dt><dd>${(st.swaps || []).length ? (st.swaps.map((x) => x.device.replace('/dev/', '')).join(', ') + ' · ' + fmtBytes(st.swaps.reduce((a, x) => a + x.used, 0)) + ' von ' + fmtBytes(st.swaps.reduce((a, x) => a + x.size, 0)) + ' belegt') : 'keiner aktiv'}</dd>
+					<dt>Apps-Bereich</dt><dd>${st.apps ? '/mnt/' + st.apps + '/.shareos' : 'noch keiner'}</dd>
+				</dl>
 			</div>
 			<div class="panel">
 				<div class="ph"><span class="pt">NEU EINRICHTEN</span></div>
@@ -597,7 +601,7 @@ function volumeCard(st, v, running) {
 	return html`<div class="card${v.mounted ? '' : ' off'}">
 		<div class="icon">${svg(I.disk)}<span class="dot ${!v.mounted ? 'down' : degraded ? 'warn' : 'up'}"></span></div>
 		<div class="info">
-			<div class="name">${v.name}</div>
+			<div class="name">${v.name}${S.storage?.apps === v.name ? html` <span class="tag" title="Pakete und App-Daten liegen in .shareos">APPS</span>` : ''}</div>
 			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
 			${v.mounted ? html`<div class="bar" style="margin-top:10px"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}
 			${md ? html`<div class="desc" style="margin-top:8px">${md.name}: ${degraded ? html`<span style="color:var(--amber)">eine Platte fehlt (${md.health})</span>` : html`beide Platten aktiv (${md.health || '?'})`}</div>` : ''}
@@ -659,7 +663,11 @@ function wizardView(st) {
 		body = html`<div style="display:grid;gap:10px">${opts.map(([id, t, d]) => html`
 			<label class="panel" style="cursor:pointer;display:flex;gap:12px;align-items:flex-start;${w.layout === id ? 'border-color:var(--accent);box-shadow:var(--glow)' : ''}">
 				<input type="radio" name="wiz-layout" value="${id}"${w.layout === id ? raw(' checked') : ''} style="margin-top:4px;accent-color:var(--accent)">
-				<span><b class="name" style="font-size:14px">${t}</b><br><span class="mut" style="font-size:12px">${d}</span></span></label>`)}</div>`;
+				<span><b class="name" style="font-size:14px">${t}</b><br><span class="mut" style="font-size:12px">${d}</span></span></label>`)}</div>
+			<div class="fields" style="margin-top:14px"><label class="f"><span>AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE</span><select id="wiz-swap">
+				${[[1024, '1 GB – empfohlen'], [2048, '2 GB'], [512, '512 MB'], [0, 'keiner']].map(([v, t]) => html`<option value="${v}"${w.swap === v ? raw(' selected') : ''}>${t}</option>`)}
+			</select></label></div>
+			<p class="note">Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.</p>`;
 	} else if (w.step === 2) {
 		const fields = w.layout === 'mirror' ? [['__mirror', 'NAME DES SPIEGELS']] : chosen.map((d) => [d.name, `NAME FÜR ${d.name.toUpperCase()} (${fmtBytes(d.size)})`]);
 		body = html`<div class="fields">${fields.map(([k, l]) => html`<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>`)}</div>
@@ -669,6 +677,7 @@ function wizardView(st) {
 			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size)]);
 		body = html`<div class="tw"><table class="t" style="min-width:420px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th></tr></thead>
 			<tbody>${vols.map(([n, ds, sz]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td></tr>`)}</tbody></table></div>
+			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}Apps-Bereich auf „${w.layout === 'mirror' ? w.names.__mirror : w.names[w.disks[0]]}“ (falls noch keiner besteht).</p>
 			<p class="note" style="color:var(--amber)">Beim Klick auf „Einrichten“ werden ${chosen.map((d) => d.name).join(' und ')} vollständig gelöscht.${w.layout === 'mirror' ? ' Die Erst-Synchronisierung läuft danach im Hintergrund (bei großen Platten mehrere Stunden); das Laufwerk ist sofort nutzbar.' : ''}</p>`;
 	}
 	return html`<section class="sec"><div class="panel" style="border-color:var(--dim);box-shadow:var(--glow)">
@@ -686,7 +695,10 @@ function wizardCollect() {
 	const w = S.wiz;
 	if (!w) return;
 	if (w.step === 0) w.disks = [...document.querySelectorAll('.wiz-disk:checked')].map((x) => x.value);
-	if (w.step === 1) w.layout = $('input[name=wiz-layout]:checked')?.value || w.layout;
+	if (w.step === 1) {
+		w.layout = $('input[name=wiz-layout]:checked')?.value || w.layout;
+		if ($('#wiz-swap')) w.swap = +$('#wiz-swap').value;
+	}
 	if (w.step === 2) document.querySelectorAll('.wiz-name').forEach((x) => { w.names[x.dataset.k] = x.value.trim().toLowerCase(); });
 }
 
@@ -978,7 +990,7 @@ const ACTIONS = {
 	check() { checkUpdates(); },
 	'wiz-start'() {
 		const disks = (S.storage?.disks || []).filter((d) => !d.rm && d.tran !== 'usb').map((d) => d.name);
-		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', names: { __mirror: 'daten' } };
+		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', swap: 1024, names: { __mirror: 'daten' } };
 		renderMain();
 		window.scrollTo(0, 0);
 	},
@@ -997,8 +1009,8 @@ const ACTIONS = {
 		const w = S.wiz;
 		if (!await confirmDlg('Platten löschen und einrichten?', `${w.disks.join(' und ')} werden vollständig gelöscht. Das lässt sich nicht rückgängig machen.`, 'Löschen & einrichten', true)) return;
 		const args = w.layout === 'mirror'
-			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, confirm: true }
-			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d })), confirm: true };
+			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, swap: w.swap, confirm: true }
+			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d })), swap: w.swap, confirm: true };
 		try { await rpc('shareos.storage', 'setup', args); S.wiz = null; toast('Einrichtung gestartet.'); setTimeout(loadStorage, 1000); }
 		catch (e) { toast('Einrichten: ' + e.message, true); }
 	},

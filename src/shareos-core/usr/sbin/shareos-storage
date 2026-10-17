@@ -3,16 +3,21 @@
 # shareos-storage – disks, RAID and volumes for ShareOS
 #
 #   shareos-storage boot | shutdown            (S20storage)
-#   shareos-storage setup mirror <name> <disk> <disk> --yes
-#   shareos-storage setup single <name>=<disk> [<name>=<disk>] --yes
+#   shareos-storage setup mirror <name> <disk> <disk> [--swap=MiB] --yes
+#   shareos-storage setup single <name>=<disk> [<name>=<disk>] [--swap=MiB] --yes
 #                                              erase the disks and create volumes
+#                                              (--swap: swap partition per disk,
+#                                              default 1024, 0 = none)
 #   shareos-storage mount <name> | umount <name>
 #   shareos-storage forget <name>              unmount and remove from the config
 #   shareos-storage spindown <minutes>         0 = never
 #   shareos-storage job                        state of the last setup job
 #
-# Disks are given as sda, sdb, ... (whole disks). Volumes are ext4, mounted
-# at /mnt/<name> and stored in /etc/config/storage (UCI). Names: a-z, 0-9,
+# Disks are given as sda, sdb, ... (whole disks). Each disk gets an optional
+# swap partition (label shareos-swap, used with equal priority on all disks)
+# and a data partition. Volumes are ext4, mounted at /mnt/<name> and stored
+# in /etc/config/storage (UCI). The first volume also gets the app area
+# /mnt/<name>/.shareos (storage.global.apps) for packages and app data. Names: a-z, 0-9,
 # - and _, at most 16 characters (ext4 label limit).
 #
 # setup erases everything on the given disks – it refuses without --yes.
@@ -49,7 +54,8 @@ step() { log "$*"; job_set step "$*"; }
 valid_name() { echo "$1" | grep -qE '^[a-z0-9][a-z0-9_-]{0,15}$'; }
 # SHAREOS_STORAGE_DISKS: other disk names for tests (e.g. 'loop[0-9]+')
 valid_disk() { echo "$1" | grep -qE "^(sd[a-z]${SHAREOS_STORAGE_DISKS:+|$SHAREOS_STORAGE_DISKS})\$" && [ -e /sys/block/$1 ]; }
-part1() { case "$1" in *[0-9]) echo /dev/${1}p1 ;; *) echo /dev/${1}1 ;; esac; }
+partn() { case "$1" in *[0-9]) echo /dev/${1}p$2 ;; *) echo /dev/${1}$2 ;; esac; }
+SWAP_MB=1024
 
 volume_dev() {   # name -> block device of the file system (by UUID)
 	u=$(uci -q get storage.$1.uuid) || return 1
@@ -132,6 +138,10 @@ release_disk() {
 			mdadm --stop /dev/${md##*/} >/dev/null 2>&1
 		fi
 	done
+	# swap on this disk
+	for sw in $(awk 'NR>1 {print $1}' /proc/swaps); do
+		case "$sw" in /dev/$disk*) swapoff $sw ;; esac
+	done
 	# any other mount of this disk (e.g. mounted by hand)
 	grep "^/dev/$disk" /proc/mounts | while read dev mp rest; do umount "$mp" || umount -l "$mp"; done
 	for p in /dev/${disk}[0-9]*; do
@@ -139,16 +149,39 @@ release_disk() {
 	done
 }
 
-partition() {   # disk type(L|R) -> one GPT partition over the whole disk
+partition() {   # disk type(L|R) -> [swap partition] + data partition; prints the data partition
 	disk=$1
 	wipefs -q -a /dev/$disk || die "wipefs $disk failed"
-	printf 'label: gpt\n,,%s\n' "$2" | sfdisk -q --wipe always --wipe-partitions always /dev/$disk >/dev/null \
+	if [ "$SWAP_MB" -gt 0 ]; then
+		printf 'label: gpt\n,%sMiB,S\n,,%s\n' "$SWAP_MB" "$2"
+	else
+		printf 'label: gpt\n,,%s\n' "$2"
+	fi | sfdisk -q --wipe always --wipe-partitions always /dev/$disk >/dev/null \
 		|| die "partitioning $disk failed"
-	p=$(part1 $disk)
+	if [ "$SWAP_MB" -gt 0 ]; then sw=$(partn $disk 1); p=$(partn $disk 2); else sw=; p=$(partn $disk 1); fi
 	i=0
 	while [ ! -b $p ] && [ $i -lt 20 ]; do sleep 0.5; i=$((i + 1)); done
 	[ -b $p ] || die "partition $p did not appear"
 	wipefs -q -a $p
+	if [ -n "$sw" ]; then
+		mkswap -L shareos-swap $sw >/dev/null || die "mkswap on $sw failed"
+		swapon -p 10 $sw 2>/dev/null
+	fi
+	DATA=$p
+}
+
+swap_on() {
+	for d in $(blkid -t LABEL=shareos-swap -o device 2>/dev/null); do
+		grep -q "^$d " /proc/swaps || swapon -p 10 $d 2>/dev/null
+	done
+}
+
+apps_area() {   # first volume becomes the app area unless one is set
+	a=$(uci -q get storage.global.apps)
+	[ -n "$a" ] && [ "$(uci -q get storage.$a)" = volume ] && return 0
+	uci set storage.global.apps="$1"
+	uci commit storage
+	mkdir -p /mnt/$1/.shareos
 }
 
 make_fs() {   # dev name
@@ -179,7 +212,14 @@ free_md() {
 cmd_setup() {
 	layout=$1; shift
 	yes=0; args=
-	for a; do [ "$a" = --yes ] && yes=1 || args="$args $a"; done
+	for a; do
+		case "$a" in
+			--yes) yes=1 ;;
+			--swap=*) SWAP_MB=${a#--swap=} ;;
+			*) args="$args $a" ;;
+		esac
+	done
+	echo "$SWAP_MB" | grep -qE '^[0-9]+$' && [ "$SWAP_MB" -le 8192 ] || { echo "invalid --swap" >&2; exit 2; }
 	[ $yes = 1 ] || { echo "setup erases the disks – add --yes" >&2; exit 2; }
 	set -- $args
 	job_start "setup $layout $*"
@@ -193,15 +233,16 @@ cmd_setup() {
 			{ dev=$(volume_dev $name); case "$dev" in /dev/$d1*|/dev/$d2*|/dev/md*) ;; *) die "volume $name exists" ;; esac; }
 		step "preparing $d1 and $d2"
 		release_disk $d1; release_disk $d2
-		step "partitioning $d1"; partition $d1 R
-		step "partitioning $d2"; partition $d2 R
+		step "partitioning $d1"; partition $d1 R; p1=$DATA
+		step "partitioning $d2"; partition $d2 R; p2=$DATA
 		md=$(free_md)
 		step "creating mirror $md"
 		mdadm --create $md --run --quiet --level=1 --raid-devices=2 --metadata=1.2 \
-			--name="$name" --bitmap=internal $(part1 $d1) $(part1 $d2) || die "mdadm --create failed"
+			--name="$name" --bitmap=internal $p1 $p2 || die "mdadm --create failed"
 		write_mdconf
 		make_fs $md "$name"
 		add_volume "$name" $md mirror
+		apps_area "$name"
 		;;
 	single)
 		[ $# -ge 1 ] || die "no disks given"
@@ -215,8 +256,9 @@ cmd_setup() {
 			step "preparing $d"
 			release_disk $d
 			step "partitioning $d"; partition $d L
-			make_fs $(part1 $d) "$n"
-			add_volume "$n" $(part1 $d) single
+			make_fs $DATA "$n"
+			add_volume "$n" $DATA single
+			apps_area "$n"
 		done
 		write_mdconf
 		;;
@@ -233,6 +275,7 @@ cmd_boot() {
 	else
 		mdadm --assemble --scan >/dev/null 2>&1
 	fi
+	swap_on
 	rc=0
 	for n in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
 		[ "$(uci -q get storage.$n.enabled)" = 0 ] && continue
@@ -243,6 +286,7 @@ cmd_boot() {
 }
 
 cmd_shutdown() {
+	for sw in $(blkid -t LABEL=shareos-swap -o device 2>/dev/null); do swapoff $sw 2>/dev/null; done
 	for n in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
 		umount_volume $n
 	done
@@ -265,7 +309,9 @@ case "$1" in
 	forget)
 		valid_name "$2" || exit 2
 		umount_volume "$2" || { echo "volume $2 is busy" >&2; exit 1; }
-		uci -q delete storage.$2; uci commit storage
+		uci -q delete storage.$2
+		[ "$(uci -q get storage.global.apps)" = "$2" ] && uci -q delete storage.global.apps
+		uci commit storage
 		rmdir /mnt/$2 2>/dev/null; true ;;
 	spindown)
 		echo "$2" | grep -qE '^[0-9]+$' || exit 2

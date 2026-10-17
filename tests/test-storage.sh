@@ -22,6 +22,7 @@ T=$(mktemp -d /tmp/shareos-storage-test.XXXX)
 R=$T/root
 LOOPS=
 cleanup() {
+	for l in $LOOPS; do for sw in $(awk -v l="$l" 'index($1, l) == 1 {print $1}' /proc/swaps); do swapoff "$sw"; done; done
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
 	for l in $LOOPS; do losetup -d "$l" 2>/dev/null; done
 	rm -rf "$T"
@@ -62,11 +63,13 @@ check "invalid name rejected" "run shareos-storage job | grep -q 'state=error'"
 o=$(run shareos-storage setup single "x=sdz" --yes)
 check "unknown disk rejected" "run shareos-storage job | grep -q \"invalid disk\""
 
-o=$(run shareos-storage setup single "daten=$A" "backup=$B" --yes); echo "$o" | sed 's/^/      /'
+o=$(run shareos-storage setup single "daten=$A" "backup=$B" --swap=64 --yes); echo "$o" | sed 's/^/      /'
 check "single setup of two disks finished" "run shareos-storage job | grep -q 'state=done'"
+check "swap partitions created and active" "grep -q '^/dev/${A}p1 ' /proc/swaps && grep -q '^/dev/${B}p1 ' /proc/swaps"
+check "app area on the first volume" "run uci get storage.global.apps | grep -qx daten && [ -d $R/mnt/daten/.shareos ]"
 check "both volumes mounted" "mounted daten && mounted backup"
 check "volumes in UCI with uuid" "run uci get storage.daten.uuid | grep -qE '^[0-9a-f-]{36}$' && run uci get storage.backup.layout | grep -qx single"
-check "ext4 label set" "run blkid -s LABEL -o value /dev/${A}p1 | grep -qx daten"
+check "ext4 label set on the data partition" "run blkid -s LABEL -o value /dev/${A}p2 | grep -qx daten"
 echo hello > "$R/mnt/daten/file"
 
 o=$(run shareos-storage umount daten)
@@ -75,12 +78,12 @@ o=$(run shareos-storage mount daten)
 check "mount again, data still there" "mounted daten && grep -qx hello $R/mnt/daten/file"
 
 run shareos-storage shutdown >/dev/null
-check "shutdown unmounts all" "! mounted daten && ! mounted backup"
+check "shutdown unmounts all and stops swap" "! mounted daten && ! mounted backup && ! grep -q '^/dev/${A}p1 ' /proc/swaps"
 run shareos-storage boot >/dev/null
-check "boot mounts enabled volumes" "mounted daten && mounted backup"
+check "boot mounts enabled volumes and swap" "mounted daten && mounted backup && grep -q '^/dev/${A}p1 ' /proc/swaps"
 
-o=$(run shareos-storage setup single "neu=$B" --yes)
-check "re-setup of a used disk releases the old volume" "run shareos-storage job | grep -q 'state=done' && ! run uci -q get storage.backup >/dev/null && mounted neu && ! mounted backup"
+o=$(run shareos-storage setup single "neu=$B" --swap=0 --yes)
+check "re-setup of a used disk releases the old volume (no swap now)" "run shareos-storage job | grep -q 'state=done' && ! run uci -q get storage.backup >/dev/null && mounted neu && ! mounted backup && ! grep -q '^/dev/${B}p' /proc/swaps"
 
 o=$(run shareos-storage forget neu)
 check "forget removes from config" "! run uci -q get storage.neu >/dev/null && ! mounted neu"
@@ -101,7 +104,7 @@ check "rpc: invalid volume name rejected" "echo '$E' | grep -q 'invalid name'"
 run 'killall rpcd ubusd' >/dev/null 2>&1
 
 if [ -e /proc/mdstat ]; then
-	run shareos-storage setup mirror spiegel $A $B --yes >/dev/null
+	run shareos-storage setup mirror spiegel $A $B --swap=32 --yes >/dev/null
 	check "mirror setup" "run shareos-storage job | grep -q 'state=done' && mounted spiegel && grep -q md /proc/mdstat"
 	run shareos-storage shutdown >/dev/null
 else

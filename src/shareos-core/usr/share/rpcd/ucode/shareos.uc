@@ -429,8 +429,15 @@ return {
 					push(disks, d);
 				}
 				let c = cursor();
+				let swaps = [];
+				for (let line in slice(split(readfile('/proc/swaps') ?? '', '\n'), 1)) {
+					let f = split(trim(line), /\s+/);
+					if (length(f) >= 4) push(swaps, { device: f[0], size: +f[2] * 1024, used: +f[3] * 1024 });
+				}
 				return {
 					disks,
+					swaps,
+					apps: c.get('storage', 'global', 'apps'),
 					arrays: mdstat(),
 					volumes: volumes(),
 					spindown: +(c.get('storage', 'global', 'spindown') ?? 0),
@@ -450,11 +457,15 @@ return {
 
 		setup: {
 			// layout mirror: name + disks[2]; layout single: volumes [{name, disk}]
-			args: { layout: '', name: '', disks: [], volumes: [], confirm: false },
+			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, confirm: false },
 			call: function(req) {
 				let a = req.args;
 				if (a.confirm !== true)
 					return { error: 'confirm must be true' };
+				let swap = a.swap == null ? 1024 : +a.swap;
+				if (!(swap >= 0 && swap <= 8192))
+					return { error: 'invalid swap size' };
+				let sw = '--swap=' + int(swap);
 				let j = storage_job();
 				if (j?.state == 'running')
 					return { error: 'a storage job is already running' };
@@ -463,7 +474,7 @@ return {
 					if (type(a.disks) != 'array' || length(a.disks) != 2 || a.disks[0] == a.disks[1] ||
 					    !valid_disk(a.disks[0]) || !valid_disk(a.disks[1]))
 						return { error: 'a mirror needs two different disks' };
-					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], '--yes' ]);
+					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], sw, '--yes' ]);
 				}
 				if (a.layout == 'single') {
 					if (type(a.volumes) != 'array' || !length(a.volumes))
@@ -475,7 +486,7 @@ return {
 						seen[v.name] = seen[v.disk] = true;
 						push(args, v.name + '=' + v.disk);
 					}
-					push(args, '--yes');
+					push(args, sw, '--yes');
 					return spawn_storage(args);
 				}
 				return { error: 'unknown layout' };
