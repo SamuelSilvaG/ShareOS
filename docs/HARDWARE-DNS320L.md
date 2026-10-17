@@ -104,3 +104,32 @@ Alt-F 1.0 boot facts from the log:
 - NAND: Hynix H27U1G8F2BTR-BC, bad blocks 167 and 1023 on the test box;
   reading `my-dlink` (mtd6) gives ECC errors – harmless, nothing uses it.
 - `rtc-mv: internal RTC not ticking` is expected, the RTC is in the MCU.
+
+## Stock U-Boot fallback: D-Link rescue firmware
+
+When `bootm` finds no valid image (bad magic / bad CRC), the stock U-Boot
+reads 5 MB from 0x6f00800 ("mini firmware" / "rescue firmware" partition) and
+boots D-Link's rescue system (Linux 2.6.31.8, BusyBox 1.11.2, lighttpd,
+hostname `dlink-<mac>`). Seen on 2026-10-17 after a failed TFTP load.
+
+Consequences:
+- A flashed ShareOS kernel with a **corrupt** uImage/initrd header or CRC does
+  not brick the box – U-Boot falls back to the rescue system (web flashing).
+  A kernel that loads fine but **hangs** is not caught by this.
+- The rescue system reads the MAC from the first 2 KB of that partition
+  (`mac1 = C4:A8:1D:...`), which confirms where ShareOS takes it from.
+- ShareOS must never overwrite the "mini firmware" partition.
+
+## TFTP boot from U-Boot (no flashing)
+
+```
+<space>1                      # stop autoboot
+setenv ipaddr <free ip>
+setenv serverip <pc ip>
+setenv netmask 255.255.255.0
+ping <pc ip>                  # check network first
+tftpboot 0xa00000 uImage
+tftpboot 0xf00000 urootfs
+bootm 0xa00000 0xf00000       # never saveenv
+```
+PC: `dnsmasq --no-daemon --port=0 --enable-tftp --tftp-root=/srv/tftp --tftp-single-port`.
