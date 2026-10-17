@@ -1,0 +1,93 @@
+#!/bin/sh
+#
+# shareos-cert – HTTPS certificate of the web interface
+#
+#   shareos-cert ensure              create a self-signed certificate if there is none
+#   shareos-cert selfsigned          create a new self-signed certificate
+#   shareos-cert install <crt> <key> use your own certificate (PEM; the chain may
+#                                    follow the certificate); tested before use
+#   shareos-cert info                details of the current certificate
+#
+# Files: shareos.web.cert / shareos.web.key (UCI), default /etc/ssl/shareos/.
+# The self-signed certificate is valid for 10 years and names the hostname,
+# <hostname>.local and the current IPv4 address.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+CRT=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
+KEY=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
+
+die() { echo "shareos-cert: $*" >&2; exit 1; }
+
+# mbedtls programs are installed with or without a prefix depending on the version
+prog() { for p in "mbedtls_$1" "$1"; do command -v "$p" >/dev/null && { echo "$p"; return; }; done; die "mbedtls program $1 missing"; }
+
+ip4() { ip -4 -o addr show dev eth0 2>/dev/null | sed -n 's/.*inet \([0-9.]*\).*/\1/p' | head -1; }
+
+selfsigned() {
+	host=$(cat /proc/sys/kernel/hostname)
+	ip=$(ip4)
+	d=$(dirname "$CRT")
+	mkdir -p "$d" "$(dirname "$KEY")"
+	t=$(mktemp -d)
+	$(prog gen_key) type=ec ec_curve=secp256r1 format=pem filename=$t/key >/dev/null || die "key generation failed"
+	san="DNS:$host;DNS:$host.local${ip:+;IP:$ip}"
+	from=$(date -u +%Y%m%d000000)
+	to=$(( $(date -u +%Y) + 10 ))$(date -u +%m%d235959)
+	$(prog cert_write) selfsign=1 issuer_key=$t/key issuer_name="CN=$host,O=ShareOS" \
+		not_before=$from not_after=$to is_ca=0 max_pathlen=0 san="$san" \
+		key_usage=digital_signature,key_encipherment ns_cert_type=ssl_server \
+		output_file=$t/crt >/dev/null 2>&1 \
+	|| $(prog cert_write) selfsign=1 issuer_key=$t/key issuer_name="CN=$host,O=ShareOS" \
+		not_before=$from not_after=$to output_file=$t/crt >/dev/null \
+	|| { rm -rf $t; die "certificate generation failed"; }
+	umask 077
+	cp $t/key "$KEY.new" && cp $t/crt "$CRT.new" && mv "$KEY.new" "$KEY" && mv "$CRT.new" "$CRT"
+	chmod 600 "$KEY"; chmod 644 "$CRT"
+	rm -rf $t
+	echo "self-signed certificate for $host ($san) created"
+}
+
+# start a throw-away uhttpd with the pair and do a TLS handshake against it
+test_pair() {
+	d=$(mktemp -d)
+	echo ok > $d/index.html
+	port=$((40000 + $$ % 20000))
+	uhttpd -f -h $d -s 127.0.0.1:$port -C "$1" -K "$2" >/dev/null 2>&1 &
+	pid=$!
+	sleep 1
+	r=$(curl -sk --max-time 5 https://127.0.0.1:$port/ 2>/dev/null)
+	kill $pid 2>/dev/null; wait $pid 2>/dev/null
+	rm -rf $d
+	[ "$r" = ok ]
+}
+
+install_pair() {
+	[ -s "$1" ] && [ -s "$2" ] || die "certificate or key file missing"
+	grep -q -- '-----BEGIN CERTIFICATE-----' "$1" || die "no PEM certificate in $1"
+	grep -qE -- '-----BEGIN (EC |RSA |ENCRYPTED )?PRIVATE KEY-----' "$2" || die "no PEM private key in $2"
+	grep -q -- 'ENCRYPTED' "$2" && die "the private key is password protected – remove the password first"
+	test_pair "$1" "$2" || die "certificate and key do not match or are not usable"
+	mkdir -p "$(dirname "$CRT")" "$(dirname "$KEY")"
+	umask 077
+	cp "$1" "$CRT.new" && cp "$2" "$KEY.new" && mv "$KEY.new" "$KEY" && mv "$CRT.new" "$CRT"
+	chmod 600 "$KEY"; chmod 644 "$CRT"
+	echo "certificate installed"
+}
+
+info() {
+	[ -s "$CRT" ] || { echo "none=1"; return; }
+	$(prog cert_app) mode=file filename="$CRT" 2>/dev/null | sed -n \
+		-e 's/^ *issuer name *: */issuer=/p' \
+		-e 's/^ *subject name *: */subject=/p' \
+		-e 's/^ *issued  *on *: */from=/p' \
+		-e 's/^ *expires on *: */until=/p' \
+		-e 's/^ *subject alt name *: *//p' -e 's/^ *\(dNSName\|iPAddress\) *: */san=\1:/p' | head -20
+}
+
+case "$1" in
+	ensure) [ -s "$CRT" ] && [ -s "$KEY" ] || selfsigned ;;
+	selfsigned) selfsigned ;;
+	install) install_pair "$2" "$3" ;;
+	info) info ;;
+	*) sed -n '3,14s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

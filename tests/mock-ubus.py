@@ -17,7 +17,7 @@ from pathlib import Path
 WWW = Path(__file__).resolve().parent.parent / 'src/shareos-core/www'
 SID = 'c0ffee00c0ffee00c0ffee00c0ffee00'
 T0 = time.time()
-STATE = {'logo': '1', 'channel': 'beta', 'job': None}
+STATE = {'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False}
 
 DISK = lambda n, model, serial: {
     'name': n, 'type': 'disk', 'size': 4000787030016, 'model': model, 'serial': serial, 'tran': 'sata', 'rm': False, 'rota': True,
@@ -76,6 +76,19 @@ def call(obj, method, args):
         return {'ubus_rpc_session': SID} if args.get('password') == 'shareos' else 6
     if obj == 'session':
         return {}
+    if obj == 'shareos.ui':
+        if method == 'set':
+            if args.get('lang'):
+                STATE['lang'] = args['lang']
+            if 'logo' in args:
+                STATE['logo'] = bool(args['logo'])
+        return {'lang': STATE['lang'], 'logo': STATE['logo']}
+    if obj == 'shareos.web':
+        if method == 'set':
+            STATE.update({k: v for k, v in args.items() if k in ('https', 'redirect')})
+        return {'https': STATE['https'], 'redirect': STATE['redirect'], 'cert': {
+            'subject': 'CN=skynet-nas, O=ShareOS', 'issuer': 'CN=skynet-nas, O=ShareOS', 'from': '2026-10-17 00:00:00',
+            'until': '2036-10-17 23:59:59', 'san': ['dNSName:skynet-nas', 'dNSName:skynet-nas.local', 'iPAddress:10.241.1.106'], 'selfsigned': True}}
     if obj == 'shareos.system':
         if method == 'info':
             return info()
@@ -98,11 +111,7 @@ def call(obj, method, args):
         return {'state': 'idle', 'current': '0.1.0-beta.1', 'check': check, 'last_upgrade': 'ok 0.1.0-beta.1'}
     if obj == 'uci':
         if method == 'get':
-            if args.get('section') == 'ui':
-                return {'values': {'logo': STATE['logo']}}
             return {'values': {}}
-        if method == 'set' and args.get('section') == 'ui':
-            STATE['logo'] = args['values'].get('logo', STATE['logo'])
         if method == 'set' and args.get('section') == 'update':
             STATE['channel'] = args['values'].get('channel', STATE['channel'])
         return {}
@@ -121,7 +130,7 @@ class H(SimpleHTTPRequestHandler):
         params = req.get('params', [])
         if req.get('method') == 'call':
             sid, obj, method, args = params
-            if obj != 'session' and sid != SID:
+            if obj not in ('session',) and not (obj == 'shareos.ui' and method == 'get') and sid != SID:
                 body = {'jsonrpc': '2.0', 'id': req.get('id'), 'error': {'code': -32002, 'message': 'Access denied'}}
             else:
                 r = call(obj, method, args)

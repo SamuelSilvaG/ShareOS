@@ -9,16 +9,12 @@
 
 /* ---------- language ---------------------------------------------------------- */
 
-const LANG = (() => {
-	try { const l = localStorage.getItem('shareos.lang'); if (l) return l; } catch (e) { }
-	return (navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
-})();
-const LOC = LANG === 'en' ? 'en-GB' : 'de-DE';
-
-function setLang(l) {
-	try { localStorage.setItem('shareos.lang', l); } catch (e) { }
-	location.reload();
-}
+// language and logo are system-wide settings (UCI shareos.ui, readable before
+// login via shareos.ui get); the last known values are cached per browser so
+// the first paint already matches
+let LANG = (() => { try { return localStorage.getItem('shareos.lang') || 'en'; } catch (e) { return 'en'; } })();
+let LOC = 'en-GB';
+const LOCALES = { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL', pl: 'pl-PL' };
 
 /* ---------- helpers --------------------------------------------------------- */
 
@@ -140,7 +136,7 @@ const TABS = [
 	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
 	['apps', 'APPS'], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['https', 'HTTPS'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
 
 function applyTheme() {
 	const app = $('#app');
@@ -296,10 +292,11 @@ function brand() {
 
 async function loadUiSettings() {
 	try {
-		const r = await rpc('uci', 'get', { config: 'shareos', section: 'ui' });
-		const on = (r.values?.logo ?? '1') !== '0';
-		if (on !== S.logo) { S.logo = on; store.set('logo', on ? '1' : '0'); renderHeader(); renderMain(); }
+		const r = await rpc('shareos.ui', 'get', {}, ZERO_SID);
+		if (r.logo !== S.logo) { S.logo = r.logo; store.set('logo', r.logo ? '1' : '0'); }
+		if (r.lang && r.lang !== LANG) { try { localStorage.setItem('shareos.lang', r.lang); } catch (e) { } return r.lang; }
 	} catch (e) { }
+	return LANG;
 }
 
 function renderLogin(msg = '') {
@@ -314,10 +311,6 @@ function renderLogin(msg = '') {
 			<label class="chk"><input name="keep" type="checkbox">Angemeldet bleiben (7 Tage)</label>
 			<p class="err" id="login-err">${msg}</p>
 			<button class="btn primary" type="submit" style="min-height:44px">Anmelden</button>
-			<div class="acts" style="justify-content:center;font-size:12px">
-				<button class="btn sm ghost${LANG === 'de' ? ' on' : ''}" type="button" data-act="lang" data-l="de" aria-pressed="${LANG === 'de'}">Deutsch</button>
-				<button class="btn sm ghost${LANG === 'en' ? ' on' : ''}" type="button" data-act="lang" data-l="en" aria-pressed="${LANG === 'en'}">English</button>
-			</div>
 		</form>
 	</div>`.s;
 	$('#login-form').addEventListener('submit', async (e) => {
@@ -349,7 +342,6 @@ function renderShell() {
 	renderTabs();
 	renderMain();
 	startPolling();
-	loadUiSettings();
 }
 
 function renderHeader(offline = false) {
@@ -864,6 +856,53 @@ const SYS = {
 		</div>`;
 	},
 
+	https() {
+		const w = S.web;
+		if (!w) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const c = w.cert || {};
+		const host = location.hostname;
+		return html`<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">VERBINDUNG</span><span class="tag ml ${location.protocol === 'https:' ? 'ok' : 'warn'}">${location.protocol === 'https:' ? 'diese Seite: HTTPS' : 'diese Seite: HTTP'}</span></div>
+				<div style="display:grid;gap:6px">
+					<label class="chk"><input type="checkbox" id="opt-https"${w.https ? raw(' checked') : ''}>HTTPS auf Port 443</label>
+					<label class="chk"><input type="checkbox" id="opt-redirect"${w.redirect ? raw(' checked') : ''}${w.https ? '' : raw(' disabled')}>HTTP-Aufrufe auf HTTPS umleiten</label>
+				</div>
+				<dl class="kv" style="margin-top:14px">
+					<dt>HTTPS</dt><dd><a href="https://${host}/">https://${host}/</a></dd>
+					<dt>HTTP</dt><dd><a href="http://${host}/">http://${host}/</a></dd>
+				</dl>
+				<p class="note">Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.</p>
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">ZERTIFIKAT</span>${c.none ? '' : c.selfsigned ? html`<span class="tag warn ml">selbstsigniert</span>` : html`<span class="tag ok ml">eigenes Zertifikat</span>`}</div>
+				${c.none ? html`<p class="mut" style="margin:0;font-size:13px">Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.</p>` : html`
+				<dl class="kv">
+					<dt>Ausgestellt für</dt><dd>${c.subject || '–'}</dd>
+					<dt>Aussteller</dt><dd>${c.issuer || '–'}</dd>
+					<dt>Gültig ab</dt><dd>${c.from || '–'}</dd>
+					<dt>Gültig bis</dt><dd>${c.until || '–'}</dd>
+					<dt>Namen</dt><dd>${(c.san || []).map((x) => x.replace(/^(dNSName|iPAddress):/, '')).join(', ') || '–'}</dd>
+				</dl>`}
+				${c.selfsigned ? html`<p class="note">Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).</p>` : ''}
+				<div class="acts" style="margin-top:14px"><button class="btn" type="button" data-act="cert-self">Neues selbstsigniertes Zertifikat</button></div>
+			</div>
+		</div>
+		<form class="panel" id="f-cert" style="margin-top:16px">
+			<div class="ph"><span class="pt">EIGENES ZERTIFIKAT HINTERLEGEN</span></div>
+			<div class="g2">
+				<label class="f"><span>ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)</span>
+					<textarea name="cert" rows="8" spellcheck="false" placeholder="-----BEGIN CERTIFICATE-----" style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" data-i18n-skip></textarea>
+					<input type="file" accept=".pem,.crt,.cer" data-target="cert" style="margin-top:6px;font-size:12px;color:var(--muted)"></label>
+				<label class="f"><span>PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)</span>
+					<textarea name="key" rows="8" spellcheck="false" placeholder="-----BEGIN PRIVATE KEY-----" style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" data-i18n-skip></textarea>
+					<input type="file" accept=".pem,.key" data-target="key" style="margin-top:6px;font-size:12px;color:var(--muted)"></label>
+			</div>
+			<p class="note">Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.</p>
+			<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Zertifikat übernehmen</button></div>
+		</form>`;
+	},
+
 	energie() {
 		return html`<div class="g2">
 			<div class="panel">
@@ -900,11 +939,11 @@ const SYS = {
 			</div>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
-			<div class="ph"><span class="pt">SPRACHE</span><span class="tag ml">nur in diesem Browser</span></div>
-			<div class="acts">
-				<button class="btn sm${LANG === 'de' ? ' primary' : ''}" type="button" data-act="lang" data-l="de">Deutsch</button>
-				<button class="btn sm${LANG === 'en' ? ' primary' : ''}" type="button" data-act="lang" data-l="en">English</button>
-			</div>
+			<div class="ph"><span class="pt">SPRACHE</span><span class="tag ml">gilt für alle</span></div>
+			<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>SPRACHE DER OBERFLÄCHE</span><select id="opt-lang" data-i18n-skip>
+				${(S.languages || [{ code: LANG, name: LANG }]).map((l) => html`<option value="${l.code}"${l.code === LANG ? raw(' selected') : ''}>${l.name}</option>`)}
+			</select></label></div>
+			<p class="note">Weitere Sprachen: eine Datei in <code>/www/i18n/</code> – siehe docs/TRANSLATING.md.</p>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
@@ -942,6 +981,28 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'protokolle') loadLog();
+		if (sub === 'https') {
+			if (!S.web) loadWeb();
+			$('#opt-https')?.addEventListener('change', (e) => webSet({ https: e.target.checked }));
+			$('#opt-redirect')?.addEventListener('change', (e) => webSet({ redirect: e.target.checked }));
+			document.querySelectorAll('#f-cert input[type=file]').forEach((inp) => inp.addEventListener('change', async () => {
+				const f = inp.files[0];
+				if (f) $(`#f-cert textarea[name=${inp.dataset.target}]`).value = await f.text();
+			}));
+			$('#f-cert')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, btn = $('button[type=submit]', f);
+				btn.disabled = true;
+				try {
+					const r = await rpc('shareos.web', 'install', { cert: f.cert.value.trim() + '\n', key: f.key.value.trim() + '\n' });
+					S.web.cert = r.cert;
+					f.reset();
+					toast('Zertifikat übernommen.');
+					afterWebRestart();
+				} catch (err) { toast('Zertifikat: ' + err.message, true); btn.disabled = false; }
+			});
+		}
+
 		if (sub === 'allgemein') {
 			$('#f-host').addEventListener('submit', async (e) => {
 				e.preventDefault();
@@ -958,11 +1019,17 @@ const VIEWS_AFTER = {
 		}
 		if (sub === 'darstellung') {
 			$('#opt-light').addEventListener('change', (e) => { S.theme = e.target.checked ? 'light' : 'dark'; store.set('theme', S.theme); applyTheme(); renderHeader(); });
+			$('#opt-lang').addEventListener('change', async (e) => {
+				try {
+					await rpc('shareos.ui', 'set', { lang: e.target.value });
+					try { localStorage.setItem('shareos.lang', e.target.value); } catch (err) { }
+					location.reload();
+				} catch (err) { toast('Sprache: ' + err.message, true); }
+			});
 			$('#opt-logo').addEventListener('change', async (e) => {
 				const on = e.target.checked;
 				try {
-					await rpc('uci', 'set', { config: 'shareos', section: 'ui', values: { logo: on ? '1' : '0' } });
-					await rpc('uci', 'commit', { config: 'shareos' });
+					await rpc('shareos.ui', 'set', { logo: on });
 					S.logo = on; store.set('logo', on ? '1' : '0'); renderHeader(); renderMain();
 				} catch (err) { e.target.checked = !on; toast('Logo: ' + err.message, true); }
 			});
@@ -988,6 +1055,32 @@ const VIEWS_AFTER = {
 	dienste() { if (!S.services) loadServices(); },
 	uebersicht() { if (!S.services) loadServices(); }
 };
+
+
+async function loadWeb() {
+	try { S.web = await rpc('shareos.web', 'get'); } catch (e) { toast('HTTPS: ' + e.message, true); }
+	if (S.route.sub === 'https') renderMain();
+}
+
+// the web server restarts after HTTPS changes: wait for it, keep the page
+function afterWebRestart() {
+	setTimeout(async () => {
+		for (let i = 0; i < 20; i++) {
+			try { await fetch('/', { cache: 'no-store' }); break; } catch (e) { await new Promise((r) => setTimeout(r, 1000)); }
+		}
+		loadWeb();
+	}, 2500);
+}
+
+async function webSet(v) {
+	try {
+		await rpc('shareos.web', 'set', v);
+		Object.assign(S.web, v);
+		toast('Gespeichert – der Webserver startet neu.');
+		if (location.protocol === 'https:' && v.https === false) { setTimeout(() => { location.href = 'http://' + location.host + '/'; }, 2500); return; }
+		afterWebRestart();
+	} catch (e) { toast('HTTPS: ' + e.message, true); }
+}
 
 async function loadLog() {
 	const box = $('#logbox');
@@ -1038,7 +1131,6 @@ async function refreshUpdateStatus() {
 const ACTIONS = {
 	theme() { S.theme = S.theme === 'light' ? 'dark' : 'light'; store.set('theme', S.theme); applyTheme(); renderHeader(); },
 	logout,
-	lang(el) { if (el.dataset.l !== LANG) setLang(el.dataset.l); },
 	accent(el) { S.accent = el.dataset.c; store.set('accent', S.accent); applyTheme(); renderMain(); },
 	check() { checkUpdates(); },
 	'wiz-start'() {
@@ -1119,6 +1211,13 @@ const ACTIONS = {
 		try { S.upd = await rpc('shareos.update', 'cancel'); renderMain(); } catch (e) { toast(e.message, true); }
 	},
 
+
+	async 'cert-self'() {
+		if (!await confirmDlg('Neues selbstsigniertes Zertifikat?', 'Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.', 'Erstellen')) return;
+		try { const r = await rpc('shareos.web', 'selfsigned'); S.web.cert = r.cert; toast('Zertifikat erstellt.'); afterWebRestart(); }
+		catch (e) { toast('Zertifikat: ' + e.message, true); }
+	},
+
 	async reboot() {
 		if (!await confirmDlg('Neu starten?', 'Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).', 'Neu starten')) return;
 		try { await rpc('shareos.system', 'reboot'); } catch (e) { }
@@ -1171,8 +1270,11 @@ setInterval(() => {
 /* ---------- start ----------------------------------------------------------- */
 
 (async function start() {
+	LANG = await loadUiSettings();
+	LOC = LOCALES[LANG] || LANG;
 	document.documentElement.lang = LANG;
-	if (LANG === 'en' && typeof i18nStart === 'function') i18nStart($('#app'));
+	if (await i18nLoad(LANG)) i18nStart($('#app'));
+	i18nLanguages().then((l) => { S.languages = l; });
 	applyTheme();
 	if (S.sid) {
 		try {

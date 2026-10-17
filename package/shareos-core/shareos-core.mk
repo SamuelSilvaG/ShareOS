@@ -23,6 +23,7 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/usr/share/rpcd/ucode/shareos.uc $(TARGET_DIR)/usr/share/rpcd/ucode/shareos.uc
 	$(INSTALL) -D -m 0644 $(@D)/usr/share/rpcd/acl.d/shareos.json $(TARGET_DIR)/usr/share/rpcd/acl.d/shareos.json
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-uhttpd $(TARGET_DIR)/usr/sbin/shareos-uhttpd
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cert $(TARGET_DIR)/usr/sbin/shareos-cert
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-factory-reset $(TARGET_DIR)/usr/sbin/shareos-factory-reset
 	rm -rf $(TARGET_DIR)/www
 	cp -a $(@D)/www $(TARGET_DIR)/www

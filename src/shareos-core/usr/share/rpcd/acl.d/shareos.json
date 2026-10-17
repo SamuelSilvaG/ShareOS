@@ -1,4 +1,12 @@
 {
+	"unauthenticated": {
+		"description": "Language and logo for the login page",
+		"read": {
+			"ubus": {
+				"shareos.ui": [ "get" ]
+			}
+		}
+	},
 	"shareos-admin": {
 		"description": "ShareOS administration",
 		"read": {
@@ -7,6 +15,8 @@
 				"shareos.service": [ "list" ],
 				"shareos.storage": [ "status", "smart" ],
 				"shareos.update": [ "check", "status" ],
+				"shareos.ui": [ "get" ],
+				"shareos.web": [ "get" ],
 				"uci": [ "get", "state", "configs" ]
 			},
 			"uci": [ "shareos", "storage" ]
@@ -17,6 +27,8 @@
 				"shareos.service": [ "action" ],
 				"shareos.storage": [ "setup", "volume", "spindown" ],
 				"shareos.update": [ "download", "apply", "cancel" ],
+				"shareos.ui": [ "set" ],
+				"shareos.web": [ "set", "selfsigned", "install" ],
 				"uci": [ "set", "add", "delete", "commit", "revert", "apply", "confirm", "rollback" ]
 			},
 			"uci": [ "shareos" ]

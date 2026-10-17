@@ -274,7 +274,103 @@ function spawn_storage(args) {
 	return { started: true };
 }
 
+/* ---------- web interface: language, logo, HTTPS ---------- */
+
+const CERT = '/usr/sbin/shareos-cert';
+
+function ui_settings() {
+	let c = cursor();
+	return { lang: c.get('shareos', 'ui', 'lang') ?? 'en', logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0' };
+}
+
+function cert_info() {
+	let r = sh(CERT + ' info');
+	let i = { san: [] };
+	for (let line in split(r.out, '\n')) {
+		let m = match(line, /^([a-z]+)=(.*)$/);
+		if (!m) continue;
+		if (m[1] == 'san') push(i.san, m[2]);
+		else i[m[1]] = m[2];
+	}
+	i.selfsigned = !!(i.issuer && i.issuer == i.subject);
+	return i;
+}
+
+// uhttpd runs under shareos-uhttpd, which reads the settings again on restart
+function restart_uhttpd() {
+	system('(sleep 1; killall uhttpd) >/dev/null 2>&1 &');
+}
+
 return {
+	'shareos.ui': {
+		// public (also before login): language and logo for the login page
+		get: {
+			call: function() { return ui_settings(); }
+		},
+
+		set: {
+			args: { lang: '', logo: false },
+			call: function(req) {
+				let c = cursor();
+				if (req.args.lang != null && req.args.lang != '') {
+					if (!match(req.args.lang, /^[a-z]{2}(-[A-Za-z]{2})?$/)) return { error: 'invalid language' };
+					c.set('shareos', 'ui', 'lang', req.args.lang);
+				}
+				if (req.args.logo != null)
+					c.set('shareos', 'ui', 'logo', req.args.logo ? '1' : '0');
+				c.commit('shareos');
+				return ui_settings();
+			}
+		}
+	},
+
+	'shareos.web': {
+		get: {
+			call: function() {
+				let c = cursor();
+				return { https: c.get('shareos', 'web', 'https') != '0', redirect: c.get('shareos', 'web', 'redirect') == '1', cert: cert_info() };
+			}
+		},
+
+		set: {
+			args: { https: true, redirect: false },
+			call: function(req) {
+				let c = cursor();
+				if (req.args.https != null) c.set('shareos', 'web', 'https', req.args.https ? '1' : '0');
+				if (req.args.redirect != null) c.set('shareos', 'web', 'redirect', req.args.redirect ? '1' : '0');
+				c.commit('shareos');
+				restart_uhttpd();
+				return { ok: true };
+			}
+		},
+
+		selfsigned: {
+			call: function() {
+				let r = sh(CERT + ' selfsigned');
+				if (r.rc != 0) return { error: trim(r.out) };
+				restart_uhttpd();
+				return { ok: true, cert: cert_info() };
+			}
+		},
+
+		install: {
+			// PEM texts; the certificate may be followed by the chain
+			args: { cert: '', key: '' },
+			call: function(req) {
+				let crt = req.args.cert ?? '', key = req.args.key ?? '';
+				if (length(crt) > 65536 || length(key) > 16384) return { error: 'file too large' };
+				let d = trim(sh('mktemp -d').out);
+				writefile(d + '/crt', crt);
+				writefile(d + '/key', key);
+				let r = sh(CERT + ' install ' + shq(d + '/crt') + ' ' + shq(d + '/key'));
+				system('rm -rf ' + shq(d));
+				if (r.rc != 0) return { error: replace(trim(r.out), 'shareos-cert: ', '') };
+				restart_uhttpd();
+				return { ok: true, cert: cert_info() };
+			}
+		}
+	},
+
 	'shareos.system': {
 		info: {
 			call: function() {

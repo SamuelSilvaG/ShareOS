@@ -1,214 +1,102 @@
 /*
- * ShareOS web interface – English translation.
+ * ShareOS web interface – translations.
  *
- * The interface is written in German. When English is selected, every text
- * node and the attributes placeholder/aria-label/title/alt are translated
- * after rendering: first by exact match (EXACT), then by the patterns in
- * PATTERNS (texts with values in them), then word by word (WORDS).
- * To translate a new text, add it here.
+ * The interface is written in German (the source language). For any other
+ * language, i18n/<code>.json is loaded and every text node plus the
+ * attributes placeholder/aria-label/title/alt are translated after rendering:
+ *
+ *   exact     "German text": "translation"
+ *   patterns  [ "regular expression on the whole text", "replacement with $1" ]
+ *             for texts that contain values (sizes, names, versions)
+ *   words     [ "regular expression", "replacement", "flags" ] applied to what
+ *             is left (and to pattern results)
+ *
+ * Available languages are listed in i18n/languages.json. How to add one:
+ * docs/TRANSLATING.md.
  */
 'use strict';
 
-const I18N_EXACT = {
-	// header, navigation
-	'ÜBERSICHT': 'OVERVIEW', 'SPEICHER': 'STORAGE', 'FREIGABEN': 'SHARES', 'DIENSTE': 'SERVICES', 'APPS': 'APPS',
-	'CLOUD': 'CLOUD', 'PAPERLESS': 'PAPERLESS', 'SYSTEM': 'SYSTEM', 'NEU': 'NEW', 'ONLINE': 'ONLINE', 'OFFLINE': 'OFFLINE',
-	'Abmelden': 'Log out', 'Hell/Dunkel umschalten': 'Toggle light/dark', 'Hauptmenü': 'Main menu', 'System': 'System',
-	'verfügbar': 'available', 'Die ShareOS-Oberfläche braucht JavaScript.': 'The ShareOS interface needs JavaScript.',
-	// login
-	'Verwaltung – bitte anmelden.': 'Administration – please log in.', 'BENUTZER': 'USER', 'PASSWORT': 'PASSWORD',
-	'Angemeldet bleiben (7 Tage)': 'Stay logged in (7 days)', 'Anmelden': 'Log in',
-	'Benutzer oder Passwort falsch.': 'Wrong user or password.', 'Box nicht erreichbar.': 'Box not reachable.',
-	'Sitzung abgelaufen – bitte neu anmelden.': 'Session expired – please log in again.',
-	// overview
-	'live · alle 5 s': 'live · every 5 s', 'AUSLASTUNG': 'LOAD', 'Gerätesteuerung aktiv': 'board control active',
-	'keine MCU-Daten': 'no MCU data', 'LÜFTER': 'FAN', 'TEMP': 'TEMP', 'aus': 'off', 'halb': 'half', 'voll': 'full',
-	'kein Link': 'no link', 'letzte 10 min': 'last 10 min', 'Gateway · DNS': 'Gateway · DNS', 'sammle Messwerte …': 'collecting samples …',
-	'Firmware': 'Firmware', 'Start aus': 'Booted from', 'Flash (UBI)': 'Flash (UBI)', 'Netzwerk (RAM)': 'Network (RAM)',
-	'Einstellungen bleiben erhalten': 'Settings are kept', 'Änderungen gehen beim Neustart verloren': 'Changes are lost on reboot',
-	'Laufzeit': 'Uptime', 'seit dem letzten Start': 'since the last boot', 'Dienste': 'Services', 'laufen': 'running',
-	'Flash frei': 'Flash free', 'für Einstellungen & Pakete': 'for settings & packages', 'Laufwerke': 'Drives',
-	'erkannt': 'detected', 'keine eingesteckt': 'none attached', 'alle verwalten': 'manage all', 'Update verfügbar': 'Update available',
-	'Lade Systemdaten …': 'Loading system data …', 'Lade Dienste …': 'Loading services …', 'Lade Laufwerke …': 'Loading drives …',
-	'Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.':
-		'No hard disk or USB storage detected. ShareOS runs entirely from the internal flash – drives appear here as soon as they are attached.',
-	'unbekanntes Modell': 'unknown model',
-	// services
-	'Start, Stopp, Neustart': 'start, stop, restart', 'Neustart': 'Restart', 'Stopp': 'Stop', 'Starten': 'Start',
-	'SSH / SFTP': 'SSH / SFTP', 'Weboberfläche': 'Web interface', 'Zeit (NTP)': 'Time (NTP)', 'Zeitplaner': 'Scheduler',
-	'API (rpcd)': 'API (rpcd)', 'Systembus (ubus)': 'System bus (ubus)', 'Systemprotokoll': 'System log', 'Gerätesteuerung': 'Board control',
-	'stellt die Uhr, gleicht die MCU-Uhr ab': 'sets the clock, keeps the MCU clock in sync', 'Schnittstelle für diese Oberfläche': 'interface for this web UI',
-	'Nachrichten zwischen den Diensten': 'messages between the services', 'syslogd, im RAM': 'syslogd, in RAM',
-	'Lüfter, Temperatur, Taster, MCU-Uhr': 'fan, temperature, buttons, MCU clock',
-	// planned areas
-	'Dieser Bereich ist noch nicht gebaut. Geplant:': 'This area is not built yet. Planned:',
-	'FREIGABEN, BENUTZER & GRUPPEN': 'SHARES, USERS & GROUPS', 'APPS & PAKETE': 'APPS & PACKAGES', 'CLOUD-SPEICHER': 'CLOUD STORAGE', 'PAPERLESS-NGX': 'PAPERLESS-NGX',
-	'Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA': 'Shares per folder with switches for SMB, NFS, FTP and DLNA',
-	'Benutzer & Gruppen mit Rechten pro Freigabe': 'Users & groups with permissions per share', 'Netzlaufwerke einbinden (CIFS/NFS)': 'Mount network drives (CIFS/NFS)',
-	'Backup-Jobs (rsync)': 'Backup jobs (rsync)', 'Paketquelle (opkg-Feed) über GitHub': 'Package source (opkg feed) on GitHub',
-	'Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange': 'Catalogue with categories, install/remove with a queue',
-	'Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte': 'Packages go to settings & packages (flash) or to the disk',
-	'Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP': 'Accounts via rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP',
-	'Sync-Jobs: kopieren, spiegeln, bidirektional': 'Sync jobs: copy, mirror, bidirectional', 'Verschlüsselung (crypt), Bandbreite und Zeitplan': 'Encryption (crypt), bandwidth and schedule',
-	'Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)': 'Inbox folder on the NAS → upload via the Paperless REST API (token)',
-	'Status der Übertragungen über /api/tasks/': 'Transfer status via /api/tasks/', 'Tags und Korrespondent je Ordner, Export-Backup aufs NAS': 'Tags and correspondent per folder, export backup to the NAS',
-	// storage
-	'VOLUMES': 'VOLUMES', 'LAUFWERKE': 'DRIVES', 'EINSTELLUNGEN': 'SETTINGS', 'RUHEZUSTAND': 'SPINDOWN', 'NEU EINRICHTEN': 'SET UP AGAIN',
-	'PLATTEN ABSCHALTEN NACH': 'SPIN DISKS DOWN AFTER', 'nie': 'never', '10 Minuten': '10 minutes', '20 Minuten': '20 minutes',
-	'30 Minuten': '30 minutes', '1 Stunde': '1 hour', '2 Stunden': '2 hours', 'Swap': 'Swap', 'Apps-Bereich': 'App area',
-	'noch keiner': 'none yet', 'keiner aktiv': 'none active', 'noch keine': 'none yet',
-	'Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).':
-		'Saves power and wear. Disks spin up again on the next access (a few seconds).',
-	'Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.':
-		'The wizard erases the selected disks and sets them up again. Single disks can also be formatted directly under "Drives".',
-	'Assistent starten': 'Start wizard', 'Speicher einrichten': 'Set up storage', 'INTERNER FLASH': 'INTERNAL FLASH',
-	'128 MB NAND · UBI': '128 MB NAND · UBI', 'BEREICH': 'AREA', 'EINGEHÄNGT': 'MOUNTED', 'BELEGT': 'USED', 'Einstellungen & Pakete': 'Settings & packages',
-	'System (nur lesbar)': 'System (read-only)', 'Arbeitsspeicher (tmp)': 'RAM (tmp)', 'Aushängen': 'Unmount', 'Einhängen': 'Mount', 'Entfernen': 'Remove',
-	'SMART lesen': 'Read SMART', 'Löschen & formatieren': 'Erase & format', 'Spiegel (RAID 1)': 'Mirror (RAID 1)', 'Einzelnes Laufwerk': 'Single drive',
-	'SMART noch nicht gelesen': 'SMART not read yet', 'schläft (SMART beim nächsten Aufwachen)': 'asleep (SMART on next wake-up)', 'no SMART data': 'no SMART data',
-	'SMART OK': 'SMART OK', 'SMART WARNUNG': 'SMART WARNING', 'SMART FEHLER': 'SMART FAILED', 'leer': 'empty', 'ohne Dateisystem': 'no file system',
-	'nicht eingehängt': 'not mounted', 'Dateisystem nicht gefunden': 'file system not found', 'wartet': 'waiting',
-	'Pakete und App-Daten liegen in .shareos': 'Packages and app data live in .shareos',
-	'Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.':
-		'No storage set up yet. The wizard sets up the disks in a few steps – as a mirror (both disks hold the same data) or as separate drives.',
-	// wizard
-	'SPEICHER EINRICHTEN · ASSISTENT': 'SET UP STORAGE · WIZARD', 'Abbrechen': 'Cancel', 'Platten': 'Disks', 'Aufbau': 'Layout', 'Name': 'Name',
-	'Bestätigen': 'Confirm', 'Zurück': 'Back', 'Weiter': 'Next', 'Einrichten': 'Set up', 'Welche Platten sollen eingerichtet werden?': 'Which disks should be set up?',
-	'Alles auf diesen Platten wird gelöscht.': 'Everything on these disks will be erased.', 'Spiegel (RAID 1) – empfohlen': 'Mirror (RAID 1) – recommended',
-	'Zwei getrennte Laufwerke': 'Two separate drives', 'AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE': 'SWAP PER DISK', '1 GB – empfohlen': '1 GB – recommended', 'keiner': 'none',
-	'Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.':
-		'The box has only 256 MB of RAM. Swap on the disks absorbs load peaks (shares, cloud sync, package installs). It is a small partition at the start of each disk; the rest becomes the drive.',
-	'NAME DES SPIEGELS': 'NAME OF THE MIRROR', 'LAUFWERK': 'DRIVE', 'PLATTEN': 'DISKS', 'GRÖSSE': 'SIZE', 'AUFBAU': 'LAYOUT',
-	'Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als': 'Lower-case letters, digits, - and _ (max. 16 characters). The drive appears as',
-	'; Freigaben legst du später darauf an.': '; you create shares on it later.', 'Platten löschen und einrichten?': 'Erase and set up the disks?',
-	'Löschen & einrichten': 'Erase & set up', 'Weiter ': 'Next', 'Einrichtung gestartet.': 'Setup started.', 'Formatieren gestartet.': 'Formatting started.',
-	'Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):': 'Name of the new drive (a–z, 0–9, - and _, max. 16 characters):',
-	'Bitte mindestens eine Platte auswählen.': 'Please select at least one disk.', 'Höchstens zwei Platten.': 'Two disks at most.',
-	'Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.': 'Invalid name: only a–z, 0–9, - and _, max. 16 characters.',
-	'Die Namen müssen verschieden sein.': 'The names must be different.', 'Ungültiger Name.': 'Invalid name.', 'Ruhezustand gespeichert.': 'Spindown saved.',
-	// system / firmware
-	'FIRMWARE': 'FIRMWARE', 'ALLGEMEIN': 'GENERAL', 'ENERGIE & RESET': 'POWER & RESET', 'PROTOKOLLE': 'LOGS', 'DARSTELLUNG': 'APPEARANCE', 'ÜBER': 'ABOUT',
-	'FIRMWARE-UPDATE': 'FIRMWARE UPDATE', 'Installiert': 'Installed', 'Kernel, Startsystem und System': 'Kernel, initramfs and system',
-	'noch nicht geprüft': 'not checked yet', 'aktuell': 'up to date', 'noch kein Release für dieses Gerät': 'no release for this device yet', 'keine': 'none',
-	'UPDATE-KANAL': 'UPDATE CHANNEL', 'Stabil (Releases)': 'Stable (releases)', 'Beta (auch Pre-Releases)': 'Beta (also pre-releases)',
-	'Jetzt prüfen': 'Check now', 'Prüfe …': 'Checking …', 'VERSIONEN': 'VERSIONS', 'von GitHub': 'from GitHub', 'VERSION': 'VERSION', 'DATUM': 'DATE',
-	'KANAL': 'CHANNEL', 'STABIL': 'STABLE', 'BETA': 'BETA', 'installiert': 'installed', 'Laden': 'Download', 'Notes ↗': 'Notes ↗',
-	'SO LÄUFT EIN UPDATE': 'HOW AN UPDATE WORKS', 'Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)': 'Download the bundle from GitHub and check it (SHA-256, device, sizes)',
-	'Kernel und Startsystem in den Flash schreiben und zurücklesen': 'Write kernel and initramfs to flash and read them back', 'Neues System bereitlegen': 'Stage the new system',
-	'Neustart: das Startsystem installiert das System, dann startet ShareOS neu': 'Reboot: the initramfs installs the system, then ShareOS starts again',
-	'Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.':
-		'Settings and installed packages are kept. If interrupted, the installation is repeated on the next boot.',
-	'Herunterladen': 'Download', 'Prüfen': 'Verify', 'Bereit': 'Ready', 'Schreiben': 'Write', 'Verwerfen': 'Discard', 'Fehler:': 'Error:', 'Letztes Update:': 'Last update:',
-	'Neustart nötig': 'Reboot needed', 'Jetzt neu starten': 'Reboot now',
-	'Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.': 'Verified: SHA-256, checksums of all parts, made for this device. Settings and packages are kept.',
-	'ShareOS ist aktuell.': 'ShareOS is up to date.', 'Update geladen und geprüft.': 'Update downloaded and verified.', 'Update geschrieben – bitte neu starten.': 'Update written – please reboot.',
-	'Update installieren?': 'Install update?', 'Installieren': 'Install',
-	// system / general, power, logs, appearance, about
-	'GERÄTENAME': 'DEVICE NAME', 'HOSTNAME': 'HOSTNAME', 'Speichern': 'Save', 'NEUES PASSWORT': 'NEW PASSWORD', 'WIEDERHOLEN': 'REPEAT', 'Passwort ändern': 'Change password',
-	'Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.': 'Letters, digits and hyphens. Applies at once; the DHCP server sees it on the next lease renewal.',
-	'Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.': 'Applies to the web interface and SSH. At least 6 characters.',
-	'Hostname gespeichert.': 'Hostname saved.', 'Passwort geändert.': 'Password changed.', 'Die Passwörter stimmen nicht überein.': 'The passwords do not match.',
-	'ENERGIE': 'POWER', 'Ausschalten': 'Power off', 'Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.':
-		'Powering off shuts ShareOS down and the board control cuts the power. Switch on with the power button.',
-	'WERKSEINSTELLUNGEN': 'FACTORY RESET', 'löscht Einstellungen': 'erases settings', 'Auf Werkseinstellungen zurücksetzen': 'Reset to factory settings',
-	'Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort':
-		'Removes all settings and installed packages from flash and reboots. The system and firmware version stay. Afterwards the password is again',
-	'Neu starten?': 'Reboot?', 'Neu starten': 'Reboot', 'Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).': 'The box reboots. This page reconnects on its own (about 1–2 minutes).',
-	'Ausschalten?': 'Power off?', 'ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.': 'ShareOS shuts down and the box switches off. Switch it on again at the device.',
-	'Werkseinstellungen?': 'Factory reset?', 'Zurücksetzen': 'Reset', 'Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.':
-		'All settings and installed packages are erased, then the box reboots. The password is "shareos" again afterwards.',
-	'Neustart läuft': 'Rebooting', 'ShareOS startet neu': 'ShareOS is restarting', 'Box wird ausgeschaltet': 'Box is powering off', 'Du kannst dieses Fenster schließen.': 'You can close this window.',
-	'Dienst wird neu gestartet': 'Service is restarting', 'warte auf die Box': 'waiting for the box', 'Werkseinstellungen': 'Factory reset',
-	'PROTOKOLL': 'LOG', 'Quelle': 'Source', 'System (syslog)': 'System (syslog)', 'Kernel (dmesg)': 'Kernel (dmesg)', 'Aktualisieren': 'Refresh', 'lade …': 'loading …', '(leer)': '(empty)',
-	'nur in diesem Browser': 'this browser only', 'Helles Design': 'Light theme', 'Scanlines': 'Scanlines', 'LOGO': 'LOGO', 'gilt für alle': 'applies to everyone',
-	'ShareOS-Logo anzeigen (aus: nur Schriftzug)': 'Show the ShareOS logo (off: text only)', 'SPRACHE': 'LANGUAGE',
-	'Akzentfarbe Grün': 'Accent colour green', 'Akzentfarbe Rot': 'Accent colour red', 'Akzentfarbe Blau': 'Accent colour blue', 'Akzentfarbe Weiß': 'Accent colour white',
-	'Version': 'Version', 'Stufe': 'Stage', 'Gerät': 'Device', 'Firmware-Name': 'Firmware name', 'PROJEKT': 'PROJECT',
-	'ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.':
-		'ShareOS is free firmware for D-Link NAS boxes, derived from Alt-F. Based on buildroot, Linux and BusyBox; operating model after OpenWrt (UCI, ubus, rpcd, ucode). Licence GPLv2.',
-	'Einrichtung läuft': 'Setup running', 'Box nicht ausschalten.': 'Do not switch the box off.', 'Einrichtung fehlgeschlagen:': 'Setup failed:'
-};
+let I18N = null;
 
-// texts with values: [pattern, replacement]
-const I18N_PATTERNS = [
-	[/^Kanal (\S+)$/, 'Channel $1'], [/^Update (\S+) verfügbar$/, 'Update $1 available'], [/^Update (\S+) verfügbar\.$/, 'Update $1 available.'],
-	[/^UPDATE (\S+)$/, 'UPDATE $1'], [/^seit (.+)$/, 'for $1'], [/^(\d+) eingerichtet$/, '$1 set up'], [/^(\d+) erkannt$/, '$1 detected'],
-	[/^geplant · Phase (\d)$/, 'planned · phase $1'], [/^Neueste · Beta$/, 'Latest · Beta'], [/^Neueste · Stabil$/, 'Latest · Stable'],
-	[/^ÄNDERUNGEN IN (.+)$/, 'CHANGES IN $1'], [/^ZUGANG · (.+)$/, 'ACCESS · $1'], [/^NAME FÜR (\S+) \((.+)\)$/, 'NAME FOR $1 ($2)'],
-	[/^ABLAUF · (.*)$/, 'PROGRESS · $1'], [/^Quelle: GitHub Releases · (.+)$/, 'Source: GitHub releases · $1'],
-	[/^erfolgreich installiert \((.+)\)$/, 'installed successfully ($1)'], [/^(\S+) formatieren$/, 'Format $1'],
-	[/^(.+) werden vollständig gelöscht\. Das lässt sich nicht rückgängig machen\.$/, (m, d) => `${d.replace(' und ', ' and ')} will be erased completely. This cannot be undone.`],
-	[/^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\.(.*)$/, (m, d, rest) => `Clicking "Set up" erases ${d.replace(' und ', ' and ')} completely.` +
-		(rest ? ' The initial sync then runs in the background (several hours on large disks); the drive can be used right away.' : '')],
-	[/^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \(falls noch keiner besteht\)\.$/, '$1 swap per disk, app area on "$2" (unless one exists).'],
-	[/^Kein Swap, Apps-Bereich auf „(.+)“ \(falls noch keiner besteht\)\.$/, 'No swap, app area on "$1" (unless one exists).'],
-	[/^Beide Platten enthalten dieselben Daten\. Fällt eine aus, ist nichts verloren\. Nutzbar: (.+)\.$/, 'Both disks hold the same data. If one fails, nothing is lost. Usable: $1.'],
-	[/^Doppelter Platz \((.+)\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\.$/, 'Twice the space ($1), but no redundancy – each disk is a drive of its own.'],
-	[/^Die Platte wird ein Laufwerk mit (.+)\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\.$/, 'The disk becomes a drive of $1. For redundancy, add a second disk as a mirror later.'],
-	[/^(\S+): beide Platten aktiv \((.+)\)$/, '$1: both disks active ($2)'], [/^(\S+): eine Platte fehlt \((.+)\)$/, '$1: one disk missing ($2)'],
-	[/^„(.+)“ entfernen\?$/, 'Remove "$1"?'], [/^(\S+) löschen\?$/, 'Erase $1?'],
-	[/^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\.$/, '$1 will be erased completely and set up as drive "$2".'],
-	[/^ShareOS (\S+) wird in den Flash geschrieben\. .*$/, 'ShareOS $1 will be written to flash. A reboot is needed afterwards, during which the new system is installed. Do not switch the box off while writing.'],
-	[/^(\S+) von (\S+ \S+)$/, '$1 of $2'], [/^(.+) installieren$/, 'Install $1'],
-	[/^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$/, 'Load $1$2'], [/^NETZWERK · (.+)$/, 'NETWORK · $1'], [/^(\S+): (eingehängt|ausgehängt|entfernt)$/, (m, n, s) => `${n}: ${{ eingehängt: 'mounted', ausgehängt: 'unmounted', entfernt: 'removed' }[s]}`],
-	[/^(\S+): (gestartet|gestoppt|neu gestartet)$/, (m, n, s) => `${n}: ${{ gestartet: 'started', gestoppt: 'stopped', 'neu gestartet': 'restarted' }[s]}`]
-];
+async function i18nLoad(code) {
+	if (!code || code === 'de') return false;
+	try {
+		const r = await fetch('i18n/' + code + '.json', { cache: 'no-cache' });
+		if (!r.ok) return false;
+		const j = await r.json();
+		I18N = {
+			exact: j.exact || {},
+			patterns: (j.patterns || []).map(([re, rep]) => [new RegExp(re), rep]),
+			words: (j.words || []).map(([re, rep, fl]) => [new RegExp(re, fl || ''), rep])
+		};
+		return true;
+	} catch (e) {
+		console.warn('i18n: cannot load ' + code, e);
+		return false;
+	}
+}
 
-// remaining German words inside composed texts
-const I18N_WORDS = [
-	[/\bläuft\b/g, 'running'], [/\bgestoppt\b/g, 'stopped'], [/ frei von /g, ' free of '], [/ von (?=\d)/g, ' of '], [/ belegt\b/g, ' used'], [/\bTage Laufzeit\b/g, 'days powered on'],
-	[/^enthält: /, 'contains: '], [/RAID-Mitglied von/g, 'RAID member of'], [/RAID-Mitglied/g, 'RAID member'], [/^Festplatte · /, 'Disk · '], [/^Schacht · /, 'Bay · '],
-	[/Erst-Synchronisierung/g, 'Initial sync'], [/Wiederherstellung/g, 'Recovery'], [/Prüfung/g, 'Check'], [/ · noch (.+)$/, ' · $1 left'], [/^Spiegel \(RAID 1\)/, 'Mirror (RAID 1)'], [/^Einzelnes Laufwerk/, 'Single drive'],
-	[/ umgelagert, /g, ' reallocated, '], [/ schwebend\b/g, ' pending'], [/\bLÄUFT\b/g, 'RUNNING'], [/ und /g, ' and '], [/\bT (\d+) h\b/g, 'd $1 h'],
-	[/ – nicht ausschalten\./, ' – do not switch off.'], [/^Prüfen fehlgeschlagen: /, 'Check failed: '], [/^Kanal: /, 'Channel: '], [/^Dienste: /, 'Services: '],
-	[/^Speicher: /, 'Storage: '], [/^Download: /, 'Download: '], [/^Installieren: /, 'Install: '], [/^Einrichten: /, 'Set up: '], [/^Formatieren: /, 'Format: ']
-];
+async function i18nLanguages() {
+	try {
+		const r = await fetch('i18n/languages.json', { cache: 'no-cache' });
+		return r.ok ? await r.json() : [];
+	} catch (e) { return []; }
+}
+
+function i18nWords(t) {
+	let r = t;
+	for (const [re, rep] of I18N.words) r = r.replace(re, rep);
+	return r;
+}
 
 function i18nText(s) {
+	if (!I18N) return s;
 	const t = s.trim();
 	if (!t) return s;
-	const pre = s.slice(0, s.indexOf(t)), post = s.slice(s.indexOf(t) + t.length);
-	if (I18N_EXACT[t] != null) return pre + I18N_EXACT[t] + post;
-	for (const [re, rep] of I18N_PATTERNS)
-		if (re.test(t)) return pre + t.replace(re, rep) + post;
-	let r = t;
-	for (const [re, rep] of I18N_WORDS) r = r.replace(re, rep);
+	const at = s.indexOf(t), pre = s.slice(0, at), post = s.slice(at + t.length);
+	if (I18N.exact[t] != null) return pre + I18N.exact[t] + post;
+	for (const [re, rep] of I18N.patterns)
+		if (re.test(t)) return pre + i18nWords(t.replace(re, rep)) + post;
+	const r = i18nWords(t);
 	return r === t ? s : pre + r + post;
 }
 
 // node -> text we wrote; keeps already translated text from being translated twice
 const I18N_DONE = new WeakMap();
+const I18N_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
 
 function i18nNode(n) {
 	if (I18N_DONE.get(n) === n.nodeValue) return;
+	if (n.parentElement && n.parentElement.closest('pre.logbox, pre.notes, code, [data-i18n-skip]')) return;
 	const v = i18nText(n.nodeValue);
 	if (v !== n.nodeValue) n.nodeValue = v;
 	I18N_DONE.set(n, v);
 }
 
+function i18nAttrs(e) {
+	for (const a of I18N_ATTRS) {
+		const v = e.getAttribute(a), key = 'i18n' + a.replace('-', '');
+		if (v && e.dataset[key] !== v) {
+			const t = i18nText(v);
+			e.dataset[key] = t;
+			if (t !== v) e.setAttribute(a, t);
+		}
+	}
+}
+
 function i18nApply(root) {
-	if (!root) return;
+	if (!root || !I18N) return;
 	if (root.nodeType === 3) { i18nNode(root); return; }
 	if (root.nodeType !== 1) return;
 	const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 	let n;
-	while ((n = w.nextNode())) {
-		if (n.parentElement && n.parentElement.closest('pre.logbox, pre.notes, code')) continue;
-		i18nNode(n);
-	}
-	const els = root.querySelectorAll ? [root, ...root.querySelectorAll('[placeholder],[aria-label],[title],[alt]')] : [];
-	for (const e of els)
-		for (const a of ['placeholder', 'aria-label', 'title', 'alt']) {
-			const v = e.getAttribute && e.getAttribute(a);
-			if (v && e.dataset['i18n' + a.replace('-', '')] !== v) {
-				const t = i18nText(v);
-				e.dataset['i18n' + a.replace('-', '')] = t;
-				if (t !== v) e.setAttribute(a, t);
-			}
-		}
+	while ((n = w.nextNode())) i18nNode(n);
+	i18nAttrs(root);
+	root.querySelectorAll('[placeholder],[aria-label],[title],[alt]').forEach(i18nAttrs);
 }
 
 function i18nStart(target) {
+	if (!I18N) return;
 	i18nApply(target);
 	new MutationObserver((muts) => {
 		for (const m of muts) {

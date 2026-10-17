@@ -90,3 +90,7 @@ BR2_PACKAGE_UTIL_LINUX_BINARIES=y
 BR2_PACKAGE_MDADM=y
 BR2_PACKAGE_SMARTMONTOOLS=y
 BR2_PACKAGE_HDPARM=y
+# HTTPS for the web interface (uhttpd TLS via ustream-ssl/mbedtls,
+# mbedtls programs for the self-signed certificate)
+BR2_PACKAGE_USTREAM_SSL=y
+BR2_PACKAGE_MBEDTLS_PROGRAMS=y

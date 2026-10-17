@@ -10,3 +10,13 @@ config update 'update'
 config ui 'ui'
 	# 1 = show the ShareOS logo in the web interface, 0 = text only
 	option logo '1'
+	# language of the web interface for everyone: en, de, ... (www/i18n/)
+	option lang 'en'
+
+config web 'web'
+	# HTTPS on port 443 (a self-signed certificate is created on first boot)
+	option https '1'
+	# 1 = send http:// requests to https://
+	option redirect '0'
+	option cert '/etc/ssl/shareos/server.crt'
+	option key '/etc/ssl/shareos/server.key'
