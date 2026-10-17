@@ -82,6 +82,22 @@ right away under **System → General**.
 
 Settings and installed packages are kept across updates.
 
+**Versions up to 0.1.0-beta.1:** curl does not find the CA certificates there,
+and the check against GitHub reports "certificate is not correctly signed".
+Run this once on the box, then the update works (not needed from 0.1.0-beta.2):
+```sh
+echo 'cacert = /etc/ssl/certs/ca-certificates.crt' > /root/.curlrc
+```
+
+## 6. Network
+
+A static IP can be set under **System → Network**. The change takes effect at
+once; the box then waits 2 minutes for a confirmation from the new address.
+The web interface opens the new address itself and confirms. Without a
+confirmation (typo, wrong network) the box restores the old settings. Last
+resort: factory reset (DHCP) from the serial console with
+`shareos-factory-reset --yes`.
+
 ## If something goes wrong
 
 | Sign | Meaning / fix |

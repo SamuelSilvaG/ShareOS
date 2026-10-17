@@ -407,9 +407,114 @@
 		", das dauert etwa 1–2 Minuten.": ", this takes about 1–2 minutes.",
 		"Paket wird geprüft …": "Checking the bundle …",
 		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 and contents, takes about half a minute.",
-		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– the new system is installed on the next start (about 1 minute, do not switch off the box)."
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– the new system is installed on the next start (about 1 minute, do not switch off the box).",
+		"NETZWERK": "NETWORK",
+		"ADRESSE": "ADDRESS",
+		"AKTUELL": "CURRENT",
+		"AKZENTFARBE": "ACCENT COLOUR",
+		"BEIM START": "AT BOOT",
+		"BESCHREIBUNG": "DESCRIPTION",
+		"DIENST": "SERVICE",
+		"HELL ODER DUNKEL": "LIGHT OR DARK",
+		"HTTPS & ZERTIFIKAT": "HTTPS & CERTIFICATE",
+		"JETZT": "NOW",
+		"KENNZAHL": "METRIC",
+		"WERT": "VALUE",
+		"HINWEIS": "NOTE",
+		"ART": "TYPE",
+		"MODELL": "MODEL",
+		"ZUSTAND": "HEALTH",
+		"INHALT": "CONTENTS",
+		"IP-ADRESSE": "IP ADDRESS",
+		"SUBNETZMASKE": "SUBNET MASK",
+		"DNS-SERVER (KOMMA-GETRENNT)": "DNS SERVERS (COMMA-SEPARATED)",
+		"Automatisch (DHCP) – vom Router": "Automatic (DHCP) – from the router",
+		"Feste Adresse": "Static address",
+		"statisch": "static",
+		"Dunkel": "Dark",
+		"Hell": "Light",
+		"Wie das Betriebssystem (automatisch)": "Same as the operating system (automatic)",
+		"Grün": "Green",
+		"Rot": "Red",
+		"Blau": "Blue",
+		"Weiß": "White",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "The logo and the browser icon take on the accent colour. The setting applies to everyone, including the login page.",
+		"Scanlines (nur in diesem Browser)": "Scanlines (this browser only)",
+		"Übernehmen": "Apply",
+		"verbunden": "connected",
+		"keine Adresse": "no address",
+		"ändern": "change",
+		"Verbindung": "Connection",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "Applies from the next start. Running services are started and stopped under “Status”. Device control, system bus, API and web interface always start, otherwise the box could no longer be operated.",
+		"welche Dienste beim Einschalten starten": "which services start when the box is switched on",
+		"starten": "start",
+		"immer": "always",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "Without this service the box cannot be operated",
+		"Kachelansicht": "Tile view",
+		"Tabellenansicht": "Table view",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "New network settings are waiting for confirmation",
+		"Behalten": "Keep",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "The last change was not confirmed; the previous network settings are active again.",
+		"Neue Netzwerkeinstellungen bestätigt.": "New network settings confirmed.",
+		"Netzwerk ändern?": "Change the network?",
+		"Netzwerk wird umgestellt": "Switching the network",
+		"Netzwerk wird neu gestartet": "Restarting the network",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "No connection – the box should have restored the old settings. Reload the page.",
+		"eine Platte fehlt": "a disk is missing",
+		"in Ordnung": "OK",
+		"Sync wartet": "Sync waiting",
+		"STATUS": "STATUS",
+		"AUTOSTART": "AUTOSTART"
 	},
 	"patterns": [
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"The change takes effect at once. The box then waits $1 seconds for a confirmation from the new address – if none comes, it restores the previous settings. So you cannot lock yourself out."
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– without confirmation the box returns to the old ones in $1 s."
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"The box gets its address from the router. Afterwards it may be reachable under a different address (look it up in the router). If the change is not confirmed on the box within $1 seconds, the previous settings apply again."
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"The box switches to $1. This page then opens the new address and confirms the change. If that does not work, the previous settings apply again after $2 seconds."
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"The network settings are applied and confirmed by this page. If that does not work, the previous settings apply again after $1 seconds."
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"new address $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"waiting for the box ($1 s) – not reachable? Look up the new address in the router and log in there."
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"waiting for the box ($1 s)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1: starts at boot"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1: no longer starts at boot"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"Network: $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"Appearance: $1"
+		],
 		[
 			"^\\((\\d+) %\\) – Box$",
 			"($1 %) –"

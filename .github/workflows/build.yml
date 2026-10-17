@@ -32,6 +32,8 @@ jobs:
         run: tests/build-host-ucode.sh "$HOME/hostroot"
       - name: Updater tests
         run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-update.sh "$HOME/hostroot/bin/ucode"
+      - name: Network tests
+        run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-net.sh "$HOME/hostroot/bin/uci"
 
   firmware:
     runs-on: ubuntu-24.04

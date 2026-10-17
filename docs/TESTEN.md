@@ -82,6 +82,22 @@ gleich unter **System → Allgemein** ändern.
 
 Einstellungen und installierte Pakete bleiben bei Updates erhalten.
 
+**Versionen bis 0.1.0-beta.1:** curl findet dort die CA-Zertifikate nicht,
+die Prüfung bei GitHub meldet „certificate is not correctly signed“. Einmal auf
+der Box ausführen, danach klappt das Update (ab 0.1.0-beta.2 nicht mehr nötig):
+```sh
+echo 'cacert = /etc/ssl/certs/ca-certificates.crt' > /root/.curlrc
+```
+
+## 6. Netzwerk
+
+Unter **System → Netzwerk** lässt sich eine feste IP einstellen. Die Änderung
+gilt sofort; die Box wartet dann 2 Minuten auf eine Bestätigung von der neuen
+Adresse. Die Oberfläche öffnet die neue Adresse selbst und bestätigt. Kommt
+keine Bestätigung (Tippfehler, falsches Netz), stellt die Box die alten
+Einstellungen wieder her. Notfalls: Werkseinstellungen (DHCP) über die serielle
+Konsole mit `shareos-factory-reset --yes`.
+
 ## Wenn etwas schiefgeht
 
 | Zeichen | Bedeutung / Abhilfe |

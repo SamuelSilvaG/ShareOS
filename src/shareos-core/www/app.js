@@ -79,7 +79,10 @@ const I = {
 	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
 	cloud: '<path d="M7 18a4.5 4.5 0 0 1-.5-9 6 6 0 0 1 11.5 1.5A3.75 3.75 0 0 1 17.5 18z"/>',
 	doc: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
-	box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>'
+	box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+	table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/>',
+	grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+	net: '<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/>'
 };
 const SVC_ICON = { dropbear: I.term, uhttpd: I.globe, ntpd: I.clock, crond: I.clock, rpcd: I.bus, ubus: I.bus, syslogd: I.list, board: I.fan };
 
@@ -126,9 +129,11 @@ const S = {
 	services: null,
 	upd: null, check: null, checking: false,
 	timer: null, updTimer: null,
-	theme: store.get('theme') || 'dark',
+	// theme and accent are system-wide (UCI shareos.ui), cached here for the first paint
+	theme: store.get('theme') || 'dark',      // dark | light | system
 	accent: store.get('accent') || 'blue',
-	scan: store.get('scan') !== '0',
+	scan: store.get('scan') !== '0',          // only this browser
+	views: (() => { try { return JSON.parse(store.get('views') || '{}'); } catch (e) { return {}; } })(),
 	logo: store.get('logo') !== '0'   // global setting (UCI shareos.ui.logo), cached for the login page
 };
 
@@ -136,13 +141,61 @@ const TABS = [
 	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
 	['apps', 'APPS'], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['hardware', 'LÜFTER & LEDS'], ['https', 'HTTPS'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
+// pages that moved: old link -> new place
+const SUB_MOVED = { hardware: 'energie', https: 'netzwerk' };
+
+// the logo is drawn in blue; these filters turn it into the other accent colours
+const LOGO_FILTER = {
+	blue: '', green: 'hue-rotate(-78deg) saturate(1.15)', red: 'hue-rotate(148deg) saturate(1.25)',
+	white: 'grayscale(1) brightness(1.25)', 'white-light': 'grayscale(1) brightness(.55)'
+};
+const logoFilter = () => LOGO_FILTER[S.accent === 'white' && effTheme() === 'light' ? 'white-light' : S.accent] || '';
+
+const MQ_DARK = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+function effTheme() { return S.theme === 'system' ? (MQ_DARK && !MQ_DARK.matches ? 'light' : 'dark') : S.theme; }
+MQ_DARK?.addEventListener?.('change', () => { if (S.theme === 'system') { applyTheme(); renderHeader(); } });
 
 function applyTheme() {
 	const app = $('#app');
-	app.className = 'sos acc-' + S.accent + (S.theme === 'light' ? ' light' : '');
+	app.className = 'sos acc-' + S.accent + (effTheme() === 'light' ? ' light' : '');
 	$('.scan', app).hidden = !S.scan;
 	document.body.style.background = getComputedStyle(app).getPropertyValue('--bg');
+	tintFavicon();
+}
+
+// favicon = the logo symbol in the accent colour
+let faviconImg = null;
+function tintFavicon() {
+	const link = $('link[rel=icon]');
+	if (!link) return;
+	const draw = () => {
+		const c = document.createElement('canvas');
+		c.width = c.height = 64;
+		const ctx = c.getContext('2d');
+		if (!ctx) return;
+		ctx.filter = logoFilter() || 'none';
+		ctx.drawImage(faviconImg, 0, 0, 64, 64);
+		try { link.href = c.toDataURL('image/png'); } catch (e) { }
+	};
+	if (faviconImg?.complete && faviconImg.naturalWidth) { draw(); return; }
+	faviconImg = new Image();
+	faviconImg.onload = draw;
+	faviconImg.src = 'favicon.png';
+}
+
+async function saveLook(v) {
+	store.set('theme', S.theme); store.set('accent', S.accent);
+	try { await rpc('shareos.ui', 'set', v); } catch (e) { toast('Darstellung: ' + e.message, true); }
+}
+
+/* --- tiles or table per section (icon at the right of the section heading) --- */
+
+const isTable = (id) => S.views[id] === 'table';
+function secHead(id, title, sub = '') {
+	const t = isTable(id);
+	return html`<h2 class="gh">${title}${sub ? html` <span>${sub}</span>` : ''}<button class="vt" type="button" data-act="view" data-id="${id}" aria-pressed="${t}" title="${t ? 'Kachelansicht' : 'Tabellenansicht'}" aria-label="${t ? 'Kachelansicht' : 'Tabellenansicht'}">${svg(t ? I.grid : I.table)}</button></h2>`;
 }
 
 /* ---------- UI primitives --------------------------------------------------- */
@@ -287,13 +340,15 @@ function stopPolling() {
 
 function brand() {
 	if (!S.logo) return html`<h1 class="brand">SHAREOS</h1>`;
-	return html`<h1 style="margin:0"><img class="brandlogo" src="${S.theme === 'light' ? 'logo-light.png' : 'logo-dark.png'}" alt=""><span class="sr">ShareOS</span></h1>`;
+	return html`<h1 style="margin:0"><img class="brandlogo" src="${effTheme() === 'light' ? 'logo-light.png' : 'logo-dark.png'}" alt="" style="filter:${logoFilter()}"><span class="sr">ShareOS</span></h1>`;
 }
 
 async function loadUiSettings() {
 	try {
 		const r = await rpc('shareos.ui', 'get', {}, ZERO_SID);
 		if (r.logo !== S.logo) { S.logo = r.logo; store.set('logo', r.logo ? '1' : '0'); }
+		if (r.theme) { S.theme = r.theme; store.set('theme', r.theme); }
+		if (r.accent) { S.accent = r.accent; store.set('accent', r.accent); }
 		if (r.lang && r.lang !== LANG) { try { localStorage.setItem('shareos.lang', r.lang); } catch (e) { } return r.lang; }
 	} catch (e) { }
 	return LANG;
@@ -343,6 +398,7 @@ function renderShell() {
 	renderMain();
 	startPolling();
 	checkFirstRun();
+	netAutoConfirm();
 }
 
 function renderHeader(offline = false) {
@@ -361,7 +417,7 @@ function renderHeader(offline = false) {
 				${upd ? html`<a class="chip warn" href="#/system/firmware"><i></i>UPDATE ${upd.replace(/^v/, '')} <small>verfügbar</small></a>` : ''}
 				${offline ? html`<span class="chip warn"><i></i>OFFLINE</span>`
 					: html`<span class="chip"><i></i>ONLINE <small>seit ${fmtUptime(i.uptime)}</small></span>`}
-				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten">${svg(I.moon)}</button>
+				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden">${svg(I.power)}</button>
 			</div>
 			<div class="clock">${now.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' })}</div>
@@ -379,8 +435,9 @@ function renderTabs() {
 
 function parseRoute() {
 	const [tab, sub] = location.hash.replace(/^#\/?/, '').split('/');
-	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'uebersicht', sub: sub || '' };
+	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'uebersicht', sub: SUB_MOVED[sub] || sub || '' };
 	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'firmware';
+	if (S.route.tab === 'dienste' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
 }
 
 function renderMain() {
@@ -410,10 +467,18 @@ function spark() {
 		<polyline style="fill:none;stroke:var(--amber);stroke-width:1.5" points="${pts(tx)}"></polyline></svg>`);
 }
 
-function diskCards(i) {
+function statusTiles(rows, table) {
+	if (table) return html`<div class="tw"><table class="t" style="min-width:480px"><thead><tr><th>KENNZAHL</th><th>WERT</th><th>HINWEIS</th></tr></thead>
+		<tbody>${rows.map(([k, v, n]) => html`<tr><td>${k}</td><td><b>${v}</b></td><td class="mut">${n}</td></tr>`)}</tbody></table></div>`;
+	return html`<div class="tiles">${rows.map(([k, v, n]) => html`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${n}</div></div>`)}</div>`;
+}
+
+function diskCards(i, table = false) {
 	const disks = i.disks || [];
 	if (!disks.length)
 		return html`<div class="panel"><div class="empty">${svg(I.info)}<span>Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.</span></div></div>`;
+	if (table) return html`<div class="tw"><table class="t" style="min-width:480px"><thead><tr><th>LAUFWERK</th><th>ART</th><th>MODELL</th><th>GRÖSSE</th></tr></thead>
+		<tbody>${disks.map((d) => html`<tr><td><b>${d.name}</b> <span class="mut">/dev/${d.name}</span></td><td>${d.removable ? 'USB' : 'Festplatte'}</td><td>${d.model || 'unbekanntes Modell'}</td><td>${fmtBytes(d.size)}</td></tr>`)}</tbody></table></div>`;
 	return html`<div class="grid">${disks.map((d) => html`
 		<div class="card">
 			<div class="icon">${svg(d.removable ? I.usb : I.disk)}<span class="dot up"></span></div>
@@ -463,22 +528,23 @@ const VIEWS = {
 			</div>
 		</section>
 		<section class="sec">
-			<div class="tiles">
-				<div class="tile"><div class="k">Firmware</div><div class="v">${i.release?.version || '–'}</div><div class="s">${S.check?.update_available ? 'Update ' + S.check.latest + ' verfügbar' : 'Kanal ' + (S.check?.channel || 'stable')}</div></div>
-				<div class="tile"><div class="k">Start aus</div><div class="v">${bootTxt}</div><div class="s">${i.boot === 'flash' ? 'Einstellungen bleiben erhalten' : 'Änderungen gehen beim Neustart verloren'}</div></div>
-				<div class="tile"><div class="k">Laufzeit</div><div class="v">${fmtUptime(i.uptime)}</div><div class="s">seit dem letzten Start</div></div>
-				<div class="tile"><div class="k">Dienste</div><div class="v">${svcUp == null ? '…' : `${svcUp} / ${S.services.length}`}</div><div class="s">laufen</div></div>
-				<div class="tile"><div class="k">Flash frei</div><div class="v">${ov ? fmtBytes(ov.avail, 0) : '–'}</div><div class="s">für Einstellungen & Pakete</div></div>
-				<div class="tile"><div class="k">Laufwerke</div><div class="v">${(i.disks || []).length}</div><div class="s">${(i.disks || []).length ? 'erkannt' : 'keine eingesteckt'}</div></div>
-			</div>
+			${secHead('status', 'STATUS')}
+			${statusTiles([
+				['Firmware', i.release?.version || '–', S.check?.update_available ? 'Update ' + S.check.latest + ' verfügbar' : 'Kanal ' + (S.check?.channel || 'stable')],
+				['Start aus', bootTxt, i.boot === 'flash' ? 'Einstellungen bleiben erhalten' : 'Änderungen gehen beim Neustart verloren'],
+				['Laufzeit', fmtUptime(i.uptime), 'seit dem letzten Start'],
+				['Dienste', svcUp == null ? '…' : `${svcUp} / ${S.services.length}`, 'laufen'],
+				['Flash frei', ov ? fmtBytes(ov.avail, 0) : '–', 'für Einstellungen & Pakete'],
+				['Laufwerke', String((i.disks || []).length), (i.disks || []).length ? 'erkannt' : 'keine eingesteckt']
+			], isTable('status'))}
 		</section>
 		<section class="sec">
-			<h2 class="gh">LAUFWERKE <span>${(i.disks || []).length} erkannt</span></h2>
-			${diskCards(i)}
+			${secHead('disks', 'LAUFWERKE', `${(i.disks || []).length} erkannt`)}
+			${diskCards(i, isTable('disks'))}
 		</section>
 		<section class="sec">
-			<h2 class="gh">DIENSTE <span><a href="#/dienste">alle verwalten</a></span></h2>
-			${serviceCards(false)}
+			${secHead('services', 'DIENSTE', html`<a href="#/dienste">alle verwalten</a>`)}
+			${serviceCards(false, isTable('services'))}
 		</section>`;
 	},
 
@@ -490,7 +556,11 @@ const VIEWS = {
 	paperless: () => planned('Paperless-ngx', 'Phase 5', ['Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)', 'Status der Übertragungen über /api/tasks/', 'Tags und Korrespondent je Ordner, Export-Backup aufs NAS'], I.doc),
 
 	dienste() {
-		return html`<section class="sec"><h2 class="gh">DIENSTE <span>Start, Stopp, Neustart</span></h2>${serviceCards(true)}</section>`;
+		const sub = S.route.sub;
+		return html`
+		<nav class="subtabs" aria-label="Dienste">${SVC_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/dienste/${id}">${label}</a>`)}</nav>
+		${sub === 'autostart' ? autostartView()
+			: html`<section class="sec">${secHead('services', 'DIENSTE', 'Start, Stopp, Neustart')}${serviceCards(true, isTable('services'))}</section>`}`;
 	},
 
 	system() {
@@ -507,20 +577,42 @@ function planned(title, phase, items, icon = I.info) {
 		<ul class="plan">${items.map((x) => html`<li>${x}</li>`)}</ul></div></div></div></section>`;
 }
 
-function serviceCards(withActions) {
+function svcActions(s) {
+	return s.running ? html`<button class="btn sm" type="button" data-act="svc" data-name="${s.name}" data-op="restart">${svg(I.reboot)}Neustart</button>
+		${s.essential ? '' : html`<button class="btn sm danger" type="button" data-act="svc" data-name="${s.name}" data-op="stop">Stopp</button>`}`
+		: html`<button class="btn sm" type="button" data-act="svc" data-name="${s.name}" data-op="start">Starten</button>`;
+}
+
+function serviceCards(withActions, table = false) {
 	if (!S.services) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Dienste …</span></div></div>`;
+	if (table) return html`<div class="tw"><table class="t" style="min-width:${withActions ? 720 : 520}px"><thead><tr><th>DIENST</th><th>BESCHREIBUNG</th><th>STATUS</th><th>BEIM START</th>${withActions ? html`<th></th>` : ''}</tr></thead>
+		<tbody>${S.services.map((s) => html`<tr>
+			<td><b>${s.label}</b><div class="mut" style="font-size:12px">${s.name}</div></td><td class="mut">${s.desc}</td>
+			<td><span class="tag ${s.running ? 'ok' : 'err'}">${s.running ? 'läuft' : 'gestoppt'}</span></td>
+			<td class="mut">${s.essential ? 'immer' : s.autostart === false ? 'aus' : 'an'}</td>
+			${withActions ? html`<td><div class="acts">${svcActions(s)}</div></td>` : ''}</tr>`)}</tbody></table></div>`;
 	return html`<div class="grid">${S.services.map((s) => html`
 		<div class="card${s.running ? '' : ' off'}">
 			<div class="icon">${svg(SVC_ICON[s.name] || I.chip)}<span class="dot ${s.running ? 'up' : 'down'}"></span></div>
 			<div class="info"><div class="name">${s.label}</div><div class="desc">${s.desc}</div>
 				<div class="ip">${s.name} · ${s.running ? 'läuft' : 'gestoppt'}</div>
-				${withActions ? html`<div class="acts" style="margin-top:12px">
-					${s.running ? html`<button class="btn sm" type="button" data-act="svc" data-name="${s.name}" data-op="restart">${svg(I.reboot)}Neustart</button>
-						${s.essential ? '' : html`<button class="btn sm danger" type="button" data-act="svc" data-name="${s.name}" data-op="stop">Stopp</button>`}`
-						: html`<button class="btn sm" type="button" data-act="svc" data-name="${s.name}" data-op="start">Starten</button>`}
-				</div>` : ''}
+				${withActions ? html`<div class="acts" style="margin-top:12px">${svcActions(s)}</div>` : ''}
 			</div>
 		</div>`)}</div>`;
+}
+
+function autostartView() {
+	if (!S.services) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Dienste …</span></div></div>`;
+	return html`<section class="sec">
+		<h2 class="gh">AUTOSTART <span>welche Dienste beim Einschalten starten</span></h2>
+		<div class="tw"><table class="t" style="min-width:560px"><thead><tr><th>DIENST</th><th>BESCHREIBUNG</th><th>BEIM START</th><th>JETZT</th></tr></thead>
+			<tbody>${S.services.map((s) => html`<tr>
+				<td><b>${s.label}</b><div class="mut" style="font-size:12px">${s.name}</div></td><td class="mut">${s.desc}</td>
+				<td>${s.essential ? html`<span class="tag" title="Ohne diesen Dienst ist die Box nicht bedienbar">immer</span>`
+					: html`<label class="chk"><input type="checkbox" class="as-toggle" data-name="${s.name}"${s.autostart !== false ? raw(' checked') : ''}>starten</label>`}</td>
+				<td><span class="tag ${s.running ? 'ok' : 'err'}">${s.running ? 'läuft' : 'gestoppt'}</span></td></tr>`)}</tbody></table></div>
+		<p class="note">Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.</p>
+	</section>`;
 }
 
 async function loadServices() {
@@ -576,14 +668,14 @@ function storageView() {
 	${job?.state === 'error' ? html`<div class="banner">${svg(I.warn)}<span><b>Einrichtung fehlgeschlagen:</b> ${job.error}</span></div>` : ''}
 	${S.wiz ? wizardView(st) : ''}
 	<section class="sec">
-		<h2 class="gh">VOLUMES <span>${st.volumes.length ? st.volumes.length + ' eingerichtet' : 'noch keine'}</span></h2>
-		${st.volumes.length ? html`<div class="grid">${st.volumes.map((v) => volumeCard(st, v, running))}</div>`
+		${secHead('volumes', 'VOLUMES', st.volumes.length ? st.volumes.length + ' eingerichtet' : 'noch keine')}
+		${st.volumes.length ? (isTable('volumes') ? volumeTable(st, running) : html`<div class="grid">${st.volumes.map((v) => volumeCard(st, v, running))}</div>`)
 			: html`<div class="panel"><div class="empty">${svg(I.info)}<div><span>Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.</span>
 				<div class="acts" style="margin-top:12px">${S.wiz ? '' : html`<button class="btn primary" type="button" data-act="wiz-start" ${running || !st.disks.length ? 'disabled' : ''}>Speicher einrichten</button>`}</div></div></div></div>`}
 	</section>
 	<section class="sec">
-		<h2 class="gh">LAUFWERKE <span>${st.disks.length} erkannt</span></h2>
-		${st.disks.length ? html`<div class="grid">${st.disks.map((d) => diskCard(st, d, running))}</div>` : diskCards(i)}
+		${secHead('stdisks', 'LAUFWERKE', `${st.disks.length} erkannt`)}
+		${st.disks.length ? (isTable('stdisks') ? diskTable(st, running) : html`<div class="grid">${st.disks.map((d) => diskCard(st, d, running))}</div>`) : diskCards(i)}
 	</section>
 	<section class="sec">
 		<h2 class="gh">EINSTELLUNGEN</h2>
@@ -620,6 +712,37 @@ function storageView() {
 	</section>`;
 }
 
+function volActions(v, running) {
+	return html`${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
+			: html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="mount" ${running || !v.device ? 'disabled' : ''}>Einhängen</button>`}
+		<button class="btn sm ghost" type="button" data-act="vol" data-name="${v.name}" data-op="forget" ${running ? 'disabled' : ''}>Entfernen</button>`;
+}
+
+function volumeTable(st, running) {
+	return html`<div class="tw"><table class="t" style="min-width:760px"><thead><tr><th>NAME</th><th>AUFBAU</th><th>BELEGT</th><th style="width:18%">AUSLASTUNG</th><th>ZUSTAND</th><th></th></tr></thead>
+		<tbody>${st.volumes.map((v) => {
+			const md = arrayOf(st, v.device), degraded = md && md.health && md.health.includes('_'), p = pct(v.used, v.size);
+			return html`<tr>
+				<td><b>${v.name}</b>${S.storage?.apps === v.name ? html` <span class="tag">APPS</span>` : ''}<div class="mut" style="font-size:12px">${v.mountpoint}</div></td>
+				<td>${LAYOUT_TXT[v.layout] || v.layout || ''}${md ? html`<div class="mut" style="font-size:12px">${md.name} · ${md.health || '?'}</div>` : ''}</td>
+				<td>${v.mounted ? html`${fmtBytes(v.used)} / ${fmtBytes(v.size)}` : '–'}</td>
+				<td>${v.mounted ? html`<div class="bar"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}</td>
+				<td>${!v.mounted ? html`<span class="tag err">nicht eingehängt</span>` : degraded ? html`<span class="tag warn">eine Platte fehlt</span>`
+					: md?.sync ? html`<span class="tag warn">Sync ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %'}</span>` : html`<span class="tag ok">in Ordnung</span>`}</td>
+				<td><div class="acts">${volActions(v, running)}</div></td></tr>`;
+		})}</tbody></table></div>`;
+}
+
+function diskTable(st, running) {
+	return html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>LAUFWERK</th><th>MODELL</th><th>GRÖSSE</th><th>SMART</th><th>INHALT</th><th></th></tr></thead>
+		<tbody>${st.disks.map((d) => html`<tr>
+			<td><b>${d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</b></td>
+			<td>${d.model || 'unbekanntes Modell'}${d.serial ? html`<div class="mut" style="font-size:12px">${d.serial}</div>` : ''}</td>
+			<td>${fmtBytes(d.size)}</td><td>${smartLine(d.smart)}</td><td class="mut" style="font-size:12px">${diskUse(st, d).txt}</td>
+			<td><div class="acts"><button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
+				<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button></div></td></tr>`)}</tbody></table></div>`;
+}
+
 function volumeCard(st, v, running) {
 	const md = arrayOf(st, v.device);
 	const degraded = md && md.health && md.health.includes('_');
@@ -634,11 +757,7 @@ function volumeCard(st, v, running) {
 			${md?.sync ? html`<div class="desc" style="margin-top:6px">${md.sync.action === 'resync' ? 'Erst-Synchronisierung' : md.sync.action === 'recovery' ? 'Wiederherstellung' : 'Prüfung'}: ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %' + (md.sync.finish ? ' · noch ' + fmtMin(md.sync.finish) : '')}</div>
 				<div class="bar" style="margin-top:6px"><i class="warn" style="width:${md.sync.percent}%"></i></div>` : ''}
 			<div class="ip">${v.mountpoint}${v.device ? ' · ' + v.device : ' · Dateisystem nicht gefunden'}</div>
-			<div class="acts" style="margin-top:12px">
-				${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
-					: html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="mount" ${running || !v.device ? 'disabled' : ''}>Einhängen</button>`}
-				<button class="btn sm ghost" type="button" data-act="vol" data-name="${v.name}" data-op="forget" ${running ? 'disabled' : ''}>Entfernen</button>
-			</div>
+			<div class="acts" style="margin-top:12px">${volActions(v, running)}</div>
 		</div></div>`;
 }
 
@@ -955,7 +1074,7 @@ const SYS = {
 	},
 
 	energie() {
-		return html`<div class="g2">
+		return html`<h2 class="gh">ENERGIE & RESET</h2><div class="g2">
 			<div class="panel">
 				<div class="ph"><span class="pt">ENERGIE</span></div>
 				<div class="acts"><button class="btn" type="button" data-act="reboot">${svg(I.reboot)}Neustart</button>
@@ -967,7 +1086,52 @@ const SYS = {
 				<p class="mut" style="margin:0 0 12px;font-size:13px">Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort <code>shareos</code>.</p>
 				<button class="btn danger" type="button" data-act="factory">Auf Werkseinstellungen zurücksetzen</button>
 			</div>
-		</div>`;
+		</div>
+		<h2 class="gh" style="margin-top:22px">LÜFTER & LEDS</h2>
+		${SYS.hardware()}`;
+	},
+
+	netzwerk() {
+		const n = S.net, i = S.info || {}, e = i.network?.eth0 || {};
+		if (!n) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const st = n.proto === 'static';
+		// prefill the static fields with what DHCP gave, so switching is easy
+		const cur = e.ipv4 ? e.ipv4.address : '';
+		const curMask = e.ipv4 ? prefixMask(e.ipv4.prefix) : '255.255.255.0';
+		const v = (k, d) => (st ? n[k] : '') || d;
+		return html`
+		${n.pending ? html`<div class="banner">${svg(I.warn)}<span style="flex:1;min-width:240px"><b>Neue Netzwerkeinstellungen warten auf Bestätigung</b> – ohne Bestätigung kehrt die Box in ${n.pending.left} s zu den alten zurück.</span><button class="btn primary" type="button" data-act="net-confirm">Behalten</button></div>` : ''}
+		${n.result === 'rolledback' && !n.pending ? html`<div class="banner">${svg(I.warn)}<span>Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.</span></div>` : ''}
+		<h2 class="gh">NETZWERK <span>eth0 · ${e.speed ? e.speed + ' Mbit/s' : 'kein Link'}</span></h2>
+		<div class="g2">
+			<form class="panel" id="f-net">
+				<div class="ph"><span class="pt">IPV4</span><span class="tag ml">${st ? 'statisch' : 'DHCP'}</span></div>
+				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>ADRESSE</span><select name="proto" id="net-proto">
+					<option value="dhcp"${st ? '' : raw(' selected')}>Automatisch (DHCP) – vom Router</option>
+					<option value="static"${st ? raw(' selected') : ''}>Feste Adresse</option></select></label></div>
+				<div class="fields" id="net-static" style="margin-top:14px"${st ? '' : raw(' hidden')}>
+					<label class="f"><span>IP-ADRESSE</span><input name="ipaddr" value="${v('ipaddr', cur)}" inputmode="decimal" placeholder="192.168.1.20"></label>
+					<label class="f"><span>SUBNETZMASKE</span><input name="netmask" value="${v('netmask', curMask)}" inputmode="decimal" placeholder="255.255.255.0"></label>
+					<label class="f"><span>GATEWAY</span><input name="gateway" value="${v('gateway', e.gateway || '')}" inputmode="decimal" placeholder="192.168.1.1"></label>
+					<label class="f"><span>DNS-SERVER (KOMMA-GETRENNT)</span><input name="dns" value="${st ? (n.dns || []).join(', ') : (e.dns || []).join(', ')}" inputmode="decimal" placeholder="192.168.1.1"></label>
+				</div>
+				<p class="note">Die Änderung gilt sofort. Die Box wartet dann ${n.timeout || 120} Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her. So sperrst du dich nicht aus.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit" ${n.pending ? 'disabled' : ''}>Übernehmen</button></div>
+			</form>
+			<div class="panel">
+				<div class="ph"><span class="pt">AKTUELL</span><span class="tag ml ${e.ipv4 ? 'ok' : 'warn'}">${e.ipv4 ? 'verbunden' : 'keine Adresse'}</span></div>
+				<dl class="kv">
+					<dt>IPv4</dt><dd>${e.ipv4 ? `${e.ipv4.address} / ${e.ipv4.prefix}` : '–'}</dd>
+					<dt>Gateway</dt><dd>${e.gateway || '–'}</dd>
+					<dt>DNS</dt><dd>${(e.dns || []).join(', ') || '–'}</dd>
+					<dt>MAC</dt><dd>${e.mac || '–'}</dd>
+					<dt>Verbindung</dt><dd>${e.speed ? e.speed + ' Mbit/s' : '–'}</dd>
+					<dt>Gerätename</dt><dd>${i.hostname || '–'} <a href="#/system/allgemein" style="font-size:12px">ändern</a></dd>
+				</dl>
+			</div>
+		</div>
+		<h2 class="gh" style="margin-top:22px">HTTPS & ZERTIFIKAT</h2>
+		${SYS.https()}`;
 	},
 
 	protokolle() {
@@ -982,11 +1146,15 @@ const SYS = {
 	darstellung() {
 		const names = { green: 'Grün', red: 'Rot', blue: 'Blau', white: 'Weiß' };
 		return html`<div class="panel" style="max-width:560px">
-			<div class="ph"><span class="pt">DARSTELLUNG</span><span class="tag ml">nur in diesem Browser</span></div>
-			<div class="row">${Object.keys(names).map((c) => html`<button class="sw c-${c}${S.accent === c ? ' on' : ''}" type="button" data-act="accent" data-c="${c}" aria-label="Akzentfarbe ${names[c]}" aria-pressed="${S.accent === c}"><i></i></button>`)}</div>
+			<div class="ph"><span class="pt">DARSTELLUNG</span><span class="tag ml">gilt für alle</span></div>
+			<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>HELL ODER DUNKEL</span><select id="opt-theme">
+				${[['dark', 'Dunkel'], ['light', 'Hell'], ['system', 'Wie das Betriebssystem (automatisch)']].map(([v, t]) => html`<option value="${v}"${S.theme === v ? raw(' selected') : ''}>${t}</option>`)}
+			</select></label></div>
+			<div class="pt" style="margin:14px 0 8px">AKZENTFARBE</div>
+			<div class="row">${Object.keys(names).map((c) => html`<button class="sw c-${c}${S.accent === c ? ' on' : ''}" type="button" data-act="accent" data-c="${c}" aria-label="Akzentfarbe ${names[c]}" aria-pressed="${S.accent === c}" title="${names[c]}"><i></i></button>`)}</div>
+			<p class="note">Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.</p>
 			<div style="display:grid;gap:6px;margin-top:14px">
-				<label class="chk"><input type="checkbox" id="opt-light"${S.theme === 'light' ? raw(' checked') : ''}>Helles Design</label>
-				<label class="chk"><input type="checkbox" id="opt-scan"${S.scan ? raw(' checked') : ''}>Scanlines</label>
+				<label class="chk"><input type="checkbox" id="opt-scan"${S.scan ? raw(' checked') : ''}>Scanlines (nur in diesem Browser)</label>
 			</div>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
@@ -1032,7 +1200,12 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'protokolle') loadLog();
-		if (sub === 'hardware') {
+		if (sub === 'netzwerk') {
+			if (!S.net) loadNet();
+			$('#net-proto')?.addEventListener('change', (e) => { $('#net-static').hidden = e.target.value !== 'static'; });
+			$('#f-net')?.addEventListener('submit', netSubmit);
+		}
+		if (sub === 'energie') {
 			if (!S.hw) loadHw();
 			document.querySelectorAll('#f-fan input[name=preset]').forEach((r) => r.addEventListener('change', () => { $('#fan-custom').hidden = r.value !== 'custom'; }));
 			$('#f-fan')?.addEventListener('submit', async (e) => {
@@ -1049,7 +1222,7 @@ const VIEWS_AFTER = {
 					catch (err) { toast('LED: ' + err.message, true); }
 				});
 		}
-		if (sub === 'https') {
+		if (sub === 'netzwerk') {
 			if (!S.web) loadWeb();
 			$('#opt-https')?.addEventListener('change', (e) => webSet({ https: e.target.checked }));
 			$('#opt-redirect')?.addEventListener('change', (e) => webSet({ redirect: e.target.checked }));
@@ -1086,7 +1259,7 @@ const VIEWS_AFTER = {
 			});
 		}
 		if (sub === 'darstellung') {
-			$('#opt-light').addEventListener('change', (e) => { S.theme = e.target.checked ? 'light' : 'dark'; store.set('theme', S.theme); applyTheme(); renderHeader(); });
+			$('#opt-theme').addEventListener('change', (e) => { S.theme = e.target.value; applyTheme(); renderHeader(); renderMain(); saveLook({ theme: S.theme }); });
 			$('#opt-lang').addEventListener('change', async (e) => {
 				try {
 					await rpc('shareos.ui', 'set', { lang: e.target.value });
@@ -1120,7 +1293,19 @@ const VIEWS_AFTER = {
 			catch (err) { toast('Ruhezustand: ' + err.message, true); }
 		});
 	},
-	dienste() { if (!S.services) loadServices(); },
+	dienste() {
+		if (!S.services) loadServices();
+		document.querySelectorAll('.as-toggle').forEach((c) => c.addEventListener('change', async () => {
+			c.disabled = true;
+			try {
+				const r = await rpc('shareos.service', 'autostart', { name: c.dataset.name, enabled: c.checked });
+				const s = S.services.find((x) => x.name === r.name);
+				if (s) s.autostart = r.autostart;
+				toast(`${r.name}: ${r.autostart ? 'startet beim Einschalten' : 'startet nicht mehr beim Einschalten'}`);
+			} catch (err) { c.checked = !c.checked; toast(err.message, true); }
+			c.disabled = false;
+		}));
+	},
 	uebersicht() { if (!S.services) loadServices(); }
 };
 
@@ -1128,7 +1313,74 @@ const VIEWS_AFTER = {
 
 async function loadHw() {
 	try { S.hw = await rpc('shareos.hw', 'get'); } catch (e) { toast('Hardware: ' + e.message, true); }
-	if (S.route.sub === 'hardware') renderMain();
+	if (S.route.sub === 'energie') renderMain();
+}
+
+/* ---------- network ------------------------------------------------------------- */
+
+function prefixMask(p) {
+	const n = p ? (0xffffffff << (32 - p)) >>> 0 : 0;
+	return [24, 16, 8, 0].map((b) => (n >>> b) & 255).join('.');
+}
+
+async function loadNet() {
+	try { S.net = await rpc('shareos.net', 'get'); } catch (e) { toast('Netzwerk: ' + e.message, true); }
+	if (S.route.sub === 'netzwerk') renderMain();
+	if (S.net?.pending) { clearTimeout(S.netTimer); S.netTimer = setTimeout(() => { S.net = null; loadNet(); }, 5000); }
+}
+
+// reaching the box after a network change is the confirmation
+async function netAutoConfirm() {
+	try {
+		const n = await rpc('shareos.net', 'get');
+		if (!n.pending) return;
+		await rpc('shareos.net', 'confirm');
+		toast('Neue Netzwerkeinstellungen bestätigt.');
+		S.net = null;
+	} catch (e) { }
+}
+
+async function netSubmit(e) {
+	e.preventDefault();
+	const f = e.target, proto = f.proto.value;
+	const args = { proto, confirm: true };
+	if (proto === 'static') {
+		Object.assign(args, { ipaddr: f.ipaddr.value.trim(), netmask: f.netmask.value.trim(), gateway: f.gateway.value.trim(),
+			dns: f.dns.value.split(/[\s,;]+/).filter(Boolean) });
+	}
+	const target = proto === 'static' ? args.ipaddr : null;
+	const moves = target && target !== location.hostname;
+	const t = S.net?.timeout || 120;
+	const text = proto === 'dhcp'
+		? `Die Box holt sich ihre Adresse vom Router. Sie ist danach eventuell unter einer anderen Adresse erreichbar (im Router nachsehen). Wird die Änderung nicht innerhalb von ${t} Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen.`
+		: moves ? `Die Box wechselt auf ${target}. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung. Klappt das nicht, gelten nach ${t} Sekunden wieder die bisherigen Einstellungen.`
+		: `Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt. Klappt das nicht, gelten nach ${t} Sekunden wieder die bisherigen Einstellungen.`;
+	if (!await confirmDlg('Netzwerk ändern?', text, 'Übernehmen')) return;
+	try { await rpc('shareos.net', 'set', args); } catch (err) { toast('Netzwerk: ' + err.message, true); return; }
+	stopPolling();
+	if (moves) {
+		cover('Netzwerk wird umgestellt', `neue Adresse ${target}`);
+		const url = `${location.protocol}//${target}${location.port ? ':' + location.port : ''}/#confirm=${S.sid}`;
+		setTimeout(() => { location.href = url; }, 6000);
+		return;
+	}
+	// same address (or DHCP): wait until this page reaches the box again, then confirm
+	cover('Netzwerk wird neu gestartet', 'warte auf die Box');
+	const t0 = Date.now();
+	await new Promise((r) => setTimeout(r, 5000));
+	for (;;) {
+		try {
+			await rpc('shareos.net', 'confirm');
+			uncover(); toast('Neue Netzwerkeinstellungen bestätigt.');
+			S.net = null; startPolling(); renderMain();
+			return;
+		} catch (err) { }
+		const sec = Math.round((Date.now() - t0) / 1000);
+		const el = $('#cover-text');
+		if (el) el.textContent = sec > t ? 'Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.'
+			: `warte auf die Box (${sec} s)${proto === 'dhcp' && sec > 20 ? ' – nicht erreichbar? Neue Adresse im Router nachsehen und dort anmelden.' : ''}`;
+		await new Promise((r) => setTimeout(r, 3000));
+	}
 }
 
 /* ---------- first-run wizard -------------------------------------------------- */
@@ -1257,7 +1509,7 @@ function frEnd(next) {
 
 async function loadWeb() {
 	try { S.web = await rpc('shareos.web', 'get'); } catch (e) { toast('HTTPS: ' + e.message, true); }
-	if (S.route.sub === 'https') renderMain();
+	if (S.route.sub === 'netzwerk') renderMain();
 }
 
 // the web server restarts after HTTPS changes: wait for it, keep the page
@@ -1327,9 +1579,24 @@ async function refreshUpdateStatus() {
 /* ---------- actions (delegated clicks) -------------------------------------- */
 
 const ACTIONS = {
-	theme() { S.theme = S.theme === 'light' ? 'dark' : 'light'; store.set('theme', S.theme); applyTheme(); renderHeader(); },
+	theme() {
+		S.theme = effTheme() === 'light' ? 'dark' : 'light';
+		applyTheme(); renderHeader();
+		if (S.route.sub === 'darstellung') renderMain();
+		saveLook({ theme: S.theme });
+	},
 	logout,
-	accent(el) { S.accent = el.dataset.c; store.set('accent', S.accent); applyTheme(); renderMain(); },
+	accent(el) { S.accent = el.dataset.c; applyTheme(); renderHeader(); renderMain(); saveLook({ accent: S.accent }); },
+	view(el) {
+		const id = el.dataset.id;
+		S.views[id] = isTable(id) ? 'tiles' : 'table';
+		store.set('views', JSON.stringify(S.views));
+		renderMain();
+	},
+	async 'net-confirm'() {
+		try { await rpc('shareos.net', 'confirm'); toast('Neue Netzwerkeinstellungen bestätigt.'); } catch (e) { toast(e.message, true); }
+		S.net = null; loadNet();
+	},
 	check() { checkUpdates(); },
 	'fr-next'() { const e = frCollect(); if (e) { toast(e, true); return; } frGo(1); },
 	'fr-back'() { frCollect(); frGo(-1); },
@@ -1501,6 +1768,12 @@ setInterval(() => {
 	if (await i18nLoad(LANG)) i18nStart($('#app'));
 	i18nLanguages().then((l) => { S.languages = l; });
 	applyTheme();
+	const m = location.hash.match(/^#confirm=([0-9a-f]{32})$/);
+	if (m) {
+		S.sid = m[1];
+		store.set('sid', S.sid, false);
+		history.replaceState(null, '', '#/system/netzwerk');
+	}
 	if (S.sid) {
 		try {
 			await rpc('session', 'access', { scope: 'ubus', object: 'shareos.system', function: 'info' });

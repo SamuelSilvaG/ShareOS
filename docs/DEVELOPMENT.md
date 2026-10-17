@@ -59,6 +59,13 @@ the box for why the web server was not running.
 | 15:00–15:44 | The web interface is gone after every boot. Debugging with Jan and Konrad. Claude reproduces the crash in the emulator: every browser request with `If-Modified-Since` crashes `uhttpd` (musl `strptime` with `%Z`). Fixed with a patch. |
 | 15:51 | The disks are detected. This confirms the SATA power line that was corrected during porting (gpio0 24 instead of Alt-F's gpio1 24). |
 | 16:00 | **Storage**: wizard and manual management (ext4, RAID 1, SMART, spindown, swap, app area). |
+| 16:45 | English interface from language files, HTTPS with a self-signed certificate, first-run wizard with Alt-F import, fan and LED settings. |
+| 17:20 | The storage tests with virtual disks find a real bug: with two single disks, the second ended up under the first one's name. Fixed before it reached the box. |
+| 18:13 | Everything goes to `main`; Jan creates the first release `v0.1.0-beta.1`, GitHub builds the update bundle. |
+| 18:26 | The box cannot reach GitHub: "certificate is not correctly signed". Claude's first guess (the network intercepts HTTPS) is wrong – Jan's output shows Google's genuine certificate. Cause: buildroot gives curl with mbedTLS no path to the CA certificates. Workaround via `/root/.curlrc`, fix in the build. |
+| 20:15 | **First online update on real hardware:** the box downloads `0.1.0-beta.1` from GitHub, verifies it, writes kernel and initramfs and installs the system on restart. The first-run wizard works without problems. |
+| 20:18 | Jan's feedback: after "Install" nothing visible happens. Claude adds a progress bar with the individual steps. |
+| 20:31 | New requirements from Jan: menu as in "Haupt-Funktion" (Services → Autostart, System → Network), tile/table view per section, light/dark/system, logo and browser icon in the accent colour. Network settings with automatic rollback so nobody locks themselves out. |
 
 ## Notable problems solved
 
@@ -66,13 +73,16 @@ the box for why the web server was not running.
 - **No flashing without a way back:** first ShareOS ran from RAM, then from the network, then the system went into flash, and the kernel came last. Every step had a way back (Alt-F backup, D-Link rescue system, rescue mode).
 - **U-Boot without documentation:** Claude worked out the abort sequence and the fallback to the rescue system on a broken image from the bootloader's behaviour and memory dump.
 - **A hardware detail in the device tree:** Alt-F switched the SATA power through the wrong GPIO controller. Claude caught it while porting; the disks confirmed it.
+- **Changing the network without locking yourself out:** a new IP takes effect at once, but the box waits 2 minutes for a confirmation from the new address. If none comes, it restores the old settings (as OpenWrt does). The web interface opens the new address itself and confirms.
 - **A crash that only happened in a real browser:** the safeguard (automatic uhttpd restart, logging) came first. The actual cause was a bug in the C library, which Claude reproduced in the emulator and worked around.
 
 ## The web interface
 
-The default is the dark blue theme with the logo. Green, red, white and a light
-theme can be chosen, and the logo can be switched off. The interface is
-available in German and English.
+The default is the dark blue theme with the logo. Light, dark or "same as the
+operating system" and the accent colours blue, green, red and white apply to
+all users. The logo and the browser icon take on the accent colour; the logo
+can be switched off. Every section with tiles has a switch for a table view at
+the right of its heading. The interface is available in German and English.
 
 | Overview (English) | Storage wizard (English) |
 |---|---|
@@ -86,9 +96,17 @@ available in German and English.
 |---|---|
 | ![Firmware](images/gui-firmware.png) | ![Appearance](images/gui-darstellung.png) |
 
-| Overview (German) | Phone |
+| Network with rollback, HTTPS | Services → Autostart |
 |---|---|
-| ![Overview](images/gui-uebersicht.png) | ![Phone](images/gui-handy.png) |
+| ![Network](images/gui-en-network.png) | ![Autostart](images/gui-en-autostart.png) |
+
+| Table view | Accent colours, light and dark |
+|---|---|
+| ![Table view](images/gui-tabelle.png) | ![Colours](images/gui-farben.png) |
+
+| Update with progress | Phone |
+|---|---|
+| ![Update](images/gui-update-progress.png) | ![Phone](images/gui-handy.png) |
 
 *Screenshots with sample data (`tests/mock-ubus.py`): two 4 TB disks as a
 mirror and an update available.*

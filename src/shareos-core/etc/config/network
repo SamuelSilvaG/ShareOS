@@ -1,0 +1,12 @@
+# Network of the box (eth0). Changed from the web interface with an automatic
+# rollback; by hand: edit, then "shareos-net restart".
+
+config interface 'lan'
+	option ifname 'eth0'
+	# dhcp = address from the router, static = the values below
+	option proto 'dhcp'
+	option ipaddr ''
+	option netmask '255.255.255.0'
+	option gateway ''
+	# DNS servers for static addresses (empty = the gateway)
+	option dns ''

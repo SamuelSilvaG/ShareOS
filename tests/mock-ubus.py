@@ -17,7 +17,8 @@ from pathlib import Path
 WWW = Path(__file__).resolve().parent.parent / 'src/shareos-core/www'
 SID = 'c0ffee00c0ffee00c0ffee00c0ffee00'
 T0 = time.time()
-STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full_temp': 50, 'half_temp': 45}, 'led': {'status': 'heartbeat', 'power': 'on', 'disks': 'off'}, 'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False}
+STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full_temp': 50, 'half_temp': 45}, 'led': {'status': 'heartbeat', 'power': 'on', 'disks': 'off'}, 'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False, 'theme': 'dark', 'accent': 'blue', 'autostart_off': ['crond'],
+         'net': {'proto': 'dhcp', 'ipaddr': '', 'netmask': '255.255.255.0', 'gateway': '', 'dns': []}, 'net_pending': None}
 
 DISK = lambda n, model, serial: {
     'name': n, 'type': 'disk', 'size': 4000787030016, 'model': model, 'serial': serial, 'tran': 'sata', 'rm': False, 'rota': True,
@@ -82,7 +83,21 @@ def call(obj, method, args):
                 STATE['lang'] = args['lang']
             if 'logo' in args:
                 STATE['logo'] = bool(args['logo'])
-        return {'lang': STATE['lang'], 'logo': STATE['logo']}
+            for k in ('theme', 'accent'):
+                if args.get(k):
+                    STATE[k] = args[k]
+        return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent']}
+    if obj == 'shareos.net':
+        if method == 'set':
+            STATE['net'] = {k: args.get(k, STATE['net'][k]) for k in STATE['net']}
+            STATE['net_pending'] = time.time() + 120
+            return {'ok': True, 'timeout': 120}
+        if method == 'confirm':
+            STATE['net_pending'] = None
+            return {'ok': True}
+        p = STATE['net_pending']
+        return {**STATE['net'], 'timeout': 120, 'result': None,
+                'pending': {'until': int(p), 'left': max(0, int(p - time.time()))} if p else None}
     if obj == 'shareos.setup':
         if method == 'status':
             return {'done': STATE['setup_done'], 'hostname': 'shareos', 'timezone': 'Europe/Berlin', 'lang': STATE['lang'], 'channel': 'stable'}
@@ -118,7 +133,13 @@ def call(obj, method, args):
         return {'ok': True}
     if obj == 'shareos.service':
         if method == 'list':
-            return {'services': [{'name': n, 'label': l, 'desc': d, 'running': True, 'essential': e} for n, l, d, e in SERVICES]}
+            return {'services': [{'name': n, 'label': l, 'desc': d, 'running': n not in STATE['autostart_off'], 'essential': e,
+                                  'autostart': n not in STATE['autostart_off']} for n, l, d, e in SERVICES]}
+        if method == 'autostart':
+            off = set(STATE['autostart_off'])
+            (off.discard if args.get('enabled') else off.add)(args['name'])
+            STATE['autostart_off'] = sorted(off)
+            return {'ok': True, 'name': args['name'], 'autostart': bool(args.get('enabled'))}
         return {'ok': True}
     if obj == 'shareos.storage':
         if method == 'status':

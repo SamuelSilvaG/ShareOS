@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Start all init scripts in /etc/init.d in numerical order, except those
+# switched off under "Services → Autostart" (UCI shareos.autostart.disabled).
+#
+disabled=" $(uci -q get shareos.autostart.disabled) "
+
+for i in /etc/init.d/S??*; do
+	# Ignore dangling symlinks (if any).
+	[ ! -f "$i" ] && continue
+
+	name=${i##*/S??}
+	case "$disabled" in
+		*" $name "*) echo "Not starting $name (autostart off)"; continue ;;
+	esac
+
+	case "$i" in
+		*.sh)
+			# Source shell script for speed.
+			(
+				trap - INT QUIT TSTP
+				set start
+				# shellcheck source=/dev/null
+				. "$i"
+			)
+			;;
+		*)
+			# No sh extension, so fork subprocess.
+			"$i" start
+			;;
+	esac
+done

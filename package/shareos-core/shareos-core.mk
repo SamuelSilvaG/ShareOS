@@ -9,6 +9,14 @@ SHAREOS_CORE_SITE = $(BR2_EXTERNAL_SHAREOS_PATH)/src/shareos-core
 SHAREOS_CORE_SITE_METHOD = local
 SHAREOS_CORE_LICENSE = GPL-2.0+
 SHAREOS_CORE_DEPENDENCIES = uci ubus ucode rpcd uhttpd libcurl alt-f-utils
+# our S40network replaces the one from ifupdown-scripts, so install after it
+ifeq ($(BR2_PACKAGE_IFUPDOWN_SCRIPTS),y)
+SHAREOS_CORE_DEPENDENCIES += ifupdown-scripts
+endif
+# same for rcS (skips services with autostart off)
+ifeq ($(BR2_PACKAGE_INITSCRIPTS),y)
+SHAREOS_CORE_DEPENDENCIES += initscripts
+endif
 
 define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/shareos $(TARGET_DIR)/etc/config/shareos
@@ -26,6 +34,10 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cert $(TARGET_DIR)/usr/sbin/shareos-cert
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-altf $(TARGET_DIR)/usr/sbin/shareos-altf
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-factory-reset $(TARGET_DIR)/usr/sbin/shareos-factory-reset
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-net $(TARGET_DIR)/usr/sbin/shareos-net
+	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S40network $(TARGET_DIR)/etc/init.d/S40network
+	$(INSTALL) -D -m 0644 $(@D)/etc/config/network $(TARGET_DIR)/etc/config/network
+	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/rcS $(TARGET_DIR)/etc/init.d/rcS
 	rm -rf $(TARGET_DIR)/www
 	cp -a $(@D)/www $(TARGET_DIR)/www
 endef
