@@ -88,6 +88,12 @@ JP1 next to the USB port, pins `[4 3 2 _ 1]`: 4 = TX (box), 3 = GND,
 TXD → pin 1, GND → pin 3. Stock boot log: U-Boot reads 3 MB each of uImage and
 ramdisk, `Hit any key to stop autoboot` counts down from 1 (bootdelay=1).
 
+**Stopping autoboot needs `<space>` followed by `1`** (D-Link change in
+abortboot, U-Boot @0x62e5fc): a space sets the delay to 0 but keeps waiting for
+the rest of that second for a `1`; any other key just boots immediately. So
+"press any key" or holding space does not work – type space, 1, space, 1 …
+right after power-on until `<INTERRUPT>` / `Marvell>>` appears.
+
 Alt-F 1.0 boot facts from the log:
 - kernel cmdline = built-in CMDLINE + U-Boot bootargs
   (`root=/dev/ram console=ttyS0,115200 :::DB88FXX81:egiga0:none`)
