@@ -55,9 +55,12 @@ valid_name() { echo "$1" | grep -qE '^[a-z0-9][a-z0-9_-]{0,15}$'; }
 # SHAREOS_STORAGE_DISKS: other disk names for tests (e.g. 'loop[0-9]+')
 valid_disk() { echo "$1" | grep -qE "^(sd[a-z]${SHAREOS_STORAGE_DISKS:+|$SHAREOS_STORAGE_DISKS})\$" && [ -e /sys/block/$1 ]; }
 partn() { case "$1" in *[0-9]) echo /dev/${1}p$2 ;; *) echo /dev/${1}$2 ;; esac; }
+# is the device name $1 the disk $2 or one of its partitions? (loop1 is not part of loop10)
+of_disk() { case "$2" in *[0-9]) case "$1" in "$2"|"$2"p[0-9]*) return 0 ;; esac ;; *) case "$1" in "$2"|"$2"[0-9]*) return 0 ;; esac ;; esac; return 1; }
 SWAP_MB=1024
 
 volume_dev() {   # name -> block device of the file system (by UUID)
+	local u
 	u=$(uci -q get storage.$1.uuid) || return 1
 	blkid -U "$u" 2>/dev/null
 }
@@ -65,7 +68,7 @@ volume_dev() {   # name -> block device of the file system (by UUID)
 is_mounted() { grep -q " $1 " /proc/mounts; }
 
 mount_volume() {
-	n=$1
+	local n=$1 dev fs
 	[ "$(uci -q get storage.$n)" = volume ] || { echo "unknown volume $n" >&2; return 1; }
 	is_mounted /mnt/$n && return 0
 	dev=$(volume_dev $n) || { log "volume $n: file system not found"; return 1; }
@@ -114,15 +117,15 @@ apply_spindown() {
 
 # stop everything ShareOS uses on a disk before it is erased
 release_disk() {
-	disk=$1
+	local disk=$1 n dev base on_disk md sw sl p mp rest
 	for n in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
 		dev=$(volume_dev $n)
 		[ -n "$dev" ] || continue
 		base=${dev#/dev/}
 		on_disk=0
 		case "$base" in
-			$disk*) on_disk=1 ;;
-			md*) ls /sys/block/$base/slaves 2>/dev/null | grep -q "^$disk" && on_disk=1 ;;
+			md*) for sl in $(ls /sys/block/$base/slaves 2>/dev/null); do of_disk $sl $disk && on_disk=1; done ;;
+			*) of_disk $base $disk && on_disk=1 ;;
 		esac
 		if [ $on_disk = 1 ]; then
 			umount_volume $n || die "volume $n on $disk is busy"
@@ -133,24 +136,28 @@ release_disk() {
 	# arrays that use a partition of this disk
 	for md in /sys/block/md*; do
 		[ -e "$md/slaves" ] || continue
-		if ls $md/slaves | grep -q "^$disk"; then
+		on_disk=0
+		for sl in $(ls $md/slaves); do of_disk $sl $disk && on_disk=1; done
+		if [ $on_disk = 1 ]; then
 			grep -q "^/dev/${md##*/} " /proc/mounts && umount /dev/${md##*/}
 			mdadm --stop /dev/${md##*/} >/dev/null 2>&1
 		fi
 	done
 	# swap on this disk
 	for sw in $(awk 'NR>1 {print $1}' /proc/swaps); do
-		case "$sw" in /dev/$disk*) swapoff $sw ;; esac
+		of_disk "${sw#/dev/}" $disk && swapoff $sw
 	done
 	# any other mount of this disk (e.g. mounted by hand)
-	grep "^/dev/$disk" /proc/mounts | while read dev mp rest; do umount "$mp" || umount -l "$mp"; done
-	for p in /dev/${disk}[0-9]*; do
+	while read dev mp rest; do
+		of_disk "${dev#/dev/}" $disk && { umount "$mp" || umount -l "$mp"; }
+	done < /proc/mounts
+	for p in $(partn $disk '[0-9]*'); do
 		[ -e "$p" ] && mdadm --zero-superblock "$p" >/dev/null 2>&1
 	done
 }
 
 partition() {   # disk type(L|R) -> [swap partition] + data partition; prints the data partition
-	disk=$1
+	local disk=$1 sw p i
 	wipefs -q -a /dev/$disk || die "wipefs $disk failed"
 	if [ "$SWAP_MB" -gt 0 ]; then
 		printf 'label: gpt\n,%sMiB,S\n,,%s\n' "$SWAP_MB" "$2"
@@ -160,7 +167,10 @@ partition() {   # disk type(L|R) -> [swap partition] + data partition; prints th
 		|| die "partitioning $disk failed"
 	if [ "$SWAP_MB" -gt 0 ]; then sw=$(partn $disk 1); p=$(partn $disk 2); else sw=; p=$(partn $disk 1); fi
 	i=0
-	while [ ! -b $p ] && [ $i -lt 20 ]; do sleep 0.5; i=$((i + 1)); done
+	while [ ! -b $p ] && [ $i -lt 20 ]; do
+		[ $i = 4 ] && blockdev --rereadpt /dev/$disk 2>/dev/null
+		sleep 0.5; i=$((i + 1))
+	done
 	[ -b $p ] || die "partition $p did not appear"
 	wipefs -q -a $p
 	if [ -n "$sw" ]; then
@@ -190,6 +200,7 @@ make_fs() {   # dev name
 }
 
 add_volume() {   # name dev layout
+	local uuid
 	uuid=$(blkid -s UUID -o value "$2")
 	[ -n "$uuid" ] || die "no UUID on $2"
 	uci -q delete storage.$1

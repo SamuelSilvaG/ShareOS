@@ -21,8 +21,11 @@ QEMU=$(command -v qemu-arm-static) || { echo "install qemu-user-static"; exit 1;
 T=$(mktemp -d /tmp/shareos-storage-test.XXXX)
 R=$T/root
 LOOPS=
+WATCH=
 cleanup() {
-	for l in $LOOPS; do for sw in $(awk -v l="$l" 'index($1, l) == 1 {print $1}' /proc/swaps); do swapoff "$sw"; done; done
+	[ -n "$WATCH" ] && kill $WATCH 2>/dev/null
+	# swap was switched on inside the chroot; switch it off there (the host sees other paths)
+	[ -d "$R/proc/self" ] && chroot "$R" /bin/sh -c 'for s in $(awk "NR>1 && /loop/ {print \$1}" /proc/swaps); do swapoff $s; done' 2>/dev/null
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
 	for l in $LOOPS; do losetup -d "$l" 2>/dev/null; done
 	rm -rf "$T"
@@ -49,12 +52,17 @@ for i in 1 2; do
 done
 set -- $LOOPS
 A=${1#/dev/} B=${2#/dev/}
+# qemu-user does not pass BLKRRPART on to the kernel, so the partitions sfdisk
+# writes inside the chroot would never show up; re-read them from the host
+( while :; do for l in $LOOPS; do partx -u "$l" 2>/dev/null; done; sleep 0.3; done ) &
+WATCH=$!
 echo "test disks: $A $B"
 
 run() { chroot "$R" /usr/bin/env SHAREOS_STORAGE_DISKS='loop[0-9]+' /bin/sh -c "$*" 2>&1; }
 pass=0; failed=0
 check() { if eval "$2"; then echo "PASS  $1"; pass=$((pass+1)); else echo "FAIL  $1"; failed=$((failed+1)); fi; }
 mounted() { grep -q " $R/mnt/$1 " /proc/mounts; }
+swapping() { run cat /proc/swaps | grep -q "^/dev/$1 "; }
 
 o=$(run shareos-storage setup single foo=$A)
 check "setup refuses without --yes" "echo \"\$o\" | grep -q 'add --yes'"
@@ -65,7 +73,7 @@ check "unknown disk rejected" "run shareos-storage job | grep -q \"invalid disk\
 
 o=$(run shareos-storage setup single "daten=$A" "backup=$B" --swap=64 --yes); echo "$o" | sed 's/^/      /'
 check "single setup of two disks finished" "run shareos-storage job | grep -q 'state=done'"
-check "swap partitions created and active" "grep -q '^/dev/${A}p1 ' /proc/swaps && grep -q '^/dev/${B}p1 ' /proc/swaps"
+check "swap partitions created and active" "swapping ${A}p1 && swapping ${B}p1"
 check "app area on the first volume" "run uci get storage.global.apps | grep -qx daten && [ -d $R/mnt/daten/.shareos ]"
 check "both volumes mounted" "mounted daten && mounted backup"
 check "volumes in UCI with uuid" "run uci get storage.daten.uuid | grep -qE '^[0-9a-f-]{36}$' && run uci get storage.backup.layout | grep -qx single"
@@ -78,12 +86,12 @@ o=$(run shareos-storage mount daten)
 check "mount again, data still there" "mounted daten && grep -qx hello $R/mnt/daten/file"
 
 run shareos-storage shutdown >/dev/null
-check "shutdown unmounts all and stops swap" "! mounted daten && ! mounted backup && ! grep -q '^/dev/${A}p1 ' /proc/swaps"
+check "shutdown unmounts all and stops swap" "! mounted daten && ! mounted backup && ! swapping ${A}p1"
 run shareos-storage boot >/dev/null
-check "boot mounts enabled volumes and swap" "mounted daten && mounted backup && grep -q '^/dev/${A}p1 ' /proc/swaps"
+check "boot mounts enabled volumes and swap" "mounted daten && mounted backup && swapping ${A}p1"
 
 o=$(run shareos-storage setup single "neu=$B" --swap=0 --yes)
-check "re-setup of a used disk releases the old volume (no swap now)" "run shareos-storage job | grep -q 'state=done' && ! run uci -q get storage.backup >/dev/null && mounted neu && ! mounted backup && ! grep -q '^/dev/${B}p' /proc/swaps"
+check "re-setup of a used disk releases the old volume (no swap now)" "run shareos-storage job | grep -q 'state=done' && ! run uci -q get storage.backup >/dev/null && mounted neu && ! mounted backup && ! swapping ${B}p1"
 
 o=$(run shareos-storage forget neu)
 check "forget removes from config" "! run uci -q get storage.neu >/dev/null && ! mounted neu"
@@ -91,17 +99,20 @@ o=$(run shareos-storage spindown 30)
 check "spindown stored" "run uci get storage.global.spindown | grep -qx 30"
 
 # rpcd: status call through ubus
-run '/usr/sbin/ubusd -s /var/run/ubus/ubus.sock & sleep 1; /sbin/rpcd -s /var/run/ubus/ubus.sock >/dev/null 2>&1 & sleep 2' >/dev/null
-S=$(run ubus -s /var/run/ubus/ubus.sock call shareos.storage status)
+mkdir -p "$R/var/log"
+run '/etc/init.d/S12ubus start && /etc/init.d/S13rpcd start' >/dev/null
+i=0; until run ubus list shareos.storage >/dev/null 2>&1 || [ $i -ge 20 ]; do sleep 0.5; i=$((i + 1)); done
+S=$(run ubus call shareos.storage status)
+[ -n "${VERBOSE:-}" ] && echo "$S" | head -20
 check "status: volume daten mounted with size" "echo '$S' | python3 -c \"import json,sys; d=json.load(sys.stdin); v=[x for x in d['volumes'] if x['name']=='daten'][0]; sys.exit(0 if v['mounted'] and v['size']>0 and v['layout']=='single' else 1)\""
 check "status: job and spindown reported" "echo '$S' | python3 -c \"import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['spindown']==30 and d['job']['state']=='done' else 1)\""
-E=$(run ubus -s /var/run/ubus/ubus.sock call shareos.storage setup "'{\"layout\":\"mirror\",\"name\":\"x\",\"disks\":[\"sda\",\"sda\"],\"confirm\":true}'")
+E=$(run ubus call shareos.storage setup "'{\"layout\":\"mirror\",\"name\":\"x\",\"disks\":[\"sda\",\"sda\"],\"confirm\":true}'")
 check "rpc: mirror with the same disk twice rejected" "echo '$E' | grep -q 'two different disks'"
-E=$(run ubus -s /var/run/ubus/ubus.sock call shareos.storage setup "'{\"layout\":\"single\",\"volumes\":[{\"name\":\"x\",\"disk\":\"sda\"}]}'")
+E=$(run ubus call shareos.storage setup "'{\"layout\":\"single\",\"volumes\":[{\"name\":\"x\",\"disk\":\"sda\"}]}'")
 check "rpc: setup needs confirm" "echo '$E' | grep -q confirm"
-E=$(run ubus -s /var/run/ubus/ubus.sock call shareos.storage volume "'{\"name\":\"../etc\",\"action\":\"mount\"}'")
+E=$(run ubus call shareos.storage volume "'{\"name\":\"../etc\",\"action\":\"mount\"}'")
 check "rpc: invalid volume name rejected" "echo '$E' | grep -q 'invalid name'"
-run 'killall rpcd ubusd' >/dev/null 2>&1
+run '/etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
 
 if [ -e /proc/mdstat ]; then
 	run shareos-storage setup mirror spiegel $A $B --swap=32 --yes >/dev/null
