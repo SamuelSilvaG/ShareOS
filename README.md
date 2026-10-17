@@ -9,7 +9,15 @@ Cardoso. All credit for the original design, the hardware support and
 years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
 [COPYING](COPYING) for the GPLv2 terms.
 
-## Status: phase 1 – new build base
+> **Built by an AI.** Apart from importing Alt-F, ShareOS was developed by
+> Claude (Anthropic): architecture, all code, builds, tests and docs. Jan
+> started the project, made the decisions and tested on the real box.
+> Timeline with timestamps and screenshots:
+> **[docs/ENTWICKLUNG.md](docs/ENTWICKLUNG.md)** (German).
+
+![ShareOS web interface](docs/images/gui-uebersicht.png)
+
+## Status: runs from flash on the DNS-320L – storage in progress
 
 ShareOS is being rebuilt on a current, maintainable base while keeping
 what made Alt-F easy to use: the stock U-Boot, the stock flash layout and

@@ -118,7 +118,7 @@ const S = {
 	upd: null, check: null, checking: false,
 	timer: null, updTimer: null,
 	theme: store.get('theme') || 'dark',
-	accent: store.get('accent') || 'green',
+	accent: store.get('accent') || 'blue',
 	scan: store.get('scan') !== '0'
 };
 
