@@ -1,0 +1,20 @@
+# Paperless-ngx connection – applied by shareos-paperless (web interface:
+# Paperless). Each inbox has the API token of the Paperless user its
+# documents belong to.
+#
+# config inbox 'u_anna'
+#	option owner 'anna'          # personal inbox: <home>/Paperless
+#	option token '…'
+#	list tags '3'
+#
+# config inbox 'scanner'
+#	option share 'scans'         # shared inbox: the folder of a share
+#	option token '…'
+
+config global 'global'
+	option url ''
+	option enabled '1'
+	# minutes between runs
+	option interval '2'
+	# after a successful upload: delete | keep (moved to .paperless/done)
+	option after 'delete'

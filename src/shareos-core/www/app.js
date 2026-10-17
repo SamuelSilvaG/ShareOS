@@ -578,8 +578,8 @@ const VIEWS = {
 			: sub === 'benutzer' ? usersView() : sub === 'gruppen' ? groupsView() : sharesView()}`;
 	},
 	apps: () => planned('Apps & Pakete', 'Phase 4', ['Paketquelle (opkg-Feed) über GitHub', 'Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange', 'Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte'], I.box),
-	cloud: () => planned('Cloud-Speicher', 'Phase 5', ['Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP', 'Sync-Jobs: kopieren, spiegeln, bidirektional', 'Verschlüsselung (crypt), Bandbreite und Zeitplan'], I.cloud),
-	paperless: () => planned('Paperless-ngx', 'Phase 5', ['Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)', 'Status der Übertragungen über /api/tasks/', 'Tags und Korrespondent je Ordner, Export-Backup aufs NAS'], I.doc),
+	cloud: () => cloudSection('admin'),
+	paperless: () => paperlessView(),
 
 	dienste() {
 		const sub = S.route.sub;
@@ -818,6 +818,7 @@ function userEditor(e) {
 				<label class="f"><span>WIEDERHOLEN</span><input name="p2" type="password" minlength="6" autocomplete="new-password" required></label>` : ''}
 		</div>
 		<label class="chk" style="margin-top:12px" id="u-web-row"${u.role === 'user' ? '' : raw(' hidden')}><input type="checkbox" name="web"${u.web ? raw(' checked') : ''}>Darf sich an der Weboberfläche anmelden („Mein ShareOS“)</label>
+		<label class="chk" style="margin-top:6px"><input type="checkbox" name="cloud"${u.cloud ? raw(' checked') : ''}>Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)</label>
 		${S.acc.groups.length ? html`<div class="pt" style="margin:16px 0 8px">GRUPPEN</div><div style="display:flex;flex-wrap:wrap;gap:6px 18px">${S.acc.groups.map((g) => html`
 			<label class="chk"><input type="checkbox" class="u-group" value="${g.name}"${u.groups.includes(g.name) ? raw(' checked') : ''}>${g.name}</label>`)}</div>` : ''}
 		<p class="note">Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.</p>
@@ -836,6 +837,309 @@ function groupsView() {
 		<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="g-new">Neue Gruppe</button></div>
 		<p class="note">Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).</p>
 	</section>`;
+}
+
+
+/* ---------- Paperless ----------------------------------------------------------- */
+
+const PL_STATE = { SUCCESS: ['ok', 'übernommen'], PENDING: ['', 'wird verarbeitet'], FAILURE: ['err', 'Fehler'], UNKNOWN: ['warn', 'unbekannt'] };
+const fmtTime = (t) => (t ? new Date(t * 1000).toLocaleString(LOC, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–');
+
+async function loadPaperless() {
+	try {
+		const [pl, acc, sh] = await Promise.all([rpc('shareos.paperless', 'get'), rpc('shareos.accounts', 'list'), rpc('shareos.shares', 'list')]);
+		S.pl = pl; S.acc = acc; S.shares = sh;
+	} catch (e) { if (e.code !== 'auth') toast('Paperless: ' + e.message, true); }
+	if (S.route.tab === 'paperless' && !document.activeElement?.matches('input,select,textarea')) renderMain();
+}
+
+function plStateTag(e) { const [c, t] = PL_STATE[e.state] || ['', e.state]; return html`<span class="tag ${c}" title="${e.message}">${t}</span>`; }
+
+function inboxWhere(ib) {
+	const host = S.info?.hostname || location.hostname;
+	if (ib.owner) return `\\\\${host}\\${ib.owner}\\Paperless`;
+	return ib.share ? `\\\\${host}\\${ib.share}` : ib.path || '–';
+}
+
+function paperlessView() {
+	const d = S.pl;
+	if (!d || !S.acc || !S.shares) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	const e = S.plEdit;
+	return html`
+	<section class="sec">
+		<h2 class="gh">PAPERLESS-NGX <span>${d.url ? d.url : 'noch nicht verbunden'}</span></h2>
+		<div class="g2">
+			<form class="panel" id="f-pl">
+				<div class="ph"><span class="pt">VERBINDUNG</span>${d.last ? html`<span class="tag ml">zuletzt ${fmtTime(d.last)}</span>` : ''}</div>
+				<div class="fields" style="grid-template-columns:1fr">
+					<label class="f"><span>ADRESSE VON PAPERLESS</span><input name="url" value="${d.url}" placeholder="http://paperless.local:8000" inputmode="url"></label>
+				</div>
+				<div class="fields" style="margin-top:12px">
+					<label class="f"><span>PRÜFEN ALLE</span><select name="interval">${[1, 2, 5, 10, 15, 30, 60].map((m) => html`<option value="${m}"${d.interval === m ? raw(' selected') : ''}>${m} min</option>`)}</select></label>
+					<label class="f"><span>NACH DEM HOCHLADEN</span><select name="after"><option value="delete"${d.after === 'delete' ? raw(' selected') : ''}>Datei löschen</option><option value="keep"${d.after === 'keep' ? raw(' selected') : ''}>aufheben (.paperless/done)</option></select></label>
+				</div>
+				<label class="chk" style="margin-top:12px"><input type="checkbox" name="enabled"${d.enabled ? raw(' checked') : ''}>Eingangsordner automatisch übertragen</label>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button>
+					<button class="btn" type="button" data-act="pl-run" ${d.url && d.inboxes.length ? '' : 'disabled'}>Jetzt übertragen</button></div>
+			</form>
+			<div class="panel">
+				<div class="ph"><span class="pt">SO FUNKTIONIERT ES</span></div>
+				<ol class="plan" style="padding-left:20px">
+					<li>Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.</li>
+					<li>Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.</li>
+					<li>ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.</li>
+				</ol>
+				<p class="note">Persönliche Eingänge liegen im persönlichen Ordner (<code>Paperless</code>); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.</p>
+			</div>
+		</div>
+	</section>
+	${e ? inboxEditor(e) : ''}
+	<section class="sec">
+		${secHead('inboxes', 'EINGÄNGE', d.inboxes.length ? d.inboxes.length + ' eingerichtet' : 'noch keine')}
+		${!d.inboxes.length ? html`<div class="panel"><div class="empty">${svg(I.doc)}<span>Noch kein Eingangsordner. ${d.url ? '' : 'Zuerst oben die Adresse von Paperless eintragen.'}</span></div></div>`
+			: isTable('inboxes') ? html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>EINGANG</th><th>ORDNER</th><th>WARTEND</th><th>ZULETZT</th><th></th></tr></thead>
+				<tbody>${d.inboxes.map((ib) => html`<tr>
+					<td><b>${ib.name}</b><div class="mut" style="font-size:12px">${ib.owner ? 'persönlich: ' + ib.owner : 'gemeinsam'}${ib.enabled ? '' : ' · aus'}</div></td>
+					<td><code>${inboxWhere(ib)}</code></td><td>${ib.waiting}</td>
+					<td>${ib.recent[0] ? html`${plStateTag(ib.recent[0])} <span class="mut" style="font-size:12px">${ib.recent[0].file}</span>` : html`<span class="mut">–</span>`}</td>
+					<td><div class="acts">${inboxActions(ib)}</div></td></tr>`)}</tbody></table></div>`
+			: html`<div class="grid">${d.inboxes.map((ib) => html`<div class="card${ib.enabled ? '' : ' off'}">
+				<div class="icon">${svg(I.doc)}<span class="dot ${ib.enabled && ib.token_set ? 'up' : 'down'}"></span></div>
+				<div class="info"><div class="name">${ib.name}</div>
+					<div class="desc">${ib.owner ? 'persönlicher Eingang von ' + ib.owner : 'gemeinsamer Eingang'} · Token ${ib.token_hint || 'fehlt'}</div>
+					<div class="desc" style="margin-top:6px">${ib.waiting ? ib.waiting + ' Datei(en) warten' : 'nichts wartend'}</div>
+					${ib.recent.slice(0, 3).map((x) => html`<div class="desc" style="margin-top:4px;font-size:12px">${plStateTag(x)} ${x.file} <span class="mut">${fmtTime(x.time)}</span></div>`)}
+					<div class="ip">${inboxWhere(ib)}</div>
+					<div class="acts" style="margin-top:12px">${inboxActions(ib)}</div></div></div>`)}</div>`}
+		${!e ? html`<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="pl-new" ${d.url ? '' : 'disabled'}>Neuer Eingang</button></div>` : ''}
+	</section>
+	${S.plLog ? html`<section class="sec"><div class="panel">
+		<div class="ph"><span class="pt">PROTOKOLL · ${S.plLog.name}</span><button class="btn sm ghost ml" type="button" data-act="pl-log-close">Schließen</button></div>
+		${S.plLog.entries.length ? html`<div class="tw"><table class="t" style="min-width:560px"><thead><tr><th>ZEIT</th><th>DATEI</th><th>STATUS</th><th>MELDUNG</th></tr></thead>
+			<tbody>${S.plLog.entries.map((x) => html`<tr><td class="mut">${fmtTime(x.time)}</td><td>${x.file}</td><td>${plStateTag(x)}</td><td class="mut" style="font-size:12px">${x.message}</td></tr>`)}</tbody></table></div>`
+			: html`<p class="mut" style="margin:0">Noch nichts übertragen.</p>`}
+	</div></section>` : ''}`;
+}
+
+function inboxActions(ib) {
+	return html`<button class="btn sm" type="button" data-act="pl-edit" data-name="${ib.name}">Bearbeiten</button>
+		<button class="btn sm" type="button" data-act="pl-log" data-name="${ib.name}">Protokoll</button>
+		<button class="btn sm ghost" type="button" data-act="pl-del" data-name="${ib.name}">Entfernen</button>`;
+}
+
+function inboxEditor(e) {
+	const x = e.data, users = S.acc.users.filter((u) => u.home), isNew = e.mode === 'new';
+	return html`<section class="sec"><form class="panel" id="f-inbox" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">${isNew ? 'NEUER EINGANG' : 'EINGANG ' + x.name.toUpperCase()}</span><button class="btn sm ghost ml" type="button" data-act="pl-cancel">Abbrechen</button></div>
+		<div class="fields">
+			<label class="f"><span>ART</span><select name="kind"${isNew ? '' : raw(' disabled')}><option value="user"${x.owner || isNew ? raw(' selected') : ''}>persönlich (Ordner „Paperless“ im persönlichen Ordner)</option><option value="share"${!x.owner && !isNew ? raw(' selected') : ''}>gemeinsam (Ordner einer Freigabe)</option></select></label>
+			<label class="f" id="ib-owner"><span>BENUTZER</span><select name="owner"${isNew ? '' : raw(' disabled')}>${users.map((u) => html`<option value="${u.name}"${x.owner === u.name ? raw(' selected') : ''}>${u.name}${u.fullname ? ' – ' + u.fullname : ''}</option>`)}</select></label>
+			<label class="f" id="ib-share" hidden><span>FREIGABE</span><select name="share"${isNew ? '' : raw(' disabled')}>${S.shares.shares.map((sh) => html`<option value="${sh.name}"${x.share === sh.name ? raw(' selected') : ''}>${sh.name}</option>`)}</select></label>
+			<label class="f"><span>API-TOKEN${isNew ? '' : ' (LEER = BEHALTEN)'}</span><input name="token" type="password" autocomplete="off" placeholder="${x.token_hint || 'aus Paperless: Profil → API-Token'}"${isNew ? raw(' required') : ''}></label>
+		</div>
+		${!isNew && e.tags ? html`<div class="pt" style="margin:16px 0 8px">TAGS FÜR NEUE DOKUMENTE</div>
+			<div style="display:flex;flex-wrap:wrap;gap:6px 18px">${e.tags.length ? e.tags.map((t) => html`<label class="chk"><input type="checkbox" class="ib-tag" value="${t.id}"${x.tags.includes(String(t.id)) ? raw(' checked') : ''}>${t.name}</label>`) : html`<span class="mut">keine Tags gefunden</span>`}</div>` : ''}
+		<label class="chk" style="margin-top:12px"><input type="checkbox" name="enabled"${x.enabled !== false ? raw(' checked') : ''}>aktiv</label>
+		${!users.length && isNew ? html`<p class="note">Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.</p>` : ''}
+		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Speichern</button><button class="btn" type="button" data-act="pl-test">Verbindung prüfen</button></div>
+	</form></section>`;
+}
+
+/* ---------- cloud (rclone), for the admin and for users ------------------------- */
+
+const CLOUD_MODES = {
+	upload: 'Hochladen – Kopie in die Cloud, nichts wird gelöscht',
+	download: 'Herunterladen – Kopie aufs NAS, nichts wird gelöscht',
+	mirror_up: 'Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt',
+	mirror_down: 'Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt'
+};
+const CLOUD_SCHED = [['', 'nur von Hand'], ['17 * * * *', 'stündlich'], ['30 2 * * *', 'täglich um 2:30'], ['0 3 * * 0', 'sonntags um 3:00'], ['custom', 'eigene Zeit (cron)']];
+const REMOTE_TYPES = { webdav: 'Nextcloud / ownCloud / WebDAV', s3: 'S3 (AWS, MinIO, Wasabi …)', sftp: 'SFTP (SSH-Server)', raw: 'andere – rclone-Konfiguration einfügen' };
+const REMOTE_FIELDS = {
+	webdav: [['url', 'ADRESSE (WEBDAV-URL)', 'https://cloud.example.com/remote.php/dav/files/NAME/'], ['vendor', 'ANBIETER', ['nextcloud', 'owncloud', 'other']], ['user', 'BENUTZER'], ['pass', 'PASSWORT / APP-PASSWORT', 'password']],
+	s3: [['provider', 'ANBIETER', ['AWS', 'Minio', 'Wasabi', 'Other']], ['endpoint', 'ENDPUNKT (LEER BEI AWS)'], ['region', 'REGION'], ['access_key_id', 'ACCESS KEY'], ['secret_access_key', 'SECRET KEY', 'password']],
+	sftp: [['host', 'SERVER'], ['port', 'PORT', '22'], ['user', 'BENUTZER'], ['pass', 'PASSWORT', 'password']]
+};
+
+const CLOUD_API = {
+	admin: {
+		async load() {
+			const [st, r, j, sh] = await Promise.all([rpc('shareos.cloud', 'status'), rpc('shareos.cloud', 'remotes'), rpc('shareos.cloud', 'jobs'), rpc('shareos.shares', 'list')]);
+			return { status: st, remotes: r.remotes, jobs: j.jobs, locals: sh.shares.map((x) => ['share:' + x.name, 'Freigabe ' + x.name]) };
+		},
+		addRemote: (a) => rpc('shareos.cloud', 'remote_add', a), delRemote: (n) => rpc('shareos.cloud', 'remote_del', { name: n }),
+		testRemote: (n) => rpc('shareos.cloud', 'remote_test', { name: n }), saveJob: (a) => rpc('shareos.cloud', 'job_set', a),
+		delJob: (n) => rpc('shareos.cloud', 'job_del', { name: n }), runJob: (n) => rpc('shareos.cloud', 'job_run', { name: n }),
+		stopJob: (n) => rpc('shareos.cloud', 'job_stop', { name: n }), log: (n) => rpc('shareos.cloud', 'job_log', { name: n })
+	},
+	me: {
+		async load() {
+			const c = await rpc('shareos.me', 'cloud');
+			return { status: { installed: c.installed }, remotes: c.remotes || [], jobs: c.jobs || [], allowed: c.allowed,
+				locals: [['home', 'Persönlicher Ordner'], ...(c.shares || []).map((x) => ['share:' + x, 'Freigabe ' + x])] };
+		},
+		addRemote: (a) => rpc('shareos.me', 'cloud_remote_add', a), delRemote: (n) => rpc('shareos.me', 'cloud_remote_del', { name: n }),
+		testRemote: null, saveJob: (a) => rpc('shareos.me', 'cloud_job_set', a), delJob: (n) => rpc('shareos.me', 'cloud_job_del', { name: n }),
+		runJob: (n) => rpc('shareos.me', 'cloud_job_run', { name: n }), stopJob: null, log: null
+	}
+};
+
+async function loadCloud(scope) {
+	clearTimeout(S.cloudTimer);
+	try { S.cloud = { ...(S.cloud?.scope === scope ? S.cloud : {}), scope, data: await CLOUD_API[scope].load() }; }
+	catch (e) { if (e.code !== 'auth') toast('Cloud: ' + e.message, true); return; }
+	const busy = S.cloud.data.status.installing || S.cloud.data.jobs.some((j) => j.state === 'running');
+	const here = scope === 'admin' ? S.route.tab === 'cloud' : S.me && S.me.role !== 'admin';
+	if (here && !document.activeElement?.matches('input,select,textarea')) { if (scope === 'admin') renderMain(); else renderUserMain(); }
+	if (busy && here) S.cloudTimer = setTimeout(() => loadCloud(scope), 4000);
+}
+
+function jobState(j) {
+	if (j.state === 'running') return html`<span class="tag warn">läuft seit ${fmtTime(j.started)}</span>`;
+	if (j.state === 'ok') return html`<span class="tag ok" title="${j.summary}">ok · ${fmtTime(j.ended)}</span>`;
+	if (j.state === 'error') return html`<span class="tag err" title="${j.error}">Fehler · ${fmtTime(j.ended)}</span>`;
+	return html`<span class="tag">noch nicht gelaufen</span>`;
+}
+const schedTxt = (s) => (CLOUD_SCHED.find(([v]) => v === s) || [s, s ? 'cron: ' + s : 'nur von Hand'])[1];
+const localTxt = (d, l) => (d.locals.find(([v]) => v === l) || [l, l])[1];
+
+function cloudSection(scope) {
+	const c = S.cloud?.scope === scope ? S.cloud : null, d = c?.data;
+	if (!d) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	const api = CLOUD_API[scope], st = d.status;
+	const head = scope === 'admin' ? html`<h2 class="gh">CLOUD-SYNC <span>${st.installed ? 'rclone ' + (st.version || '') : 'rclone nicht installiert'}</span></h2>` : html`<h2 class="gh">MEINE CLOUD <span>eigene Konten und Aufträge</span></h2>`;
+	if (!st.installed) {
+		return html`<section class="sec">${head}<div class="panel"><div class="empty">${svg(I.cloud)}<div>
+			${scope === 'admin' ? html`<span>Cloud-Sync nutzt <b>rclone</b> (Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr). Das Programm (rund 20 MB) kommt in den Apps-Bereich auf der Platte${st.apps ? ` (${st.apps})` : ''}.</span>
+				${st.installing ? html`<div style="margin-top:12px;display:flex;gap:10px;align-items:center"><div class="spin" style="margin:0;width:18px;height:18px"></div><span>wird geladen und geprüft …</span></div>`
+				: html`<div class="acts" style="margin-top:12px"><button class="btn primary" type="button" data-act="cl-install" ${st.apps ? '' : 'disabled'}>rclone installieren</button></div>`}
+				${st.install_error ? html`<p class="note" style="color:var(--red)">Fehler: ${st.install_error}</p>` : ''}
+				${st.apps ? '' : html`<p class="note">Zuerst unter <a href="#/speicher">Speicher</a> ein Laufwerk einrichten.</p>`}`
+			: html`<span>Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.</span>`}
+		</div></div></div></section>`;
+	}
+	const re = c.remoteEdit, je = c.jobEdit;
+	return html`<section class="sec">${head}
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">KONTEN</span><span class="tag ml">${d.remotes.length}</span></div>
+				${d.remotes.length ? html`<div class="tw"><table class="t"><thead><tr><th>NAME</th><th>ART</th><th></th></tr></thead>
+					<tbody>${d.remotes.map((r) => html`<tr><td><b>${r.name}</b></td><td class="mut">${r.type}</td>
+						<td><div class="acts">${api.testRemote ? html`<button class="btn sm" type="button" data-act="cl-rtest" data-scope="${scope}" data-name="${r.name}">Testen</button>` : ''}
+							<button class="btn sm ghost" type="button" data-act="cl-rdel" data-scope="${scope}" data-name="${r.name}">Entfernen</button></div></td></tr>`)}</tbody></table></div>`
+					: html`<p class="mut" style="margin:0;font-size:13px">Noch kein Cloud-Konto.</p>`}
+				${re ? '' : html`<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="cl-rnew" data-scope="${scope}">Konto hinzufügen</button></div>`}
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">HINWEISE</span></div>
+				<p class="mut" style="margin:0;font-size:13px;line-height:1.6">Zugangsdaten bleiben verschlüsselt auf der Box${scope === 'me' ? ' in deinem persönlichen Ordner' : ''}. Für Google Drive, OneDrive oder Dropbox auf dem PC <code>rclone config</code> ausführen und den fertigen Abschnitt hier einfügen.
+				Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie <code>2M</code> hält das Netz frei.${scope === 'me' ? ' Was du herunterlädst, zählt zu deinem Speicherlimit.' : ''}</p>
+			</div>
+		</div>
+		${re ? remoteEditor(scope, re) : ''}
+	</section>
+	${je ? jobEditor(scope, d, je) : ''}
+	<section class="sec">
+		${secHead('cloudjobs-' + scope, 'AUFTRÄGE', d.jobs.length ? d.jobs.length + ' eingerichtet' : 'noch keine')}
+		${!d.jobs.length ? html`<div class="panel"><div class="empty">${svg(I.cloud)}<span>Noch kein Auftrag. Ein Auftrag kopiert oder spiegelt einen Ordner mit einem Cloud-Konto – von Hand oder nach Zeitplan.</span></div></div>`
+			: isTable('cloudjobs-' + scope) ? html`<div class="tw"><table class="t" style="min-width:860px"><thead><tr><th>AUFTRAG</th><th>VON → NACH</th><th>ZEITPLAN</th><th>ZULETZT</th><th></th></tr></thead>
+				<tbody>${d.jobs.map((j) => html`<tr><td><b>${j.name}</b><div class="mut" style="font-size:12px">${scope === 'admin' ? (j.owner ? 'von ' + j.owner : 'System') : ''}</div></td>
+					<td style="font-size:12px">${jobRoute(d, j)}</td><td class="mut">${schedTxt(j.schedule)}${j.enabled ? '' : ' · aus'}</td><td>${jobState(j)}</td>
+					<td><div class="acts">${jobActions(scope, j)}</div></td></tr>`)}</tbody></table></div>`
+			: html`<div class="grid">${d.jobs.map((j) => html`<div class="card${j.enabled ? '' : ' off'}">
+				<div class="icon">${svg(I.cloud)}<span class="dot ${j.state === 'error' ? 'down' : j.state === 'running' ? 'warn' : 'up'}"></span></div>
+				<div class="info"><div class="name">${j.name}</div>
+					<div class="desc" style="font-size:12px">${jobRoute(d, j)}</div>
+					<div class="desc" style="margin-top:6px">${schedTxt(j.schedule)}${scope === 'admin' && j.owner ? ' · von ' + j.owner : ''}</div>
+					<div class="desc" style="margin-top:6px">${jobState(j)}</div>
+					${j.state === 'error' && j.error ? html`<div class="desc" style="margin-top:4px;font-size:12px;color:var(--red)">${j.error}</div>` : j.summary ? html`<div class="desc mut" style="margin-top:4px;font-size:12px">${j.summary}</div>` : ''}
+					<div class="acts" style="margin-top:12px">${jobActions(scope, j)}</div></div></div>`)}</div>`}
+		${!je && d.remotes.length ? html`<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="cl-jnew" data-scope="${scope}">Neuer Auftrag</button></div>` : ''}
+	</section>
+	${c.log ? html`<section class="sec"><div class="panel"><div class="ph"><span class="pt">PROTOKOLL · ${c.log.name}</span><button class="btn sm ghost ml" type="button" data-act="cl-logclose" data-scope="${scope}">Schließen</button></div>
+		<pre class="logbox">${c.log.lines.join('\n') || '(leer)'}</pre></div></section>` : ''}`;
+}
+
+function jobRoute(d, j) {
+	const local = localTxt(d, j.local), remote = `${j.remote}:${j.remote_path || '/'}`;
+	return j.mode === 'download' || j.mode === 'mirror_down' ? html`${remote} → ${local}` : html`${local} → ${remote}`;
+}
+
+function jobActions(scope, j) {
+	const api = CLOUD_API[scope];
+	return html`${j.state === 'running' ? (api.stopJob ? html`<button class="btn sm danger" type="button" data-act="cl-jstop" data-scope="${scope}" data-name="${j.name}">Stopp</button>` : '')
+		: html`<button class="btn sm" type="button" data-act="cl-jrun" data-scope="${scope}" data-name="${j.name}">Jetzt starten</button>`}
+		<button class="btn sm" type="button" data-act="cl-jedit" data-scope="${scope}" data-name="${j.name}">Bearbeiten</button>
+		${api.log ? html`<button class="btn sm" type="button" data-act="cl-jlog" data-scope="${scope}" data-name="${j.name}">Protokoll</button>` : ''}
+		<button class="btn sm ghost" type="button" data-act="cl-jdel" data-scope="${scope}" data-name="${j.name}">Entfernen</button>`;
+}
+
+function remoteEditor(scope, re) {
+	const fields = REMOTE_FIELDS[re.type] || [];
+	return html`<form class="panel" id="f-remote" data-scope="${scope}" style="margin-top:16px;border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">NEUES CLOUD-KONTO</span><button class="btn sm ghost ml" type="button" data-act="cl-rcancel" data-scope="${scope}">Abbrechen</button></div>
+		<div class="fields">
+			<label class="f"><span>NAME</span><input name="name" value="${re.name || ''}" maxlength="32" pattern="[a-z][a-z0-9_]{0,31}" required placeholder="nextcloud"></label>
+			<label class="f"><span>ART</span><select name="type" id="remote-type">${Object.entries(REMOTE_TYPES).map(([k, t]) => html`<option value="${k}"${re.type === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+			${fields.map(([k, label, extra]) => html`<label class="f"><span>${label}</span>${Array.isArray(extra)
+				? html`<select name="p_${k}">${extra.map((o) => html`<option>${o}</option>`)}</select>`
+				: html`<input name="p_${k}" type="${extra === 'password' ? 'password' : 'text'}" autocomplete="off"${extra && extra !== 'password' ? raw(` placeholder="${esc(extra)}"`) : ''}>`}</label>`)}
+		</div>
+		${re.type === 'raw' ? html`<label class="f" style="margin-top:12px"><span>ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])</span>
+			<textarea name="raw" rows="8" spellcheck="false" data-i18n-skip style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" placeholder="[gdrive]&#10;type = drive&#10;token = {...}"></textarea></label>` : ''}
+		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Hinzufügen</button></div>
+	</form>`;
+}
+
+function jobEditor(scope, d, je) {
+	const x = je.data, custom = x.schedule && !CLOUD_SCHED.some(([v]) => v === x.schedule);
+	return html`<section class="sec"><form class="panel" id="f-job" data-scope="${scope}" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">${je.mode === 'new' ? 'NEUER AUFTRAG' : 'AUFTRAG ' + x.name.toUpperCase()}</span><button class="btn sm ghost ml" type="button" data-act="cl-jcancel" data-scope="${scope}">Abbrechen</button></div>
+		<div class="fields">
+			<label class="f"><span>NAME</span><input name="name" value="${x.name}" maxlength="32" pattern="[a-z][a-z0-9_]{0,31}" required${je.mode === 'new' ? '' : raw(' readonly')}></label>
+			<label class="f"><span>ORDNER AUF DEM NAS</span><select name="local">${d.locals.map(([v, t]) => html`<option value="${v}"${x.local === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+			<label class="f"><span>CLOUD-KONTO</span><select name="remote">${d.remotes.map((r) => html`<option value="${r.name}"${x.remote === r.name ? raw(' selected') : ''}>${r.name}</option>`)}</select></label>
+			<label class="f"><span>ORDNER IN DER CLOUD</span><input name="remote_path" value="${x.remote_path}" placeholder="Backup/NAS"></label>
+		</div>
+		<div class="pt" style="margin:16px 0 8px">RICHTUNG</div>
+		<div style="display:grid;gap:6px">${Object.entries(CLOUD_MODES).map(([k, t]) => html`<label class="chk"><input type="radio" name="mode" value="${k}"${x.mode === k ? raw(' checked') : ''} style="accent-color:var(--accent)">${t}</label>`)}</div>
+		<div class="fields" style="margin-top:14px">
+			<label class="f"><span>ZEITPLAN</span><select name="sched" id="job-sched">${CLOUD_SCHED.map(([v, t]) => html`<option value="${v}"${(custom ? 'custom' : x.schedule) === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+			<label class="f" id="job-cron"${custom ? '' : raw(' hidden')}><span>CRON-ZEIT (MIN STD TAG MON WOTAG)</span><input name="cron" value="${custom ? x.schedule : ''}" placeholder="0 4 * * 1-5"></label>
+			<label class="f"><span>BANDBREITE (LEER = UNBEGRENZT)</span><input name="bwlimit" value="${x.bwlimit}" placeholder="2M"></label>
+		</div>
+		<label class="chk" style="margin-top:12px"><input type="checkbox" name="enabled"${x.enabled !== false ? raw(' checked') : ''}>Zeitplan aktiv</label>
+		<p class="note">Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.</p>
+		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
+}
+
+function cloudAfter(scope) {
+	$('#remote-type')?.addEventListener('change', (e) => {
+		const f = $('#f-remote');
+		S.cloud.remoteEdit = { name: f.name.value, type: e.target.value };
+		scope === 'admin' ? renderMain() : renderUserMain();
+	});
+	$('#job-sched')?.addEventListener('change', (e) => { $('#job-cron').hidden = e.target.value !== 'custom'; });
+	$('#f-remote')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target, type = f.type.value, params = {};
+		(REMOTE_FIELDS[type] || []).forEach(([k]) => { const v = f['p_' + k]?.value.trim(); if (v) params[k] = v; });
+		try {
+			await CLOUD_API[scope].addRemote({ name: f.name.value.trim(), type, params, raw: type === 'raw' ? f.raw.value.trim() + '\n' : '' });
+			S.cloud.remoteEdit = null; toast(`Konto „${f.name.value.trim()}“ hinzugefügt.`); loadCloud(scope);
+		} catch (err) { toast('Konto: ' + err.message, true); }
+	});
+	$('#f-job')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target, sched = f.sched.value === 'custom' ? f.cron.value.trim() : f.sched.value;
+		const args = { name: f.name.value.trim(), local: f.local.value, remote: f.remote.value, remote_path: f.remote_path.value.trim(),
+			mode: $('input[name=mode]:checked', f)?.value || 'upload', schedule: sched, bwlimit: f.bwlimit.value.trim(), enabled: f.enabled.checked };
+		if ((args.mode === 'mirror_down' || args.mode === 'mirror_up') && !await confirmDlg('Spiegeln?', args.mode === 'mirror_down'
+			? 'Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.' : 'Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.', 'Verstanden', true)) return;
+		try { await CLOUD_API[scope].saveJob(args); S.cloud.jobEdit = null; toast(`Auftrag „${args.name}“ gespeichert.`); loadCloud(scope); }
+		catch (err) { toast('Auftrag: ' + err.message, true); }
+	});
 }
 
 /* ---------- "Mein ShareOS" for plain users ------------------------------------ */
@@ -864,6 +1168,33 @@ function renderUserHeader() {
 			<div class="meta">${now.toLocaleDateString(LOC, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
 		</div>`.s;
 	$('#ft').innerHTML = html`<span><b>ShareOS</b> · Mein ShareOS</span><span><a href="https://github.com/UniqueDroid/ShareOS" target="_blank" rel="noopener">github.com/UniqueDroid/ShareOS</a></span>`.s;
+}
+
+async function loadMyPaperless() {
+	try { S.myPl = await rpc('shareos.me', 'paperless'); } catch (e) { S.myPl = { available: false }; }
+	if (S.me && S.me.role !== 'admin' && !document.activeElement?.matches('input,select,textarea')) renderUserMain();
+}
+
+function myPaperless() {
+	const p = S.myPl;
+	if (!p) return html`<section class="sec"><div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div></section>`;
+	if (!p.available) return '';
+	const ib = p.inbox;
+	return html`<section class="sec"><h2 class="gh">PAPERLESS <span>${p.url}</span></h2>
+		<div class="g2">
+			<form class="panel" id="f-mypl">
+				<div class="ph"><span class="pt">MEIN EINGANG</span>${ib ? html`<span class="tag ml ${ib.enabled ? 'ok' : ''}">${ib.enabled ? 'aktiv' : 'aus'}</span>` : ''}</div>
+				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>MEIN API-TOKEN AUS PAPERLESS${ib ? ' (LEER = BEHALTEN)' : ''}</span><input name="token" type="password" autocomplete="off" placeholder="${ib?.token_hint || 'Paperless → Profil → API-Token'}"></label></div>
+				<label class="chk" style="margin-top:10px"><input type="checkbox" name="enabled"${!ib || ib.enabled ? raw(' checked') : ''}>Dateien aus meinem Eingang übertragen</label>
+				<dl class="kv" style="margin-top:12px"><dt>Eingangsordner</dt><dd><code>${p.folder}</code></dd></dl>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit" value="save">Speichern</button><button class="btn" type="submit" value="test">Verbindung prüfen</button></div>
+			</form>
+			<div class="panel">
+				<div class="ph"><span class="pt">ZULETZT ÜBERTRAGEN</span>${ib?.waiting ? html`<span class="tag ml warn">${ib.waiting} wartend</span>` : ''}</div>
+				${ib?.recent?.length ? html`<div style="display:grid;gap:6px">${ib.recent.map((x) => html`<div style="font-size:13px">${plStateTag(x)} ${x.file} <span class="mut" style="font-size:12px">${fmtTime(x.time)}</span></div>`)}</div>`
+					: html`<p class="mut" style="margin:0;font-size:13px">Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.</p>`}
+			</div>
+		</div></section>`;
 }
 
 function renderUserMain() {
@@ -900,8 +1231,20 @@ function renderUserMain() {
 				<div class="ip">\\\\${host}\\${x.name}</div></div></div>`)}</div>`
 			: html`<div class="panel"><div class="empty">${svg(I.info)}<span>Dir wurde noch keine Freigabe zugewiesen.</span></div></div>`}
 	</section>
-	<section class="sec"><div class="panel"><div class="ph"><span class="pt">APPS & CLOUD</span><span class="tag ml">geplant</span></div>
-		<p class="mut" style="margin:0;font-size:13px">Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.</p></div></section>`.s;
+	${m.paperless ? myPaperless() : ''}
+	${m.cloud ? cloudSection('me') : ''}`.s;
+	if (m.paperless && !S.myPl) loadMyPaperless();
+	if (m.cloud && S.cloud?.scope !== 'me') loadCloud('me');
+	if (m.cloud) cloudAfter('me');
+	$('#f-mypl')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target, test = e.submitter?.value === 'test';
+		try {
+			const r = await rpc('shareos.me', 'paperless_set', { token: f.token.value.trim(), test, enabled: f.enabled.checked });
+			if (test) toast(`Verbindung in Ordnung – ${r.documents} Dokumente in Paperless.`);
+			else { toast('Paperless-Eingang gespeichert.'); S.myPl = null; loadMyPaperless(); }
+		} catch (err) { toast('Paperless: ' + err.message, true); }
+	});
 	$('#f-mypass').addEventListener('submit', async (e) => {
 		e.preventDefault();
 		const f = e.target;
@@ -1648,6 +1991,33 @@ const VIEWS_AFTER = {
 			catch (err) { toast('Ruhezustand: ' + err.message, true); }
 		});
 	},
+	cloud() {
+		if (S.cloud?.scope !== 'admin') { loadCloud('admin'); return; }
+		cloudAfter('admin');
+	},
+	paperless() {
+		if (!S.pl || !S.acc || !S.shares) { loadPaperless(); return; }
+		const kind = $('#f-inbox select[name=kind]');
+		const syncKind = () => { if (!kind) return; $('#ib-owner').hidden = kind.value !== 'user'; $('#ib-share').hidden = kind.value !== 'share'; };
+		kind?.addEventListener('change', syncKind); syncKind();
+		$('#f-pl')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target;
+			try { await rpc('shareos.paperless', 'set_global', { url: f.url.value.trim(), interval: +f.interval.value, after: f.after.value, enabled: f.enabled.checked }); toast('Gespeichert.'); loadPaperless(); }
+			catch (err) { toast('Paperless: ' + err.message, true); }
+		});
+		$('#f-inbox')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target, ed = S.plEdit, x = ed.data, kindv = f.kind.value;
+			const owner = ed.mode === 'new' ? (kindv === 'user' ? f.owner.value : '') : x.owner;
+			const share = ed.mode === 'new' ? (kindv === 'share' ? f.share.value : '') : x.share;
+			const name = ed.mode === 'new' ? (owner ? 'u_' + owner : share.replace(/-/g, '_')) : x.name;
+			const args = { name, owner, share, token: f.token.value.trim(), enabled: f.enabled.checked };
+			if (ed.tags) args.tags = [...document.querySelectorAll('#f-inbox .ib-tag:checked')].map((c) => +c.value);
+			try { await rpc('shareos.paperless', 'inbox_set', args); S.plEdit = null; toast(`Eingang „${name}“ gespeichert.`); loadPaperless(); }
+			catch (err) { toast('Eingang: ' + err.message, true); }
+		});
+	},
 	freigaben() {
 		if (!S.shares || !S.acc) { loadShareData(); return; }
 		$('#opt-smb')?.addEventListener('change', (e) => shareGlobal({ smb: e.target.checked }));
@@ -1669,7 +2039,7 @@ const VIEWS_AFTER = {
 			e.preventDefault();
 			const f = e.target, isNew = S.uEdit.mode === 'new';
 			const args = { name: f.name.value.trim().toLowerCase(), fullname: f.fullname.value.trim(), role: f.role.value, home: f.home.value,
-				quota: Math.max(0, Math.round(+f.quota.value || 0)) * 1000, web: f.web.checked,
+				quota: Math.max(0, Math.round(+f.quota.value || 0)) * 1000, web: f.web.checked, cloud: f.cloud.checked,
 				groups: [...document.querySelectorAll('#f-user .u-group:checked')].map((x) => x.value) };
 			if (isNew) {
 				if (f.p1.value !== f.p2.value) { toast('Die Passwörter stimmen nicht überein.', true); return; }
@@ -1979,6 +2349,72 @@ const ACTIONS = {
 	},
 	logout,
 	accent(el) { S.accent = el.dataset.c; applyTheme(); renderHeader(); renderMain(); saveLook({ accent: S.accent }); },
+	async 'pl-run'() { try { await rpc('shareos.paperless', 'run'); toast('Übertragung gestartet.'); setTimeout(loadPaperless, 5000); } catch (e) { toast(e.message, true); } },
+	'pl-new'() { S.plEdit = { mode: 'new', data: { name: '', owner: '', share: '', tags: [], enabled: true } }; renderMain(); },
+	async 'pl-edit'(el) {
+		const ib = S.pl.inboxes.find((x) => x.name === el.dataset.name);
+		S.plEdit = { mode: 'edit', data: structuredClone(ib), tags: null };
+		renderMain();
+		try { S.plEdit.tags = (await rpc('shareos.paperless', 'tags', { inbox: ib.name })).tags; renderMain(); } catch (e) { }
+	},
+	'pl-cancel'() { S.plEdit = null; renderMain(); },
+	async 'pl-test'() {
+		const f = $('#f-inbox'), ed = S.plEdit;
+		try {
+			const r = await rpc('shareos.paperless', 'test', { url: S.pl.url, token: f.token.value.trim(), inbox: ed.mode === 'edit' ? ed.data.name : '' });
+			toast(`Verbindung in Ordnung – ${r.documents} Dokumente in Paperless.`);
+		} catch (e) { toast('Paperless: ' + e.message, true); }
+	},
+	async 'pl-log'(el) { try { S.plLog = { name: el.dataset.name, entries: (await rpc('shareos.paperless', 'log', { inbox: el.dataset.name })).entries }; renderMain(); } catch (e) { toast(e.message, true); } },
+	'pl-log-close'() { S.plLog = null; renderMain(); },
+	async 'pl-del'(el) {
+		const n = el.dataset.name;
+		if (!await confirmDlg(`Eingang „${n}“ entfernen?`, 'Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.', 'Entfernen')) return;
+		try { await rpc('shareos.paperless', 'inbox_del', { name: n }); toast(`Eingang „${n}“ entfernt.`); loadPaperless(); } catch (e) { toast(e.message, true); }
+	},
+
+	async 'cl-install'() {
+		try { await rpc('shareos.cloud', 'install'); S.cloud.data.status.installing = true; renderMain(); setTimeout(() => loadCloud('admin'), 3000); }
+		catch (e) { toast('rclone: ' + e.message, true); }
+	},
+	'cl-rnew'(el) { S.cloud.remoteEdit = { type: 'webdav' }; el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); },
+	'cl-rcancel'(el) { S.cloud.remoteEdit = null; el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); },
+	async 'cl-rtest'(el) {
+		el.disabled = true;
+		try { const r = await CLOUD_API[el.dataset.scope].testRemote(el.dataset.name); toast(`${el.dataset.name}: Verbindung in Ordnung (${r.folders} Ordner).`); }
+		catch (e) { toast(`${el.dataset.name}: ${e.message}`, true); }
+		el.disabled = false;
+	},
+	async 'cl-rdel'(el) {
+		const n = el.dataset.name;
+		if (!await confirmDlg(`Konto „${n}“ entfernen?`, 'Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.', 'Entfernen')) return;
+		try { await CLOUD_API[el.dataset.scope].delRemote(n); toast(`Konto „${n}“ entfernt.`); loadCloud(el.dataset.scope); } catch (e) { toast(e.message, true); }
+	},
+	'cl-jnew'(el) {
+		const d = S.cloud.data;
+		S.cloud.jobEdit = { mode: 'new', data: { name: '', local: d.locals[0]?.[0] || '', remote: d.remotes[0]?.name || '', remote_path: '', mode: 'upload', schedule: '30 2 * * *', bwlimit: '', enabled: true } };
+		el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); window.scrollTo(0, 0);
+	},
+	'cl-jedit'(el) {
+		S.cloud.jobEdit = { mode: 'edit', data: structuredClone(S.cloud.data.jobs.find((j) => j.name === el.dataset.name)) };
+		el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); window.scrollTo(0, 0);
+	},
+	'cl-jcancel'(el) { S.cloud.jobEdit = null; el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); },
+	async 'cl-jrun'(el) {
+		el.disabled = true;
+		try { await CLOUD_API[el.dataset.scope].runJob(el.dataset.name); toast(`Auftrag „${el.dataset.name}“ gestartet.`); setTimeout(() => loadCloud(el.dataset.scope), 1500); }
+		catch (e) { toast(e.message, true); el.disabled = false; }
+	},
+	async 'cl-jstop'(el) { try { await CLOUD_API[el.dataset.scope].stopJob(el.dataset.name); toast('Gestoppt.'); setTimeout(() => loadCloud(el.dataset.scope), 1500); } catch (e) { toast(e.message, true); } },
+	async 'cl-jlog'(el) {
+		try { S.cloud.log = { name: el.dataset.name, lines: (await CLOUD_API[el.dataset.scope].log(el.dataset.name)).lines }; renderMain(); } catch (e) { toast(e.message, true); }
+	},
+	'cl-logclose'(el) { S.cloud.log = null; el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); },
+	async 'cl-jdel'(el) {
+		const n = el.dataset.name;
+		if (!await confirmDlg(`Auftrag „${n}“ entfernen?`, 'Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.', 'Entfernen')) return;
+		try { await CLOUD_API[el.dataset.scope].delJob(n); toast(`Auftrag „${n}“ entfernt.`); loadCloud(el.dataset.scope); } catch (e) { toast(e.message, true); }
+	},
 	'sh-new'() {
 		S.shEdit = { mode: 'new', data: { name: '', volume: S.vols[0]?.name || '', path: '', comment: '', smb: true, guest: false, nfs: false, nfs_rw: false, nfs_hosts: [], rw: [], ro: [] } };
 		renderMain(); window.scrollTo(0, 0);
@@ -2193,6 +2629,9 @@ window.addEventListener('hashchange', () => {
 	parseRoute();
 	if (S.route.tab !== 'speicher') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
 	if (S.route.tab !== 'freigaben') { S.shEdit = null; S.uEdit = null; }
+	if (S.route.tab !== 'paperless') { S.plEdit = null; S.plLog = null; } else if (S.pl) loadPaperless();
+	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
+	else if (S.cloud?.scope === 'admin') loadCloud('admin');
 	else if (S.shares) loadShareData();
 	renderTabs();
 	renderMain();

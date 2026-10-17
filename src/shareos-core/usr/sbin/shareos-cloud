@@ -1,0 +1,239 @@
+#!/bin/sh
+#
+# shareos-cloud – cloud sync with rclone
+#
+#   shareos-cloud install              download rclone into the apps area
+#                                      (/mnt/<apps>/.shareos/bin) and check it
+#   shareos-cloud remote-add <owner> <name> <type> [key=value ...]
+#                                      secrets (pass=, secret_access_key=) on
+#                                      stdin as key=value lines; type raw =
+#                                      an rclone.conf section on stdin
+#   shareos-cloud remote-del <owner> <name>
+#   shareos-cloud remote-test <owner> <name>
+#   shareos-cloud run <job>            run a job now (also from cron)
+#   shareos-cloud stop <job>
+#   shareos-cloud status               key=value lines for the web interface
+#
+# owner "-" = the system (admin), otherwise a ShareOS user. Remotes live in
+# the owner's rclone.conf (system: /etc/shareos/cloud/rclone.conf, user:
+# ~/.config/rclone/rclone.conf); jobs are UCI sections cloud.<job> and run
+# as their owner, so a user's storage limit applies to what they download.
+#
+PATH=${SHAREOS_TEST_PATH:+$SHAREOS_TEST_PATH:}/usr/sbin:/usr/bin:/sbin:/bin
+VERSION=${SHAREOS_RCLONE_VERSION:-1.75.2}
+DL=${SHAREOS_RCLONE_URL:-https://github.com/rclone/rclone/releases/download}
+ST=/tmp/shareos-cloud
+SYSCONF=/etc/shareos/cloud/rclone.conf
+NAME_RE='^[a-z][a-z0-9_]{0,31}$'
+
+die() { echo "error: $*" >&2; exit 1; }
+log() { logger -t shareos-cloud "$*"; }
+
+apps_dir() {
+	a=$(uci -q get storage.global.apps)
+	[ -n "$a" ] && grep -q " /mnt/$a " /proc/mounts && echo "/mnt/$a/.shareos"
+}
+rclone_bin() {
+	for b in "$(apps_dir)/bin/rclone" /usr/bin/rclone; do [ -x "$b" ] && { echo "$b"; return 0; }; done
+	return 1
+}
+
+owner_home() {   # owner -> home directory (users only)
+	v=$(uci -q get accounts."$1".home)
+	[ -n "$v" ] && echo "/mnt/$v/home/$1"
+}
+conf_of() {   # owner -> rclone.conf path
+	if [ "$1" = - ]; then echo $SYSCONF; else h=$(owner_home "$1") && [ -n "$h" ] && echo "$h/.config/rclone/rclone.conf"; fi
+}
+check_owner() {
+	[ "$1" = - ] && return 0
+	[ "$(uci -q get accounts."$1")" = user ] || die "unknown user $1"
+	[ -n "$(owner_home "$1")" ] || die "user $1 has no personal folder (needed for cloud settings)"
+}
+# run a command as the owner (users have no login shell)
+as_owner() {   # owner cmd...
+	o=$1; shift
+	if [ "$o" = - ]; then "$@"; return; fi
+	cmd=; for a; do cmd="$cmd '$(printf %s "$a" | sed "s/'/'\\\\''/g")'"; done
+	HOME=$(owner_home "$o") su -s /bin/sh "$o" -c "umask 077; $cmd"
+}
+
+ensure_conf() {   # owner
+	c=$(conf_of "$1") || die "no place for the settings of $1"
+	d=${c%/*}
+	if [ ! -d "$d" ]; then
+		mkdir -p "$d"
+		[ "$1" = - ] && chmod 700 "$d" || { chown -R "$1":users "${d%/rclone}" "$d"; chmod 700 "$d"; }
+	fi
+	[ -f "$c" ] || { : > "$c"; chmod 600 "$c"; [ "$1" = - ] || chown "$1":users "$c"; }
+	echo "$c"
+}
+
+# --- install ----------------------------------------------------------------------
+cmd_install() {
+	ad=$(apps_dir) || die "no apps area – set up a volume first (Storage)"
+	mkdir -p $ST
+	echo "state=installing" > $ST/install
+	t=$ad/tmp/rclone.$$; rm -rf "$t"; mkdir -p "$t"
+	zip=rclone-v$VERSION-linux-arm.zip
+	if ! curl -fsSL --retry 2 -o "$t/$zip" "$DL/v$VERSION/$zip" || ! curl -fsSL -o "$t/SHA256SUMS" "$DL/v$VERSION/SHA256SUMS"; then
+		rm -rf "$t"; echo "state=error" > $ST/install; echo "error=download failed" >> $ST/install; die "download failed"
+	fi
+	want=$(grep " $zip\$" "$t/SHA256SUMS" | awk '{print $1}' | head -1)
+	have=$(sha256sum "$t/$zip" | awk '{print $1}')
+	if [ -z "$want" ] || [ "$want" != "$have" ]; then
+		rm -rf "$t"; printf 'state=error\nerror=checksum mismatch\n' > $ST/install; die "checksum mismatch"
+	fi
+	(cd "$t" && unzip -q "$zip") || { rm -rf "$t"; printf 'state=error\nerror=unzip failed\n' > $ST/install; die "unzip failed"; }
+	mkdir -p "$ad/bin"
+	install -m 0755 "$t"/rclone-v$VERSION-linux-arm/rclone "$ad/bin/rclone.new" && mv "$ad/bin/rclone.new" "$ad/bin/rclone"
+	rm -rf "$t"
+	v=$("$ad/bin/rclone" version 2>/dev/null | head -1)
+	[ -n "$v" ] || { printf 'state=error\nerror=rclone does not run on this box\n' > $ST/install; die "rclone does not run"; }
+	ln -sf "$ad/bin/rclone" /usr/bin/rclone
+	uci set cloud.global=global; uci set cloud.global.version="$VERSION"; uci commit cloud
+	printf 'state=done\nversion=%s\n' "$v" > $ST/install
+	log "installed $v"
+	echo "$v"
+}
+
+# --- remotes ----------------------------------------------------------------------
+cmd_remote_add() {   # owner name type [k=v...]; secrets on stdin
+	o=$1 n=$2 type=$3; shift 3 || die "usage: remote-add <owner> <name> <type>"
+	check_owner "$o"
+	echo "$n" | grep -qE "$NAME_RE" || die "invalid name (a-z, 0-9 and _)"
+	rc=$(rclone_bin) || die "rclone is not installed"
+	c=$(ensure_conf "$o")
+	grep -q "^\[$n\]" "$c" && die "a connection named $n exists"
+	if [ "$type" = raw ]; then
+		sect=$(cat)
+		echo "$sect" | head -1 | grep -qE '^\[[A-Za-z0-9_-]+\]$' || die "the pasted text must start with [name]"
+		echo "$sect" | sed "1s/.*/[$n]/" >> "$c"
+	else
+		case "$type" in webdav|s3|sftp|ftp|smb) ;; *) die "unknown type $type" ;; esac
+		for kv; do echo "$kv" | grep -qE '^[a-z_]+=' || die "invalid option $kv"; done
+		# secrets from stdin, appended to the arguments
+		while IFS= read -r kv; do [ -n "$kv" ] && set -- "$@" "$kv"; done
+		as_owner "$o" "$rc" config create "$n" "$type" "$@" --obscure --non-interactive --config "$c" >/dev/null 2>$ST.err \
+			|| { e=$(tail -n1 $ST.err); rm -f $ST.err; die "${e:-rclone config failed}"; }
+		rm -f $ST.err
+	fi
+	[ "$o" = - ] || chown "$o":users "$c"
+	echo "ok"
+}
+
+cmd_remote_del() {
+	o=$1 n=$2
+	c=$(conf_of "$o") || die "unknown owner"
+	[ -f "$c" ] && grep -q "^\[$n\]" "$c" || die "unknown connection $n"
+	awk -v s="[$n]" '/^\[/ {skip = ($0 == s)} !skip' "$c" > "$c.new" && cat "$c.new" > "$c" && rm -f "$c.new"
+	echo "ok"
+}
+
+cmd_remote_test() {
+	o=$1 n=$2
+	rc=$(rclone_bin) || die "rclone is not installed"
+	c=$(conf_of "$o") || die "unknown owner"
+	out=$(as_owner "$o" timeout 40 "$rc" lsd "$n:" --max-depth 1 --config "$c" --contimeout 15s --low-level-retries 1 --retries 1 2>&1)
+	if [ $? = 0 ]; then echo "ok folders=$(echo "$out" | grep -c .)"; else echo "error: $(echo "$out" | grep -v '^$' | tail -n1 | cut -c1-200)"; exit 1; fi
+}
+
+cmd_remotes() {   # owner -> name:type lines
+	c=$(conf_of "$1") || return 0
+	[ -f "$c" ] || return 0
+	# section name and type per remote ("name:type")
+	sed -n -e 's/^\[\(.*\)\]$/S \1/p' -e 's/^type *= *//p' "$c" | awk '/^S / {n = substr($0, 3); next} {print n ":" $0}'
+}
+
+# --- jobs -------------------------------------------------------------------------
+job() { uci -q get cloud."$J".$1; }
+
+local_path() {   # job -> local directory
+	l=$(job local); o=$(job owner); o=${o:--}
+	case "$l" in
+		home) [ "$o" != - ] && owner_home "$o" ;;
+		share:*)
+			s=${l#share:}; v=$(uci -q get shares."$s".volume); p=$(uci -q get shares."$s".path); p=${p:-$s}
+			[ -n "$v" ] && echo "/mnt/$v/$p" ;;
+		home:*) [ "$o" != - ] && h=$(owner_home "$o") && echo "$h/${l#home:}" ;;
+	esac
+}
+
+cmd_run() {
+	J=$1
+	[ "$(uci -q get cloud."$J")" = job ] || die "unknown job $J"
+	rc=$(rclone_bin) || die "rclone is not installed"
+	o=$(job owner); o=${o:--}
+	c=$(conf_of "$o") || die "no settings for $o"
+	src=$(local_path) || true
+	[ -n "$src" ] && [ -d "$src" ] || die "local folder missing ($(job local))"
+	case "$src" in *..*) die "invalid folder" ;; esac
+	r=$(job remote):$(job remote_path)
+	case "$(job mode)" in
+		upload) set -- copy "$src" "$r" ;;
+		download) set -- copy "$r" "$src" ;;
+		mirror_up) set -- sync "$src" "$r" ;;
+		mirror_down) set -- sync "$r" "$src" ;;
+		*) die "unknown mode" ;;
+	esac
+	mkdir -p $ST
+	if ! mkdir $ST/$J.lock 2>/dev/null; then
+		pid=$(cat $ST/$J.pid 2>/dev/null)
+		[ -n "$pid" ] && kill -0 "$pid" 2>/dev/null && die "job $J is already running"
+		rm -rf $ST/$J.lock; mkdir $ST/$J.lock
+	fi
+	trap 'rm -rf $ST/$J.lock $ST/$J.pid' EXIT
+	ad=$(apps_dir); logd=${ad:-/tmp}/cloud/logs; mkdir -p "$logd"
+	lf=$logd/$J.log
+	[ -f "$lf" ] && [ "$(stat -c %s "$lf")" -gt 262144 ] && tail -c 131072 "$lf" > "$lf.old" && mv "$lf.old" "$lf"
+	bw=$(job bwlimit); [ -n "$bw" ] || bw=$(uci -q get cloud.global.bwlimit)
+	set -- "$@" --config "$c" --transfers 2 --checkers 4 --buffer-size 4M --use-mmap \
+		--low-level-retries 5 --retries 2 --stats 1m --stats-one-line -v --log-file "$lf.run"
+	[ -n "$bw" ] && set -- "$@" --bwlimit "$bw"
+	printf 'state=running\nstarted=%s\n' "$(date +%s)" > $ST/$J.state
+	: > "$lf.run"; [ "$o" != - ] && chown "$o":users "$lf.run"
+	as_owner "$o" "$rc" "$@" &
+	echo $! > $ST/$J.pid
+	wait $!; rc_exit=$?
+	cat "$lf.run" >> "$lf"
+	summary=$(grep -E 'Transferred:' "$lf.run" | tail -n1 | sed 's/.*Transferred: *//' | cut -c1-120)
+	err=$(grep -E ' ERROR ' "$lf.run" | tail -n1 | sed 's/.* ERROR : *//' | cut -c1-200)
+	rm -f "$lf.run"
+	if [ $rc_exit = 0 ]; then
+		printf 'state=ok\nended=%s\nsummary=%s\n' "$(date +%s)" "$summary" > $ST/$J.state
+		log "job $J finished: $summary"
+	else
+		printf 'state=error\nended=%s\nsummary=%s\nerror=%s\n' "$(date +%s)" "$summary" "${err:-rclone exit $rc_exit}" > $ST/$J.state
+		log "job $J failed: ${err:-exit $rc_exit}"
+	fi
+	# keep the last result over a reboot
+	cp $ST/$J.state "$logd/$J.state" 2>/dev/null
+	[ $rc_exit = 0 ]
+}
+
+cmd_stop() {
+	pid=$(cat $ST/$1.pid 2>/dev/null)
+	[ -n "$pid" ] || die "job $1 is not running"
+	pkill -P "$pid" 2>/dev/null; kill "$pid" 2>/dev/null
+	echo ok
+}
+
+cmd_status() {
+	b=$(rclone_bin) && echo "rclone=$b" && echo "version=$("$b" version 2>/dev/null | head -1 | sed 's/^rclone //')"
+	echo "apps=$(apps_dir)"
+	[ -f $ST/install ] && sed 's/^/install_/' $ST/install
+	return 0
+}
+
+[ -f /etc/config/cloud ] || : > /etc/config/cloud
+case "$1" in
+	install) cmd_install ;;
+	remote-add) shift; cmd_remote_add "$@" ;;
+	remote-del) cmd_remote_del "$2" "$3" ;;
+	remote-test) cmd_remote_test "$2" "$3" ;;
+	remotes) cmd_remotes "$2" ;;
+	run) cmd_run "$2" ;;
+	stop) cmd_stop "$2" ;;
+	status) cmd_status ;;
+	*) sed -n '3,22s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

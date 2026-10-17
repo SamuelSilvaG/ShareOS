@@ -1,0 +1,15 @@
+# Cloud sync with rclone – managed by shareos-cloud (web interface: Cloud).
+# Connections (remotes) are kept in the owner's rclone.conf, jobs here.
+#
+# config job 'fotos_nextcloud'
+#	option owner ''              # '' = system, otherwise a ShareOS user
+#	option remote 'nextcloud'
+#	option remote_path 'Backup/Fotos'
+#	option local 'share:fotos'   # share:<name> | home | home:<folder>
+#	option mode 'upload'         # upload | download | mirror_up | mirror_down
+#	option schedule '30 2 * * *' # cron time, empty = only by hand
+#	option bwlimit '2M'
+
+config global 'global'
+	option version '1.75.2'
+	option bwlimit ''

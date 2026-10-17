@@ -1,0 +1,191 @@
+#!/bin/sh
+#
+# shareos-paperless – send documents from inbox folders to Paperless-ngx
+#
+#   shareos-paperless run              upload new files of all inboxes, then
+#                                      check the state of earlier uploads
+#   shareos-paperless test <url>       check URL + token (token on stdin)
+#   shareos-paperless tags <inbox>     list the Paperless tags (JSON) the inbox
+#                                      token can see
+#   shareos-paperless status           key=value lines per inbox
+#
+# Settings: UCI /etc/config/paperless – global.url, and one "inbox" section
+# per folder with the API token of the Paperless user the documents belong
+# to (owner = ShareOS user, or empty for an inbox the admin shares).
+# Every inbox keeps its upload log in <folder>/.paperless/log (tab separated:
+# time, file, task id, state, message).
+#
+PATH=${SHAREOS_TEST_PATH:+$SHAREOS_TEST_PATH:}/usr/sbin:/usr/bin:/sbin:/bin
+LOCK=/tmp/shareos-paperless.lock
+EXT='pdf|png|jpg|jpeg|tif|tiff|webp|gif|txt|eml|docx|doc|odt|xlsx|xls|ods|pptx|odp'
+MIN_AGE=20          # s since the last change: files still being copied are skipped
+MAX_SIZE=104857600  # 100 MB
+
+log() { logger -t shareos-paperless "$*"; }
+g() { uci -q get paperless."$1"."$2"; }
+inboxes() { uci -q show paperless | sed -n "s/^paperless\.\([^.=]*\)=inbox$/\1/p"; }
+url() { u=$(g global url); echo "${u%/}"; }
+
+# curl with the token as a header file, so it never shows up in ps
+pcurl() {   # token args...
+	tok=$1; shift
+	h=$(mktemp); chmod 600 "$h"
+	printf 'Authorization: Token %s\n' "$tok" > "$h"
+	curl -sS --connect-timeout 10 --max-time 300 -H @"$h" "$@"
+	rc=$?; rm -f "$h"; return $rc
+}
+
+inbox_path() {   # inbox -> folder
+	p=$(g "$1" path)
+	sh=$(g "$1" share)
+	if [ -z "$p" ] && [ -n "$sh" ]; then
+		v=$(uci -q get shares."$sh".volume); sp=$(uci -q get shares."$sh".path)
+		[ -n "$v" ] && p=/mnt/$v/${sp:-$sh}
+	fi
+	if [ -z "$p" ]; then
+		o=$(g "$1" owner); v=$(uci -q get accounts."$o".home)
+		[ -n "$o" ] && [ -n "$v" ] && p=/mnt/$v/home/$o/Paperless
+	fi
+	echo "$p"
+}
+
+add_log() {   # dir file task state msg
+	mkdir -p "$1/.paperless"
+	printf '%s\t%s\t%s\t%s\t%s\n' "$(date +%s)" "$2" "$3" "$4" "$(echo "$5" | tr '\t\n' '  ' | cut -c1-200)" >> "$1/.paperless/log"
+	# keep the log short
+	if [ "$(wc -l < "$1/.paperless/log")" -gt 500 ]; then
+		tail -n 300 "$1/.paperless/log" > "$1/.paperless/log.new" && mv "$1/.paperless/log.new" "$1/.paperless/log"
+	fi
+}
+
+upload_inbox() {   # inbox
+	ib=$1
+	[ "$(g "$ib" enabled)" = 0 ] && return 0
+	dir=$(inbox_path "$ib"); tok=$(g "$ib" token); base=$(url)
+	[ -n "$dir" ] && [ -n "$tok" ] && [ -n "$base" ] || return 0
+	[ -d "$dir" ] || return 0
+	now=$(date +%s)
+	find "$dir" -maxdepth 1 -type f ! -name '.*' 2>/dev/null | while read -r f; do
+		name=${f##*/}
+		echo "$name" | grep -qiE "\.($EXT)\$" || continue
+		age=$((now - $(stat -c %Y "$f")))
+		[ $age -ge $MIN_AGE ] || continue
+		size=$(stat -c %s "$f")
+		if [ "$size" -gt $MAX_SIZE ] || [ "$size" -eq 0 ]; then
+			add_log "$dir" "$name" "" FAILURE "file empty or larger than 100 MB"
+			mkdir -p "$dir/.paperless/failed" && mv "$f" "$dir/.paperless/failed/"
+			continue
+		fi
+		set -- -F "document=@$f"
+		for t in $(g "$ib" tags); do set -- "$@" -F "tags=$t"; done
+		c=$(g "$ib" correspondent); [ -n "$c" ] && set -- "$@" -F "correspondent=$c"
+		dt=$(g "$ib" document_type); [ -n "$dt" ] && set -- "$@" -F "document_type=$dt"
+		out=$(pcurl "$tok" -w '\n%{http_code}' "$@" "$base/api/documents/post_document/" 2>&1)
+		code=$(echo "$out" | tail -n1); body=$(echo "$out" | sed '$d')
+		if [ "$code" = 200 ]; then
+			task=$(echo "$body" | tr -d '"[:space:]')
+			add_log "$dir" "$name" "$task" PENDING "uploaded"
+			if [ "$(g global after)" = keep ]; then
+				mkdir -p "$dir/.paperless/done" && mv "$f" "$dir/.paperless/done/"
+			else
+				rm -f "$f"
+			fi
+			log "$ib: $name uploaded (task $task)"
+		else
+			msg=$(echo "$body" | head -c 200)
+			[ "$code" = 000 ] && msg="Paperless not reachable: $msg"
+			[ "$code" = 401 ] || [ "$code" = 403 ] && msg="token rejected (HTTP $code)"
+			add_log "$dir" "$name" "" FAILURE "$msg"
+			log "$ib: $name failed: $msg"
+			# a rejected file (bad type, …) would be retried forever: park it;
+			# connection problems are retried on the next run
+			case "$code" in 000|401|403|5*) ;; *) mkdir -p "$dir/.paperless/failed" && mv "$f" "$dir/.paperless/failed/" ;; esac
+			[ "$code" = 000 ] && break
+		fi
+	done
+}
+
+# look up pending tasks: SUCCESS / FAILURE with the Paperless message
+check_tasks() {   # inbox
+	ib=$1; dir=$(inbox_path "$ib"); tok=$(g "$ib" token); base=$(url)
+	lf=$dir/.paperless/log
+	[ -f "$lf" ] && grep -q "	PENDING	" "$lf" || return 0
+	tmp=$lf.tmp; : > "$tmp"
+	while IFS="	" read -r t name task state msg; do
+		if [ "$state" = PENDING ] && [ -n "$task" ]; then
+			r=$(pcurl "$tok" "$base/api/tasks/?task_id=$task" 2>/dev/null)
+			st=$(echo "$r" | sed -n 's/.*"status" *: *"\([A-Z]*\)".*/\1/p' | head -1)
+			res=$(echo "$r" | sed -n 's/.*"result" *: *"\([^"]*\)".*/\1/p' | head -1)
+			case "$st" in
+				SUCCESS) state=SUCCESS; msg=${res:-done} ;;
+				FAILURE|REVOKED) state=FAILURE; msg=${res:-failed} ;;
+			esac
+			# give up waiting after a day
+			[ "$state" = PENDING ] && [ $(( $(date +%s) - t )) -gt 86400 ] && { state=UNKNOWN; msg="no result from Paperless"; }
+		fi
+		printf '%s\t%s\t%s\t%s\t%s\n' "$t" "$name" "$task" "$state" "$msg" >> "$tmp"
+	done < "$lf"
+	mv "$tmp" "$lf"
+}
+
+ensure_folders() {
+	for ib in $(inboxes); do
+		dir=$(inbox_path "$ib"); [ -n "$dir" ] || continue
+		parent=${dir%/*}
+		[ -d "$parent" ] || continue                  # volume/home not there
+		if [ ! -d "$dir" ]; then
+			mkdir -p "$dir"
+			o=$(g "$ib" owner)
+			if [ -n "$o" ]; then chown "$o":users "$dir"; chmod 0700 "$dir"
+			else chown root:users "$dir"; chmod 2775 "$dir"; fi
+		fi
+	done
+}
+
+cmd_run() {
+	[ -n "$(url)" ] || return 0
+	[ "$(g global enabled)" = 0 ] && return 0
+	mkdir "$LOCK" 2>/dev/null || { [ $(( $(date +%s) - $(stat -c %Y "$LOCK") )) -gt 3600 ] && rmdir "$LOCK" && mkdir "$LOCK" || exit 0; }
+	trap 'rmdir "$LOCK" 2>/dev/null' EXIT
+	ensure_folders
+	for ib in $(inboxes); do upload_inbox "$ib"; check_tasks "$ib"; done
+	date +%s > /tmp/shareos-paperless.last
+}
+
+cmd_test() {   # url, token on stdin
+	IFS= read -r tok || true
+	u=${1%/}
+	[ -n "$u" ] && [ -n "$tok" ] || { echo "error: URL and token needed"; exit 1; }
+	out=$(pcurl "$tok" -w '\n%{http_code}' "$u/api/documents/?page_size=1" 2>&1)
+	code=$(echo "$out" | tail -n1)
+	case "$code" in
+		200) n=$(echo "$out" | sed -n 's/.*"count" *: *\([0-9]*\).*/\1/p' | head -1); echo "ok documents=${n:-?}" ;;
+		401|403) echo "error: token rejected (HTTP $code)"; exit 1 ;;
+		000) echo "error: not reachable – $(echo "$out" | head -1)"; exit 1 ;;
+		*) echo "error: HTTP $code – is this the Paperless address?"; exit 1 ;;
+	esac
+}
+
+cmd_tags() {
+	tok=$(g "$1" token); base=$(url)
+	[ -n "$tok" ] && [ -n "$base" ] || { echo '{"results":[]}'; return; }
+	pcurl "$tok" "$base/api/tags/?page_size=1000&fields=id,name" 2>/dev/null || echo '{"results":[]}'
+}
+
+cmd_status() {
+	echo "last=$(cat /tmp/shareos-paperless.last 2>/dev/null)"
+	for ib in $(inboxes); do
+		dir=$(inbox_path "$ib")
+		waiting=$(find "$dir" -maxdepth 1 -type f ! -name '.*' 2>/dev/null | grep -ciE "\.($EXT)\$")
+		echo "inbox=$ib:$dir:$waiting"
+	done
+}
+
+case "$1" in
+	run) cmd_run ;;
+	test) cmd_test "$2" ;;
+	tags) cmd_tags "$2" ;;
+	status) cmd_status ;;
+	folders) ensure_folders ;;
+	*) sed -n '3,18s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

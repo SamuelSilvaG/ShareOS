@@ -57,7 +57,20 @@
 					"list"
 				],
 				"shareos.me": [
-					"get"
+					"get",
+					"paperless",
+					"cloud"
+				],
+				"shareos.paperless": [
+					"get",
+					"tags",
+					"log"
+				],
+				"shareos.cloud": [
+					"status",
+					"remotes",
+					"jobs",
+					"job_log"
 				]
 			},
 			"uci": [
@@ -65,7 +78,9 @@
 				"storage",
 				"network",
 				"accounts",
-				"shares"
+				"shares",
+				"paperless",
+				"cloud"
 			]
 		},
 		"write": {
@@ -137,11 +152,34 @@
 				],
 				"shareos.me": [
 					"bind",
-					"passwd"
+					"passwd",
+					"paperless_set",
+					"cloud_remote_add",
+					"cloud_remote_del",
+					"cloud_job_set",
+					"cloud_job_del",
+					"cloud_job_run"
 				],
 				"shareos.backup": [
 					"export",
 					"restore"
+				],
+				"shareos.paperless": [
+					"set_global",
+					"test",
+					"inbox_set",
+					"inbox_del",
+					"run"
+				],
+				"shareos.cloud": [
+					"install",
+					"remote_add",
+					"remote_del",
+					"remote_test",
+					"job_set",
+					"job_del",
+					"job_run",
+					"job_stop"
 				]
 			},
 			"uci": [
@@ -154,7 +192,9 @@
 		"read": {
 			"ubus": {
 				"shareos.me": [
-					"get"
+					"get",
+					"paperless",
+					"cloud"
 				],
 				"shareos.ui": [
 					"get"
@@ -165,7 +205,13 @@
 			"ubus": {
 				"shareos.me": [
 					"bind",
-					"passwd"
+					"passwd",
+					"paperless_set",
+					"cloud_remote_add",
+					"cloud_remote_del",
+					"cloud_job_set",
+					"cloud_job_del",
+					"cloud_job_run"
 				]
 			}
 		}

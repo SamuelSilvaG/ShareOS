@@ -8,6 +8,9 @@
 //   shareos.shares   list | set | del | global
 //   shareos.me       bind | get | passwd   (the logged-in account, also for plain users)
 //   shareos.backup   export | restore      (settings as JSON, optionally encrypted)
+//   shareos.paperless get | set_global | test | inbox_set | inbox_del | run | tags | log
+//   shareos.cloud    status | install | remotes | remote_add | remote_del | remote_test |
+//                    jobs | job_set | job_del | job_run | job_stop | job_log
 //   shareos.update   check | status | download | apply | cancel
 //
 // Long-running update steps run as a separate process (shareos-update) so
@@ -506,6 +509,7 @@ function opt_args(a) {
 	if (a.quota != null) push(o, '--quota=' + int(+a.quota));
 	if (a.web != null) push(o, '--web=' + (a.web ? '1' : '0'));
 	if (a.role != null) push(o, '--role=' + a.role);
+	if (a.cloud != null) push(o, '--cloud=' + (a.cloud ? '1' : '0'));
 	return join(' ', map(o, shq));
 }
 
@@ -528,7 +532,7 @@ function accounts() {
 	c.foreach('accounts', 'user', (x) => {
 		push(users, {
 			name: x['.name'], role: x.role ?? 'share', fullname: x.fullname ?? '', uid: +(x.uid ?? 0),
-			groups: list_of(x.groups), home: x.home ?? '', quota: +(x.quota ?? 0), web: (x.web ?? '1') != '0',
+			groups: list_of(x.groups), home: x.home ?? '', quota: +(x.quota ?? 0), web: (x.web ?? '1') != '0', cloud: x.cloud == '1',
 			usage: usage[x['.name']] ?? []
 		});
 	});
@@ -604,6 +608,8 @@ function me_info(u) {
 	});
 	info.shares = mine;
 	info.host = read_trim('/proc/sys/kernel/hostname');
+	info.cloud = me_cloud_allowed(u);
+	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
 	return info;
 }
 
@@ -702,6 +708,193 @@ function backup_restore(b) {
 	system(USERS + ' sync >/dev/null 2>&1');
 	return { ok: true, reboot: true };
 }
+
+/* ---------- Paperless ---------- */
+
+const PAPERLESS = '/usr/sbin/shareos-paperless';
+const CRON = '/usr/sbin/shareos-cron';
+
+function token_hint(t) { return t ? '••••' + substr(t, -4) : ''; }
+
+function inbox_path(c, name) {
+	let p = c.get('paperless', name, 'path');
+	if (p) return p;
+	let sh = c.get('paperless', name, 'share');
+	if (sh && c.get('shares', sh) == 'share')
+		return '/mnt/' + c.get('shares', sh, 'volume') + '/' + (c.get('shares', sh, 'path') ?? sh);
+	let o = c.get('paperless', name, 'owner'), v = o ? c.get('accounts', o, 'home') : null;
+	return v ? '/mnt/' + v + '/home/' + o + '/Paperless' : null;
+}
+
+function paperless_log(path, n) {
+	let out = [];
+	if (!path) return out;
+	let lines = filter(split(readfile(path + '/.paperless/log') ?? '', '\n'), (l) => l != '');
+	for (let l in slice(lines, -(n ?? 20))) {
+		let f = split(l, '\t');
+		push(out, { time: +f[0], file: f[1], task: f[2], state: f[3], message: f[4] ?? '' });
+	}
+	return reverse(out);
+}
+
+function waiting_files(path) {
+	if (!path) return 0;
+	let n = 0;
+	for (let f in glob(path + '/*') ?? [])
+		if (match(f, /\.(pdf|png|jpe?g|tiff?|webp|gif|txt|eml|docx?|odt|xlsx?|ods|pptx|odp)$/i)) n++;
+	return n;
+}
+
+function inbox_info(c, name) {
+	let path = inbox_path(c, name), tok = c.get('paperless', name, 'token');
+	return { name, owner: c.get('paperless', name, 'owner') ?? '', share: c.get('paperless', name, 'share') ?? '',
+		path, token_set: !!tok, token_hint: token_hint(tok), tags: list_of(c.get('paperless', name, 'tags')),
+		enabled: c.get('paperless', name, 'enabled') != '0', waiting: waiting_files(path), recent: paperless_log(path, 10) };
+}
+
+function paperless_global(c) {
+	return { url: c.get('paperless', 'global', 'url') ?? '', enabled: c.get('paperless', 'global', 'enabled') != '0',
+		interval: +(c.get('paperless', 'global', 'interval') ?? 2), after: c.get('paperless', 'global', 'after') ?? 'delete',
+		last: read_int('/tmp/shareos-paperless.last') };
+}
+
+function inbox_save(c, name, a) {
+	c.set('paperless', name, 'inbox');
+	if (a.owner != null) c.set('paperless', name, 'owner', a.owner);
+	if (a.share != null) c.set('paperless', name, 'share', a.share);
+	if (a.token) c.set('paperless', name, 'token', a.token);
+	if (a.tags != null) {
+		c.delete('paperless', name, 'tags');
+		let t = filter(a.tags, (x) => match('' + x, /^[0-9]+$/));
+		if (length(t)) c.set('paperless', name, 'tags', map(t, (x) => '' + x));
+	}
+	if (a.enabled != null) c.set('paperless', name, 'enabled', a.enabled ? '1' : '0');
+	c.commit('paperless');
+	sh(PAPERLESS + ' folders; ' + CRON + ' sync');
+}
+
+function token_ok(t) { return type(t) == 'string' && match(t, /^[A-Za-z0-9]{20,128}$/); }
+
+/* ---------- cloud (rclone) ---------- */
+
+const CLOUD = '/usr/sbin/shareos-cloud';
+const CLOUD_ST = '/tmp/shareos-cloud';
+const REMOTE_KEYS = {
+	webdav: { plain: [ 'url', 'vendor', 'user' ], secret: [ 'pass' ] },
+	s3: { plain: [ 'provider', 'endpoint', 'region', 'access_key_id' ], secret: [ 'secret_access_key' ] },
+	sftp: { plain: [ 'host', 'port', 'user' ], secret: [ 'pass' ] }
+};
+const CLOUD_MODES = { upload: 1, download: 1, mirror_up: 1, mirror_down: 1 };
+
+function kv_file(path) {
+	let o = {};
+	for (let l in split(readfile(path) ?? '', '\n')) {
+		let m = match(l, /^([a-z_]+)=(.*)$/);
+		if (m) o[m[1]] = m[2];
+	}
+	return o;
+}
+
+function cloud_status() {
+	let st = {};
+	for (let l in split(sh(CLOUD + ' status').out, '\n')) {
+		let m = match(l, /^([a-z_]+)=(.*)$/);
+		if (m) st[m[1]] = m[2];
+	}
+	return { installed: !!st.rclone, version: st.version ?? null, apps: st.apps || null,
+		installing: st.install_state == 'installing', install_error: st.install_state == 'error' ? st.install_error : null };
+}
+
+function cloud_remotes(owner) {
+	let list = [];
+	for (let l in split(sh(CLOUD + ' remotes ' + shq(owner ?? '-')).out, '\n')) {
+		let m = match(l, /^([^:]+):(.+)$/);
+		if (m) push(list, { name: m[1], type: m[2] });
+	}
+	return list;
+}
+
+function cloud_jobs(c, owner) {   // owner null = all
+	let list = [];
+	c.foreach('cloud', 'job', (x) => {
+		let o = x.owner ?? '';
+		if (owner != null && o != owner) return;
+		let n = x['.name'];
+		let st = kv_file(CLOUD_ST + '/' + n + '.state');
+		if (!st.state) {
+			let a = c.get('storage', 'global', 'apps');
+			if (a) st = kv_file('/mnt/' + a + '/.shareos/cloud/logs/' + n + '.state');
+		}
+		push(list, { name: n, owner: o, remote: x.remote ?? '', remote_path: x.remote_path ?? '', local: x.local ?? '',
+			mode: x.mode ?? 'upload', schedule: x.schedule ?? '', bwlimit: x.bwlimit ?? '', enabled: x.enabled != '0',
+			state: st.state ?? null, started: +(st.started ?? 0), ended: +(st.ended ?? 0), summary: st.summary ?? '', error: st.error ?? '' });
+	});
+	return sort(list, (a, b) => a.name < b.name ? -1 : 1);
+}
+
+// may this owner use this local folder? ('home', 'home:<sub>' or 'share:<name>')
+function cloud_local_ok(c, owner, local, mode) {
+	if (local == 'home' || match(local ?? '', /^home:[A-Za-z0-9 ._\/-]+$/))
+		return owner != '' && !!c.get('accounts', owner, 'home') && !match(local, /\.\./);
+	let m = match(local ?? '', /^share:([a-z0-9][a-z0-9_-]{0,15})$/);
+	if (!m || c.get('shares', m[1]) != 'share') return false;
+	if (owner == '') return true;
+	let tags = [ owner, ...map(list_of(c.get('accounts', owner, 'groups')), (g) => '@' + g) ];
+	let rw = list_of(c.get('shares', m[1], 'rw')), ro = list_of(c.get('shares', m[1], 'ro'));
+	let can_w = length(filter(tags, (t) => index(rw, t) >= 0)) > 0;
+	let can_r = can_w || length(filter(tags, (t) => index(ro, t) >= 0)) > 0;
+	return (mode == 'download' || mode == 'mirror_down') ? can_w : can_r;
+}
+
+function cloud_job_save(c, owner, a) {
+	if (!match(a.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name (a-z, 0-9 and _)' };
+	let existing = c.get('cloud', a.name);
+	if (existing && existing != 'job') return { error: 'invalid name' };
+	if (existing && (c.get('cloud', a.name, 'owner') ?? '') != owner) return { error: 'this name is taken' };
+	if (!CLOUD_MODES[a.mode]) return { error: 'invalid mode' };
+	if (index(map(cloud_remotes(owner == '' ? '-' : owner), (r) => r.name), a.remote) < 0) return { error: 'unknown connection' };
+	if (match(a.remote_path ?? '', /[\n\r]|\.\./)) return { error: 'invalid remote folder' };
+	if (!cloud_local_ok(c, owner, a.local, a.mode)) return { error: 'this folder is not allowed for this job' };
+	if (a.schedule && !match(a.schedule, /^[0-9*\/,-]+( [0-9*\/,-]+){4}$/)) return { error: 'invalid schedule' };
+	if (a.bwlimit && !match(a.bwlimit, /^[0-9]+(\.[0-9]+)?[KMG]?$/)) return { error: 'invalid bandwidth limit (e.g. 2M)' };
+	c.set('cloud', a.name, 'job');
+	c.set('cloud', a.name, 'owner', owner);
+	for (let k in [ 'remote', 'remote_path', 'local', 'mode', 'schedule', 'bwlimit' ]) c.set('cloud', a.name, k, a[k] ?? '');
+	c.set('cloud', a.name, 'enabled', a.enabled === false ? '0' : '1');
+	c.commit('cloud');
+	sh(CRON + ' sync');
+	return { ok: true };
+}
+
+function cloud_remote_add(owner, a) {
+	let o = owner == '' ? '-' : owner;
+	if (!match(a.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name (a-z, 0-9 and _)' };
+	if (a.type == 'raw') {
+		if (!match(a.raw ?? '', /^\[[A-Za-z0-9_-]+\]\n/)) return { error: 'paste an rclone.conf section starting with [name]' };
+		return tool_result(sh(sprintf("printf '%%s\\n' %s | %s remote-add %s %s raw", shq(a.raw), CLOUD, shq(o), shq(a.name))));
+	}
+	let keys = REMOTE_KEYS[a.type];
+	if (!keys) return { error: 'unknown type' };
+	let args = [], secrets = [];
+	for (let k in keys.plain) if (a.params?.[k]) {
+		if (match('' + a.params[k], /[\n\r]/)) return { error: 'invalid ' + k };
+		push(args, shq(k + '=' + a.params[k]));
+	}
+	for (let k in keys.secret) if (a.params?.[k]) {
+		if (match('' + a.params[k], /[\n\r]/)) return { error: 'invalid ' + k };
+		push(secrets, k + '=' + a.params[k]);
+	}
+	return tool_result(sh(sprintf("printf '%%s\\n' %s | %s remote-add %s %s %s %s", shq(join('\n', secrets)), CLOUD, shq(o), shq(a.name), a.type, join(' ', args))));
+}
+
+function cloud_log(c, name, n) {
+	let a = c.get('storage', 'global', 'apps');
+	if (!a) return [];
+	let lines = filter(split(readfile('/mnt/' + a + '/.shareos/cloud/logs/' + name + '.log') ?? '', '\n'), (l) => l != '');
+	return slice(lines, -(n ?? 60));
+}
+
+function me_cloud_allowed(u) { return u != 'root' && cursor().get('accounts', u, 'cloud') == '1' && !!cursor().get('accounts', u, 'home'); }
 
 return {
 	'shareos.ui': {
@@ -1206,7 +1399,7 @@ return {
 		},
 
 		add: {
-			args: { name: '', role: '', password: '', fullname: '', groups: [], home: '', quota: 0, web: true },
+			args: { name: '', role: '', password: '', fullname: '', groups: [], home: '', quota: 0, web: true, cloud: false },
 			call: function(req) {
 				let a = req.args;
 				if (!acc_name_ok(a.name)) return { error: 'invalid name (a-z, 0-9 and _, starting with a letter)' };
@@ -1218,7 +1411,7 @@ return {
 		},
 
 		set: {
-			args: { name: '', role: '', fullname: '', groups: [], home: '', quota: 0, web: true },
+			args: { name: '', role: '', fullname: '', groups: [], home: '', quota: 0, web: true, cloud: false },
 			call: function(req) {
 				let a = req.args;
 				if (!acc_name_ok(a.name)) return { error: 'invalid name' };
@@ -1370,6 +1563,106 @@ return {
 			}
 		},
 
+
+		paperless: {
+			call: function(req) {
+				let u = session_user(req), c = cursor();
+				if (!u || u == 'root') return { error: 'session not bound' };
+				let g = paperless_global(c), name = 'u_' + u;
+				return { url: g.url, available: g.url != '' && g.enabled && !!c.get('accounts', u, 'home'),
+					inbox: c.get('paperless', name) == 'inbox' ? inbox_info(c, name) : null,
+					folder: c.get('accounts', u, 'home') ? '\\\\' + read_trim('/proc/sys/kernel/hostname') + '\\' + u + '\\Paperless' : null };
+			}
+		},
+
+		paperless_set: {
+			args: { token: '', tags: [], enabled: true, test: false },
+			call: function(req) {
+				let u = session_user(req), c = cursor();
+				if (!u || u == 'root') return { error: 'session not bound' };
+				if (!c.get('accounts', u, 'home')) return { error: 'you have no personal folder' };
+				if (!c.get('paperless', 'global', 'url')) return { error: 'Paperless is not set up on this box' };
+				let a = req.args, name = 'u_' + u;
+				if (a.token && !token_ok(a.token)) return { error: 'invalid token' };
+				if (a.test) {
+					let tok = a.token || c.get('paperless', name, 'token');
+					if (!tok) return { error: 'token needed' };
+					let r = sh(sprintf("printf '%%s\\n' %s | %s test %s", shq(tok), PAPERLESS, shq(c.get('paperless', 'global', 'url'))));
+					let m = match(r.out, /ok documents=([0-9?]+)/);
+					return m ? { ok: true, documents: m[1] } : tool_result(r);
+				}
+				if (!a.token && c.get('paperless', name) != 'inbox') return { error: 'token needed' };
+				inbox_save(c, name, { owner: u, share: '', token: a.token, tags: a.tags, enabled: a.enabled });
+				return { ok: true, inbox: inbox_info(c, name) };
+			}
+		},
+
+		cloud: {
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !me_cloud_allowed(u)) return { allowed: false };
+				let c = cursor(), st = cloud_status();
+				let shares = [];
+				c.foreach('shares', 'share', (x) => { if (cloud_local_ok(c, u, 'share:' + x['.name'], 'upload')) push(shares, x['.name']); });
+				return { allowed: true, installed: st.installed, remotes: cloud_remotes(u), jobs: cloud_jobs(c, u), shares };
+			}
+		},
+
+		cloud_remote_add: {
+			args: { name: '', type: '', params: {}, raw: '' },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				let r = cloud_remote_add(u, req.args);
+				return r.error ? r : { ok: true, remotes: cloud_remotes(u) };
+			}
+		},
+
+		cloud_remote_del: {
+			args: { name: '' },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				if (!match(req.args.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name' };
+				let r = tool_result(sh(CLOUD + ' remote-del ' + shq(u) + ' ' + shq(req.args.name)));
+				return r.error ? r : { ok: true, remotes: cloud_remotes(u) };
+			}
+		},
+
+		cloud_job_set: {
+			args: { name: '', remote: '', remote_path: '', local: '', mode: '', schedule: '', bwlimit: '', enabled: true },
+			call: function(req) {
+				let u = session_user(req), c = cursor();
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				let r = cloud_job_save(c, u, req.args);
+				return r.error ? r : { ok: true, jobs: cloud_jobs(cursor(), u) };
+			}
+		},
+
+		cloud_job_del: {
+			args: { name: '' },
+			call: function(req) {
+				let u = session_user(req), c = cursor();
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				if (c.get('cloud', req.args.name) != 'job' || c.get('cloud', req.args.name, 'owner') != u) return { error: 'unknown job' };
+				c.delete('cloud', req.args.name); c.commit('cloud');
+				sh(CRON + ' sync');
+				return { ok: true, jobs: cloud_jobs(cursor(), u) };
+			}
+		},
+
+		cloud_job_run: {
+			args: { name: '' },
+			call: function(req) {
+				let u = session_user(req), c = cursor();
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				if (c.get('cloud', req.args.name) != 'job' || c.get('cloud', req.args.name, 'owner') != u) return { error: 'unknown job' };
+				system(sprintf('mkdir -p %s; printf "state=running\\nstarted=%%s\\n" "$(date +%%s)" > %s/%s.state; start-stop-daemon -S -b -x %s -- run %s',
+					CLOUD_ST, CLOUD_ST, req.args.name, CLOUD, req.args.name));
+				return { started: true };
+			}
+		},
+
 		passwd: {
 			args: { old: '', password: '' },
 			call: function(req) {
@@ -1414,6 +1707,192 @@ return {
 				}
 				if (!req.args.apply) return { ok: true, preview: true, encrypted: !!req.args.password, ...backup_summary(j) };
 				return backup_restore(j);
+			}
+		}
+	},
+
+	'shareos.paperless': {
+		get: {
+			call: function() {
+				let c = cursor(), list = [];
+				c.foreach('paperless', 'inbox', (x) => { push(list, inbox_info(c, x['.name'])); });
+				return { ...paperless_global(c), inboxes: list };
+			}
+		},
+
+		set_global: {
+			args: { url: '', enabled: true, interval: 2, after: '' },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (a.url != null && a.url != '' && !match(a.url, /^https?:\/\/[A-Za-z0-9.:\[\]_-]+(:[0-9]+)?(\/[^\s]*)?$/)) return { error: 'invalid URL (http://… or https://…)' };
+				if (a.interval != null && !(+a.interval >= 1 && +a.interval <= 60)) return { error: 'interval 1–60 minutes' };
+				if (a.after && !(a.after in { delete: 1, keep: 1 })) return { error: 'invalid value' };
+				c.set('paperless', 'global', 'global');
+				if (a.url != null) c.set('paperless', 'global', 'url', replace(a.url, /\/+$/, ''));
+				if (a.enabled != null) c.set('paperless', 'global', 'enabled', a.enabled ? '1' : '0');
+				if (a.interval != null) c.set('paperless', 'global', 'interval', '' + int(+a.interval));
+				if (a.after) c.set('paperless', 'global', 'after', a.after);
+				c.commit('paperless');
+				sh(CRON + ' sync');
+				return paperless_global(c);
+			}
+		},
+
+		test: {
+			args: { url: '', token: '', inbox: '' },
+			call: function(req) {
+				let c = cursor(), tok = req.args.token || (req.args.inbox ? c.get('paperless', req.args.inbox, 'token') : null);
+				let url = req.args.url || c.get('paperless', 'global', 'url');
+				if (!url || !tok) return { error: 'URL and token needed' };
+				let r = sh(sprintf("printf '%%s\\n' %s | %s test %s", shq(tok), PAPERLESS, shq(url)));
+				let m = match(r.out, /ok documents=([0-9?]+)/);
+				return m ? { ok: true, documents: m[1] } : tool_result(r);
+			}
+		},
+
+		// admin inboxes: one per user (owner) or a shared one on a share
+		inbox_set: {
+			args: { name: '', owner: '', share: '', token: '', tags: [], enabled: true },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (!match(a.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name (a-z, 0-9 and _)' };
+				let exists = c.get('paperless', a.name) == 'inbox';
+				if (a.owner) {
+					if (c.get('accounts', a.owner) != 'user') return { error: 'unknown user' };
+					if (!c.get('accounts', a.owner, 'home')) return { error: 'the user has no personal folder' };
+					a.share = '';
+				} else if (c.get('shares', a.share) != 'share') return { error: 'choose a share for a shared inbox' };
+				if (a.token && !token_ok(a.token)) return { error: 'invalid token' };
+				if (!a.token && !exists) return { error: 'token needed (Paperless → profile → API token)' };
+				inbox_save(c, a.name, a);
+				return { ok: true, inbox: inbox_info(c, a.name) };
+			}
+		},
+
+		inbox_del: {
+			args: { name: '' },
+			call: function(req) {
+				let c = cursor();
+				if (c.get('paperless', req.args.name) != 'inbox') return { error: 'unknown inbox' };
+				c.delete('paperless', req.args.name); c.commit('paperless');
+				sh(CRON + ' sync');
+				return { ok: true };   // the folder and its files stay
+			}
+		},
+
+		run: {
+			call: function() {
+				system('start-stop-daemon -S -b -x ' + PAPERLESS + ' -- run');
+				return { started: true };
+			}
+		},
+
+		tags: {
+			args: { inbox: '' },
+			call: function(req) {
+				if (!match(req.args.inbox ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid inbox' };
+				let j = json(sh(PAPERLESS + ' tags ' + shq(req.args.inbox)).out);
+				return { tags: map(j?.results ?? [], (t) => ({ id: t.id, name: t.name })) };
+			}
+		},
+
+		log: {
+			args: { inbox: '' },
+			call: function(req) {
+				let c = cursor();
+				if (c.get('paperless', req.args.inbox) != 'inbox') return { error: 'unknown inbox' };
+				return { entries: paperless_log(inbox_path(c, req.args.inbox), 100) };
+			}
+		}
+	},
+
+	'shareos.cloud': {
+		status: { call: function() { return cloud_status(); } },
+
+		install: {
+			call: function() {
+				let st = cloud_status();
+				if (!st.apps) return { error: 'no apps area – set up a volume first (Storage)' };
+				system('mkdir -p ' + CLOUD_ST + ' && echo state=installing > ' + CLOUD_ST + '/install');
+				system('start-stop-daemon -S -b -x ' + CLOUD + ' -- install');
+				return { started: true };
+			}
+		},
+
+		remotes: { call: function() { return { remotes: cloud_remotes('-') }; } },
+
+		remote_add: {
+			args: { name: '', type: '', params: {}, raw: '' },
+			call: function(req) { let r = cloud_remote_add('', req.args); return r.error ? r : { ok: true, remotes: cloud_remotes('-') }; }
+		},
+
+		remote_del: {
+			args: { name: '' },
+			call: function(req) {
+				if (!match(req.args.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name' };
+				let r = tool_result(sh(CLOUD + ' remote-del - ' + shq(req.args.name)));
+				return r.error ? r : { ok: true, remotes: cloud_remotes('-') };
+			}
+		},
+
+		remote_test: {
+			args: { name: '' },
+			call: function(req) {
+				if (!match(req.args.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name' };
+				let r = sh(CLOUD + ' remote-test - ' + shq(req.args.name));
+				let m = match(r.out, /ok folders=([0-9]+)/);
+				return m ? { ok: true, folders: +m[1] } : tool_result(r);
+			}
+		},
+
+		jobs: { call: function() { return { jobs: cloud_jobs(cursor(), null) }; } },
+
+		job_set: {
+			args: { name: '', remote: '', remote_path: '', local: '', mode: '', schedule: '', bwlimit: '', enabled: true },
+			call: function(req) {
+				let c = cursor();
+				// the admin edits system jobs here; a user's job keeps its owner
+				let owner = c.get('cloud', req.args.name) == 'job' ? (c.get('cloud', req.args.name, 'owner') ?? '') : '';
+				let r = cloud_job_save(c, owner, req.args);
+				return r.error ? r : { ok: true, jobs: cloud_jobs(cursor(), null) };
+			}
+		},
+
+		job_del: {
+			args: { name: '' },
+			call: function(req) {
+				let c = cursor();
+				if (c.get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
+				c.delete('cloud', req.args.name); c.commit('cloud');
+				sh(CRON + ' sync');
+				return { ok: true, jobs: cloud_jobs(cursor(), null) };
+			}
+		},
+
+		job_run: {
+			args: { name: '' },
+			call: function(req) {
+				if (cursor().get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
+				system(sprintf('mkdir -p %s; printf "state=running\\nstarted=%%s\\n" "$(date +%%s)" > %s/%s.state; start-stop-daemon -S -b -x %s -- run %s',
+					CLOUD_ST, CLOUD_ST, req.args.name, CLOUD, req.args.name));
+				return { started: true };
+			}
+		},
+
+		job_stop: {
+			args: { name: '' },
+			call: function(req) {
+				if (cursor().get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
+				return tool_result(sh(CLOUD + ' stop ' + shq(req.args.name)));
+			}
+		},
+
+		job_log: {
+			args: { name: '' },
+			call: function(req) {
+				let c = cursor();
+				if (c.get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
+				return { lines: cloud_log(c, req.args.name, 80) };
 			}
 		}
 	},
