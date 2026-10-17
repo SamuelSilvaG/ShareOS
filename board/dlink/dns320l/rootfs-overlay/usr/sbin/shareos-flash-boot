@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# shareos-flash-boot – write the ShareOS kernel + initramfs into flash
+# (partitions "uImage" and "ramdisk"), so the stock U-Boot starts ShareOS
+# on its own. The system itself must already be in "image" (shareos-install-ubi).
+#
+#   shareos-flash-boot tftp://<server> --yes    uImage, urootfs, SHA256SUMS via TFTP
+#   shareos-flash-boot <dir> --yes              same files from a local directory
+#
+# Before writing, the current contents of both partitions (e.g. Alt-F) are
+# saved to /root/boot-backup/ (once). Never touches u-boot, image,
+# mini firmware, config or my-dlink.
+#
+set -e
+
+SRC=""; YES=0
+for a in "$@"; do
+	case "$a" in
+		--yes) YES=1 ;;
+		-*) echo "unknown option $a"; exit 2 ;;
+		*) SRC="$a" ;;
+	esac
+done
+if [ -z "$SRC" ] || [ $YES != 1 ]; then
+	sed -n '3,13s/^# \{0,1\}//p' "$0"
+	echo; echo "Nothing done. Add --yes to really write to flash."
+	exit 2
+fi
+
+die() { echo "shareos-flash-boot: $*" >&2; exit 1; }
+mtd_by_name() { sed -n "s/^\(mtd[0-9]*\):.*\"$1\"\$/\1/p" /proc/mtd; }
+part_size() { printf '%d' "0x$(sed -n "s/^$1: \([0-9a-f]*\) .*/\1/p" /proc/mtd)"; }
+
+K=$(mtd_by_name uImage); R=$(mtd_by_name ramdisk)
+[ -n "$K" ] && [ -n "$R" ] || die "partitions uImage/ramdisk not found"
+[ "$(part_size $K)" = 5242880 ] && [ "$(part_size $R)" = 5242880 ] || die "unexpected partition sizes, refusing"
+[ "$(nanddump -q -l 2048 /dev/$(mtd_by_name image) 2>/dev/null | head -c 4)" = "UBI#" ] || \
+	die "no ShareOS system in 'image' – run shareos-install-ubi first"
+
+# get the files
+D=/tmp/flash-boot; rm -rf $D; mkdir -p $D
+case "$SRC" in
+	tftp://*)
+		host=${SRC#tftp://}; host=${host%%/*}
+		for f in uImage urootfs SHA256SUMS; do
+			tftp -b 1468 -g -r $f -l $D/$f "$host" || die "TFTP download of $f failed"
+		done ;;
+	*)
+		for f in uImage urootfs SHA256SUMS; do cp "$SRC/$f" $D/ || die "$SRC/$f missing"; done ;;
+esac
+(cd $D && grep -E ' (uImage|urootfs)$' SHA256SUMS | sha256sum -c -s) || die "checksum mismatch"
+
+# check the U-Boot headers: magic, ShareOS image name, 3 MB limit of the stock U-Boot
+check() {
+	[ "$(head -c 4 "$1" | hexdump -e '4/1 "%02x"')" = 27051956 ] || die "$1: not a U-Boot image"
+	name=$(dd if="$1" bs=1 skip=32 count=32 2>/dev/null | tr -d '\0')
+	case "$name" in ShareOS-*) ;; *) die "$1: image name '$name' is not ShareOS" ;; esac
+	[ $(wc -c < "$1") -le 3145728 ] || die "$1: larger than 3 MB, U-Boot would not load it"
+	echo "$(basename "$1"): $name, $(wc -c < "$1") bytes"
+}
+check $D/uImage
+check $D/urootfs
+
+# backup of the current boot partitions (kept on the first run only)
+B=/root/boot-backup
+if [ ! -s $B/uImage.bin ] || [ ! -s $B/ramdisk.bin ]; then
+	mkdir -p $B
+	nanddump -q -f $B/uImage.bin /dev/$K
+	nanddump -q -f $B/ramdisk.bin /dev/$R
+	echo "old boot partitions saved to $B (copy them to your PC: scp -r root@<ip>:$B .)"
+fi
+
+write() {
+	f=$1; m=$2
+	len=$(wc -c < "$f")
+	echo "writing $(basename "$f") to $m ..."
+	flash_erase -q /dev/$m 0 0
+	nandwrite -q -p /dev/$m "$f"
+	nanddump -q -l "$len" -f $D/readback /dev/$m
+	head -c "$len" $D/readback | cmp -s - "$f" || die "read-back of $m differs!"
+	echo "  verified"
+}
+write $D/urootfs $R
+write $D/uImage $K
+sync
+echo "done – ShareOS now starts from flash on power-on (no TFTP needed)"

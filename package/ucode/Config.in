@@ -1,0 +1,15 @@
+config BR2_PACKAGE_UCODE
+	bool "ucode"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	depends on !BR2_STATIC_LIBS # dlopen() of modules
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBUBOX
+	select BR2_PACKAGE_UBUS
+	select BR2_PACKAGE_UCI
+	help
+	  Small ECMAScript-like scripting language from OpenWrt, used by
+	  the ShareOS backend (rpcd plugins) and its templates. Built
+	  with the fs, io, math, struct, log, socket, resolv, uloop,
+	  ubus and uci modules.
+
+	  https://ucode.mein.io/

@@ -1,0 +1,11 @@
+# ShareOS storage (UCI). Written by the web interface / shareos-storage.
+#
+# config volume '<name>'      one mounted file system, mounted at /mnt/<name>
+#	option uuid   '<filesystem uuid>'
+#	option fstype 'ext4'
+#	option enabled '1'
+#	option layout 'mirror|single|disk'   (information only)
+
+config global 'global'
+	# spin disks down after this many minutes without access (0 = never)
+	option spindown '20'

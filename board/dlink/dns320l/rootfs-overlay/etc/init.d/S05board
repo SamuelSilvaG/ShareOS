@@ -1,0 +1,85 @@
+#!/bin/sh
+#
+# ShareOS – DNS-320L board bring-up (phase 1)
+#
+# - LEDs and the Alt-F style /tmp/sys interface used by dns320l-daemon
+# - dns320l-daemon: talks to the Weltrend MCU on /dev/ttyS1
+#   (fan, temperature, power LED, RTC, power-off)
+# - shareos-board: fan curve + power button polling
+#
+
+DAEMON=/usr/sbin/dns320l-daemon
+PIDFILE=/var/run/dns320l-daemon.pid
+BOARDPID=/var/run/shareos-board.pid
+
+led() { [ -e "/sys/class/leds/$1/brightness" ] && echo "$2" > "/sys/class/leds/$1/brightness"; }
+
+# The real MAC address is stored at the start of the "mini firmware"
+# partition; without this eth0 keeps the Marvell default 00:50:43:00:02:02.
+set_mac() {
+	mtd=$(sed -n 's/^\(mtd[0-9]*\):.*"mini firmware"$/\1/p' /proc/mtd)
+	[ -n "$mtd" ] || return
+	mac=$(nanddump -q -l 2048 /dev/$mtd 2>/dev/null | grep -aoE '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | head -1)
+	cur=$(cat /sys/class/net/eth0/address 2>/dev/null)
+	# already set by the initramfs (netroot) -> nothing to do
+	if [ -n "$mac" ] && [ "$(echo "$mac" | tr A-F a-f)" != "$cur" ]; then
+		ip link set dev eth0 address "$mac" && echo -n "MAC $mac, "
+	fi
+}
+
+start() {
+	printf "Starting board support: "
+	set_mac
+
+	mkdir -p /tmp/sys/power_led
+	echo none > /tmp/sys/power_led/trigger
+	echo 1    > /tmp/sys/power_led/brightness
+	echo 100  > /tmp/sys/pwm1          # fan half speed until the first reading
+	echo 0    > /tmp/sys/fan1_input
+
+	led dns320l:red:sata0 0
+	led dns320l:red:sata1 0
+	led dns320l:orange:usb 0
+	led dns320l:blue:usb 0
+	# blue USB LED blinks while ShareOS is running
+	[ -e /sys/class/leds/dns320l:blue:usb/trigger ] && \
+		echo heartbeat > /sys/class/leds/dns320l:blue:usb/trigger
+
+	if grep -q "DNS-320L" /proc/device-tree/model 2>/dev/null; then
+		start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "$DAEMON" -- -f
+		start-stop-daemon -S -q -b -m -p "$BOARDPID" -x /usr/sbin/shareos-board
+		# system time from the MCU's RTC (UTC); ntpd refines it later
+		i=0
+		while [ $i -lt 10 ]; do
+			"$DAEMON" -x hctosys >/dev/null 2>&1 && { echo -n "time $(date '+%F %T'), "; break; }
+			sleep 0.5; i=$((i + 1))
+		done
+		echo "OK"
+	else
+		echo "not a DNS-320L, skipped"
+	fi
+}
+
+stop() {
+	printf "Stopping board support: "
+	# keep the MCU's RTC in sync, but never write a clock that was never set
+	[ "$(date +%Y)" -ge 2025 ] && "$DAEMON" -x systohc >/dev/null 2>&1
+	start-stop-daemon -K -q -p "$BOARDPID" 2>/dev/null
+	start-stop-daemon -K -q -p "$PIDFILE" 2>/dev/null
+	sleep 1
+	if [ -f /tmp/.poweroff ]; then
+		# ask the MCU to cut power 3 seconds from now
+		sync
+		"$DAEMON" -x DeviceShutdown 3 >/dev/null 2>&1
+		echo "power-off requested from MCU"
+	else
+		echo "OK"
+	fi
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	restart) stop; start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

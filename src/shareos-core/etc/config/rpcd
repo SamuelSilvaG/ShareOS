@@ -1,0 +1,11 @@
+# rpcd logins for the web interface. $p$root = check against root in /etc/shadow.
+
+config rpcd
+	option socket /var/run/ubus/ubus.sock
+	option timeout 30
+
+config login
+	option username 'root'
+	option password '$p$root'
+	list read '*'
+	list write '*'

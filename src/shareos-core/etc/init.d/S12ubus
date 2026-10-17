@@ -1,0 +1,20 @@
+#!/bin/sh
+# ubusd – message bus between ShareOS services
+SOCK=/var/run/ubus/ubus.sock
+PID=/var/run/ubusd.pid
+case "$1" in
+	start)
+		printf "Starting ubusd: "
+		mkdir -p /var/run/ubus
+		start-stop-daemon -S -q -b -m -p $PID -x /usr/sbin/ubusd -- -s $SOCK
+		# wait for the socket so rpcd can connect
+		for i in 1 2 3 4 5 6 7 8 9 10; do [ -S $SOCK ] && break; sleep 0.2; done
+		[ -S $SOCK ] && echo "OK" || echo "FAIL"
+		;;
+	stop)
+		printf "Stopping ubusd: "
+		start-stop-daemon -K -q -p $PID && echo "OK" || echo "FAIL"
+		;;
+	restart) "$0" stop; "$0" start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

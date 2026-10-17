@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# shareos-factory-reset --yes [--no-reboot]
+#
+# Removes all settings and installed packages (the UBIFS overlay) on the next
+# boot and reboots. The system itself and the boot partitions stay.
+#
+case " $* " in *" --yes "*) ;; *)
+	sed -n '3,6s/^# \{0,1\}//p' "$0"; echo "Nothing done. Add --yes."; exit 2 ;;
+esac
+grep -q " /overlay ubifs " /proc/mounts || { echo "not running from flash – nothing to reset"; exit 1; }
+touch /overlay/factory-reset && sync || exit 1
+echo "factory reset scheduled"
+case " $* " in *" --no-reboot "*) exit 0 ;; esac
+reboot

@@ -1,16 +1,17 @@
 config BR2_PACKAGE_ALT_F_UTILS
-	bool "Alt-F-utils"
+	bool "alt-f-utils"
 	help
-	  Provides fan control, hdd sleep and buttons press detection for the DNS-323/321
+	  Device utilities inherited from Alt-F:
+	  dns320l-daemon (Weltrend MCU: fan, RTC, power LED, power
+	  button, shutdown/WOL), sysctrl (fan/temperature/button control)
+	  and dns323-fw (D-Link firmware container tool).
 
-config BR2_PACKAGE_ALT_F_UTILS_TARGET
-	bool "Alt-F-utils-target"
-	depends on BR2_PACKAGE_ALT_F_UTILS
-	help
-	  tools for the target
+if BR2_PACKAGE_ALT_F_UTILS
 
-config BR2_PACKAGE_ALT_F_UTILS_HOST
-	bool "Alt-F-utils-host"
-	depends on BR2_PACKAGE_ALT_F_UTILS
+config BR2_PACKAGE_ALT_F_UTILS_SYSCTRL
+	bool "sysctrl"
 	help
-	  firmware builder for the host
+	  Alt-F system control daemon. Not needed for the phase-1
+	  test system; will be replaced by shareosd modules later.
+
+endif

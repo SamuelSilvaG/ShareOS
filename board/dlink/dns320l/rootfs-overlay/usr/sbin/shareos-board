@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# ShareOS – DNS-320L fan curve and power button (phase 1, interim)
+#
+# dns320l-daemon writes the MCU temperature to /tmp/sys/temp1_input
+# (millidegrees) and applies /tmp/sys/pwm1: 0 = stop, 1..127 = half,
+# 128..255 = full. In phase 1 the fan never stops.
+# Will be replaced by a shareosd module later.
+#
+
+HALF=100
+FULL=255
+UP=50000     # >= 50 °C -> full
+DOWN=45000   # <= 45 °C -> back to half
+
+# power button: mpp29, low = pressed; it can read low at boot,
+# so only arm it after it has been seen released once.
+PWR_CHIP=gpiochip0
+PWR_LINE=29
+armed=0
+state=half
+
+read_button() {
+	gpioget --numeric -c "$PWR_CHIP" "$PWR_LINE" 2>/dev/null
+}
+
+while true; do
+	t=$(cat /tmp/sys/temp1_input 2>/dev/null)
+	case "$t" in
+		''|*[!0-9]*) ;;
+		*)
+			if [ "$state" = half ] && [ "$t" -ge "$UP" ]; then
+				echo $FULL > /tmp/sys/pwm1; state=full
+				logger -t shareos-board "temperature ${t}m°C, fan full"
+			elif [ "$state" = full ] && [ "$t" -le "$DOWN" ]; then
+				echo $HALF > /tmp/sys/pwm1; state=half
+				logger -t shareos-board "temperature ${t}m°C, fan half"
+			fi
+			;;
+	esac
+
+	# poll the power button ten times over the next 5 s
+	i=0
+	while [ $i -lt 10 ]; do
+		b=$(read_button)
+		if [ "$b" = 1 ]; then
+			armed=1
+		elif [ "$b" = 0 ] && [ $armed = 1 ]; then
+			logger -t shareos-board "power button pressed, powering off"
+			/sbin/poweroff
+			exit 0
+		fi
+		sleep 0.5
+		i=$((i + 1))
+	done
+done

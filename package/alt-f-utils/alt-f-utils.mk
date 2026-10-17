@@ -1,45 +1,39 @@
-#############################################################
+################################################################################
 #
-# Alt-F-utils
+# alt-f-utils
 #
-###########################################################
+################################################################################
 
 ALT_F_UTILS_VERSION = 0.1.11
-ALT_F_UTILS_SOURCE = alt-f-utils-$(ALT_F_UTILS_VERSION).tar.gz
-ALT_F_UTILS_SITE = file://$(DL_DIR)
+ALT_F_UTILS_SITE = $(BR2_EXTERNAL_SHAREOS_PATH)/src/alt-f-utils
+ALT_F_UTILS_SITE_METHOD = local
+ALT_F_UTILS_LICENSE = GPL-2.0+
+ALT_F_UTILS_LICENSE_FILES = dns323-fw.c
 
-ALT_F_UTILS_AUTORECONF := NO
-ALT_F_UTILS_LIBTOOL_PATCH = NO
+ALT_F_UTILS_BINS = dns320l-daemon dns323-fw
+ifeq ($(BR2_PACKAGE_ALT_F_UTILS_SYSCTRL),y)
+ALT_F_UTILS_BINS += sysctrl
+endif
 
-ALT_F_UTILS_INSTALL_STAGING := NO
-ALT_F_UTILS_INSTALL_TARGET := YES
+define ALT_F_UTILS_BUILD_CMDS
+	$(foreach b,$(ALT_F_UTILS_BINS), \
+		$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_LDFLAGS) -D_GNU_SOURCE \
+			-o $(@D)/$(b) $(@D)/$(b).c || exit 1;)
+endef
 
-ALT_F_UTILS_DEPENDENCIES := uclibc
+define ALT_F_UTILS_INSTALL_TARGET_CMDS
+	$(foreach b,$(ALT_F_UTILS_BINS), \
+		$(INSTALL) -D -m 0755 $(@D)/$(b) $(TARGET_DIR)/usr/sbin/$(b);)
+endef
 
-ALT_F_UTILS_SRC := package/alt-f-utils/alt-f-utils-$(ALT_F_UTILS_VERSION)
+define HOST_ALT_F_UTILS_BUILD_CMDS
+	$(HOSTCC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -D_GNU_SOURCE \
+		-o $(@D)/dns323-fw $(@D)/dns323-fw.c
+endef
 
-ALT_F_UTILS_MAKE_ENV := CC="$(TARGET_CC) $(TARGET_CFLAGS) -D_GNU_SOURCE" STRIP="$(TARGET_STRIP)"
-ALT_F_UTILS_HOST_MAKE_ENV := STRIP=true
+define HOST_ALT_F_UTILS_INSTALL_CMDS
+	$(INSTALL) -D -m 0755 $(@D)/dns323-fw $(HOST_DIR)/bin/dns323-fw
+endef
 
-$(DL_DIR)/$(ALT_F_UTILS_SOURCE): $(ALT_F_UTILS_SRC)/*.c $(ALT_F_UTILS_SRC)/*.h $(ALT_F_UTILS_SRC)/Makefile
-	(cd package/alt-f-utils/; \
-		rm alt-f-utils-$(ALT_F_UTILS_VERSION)/*~; \
-		$(TAR) --exclude-vcs -cvzf $(ALT_F_UTILS_SOURCE) alt-f-utils-$(ALT_F_UTILS_VERSION); \
-		cp  $(ALT_F_UTILS_SOURCE) $(DL_DIR) \
-	)
-	-make alt-f-utils-dirclean alt-f-utils-host-dirclean
-	touch $@
-
-$(eval $(call AUTOTARGETS,package,alt-f-utils))
-
-$(eval $(call AUTOTARGETS_HOST,package,alt-f-utils))
-
-$(ALT_F_UTILS_HOST_HOOK_POST_INSTALL):
-	mkdir -p $(HOST_DIR)/usr/bin
-	mv $(HOST_DIR)/usr/sbin/dns323-fw $(HOST_DIR)/usr/bin
-	touch $@
-
-$(ALT_F_UTILS_TARGET_CONFIGURE) $(ALT_F_UTILS_HOST_CONFIGURE):
-	touch $@
-
-$(ALT_F_UTILS_TARGET_SOURCE) $(ALT_F_UTILS_HOST_SOURCE): $(DL_DIR)/$(ALT_F_UTILS_SOURCE)
+$(eval $(generic-package))
+$(eval $(host-generic-package))

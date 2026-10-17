@@ -1,0 +1,25 @@
+{
+	"shareos-admin": {
+		"description": "ShareOS administration",
+		"read": {
+			"ubus": {
+				"shareos.system": [ "info", "log" ],
+				"shareos.service": [ "list" ],
+				"shareos.storage": [ "status", "smart" ],
+				"shareos.update": [ "check", "status" ],
+				"uci": [ "get", "state", "configs" ]
+			},
+			"uci": [ "shareos", "storage" ]
+		},
+		"write": {
+			"ubus": {
+				"shareos.system": [ "reboot", "poweroff", "factory_reset", "set_password", "set_hostname" ],
+				"shareos.service": [ "action" ],
+				"shareos.storage": [ "setup", "volume", "spindown" ],
+				"shareos.update": [ "download", "apply", "cancel" ],
+				"uci": [ "set", "add", "delete", "commit", "revert", "apply", "confirm", "rollback" ]
+			},
+			"uci": [ "shareos" ]
+		}
+	}
+}

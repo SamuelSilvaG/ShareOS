@@ -1,0 +1,81 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# one build per branch/PR; a newer push cancels the running one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-tests:
+    # fast checks of the ucode backend (updater) without a firmware build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake libjson-c-dev u-boot-tools curl python3
+      - name: Fetch buildroot (for pinned libubox version)
+        run: make buildroot
+      - name: Build ucode for the host (same commits as the firmware)
+        run: tests/build-host-ucode.sh "$HOME/hostroot"
+      - name: Updater tests
+        run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-update.sh "$HOME/hostroot/bin/ucode"
+
+  firmware:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [dns320l]
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # version.sh uses git describe
+
+      - name: Install host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential bc bison flex cpio rsync unzip file wget \
+            libssl-dev libncurses-dev python3
+
+      - name: Cache downloads
+        uses: actions/cache@v4
+        with:
+          path: dl
+          key: dl-${{ hashFiles('configs/*_defconfig', 'Makefile', 'patches/**/*.hash') }}
+          restore-keys: dl-
+
+      - name: Build ${{ matrix.board }}
+        run: make ${{ matrix.board }}
+
+      - name: Collect images
+        run: |
+          mkdir -p artifacts
+          cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 output/${{ matrix.board }}/images/ShareOS-*.sysupgrade.tar* artifacts/
+          ls -l artifacts
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shareos-${{ matrix.board }}
+          path: artifacts/
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          prerelease: ${{ contains(github.ref_name, '-') }}

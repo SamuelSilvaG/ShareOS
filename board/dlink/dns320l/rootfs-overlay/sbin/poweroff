@@ -1,0 +1,5 @@
+#!/bin/sh
+# Marks a real power-off so that S05board asks the MCU to cut power
+# (a plain reboot must not do that). Same approach as Alt-F.
+touch /tmp/.poweroff
+exec /bin/busybox poweroff "$@"

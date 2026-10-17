@@ -1,0 +1,24 @@
+################################################################################
+#
+# ucode
+#
+################################################################################
+
+UCODE_VERSION = 57367e880e9d4e5d11eb033f968cee80b5dcdd81
+UCODE_SITE = https://github.com/jow-/ucode
+UCODE_SITE_METHOD = git
+UCODE_LICENSE = ISC
+UCODE_LICENSE_FILES = LICENSE
+UCODE_INSTALL_STAGING = YES
+UCODE_DEPENDENCIES = json-c libubox ubus uci
+UCODE_CONF_OPTS = \
+	-DSOVERSION=0 \
+	-DFS_SUPPORT=ON -DIO_SUPPORT=ON -DMATH_SUPPORT=ON \
+	-DSTRUCT_SUPPORT=ON -DLOG_SUPPORT=ON -DSOCKET_SUPPORT=ON \
+	-DRESOLV_SUPPORT=ON -DULOOP_SUPPORT=ON -DUBUS_SUPPORT=ON \
+	-DUCI_SUPPORT=ON \
+	-DNL80211_SUPPORT=OFF -DRTNL_SUPPORT=OFF -DFFI_SUPPORT=OFF \
+	-DZLIB_SUPPORT=OFF -DDIGEST_SUPPORT=OFF -DDEBUG_SUPPORT=OFF \
+	-DSERIAL_SUPPORT=OFF
+
+$(eval $(cmake-package))

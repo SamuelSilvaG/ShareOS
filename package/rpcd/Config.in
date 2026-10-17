@@ -1,0 +1,15 @@
+config BR2_PACKAGE_RPCD
+	bool "rpcd"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	depends on !BR2_STATIC_LIBS # plugins
+	select BR2_PACKAGE_LIBUBOX
+	select BR2_PACKAGE_UBUS
+	select BR2_PACKAGE_UCI
+	select BR2_PACKAGE_UCODE
+	select BR2_PACKAGE_JSON_C
+	help
+	  OpenWrt ubus RPC daemon: sessions, ACLs, uci access, file and
+	  sys plugins, and ucode plugins (/usr/share/rpcd/ucode/*.uc).
+	  The ShareOS web UI talks to it through uhttpd's /ubus endpoint.
+
+	  https://openwrt.org/docs/techref/rpcd

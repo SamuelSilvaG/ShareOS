@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# ShareOS phase-1 hardware check. Prints a report and saves it to
+# /tmp/shareos-check.txt (copy it off with: scp root@<ip>:/tmp/shareos-check.txt .)
+#
+
+OUT=/tmp/shareos-check.txt
+
+section() { echo; echo "=== $* ==="; }
+
+{
+	echo "ShareOS hardware check – $(date)"
+	echo "MCU RTC: $(dns320l-daemon -x ReadRtc 2>/dev/null)"
+	cat /etc/shareos-release 2>/dev/null
+
+	section "Board"
+	tr -d '\0' < /proc/device-tree/model; echo
+	uname -a
+	grep -E "Hardware|Revision|model name|BogoMIPS" /proc/cpuinfo
+	echo "cmdline: $(cat /proc/cmdline)"
+	grep -q kexecmode /proc/cmdline && echo "boot: started via TryIt/kexec (flash unchanged)"
+
+	section "Memory"
+	free
+
+	section "Ethernet (A3 Gigabit check)"
+	ethtool eth0 2>&1 | awk '/Supported link modes|Advertised link modes/{p=1} /pause|Supports auto|Advertised auto/{p=0} p; /Speed|Duplex|Link detected|Auto-negotiation/'
+	for d in /sys/bus/mdio_bus/devices/*; do
+		[ -e "$d/phy_id" ] || continue
+		echo "PHY $(basename "$d"): id $(cat "$d/phy_id"), driver $(basename "$(readlink "$d/driver" 2>/dev/null)" 2>/dev/null)"
+	done
+	ip -4 addr show eth0 | grep inet
+
+	section "MCU / fan / temperature"
+	echo "temperature: $(cat /tmp/sys/temp1_input 2>/dev/null) m°C"
+	echo "fan pwm:     $(cat /tmp/sys/pwm1 2>/dev/null)"
+	pidof dns320l-daemon >/dev/null && echo "dns320l-daemon: running" || echo "dns320l-daemon: NOT running"
+
+	section "Flash (MTD)"
+	cat /proc/mtd
+
+	section "Disks"
+	cat /proc/partitions
+	for d in /sys/block/sd?; do
+		[ -e "$d" ] || continue
+		echo "$(basename $d): $(cat $d/device/model 2>/dev/null) $(($(cat $d/size) / 2048)) MiB"
+	done
+
+	section "USB"
+	ls /sys/bus/usb/devices/ 2>/dev/null
+
+	section "LEDs / input"
+	ls /sys/class/leds/
+	cat /proc/bus/input/devices 2>/dev/null | grep -E "^N:"
+
+	section "Kernel warnings/errors"
+	dmesg | grep -iE "error|fail|warn|timeout" | grep -v "Spectre" | tail -40
+} 2>&1 | tee "$OUT"
+
+echo
+echo "Report saved to $OUT"

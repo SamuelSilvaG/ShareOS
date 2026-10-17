@@ -1,0 +1,21 @@
+From: ShareOS <noreply@github.com>
+Subject: [PATCH] file: parse HTTP dates without strptime %Z
+
+musl's strptime() handles %Z by comparing with tzname[0]/tzname[1], which
+are NULL until tzset() has run - uhttpd never calls it, so every request
+with an If-Modified-Since or If-Unmodified-Since header (any browser
+revalidating a cached page) crashed uhttpd with SIGSEGV.
+
+HTTP dates are always GMT (RFC 9110), so match the zone literally.
+
+--- a/file.c
++++ b/file.c
+@@ -312,7 +312,7 @@ static time_t uh_file_date2unix(const char *date)
+ 
+ 	memset(&t, 0, sizeof(t));
+ 
+-	if (strptime(date, "%a, %d %b %Y %H:%M:%S %Z", &t) != NULL)
++	if (strptime(date, "%a, %d %b %Y %H:%M:%S GMT", &t) != NULL)
+ 		return timegm(&t);
+ 
+ 	return 0;

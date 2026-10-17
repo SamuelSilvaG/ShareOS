@@ -1,0 +1,10 @@
+config BR2_PACKAGE_UCI
+	bool "uci"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libubox -> json-c
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LIBUBOX
+	help
+	  OpenWrt Unified Configuration Interface: library and CLI for
+	  the /etc/config/* files. ShareOS keeps all settings in UCI.
+
+	  https://openwrt.org/docs/guide-user/base-system/uci

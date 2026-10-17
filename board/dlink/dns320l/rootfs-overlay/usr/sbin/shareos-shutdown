@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Last shutdown step: leave the UBIFS overlay (/overlay) cleanly.
+# busybox "umount -a -r" cannot unmount it while / (overlayfs) sits on top,
+# so without this UBIFS needs a journal recovery on every boot.
+#
+sync
+mount -o remount,ro / 2>/dev/null
+grep -q " /overlay ubifs " /proc/mounts && \
+	{ mount -o remount,ro /overlay || echo "shareos-shutdown: /overlay still busy"; }
+sync

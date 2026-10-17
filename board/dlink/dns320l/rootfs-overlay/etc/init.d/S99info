@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Print where to reach the box once it is up.
+#
+case "$1" in
+	start)
+		# DHCP may still be running in the background (link comes up late)
+		i=0
+		while [ $i -lt 20 ]; do
+			ip=$(ip -4 addr show eth0 2>/dev/null | sed -n 's/.*inet \([0-9.]*\).*/\1/p')
+			[ -n "$ip" ] && break
+			sleep 1; i=$((i + 1))
+		done
+		speed=$(cat /sys/class/net/eth0/speed 2>/dev/null)
+		msg="ShareOS phase-1 test system ready: ssh root@${ip:-<no ip>} (password: shareos), link ${speed:-?} Mbit/s. Run 'shareos-check'."
+		echo "$msg"
+		echo "$msg" > /etc/motd
+		logger -t shareos "$msg"
+		;;
+esac
