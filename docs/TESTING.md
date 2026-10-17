@@ -48,6 +48,11 @@ check the hardware.
 
 ## 3. Write the system to flash
 
+> The `.bin` of a release only contains the kernel and the boot system. Flashed
+> from the Alt-F or D-Link firmware page, the box then starts in rescue mode
+> until the system (step below) is installed. An install page for this is
+> planned.
+
 On the box, still in the network boot from step 2:
 ```sh
 shareos-install-ubi tftp://<pc ip>/rootfs.squashfs --yes

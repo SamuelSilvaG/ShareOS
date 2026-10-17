@@ -1563,6 +1563,11 @@ async function refreshUpdateStatus() {
 	try {
 		const prev = S.upd?.state;
 		S.upd = await rpc('shareos.update', 'status');
+		// the updater runs as its own process: right after a click its status can
+		// still say 'ready'/'idle' for a moment – keep showing what was started
+		const pend = S.updPending;
+		if (pend && Date.now() < pend.until && ['ready', 'idle'].includes(S.upd.state)) S.upd = { ...S.upd, state: pend.state, step: '' };
+		else S.updPending = null;
 		if (S.upd.check && !S.check) S.check = { ...S.upd.check, current: S.upd.current };
 		// look for updates now and then (GitHub allows 60 anonymous API calls per hour)
 		if (!prev && !S.checking && (!S.upd.check || Date.now() / 1000 - S.upd.check.time > 6 * 3600)) checkUpdates(true);
@@ -1570,7 +1575,7 @@ async function refreshUpdateStatus() {
 		if (prev && prev !== S.upd.state && S.upd.state === 'ready') toast('Update geladen und geprüft.');
 		if (prev && prev !== S.upd.state && S.upd.state === 'flashed') toast('Update geschrieben – bitte neu starten.');
 		const busy = ['downloading', 'verifying', 'flashing'].includes(S.upd.state);
-		S.updTimer = setTimeout(refreshUpdateStatus, busy ? 1000 : 30000);
+		S.updTimer = setTimeout(refreshUpdateStatus, busy || S.updPending ? 1000 : 30000);
 	} catch (e) {
 		if (e.code !== 'auth') S.updTimer = setTimeout(refreshUpdateStatus, 10000);
 	}
@@ -1684,19 +1689,23 @@ const ACTIONS = {
 	},
 
 	async download(el) {
+		el.disabled = true;
+		S.updPending = { state: 'downloading', until: Date.now() + 15000 };
 		S.upd = { ...S.upd, state: 'downloading', progress: null };
 		renderMain();
 		try { await rpc('shareos.update', 'download', { tag: el.dataset.tag }); refreshUpdateStatus(); }
-		catch (e) { toast('Download: ' + e.message, true); refreshUpdateStatus(); }
+		catch (e) { S.updPending = null; toast('Download: ' + e.message, true); refreshUpdateStatus(); }
 	},
 
 	async apply(el) {
 		const tag = el.dataset.tag;
-		if (!await confirmDlg('Update installieren?', `ShareOS ${tag.replace(/^v/, '')} wird in den Flash geschrieben. Danach ist ein Neustart nötig, bei dem das neue System installiert wird. Während des Schreibens die Box nicht ausschalten.`, 'Installieren')) return;
+		el.disabled = true;
+		if (!await confirmDlg('Update installieren?', `ShareOS ${tag.replace(/^v/, '')} wird in den Flash geschrieben. Danach ist ein Neustart nötig, bei dem das neue System installiert wird. Während des Schreibens die Box nicht ausschalten.`, 'Installieren')) { el.disabled = false; return; }
+		S.updPending = { state: 'flashing', until: Date.now() + 15000 };
 		S.upd = { ...S.upd, state: 'flashing', step: '' };
 		renderMain();
 		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
-		catch (e) { toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
+		catch (e) { S.updPending = null; toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
 	},
 
 	async cancel() {

@@ -48,6 +48,11 @@ Niemals `saveenv` eingeben. Anmelden mit `root` / `shareos`. Mit
 
 ## 3. System in den Flash schreiben
 
+> Die `.bin` aus einem Release enthält nur Kernel und Startsystem. Über die
+> Firmware-Seite von Alt-F oder D-Link geflasht, startet die Box danach im
+> Rettungsmodus, bis das System (Schritt unten) installiert ist. Eine
+> Installationsseite dafür ist geplant.
+
 Auf der Box, im Netzwerk-Start aus Schritt 2:
 ```sh
 shareos-install-ubi tftp://<IP des PCs>/rootfs.squashfs --yes

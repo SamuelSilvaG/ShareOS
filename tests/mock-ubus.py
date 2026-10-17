@@ -9,6 +9,7 @@ The data imitates a DNS-320L with two disks, a mirror in initial sync and an
 update available.
 """
 import json
+import os
 import sys
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -149,14 +150,19 @@ def call(obj, method, args):
         if method == 'apply':
             STATE['apply_t'] = time.time()
             return {'started': True}
+        rel = {'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1'}
+        if method == 'status' and STATE.get('apply_t') and time.time() - STATE['apply_t'] < 2:
+            # like the real updater: just after the click it may still report 'ready'
+            return {'state': 'ready', 'current': '0.1.0-beta.1', 'release': rel}
         if method == 'status' and STATE.get('apply_t'):
             # walk through the flashing steps, 3 s each
             steps = ['check bundle', 'stage rootfs', 'erase ramdisk', 'write ramdisk', 'verify ramdisk', 'erase uImage', 'write uImage', 'verify uImage']
-            i = int((time.time() - STATE['apply_t']) / 3)
-            rel = {'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1'}
+            i = int((time.time() - STATE['apply_t'] - 2) / 3)
             if i < len(steps):
                 return {'state': 'flashing', 'step': steps[i], 'current': '0.1.0-beta.1', 'release': rel}
             return {'state': 'flashed', 'current': '0.1.0-beta.1', 'release': rel, 'pending_reboot': True}
+        if method == 'status' and os.environ.get('MOCK_UPDATE_READY'):
+            return {'state': 'ready', 'current': '0.1.0-beta.1', 'release': rel}
         check = {'time': int(time.time()), 'channel': STATE['channel'], 'repo': 'UniqueDroid/ShareOS', 'releases': RELEASES,
                  'latest': 'v0.2.0-beta.1', 'update_available': True}
         if method == 'check':
