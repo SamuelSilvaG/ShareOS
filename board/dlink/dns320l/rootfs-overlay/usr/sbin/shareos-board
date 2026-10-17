@@ -1,17 +1,14 @@
 #!/bin/sh
 #
-# ShareOS – DNS-320L fan curve and power button (phase 1, interim)
+# ShareOS – DNS-320L fan control and power button
 #
 # dns320l-daemon writes the MCU temperature to /tmp/sys/temp1_input
 # (millidegrees) and applies /tmp/sys/pwm1: 0 = stop, 1..127 = half,
-# 128..255 = full. In phase 1 the fan never stops.
-# Will be replaced by a shareosd module later.
+# 128..255 = full. The curve comes from UCI shareos.fan (presets or custom
+# temperatures) and is re-read every cycle, so changes apply within seconds.
 #
 
-HALF=100
-FULL=255
-UP=50000     # >= 50 °C -> full
-DOWN=45000   # <= 45 °C -> back to half
+OFF=0; HALF=100; FULL=255
 
 # power button: mpp29, low = pressed; it can read low at boot,
 # so only arm it after it has been seen released once.
@@ -24,17 +21,47 @@ read_button() {
 	gpioget --numeric -c "$PWR_CHIP" "$PWR_LINE" 2>/dev/null
 }
 
+# sets OFF_T FULL_T HALF_T (millidegrees; OFF_T=0 means never stop)
+read_curve() {
+	p=$(uci -q get shareos.fan.preset || echo balanced)
+	case "$p" in
+		quiet)  OFF_T=40000; FULL_T=55000; HALF_T=50000 ;;
+		cool)   OFF_T=0;     FULL_T=45000; HALF_T=42000 ;;
+		custom)
+			o=$(uci -q get shareos.fan.off_temp || echo 0)
+			f=$(uci -q get shareos.fan.full_temp || echo 50)
+			h=$(uci -q get shareos.fan.half_temp || echo 45)
+			OFF_T=$((o * 1000)); FULL_T=$((f * 1000)); HALF_T=$((h * 1000))
+			[ $HALF_T -lt $FULL_T ] || HALF_T=$((FULL_T - 3000))
+			;;
+		*)      OFF_T=0;     FULL_T=50000; HALF_T=45000 ;;
+	esac
+}
+
+set_fan() {
+	[ "$state" = "$1" ] && return
+	case "$1" in off) v=$OFF ;; half) v=$HALF ;; full) v=$FULL ;; esac
+	echo $v > /tmp/sys/pwm1
+	logger -t shareos-board "temperature ${t}m°C, fan $1"
+	state=$1
+}
+
 while true; do
+	read_curve
 	t=$(cat /tmp/sys/temp1_input 2>/dev/null)
 	case "$t" in
 		''|*[!0-9]*) ;;
 		*)
-			if [ "$state" = half ] && [ "$t" -ge "$UP" ]; then
-				echo $FULL > /tmp/sys/pwm1; state=full
-				logger -t shareos-board "temperature ${t}m°C, fan full"
-			elif [ "$state" = full ] && [ "$t" -le "$DOWN" ]; then
-				echo $HALF > /tmp/sys/pwm1; state=half
-				logger -t shareos-board "temperature ${t}m°C, fan half"
+			if [ "$t" -ge "$FULL_T" ]; then
+				set_fan full
+			elif [ "$state" = full ] && [ "$t" -gt "$HALF_T" ]; then
+				:                                   # stay full until below half_temp
+			elif [ "$OFF_T" -gt 0 ] && [ "$t" -lt $((OFF_T - 2000)) ]; then
+				set_fan off                         # 2 °C hysteresis around off_temp
+			elif [ "$state" = off ] && [ "$t" -lt "$OFF_T" ]; then
+				:
+			else
+				set_fan half
 			fi
 			;;
 	esac

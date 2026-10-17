@@ -324,7 +324,76 @@
 		"Lade …": "Loading …",
 		"SPRACHE DER OBERFLÄCHE": "INTERFACE LANGUAGE",
 		"Weitere Sprachen: eine Datei in": "More languages: one file in",
-		"– siehe docs/TRANSLATING.md.": "– see docs/TRANSLATING.md."
+		"– siehe docs/TRANSLATING.md.": "– see docs/TRANSLATING.md.",
+		"AUS UNTER (°C, 0 = NIE)": "OFF BELOW (°C, 0 = NEVER)",
+		"VOLL AB (°C)": "FULL FROM (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "BACK TO HALF BELOW (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "Everything can be set later under System. The password stays \"shareos\" until you change it.",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "Take over Alt-F",
+		"Auch Testversionen, mit neuen Funktionen früher.": "Test versions too, with new features earlier.",
+		"Auf dieser Box wurden Einstellungen von": "This box has settings from",
+		"gefunden": "",
+		"Ausgewogen": "Balanced",
+		"Benutzer": "Users",
+		"Freigaben": "Shares",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "Users and shares are kept and offered in the \"Shares\" area. The Alt-F data in flash stays untouched.",
+		"Beta": "Beta",
+		"Stabil": "Stable",
+		"Danach kannst du gleich die Festplatten einrichten.": "Next, you can set up the hard disks right away.",
+		"Das Standardpasswort": "Everyone knows the default password",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– please set your own now. It applies to the web interface and SSH.",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "The box runs the fan in three steps (off, half, full) according to the board temperature. Changes apply within seconds.",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "The orange USB LED shows rescue mode and updates during boot and cannot be changed.",
+		"ERSTEINRICHTUNG": "FIRST-TIME SETUP",
+		"Eigene Werte": "Custom values",
+		"Ersteinrichtung abgeschlossen.": "First-time setup finished.",
+		"Ersteinrichtung erneut starten": "Run first-time setup again",
+		"Ersteinrichtung überspringen?": "Skip first-time setup?",
+		"Fertig": "Done",
+		"Fertig & Speicher einrichten": "Done & set up storage",
+		"Gerätename": "Device name",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "Take over device name, time zone and fan",
+		"Herzschlag (ShareOS läuft)": "Heartbeat (ShareOS running)",
+		"Kühl": "Cool",
+		"Leise": "Quiet",
+		"LEDS": "LEDS",
+		"LÜFTER & LEDS": "FAN & LEDS",
+		"Lüfter": "Fan",
+		"Leer lassen, um das Passwort später zu ändern.": "Leave empty to change the password later.",
+		"Lüfter läuft immer, voll ab 45 °C": "Fan always on, full from 45 °C",
+		"Lüfter läuft immer, voll ab 50 °C": "Fan always on, full from 50 °C",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "Fan stops below 40 °C, full from 55 °C",
+		"Name & Zeit": "Name & time",
+		"Nur fertige Versionen – empfohlen.": "Finished versions only – recommended.",
+		"PLATTEN-LEDS (ROT)": "DISK LEDS (RED)",
+		"POWER-LED": "POWER LED",
+		"STATUS-LED (BLAU)": "STATUS LED (BLUE)",
+		"Passwort": "Password",
+		"Plattenzugriffe anzeigen": "Show disk access",
+		"Sprache": "Language",
+		"Temperaturen selbst festlegen": "Set the temperatures yourself",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "The box appears under this name on the network. The clock sets itself via NTP.",
+		"Update-Kanal": "Update channel",
+		"Updates": "Updates",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "Updates come from GitHub and are installed under System → Firmware.",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "Welcome to ShareOS. The box is set up in a few steps; everything can be changed later under",
+		"ändern.": ".",
+		"ZEITZONE": "TIME ZONE",
+		"Zeitzone": "Time zone",
+		"blinkt": "blinking",
+		"an": "on",
+		"sofort aktiv": "applies at once",
+		"wird geändert": "will be changed",
+		"bleibt (später ändern)": "stays (change later)",
+		"ja": "yes",
+		"nein": "no",
+		"Überspringen": "Skip",
+		"Lüfter gespeichert.": "Fan saved.",
+		"LED gespeichert.": "LED saved.",
+		"Ungültiger Gerätename.": "Invalid device name.",
+		"Das Passwort braucht mindestens 6 Zeichen.": "The password needs at least 6 characters."
 	},
 	"patterns": [
 		[
@@ -490,6 +559,18 @@
 		[
 			"^(\\S+): neu gestartet$",
 			"$1: restarted"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)."
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"full from $1 °C"
+		],
+		[
+			"^jetzt: (.+)$",
+			"now: $1"
 		]
 	],
 	"words": [
@@ -666,6 +747,21 @@
 		[
 			"^Logo: ",
 			"Logo: ",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"half",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"Fan: ",
+			""
+		],
+		[
+			"^Hardware: ",
+			"Hardware: ",
 			""
 		]
 	]

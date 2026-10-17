@@ -17,7 +17,7 @@ from pathlib import Path
 WWW = Path(__file__).resolve().parent.parent / 'src/shareos-core/www'
 SID = 'c0ffee00c0ffee00c0ffee00c0ffee00'
 T0 = time.time()
-STATE = {'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False}
+STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full_temp': 50, 'half_temp': 45}, 'led': {'status': 'heartbeat', 'power': 'on', 'disks': 'off'}, 'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False}
 
 DISK = lambda n, model, serial: {
     'name': n, 'type': 'disk', 'size': 4000787030016, 'model': model, 'serial': serial, 'tran': 'sata', 'rm': False, 'rota': True,
@@ -83,6 +83,27 @@ def call(obj, method, args):
             if 'logo' in args:
                 STATE['logo'] = bool(args['logo'])
         return {'lang': STATE['lang'], 'logo': STATE['logo']}
+    if obj == 'shareos.setup':
+        if method == 'status':
+            return {'done': STATE['setup_done'], 'hostname': 'shareos', 'timezone': 'Europe/Berlin', 'lang': STATE['lang'], 'channel': 'stable'}
+        if method == 'zones':
+            return {'zones': ['Europe/Berlin', 'Europe/London', 'Europe/Vienna', 'Europe/Zurich', 'America/New_York', 'UTC'], 'current': 'Europe/Berlin'}
+        if method == 'altf':
+            return {'found': True, 'file': 'set_2026-07-23_15:20:02.tgz', 'date': '2026-07-23 15:20:02', 'hostname': 'skynet-nas',
+                    'timezone': 'Europe/Berlin', 'users': ['jan:Jan', 'media:Medien'], 'shares': ['Fotos', 'Musik', 'Backup'], 'nfs': ['/mnt/md0/proxmox'], 'fan_lo_temp': '45'}
+        if method in ('apply',):
+            STATE['setup_done'] = True
+            return {'ok': True, 'done': []}
+        if method == 'reset':
+            STATE['setup_done'] = False
+        return {'ok': True}
+    if obj == 'shareos.hw':
+        if method == 'set_fan':
+            STATE['fan'].update(args)
+        if method == 'set_led':
+            STATE['led'].update({k: v for k, v in args.items() if v})
+        return {'fan': STATE['fan'], 'led': STATE['led'], 'temperature': 41000, 'fan_pwm': 100,
+                'presets': {'quiet': {'off_temp': 40, 'full_temp': 55, 'half_temp': 50}}}
     if obj == 'shareos.web':
         if method == 'set':
             STATE.update({k: v for k, v in args.items() if k in ('https', 'redirect')})

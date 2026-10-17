@@ -3,7 +3,9 @@
 		"description": "Language and logo for the login page",
 		"read": {
 			"ubus": {
-				"shareos.ui": [ "get" ]
+				"shareos.ui": [
+					"get"
+				]
 			}
 		}
 	},
@@ -11,27 +13,98 @@
 		"description": "ShareOS administration",
 		"read": {
 			"ubus": {
-				"shareos.system": [ "info", "log" ],
-				"shareos.service": [ "list" ],
-				"shareos.storage": [ "status", "smart" ],
-				"shareos.update": [ "check", "status" ],
-				"shareos.ui": [ "get" ],
-				"shareos.web": [ "get" ],
-				"uci": [ "get", "state", "configs" ]
+				"shareos.system": [
+					"info",
+					"log"
+				],
+				"shareos.service": [
+					"list"
+				],
+				"shareos.storage": [
+					"status",
+					"smart"
+				],
+				"shareos.update": [
+					"check",
+					"status"
+				],
+				"shareos.ui": [
+					"get"
+				],
+				"shareos.web": [
+					"get"
+				],
+				"uci": [
+					"get",
+					"state",
+					"configs"
+				],
+				"shareos.hw": [
+					"get"
+				],
+				"shareos.setup": [
+					"status",
+					"zones",
+					"altf"
+				]
 			},
-			"uci": [ "shareos", "storage" ]
+			"uci": [
+				"shareos",
+				"storage"
+			]
 		},
 		"write": {
 			"ubus": {
-				"shareos.system": [ "reboot", "poweroff", "factory_reset", "set_password", "set_hostname" ],
-				"shareos.service": [ "action" ],
-				"shareos.storage": [ "setup", "volume", "spindown" ],
-				"shareos.update": [ "download", "apply", "cancel" ],
-				"shareos.ui": [ "set" ],
-				"shareos.web": [ "set", "selfsigned", "install" ],
-				"uci": [ "set", "add", "delete", "commit", "revert", "apply", "confirm", "rollback" ]
+				"shareos.system": [
+					"reboot",
+					"poweroff",
+					"factory_reset",
+					"set_password",
+					"set_hostname"
+				],
+				"shareos.service": [
+					"action"
+				],
+				"shareos.storage": [
+					"setup",
+					"volume",
+					"spindown"
+				],
+				"shareos.update": [
+					"download",
+					"apply",
+					"cancel"
+				],
+				"shareos.ui": [
+					"set"
+				],
+				"shareos.web": [
+					"set",
+					"selfsigned",
+					"install"
+				],
+				"uci": [
+					"set",
+					"add",
+					"delete",
+					"commit",
+					"revert",
+					"apply",
+					"confirm",
+					"rollback"
+				],
+				"shareos.hw": [
+					"set_fan",
+					"set_led"
+				],
+				"shareos.setup": [
+					"apply",
+					"reset"
+				]
 			},
-			"uci": [ "shareos" ]
+			"uci": [
+				"shareos"
+			]
 		}
 	}
 }

@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Applies the LED settings from UCI shareos.led (S05board, web interface).
+#
+led() {   # name trigger [brightness]
+	d=/sys/class/leds/$1
+	[ -e $d/trigger ] || return
+	echo "$2" > $d/trigger 2>/dev/null
+	[ -n "$3" ] && echo "$3" > $d/brightness
+}
+
+case "$(uci -q get shareos.led.status || echo heartbeat)" in
+	on)  led dns320l:blue:usb none 1 ;;
+	off) led dns320l:blue:usb none 0 ;;
+	*)   led dns320l:blue:usb heartbeat ;;
+esac
+
+case "$(uci -q get shareos.led.disks || echo off)" in
+	activity) led dns320l:red:sata0 disk-activity; led dns320l:red:sata1 disk-activity ;;
+	*)        led dns320l:red:sata0 none 0; led dns320l:red:sata1 none 0 ;;
+esac
+
+# power LED is driven by the MCU through dns320l-daemon
+if [ -d /tmp/sys/power_led ]; then
+	case "$(uci -q get shareos.led.power || echo on)" in
+		off)   echo none > /tmp/sys/power_led/trigger; echo 0 > /tmp/sys/power_led/brightness ;;
+		blink) echo timer > /tmp/sys/power_led/trigger ;;
+		*)     echo none > /tmp/sys/power_led/trigger; echo 1 > /tmp/sys/power_led/brightness ;;
+	esac
+fi
+exit 0
