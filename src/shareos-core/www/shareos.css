@@ -201,3 +201,8 @@ dialog.dlg .acts{justify-content:flex-end}
 .arrow{color:var(--amber);font-size:22px}
 @media(max-width:640px){.ver{grid-template-columns:1fr}.arrow{display:none}}
 .banner svg{flex:none;width:20px;height:20px;color:var(--amber)}
+/* Logo */
+.brandlogo{display:block;height:72px;width:auto}
+.login .brandlogo{height:auto;width:min(100%,300px);margin:0 auto 4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:640px){.brandlogo{height:52px}}

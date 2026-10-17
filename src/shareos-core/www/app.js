@@ -119,7 +119,8 @@ const S = {
 	timer: null, updTimer: null,
 	theme: store.get('theme') || 'dark',
 	accent: store.get('accent') || 'blue',
-	scan: store.get('scan') !== '0'
+	scan: store.get('scan') !== '0',
+	logo: store.get('logo') !== '0'   // global setting (UCI shareos.ui.logo), cached for the login page
 };
 
 const TABS = [
@@ -275,11 +276,24 @@ function stopPolling() {
 
 /* ---------- layout ---------------------------------------------------------- */
 
+function brand() {
+	if (!S.logo) return html`<h1 class="brand">SHAREOS</h1>`;
+	return html`<h1 style="margin:0"><img class="brandlogo" src="${S.theme === 'light' ? 'logo-light.png' : 'logo-dark.png'}" alt=""><span class="sr">ShareOS</span></h1>`;
+}
+
+async function loadUiSettings() {
+	try {
+		const r = await rpc('uci', 'get', { config: 'shareos', section: 'ui' });
+		const on = (r.values?.logo ?? '1') !== '0';
+		if (on !== S.logo) { S.logo = on; store.set('logo', on ? '1' : '0'); renderHeader(); renderMain(); }
+	} catch (e) { }
+}
+
 function renderLogin(msg = '') {
 	$('#root').innerHTML = html`
 	<div class="login">
 		<form class="panel" id="login-form" autocomplete="on">
-			<h1 class="brand">SHAREOS</h1>
+			${brand()}
 			<p class="prompt">Verwaltung – bitte anmelden.</p>
 			<p class="prompt"><b>root@shareos</b>:~$ login<span class="cursor"></span></p>
 			<label class="f"><span>BENUTZER</span><input name="user" type="text" value="${S.user}" autocomplete="username" required></label>
@@ -318,6 +332,7 @@ function renderShell() {
 	renderTabs();
 	renderMain();
 	startPolling();
+	loadUiSettings();
 }
 
 function renderHeader(offline = false) {
@@ -328,7 +343,7 @@ function renderHeader(offline = false) {
 	const upd = S.check?.update_available ? S.check.latest : null;
 	hd.innerHTML = html`
 		<div>
-			<h1 class="brand">SHAREOS</h1>
+			${brand()}
 			<div class="sub"><b>${i.hostname || '…'}</b>${[(i.model || '').replace(/ NAS$/, ''), 'ShareOS ' + (r.version || '…'), ip].filter(Boolean).map((x) => ' · ' + x).join('')}</div>
 		</div>
 		<div class="side">
@@ -866,6 +881,11 @@ const SYS = {
 				<label class="chk"><input type="checkbox" id="opt-light"${S.theme === 'light' ? raw(' checked') : ''}>Helles Design</label>
 				<label class="chk"><input type="checkbox" id="opt-scan"${S.scan ? raw(' checked') : ''}>Scanlines</label>
 			</div>
+		</div>
+		<div class="panel" style="max-width:560px;margin-top:16px">
+			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
+			<label class="chk"><input type="checkbox" id="opt-logo"${S.logo ? raw(' checked') : ''}>ShareOS-Logo anzeigen (aus: nur Schriftzug)</label>
+			<div style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)">${brand()}</div>
 		</div>`;
 	},
 
@@ -913,7 +933,15 @@ const VIEWS_AFTER = {
 			});
 		}
 		if (sub === 'darstellung') {
-			$('#opt-light').addEventListener('change', (e) => { S.theme = e.target.checked ? 'light' : 'dark'; store.set('theme', S.theme); applyTheme(); });
+			$('#opt-light').addEventListener('change', (e) => { S.theme = e.target.checked ? 'light' : 'dark'; store.set('theme', S.theme); applyTheme(); renderHeader(); });
+			$('#opt-logo').addEventListener('change', async (e) => {
+				const on = e.target.checked;
+				try {
+					await rpc('uci', 'set', { config: 'shareos', section: 'ui', values: { logo: on ? '1' : '0' } });
+					await rpc('uci', 'commit', { config: 'shareos' });
+					S.logo = on; store.set('logo', on ? '1' : '0'); renderHeader(); renderMain();
+				} catch (err) { e.target.checked = !on; toast('Logo: ' + err.message, true); }
+			});
 			$('#opt-scan').addEventListener('change', (e) => { S.scan = e.target.checked; store.set('scan', S.scan ? '1' : '0'); applyTheme(); });
 		}
 		if (sub === 'firmware') {
@@ -984,7 +1012,7 @@ async function refreshUpdateStatus() {
 /* ---------- actions (delegated clicks) -------------------------------------- */
 
 const ACTIONS = {
-	theme() { S.theme = S.theme === 'light' ? 'dark' : 'light'; store.set('theme', S.theme); applyTheme(); },
+	theme() { S.theme = S.theme === 'light' ? 'dark' : 'light'; store.set('theme', S.theme); applyTheme(); renderHeader(); },
 	logout,
 	accent(el) { S.accent = el.dataset.c; store.set('accent', S.accent); applyTheme(); renderMain(); },
 	check() { checkUpdates(); },
