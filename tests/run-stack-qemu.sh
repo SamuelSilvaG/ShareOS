@@ -41,7 +41,7 @@ rmdir "$R" && "$UNSQ" -q -d "$R" "$SQFS" >/dev/null
 mkdir -p "$R/proc" "$R/dev"
 mount -t proc proc "$R/proc"
 mount --bind /dev "$R/dev"
-sed -i "s/-p 80 /-p $PORT /" "$R/etc/init.d/S50uhttpd"
+sed -i "s/-p 80 /-p $PORT /" "$R/usr/sbin/shareos-uhttpd"
 
 chroot "$R" /bin/sh -c '/etc/init.d/S12ubus start && /etc/init.d/S13rpcd start && /etc/init.d/S50uhttpd start'
 for i in $(seq 50); do curl -s -o /dev/null "http://127.0.0.1:$PORT/" && break; sleep 0.2; done

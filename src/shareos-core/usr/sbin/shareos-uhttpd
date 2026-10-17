@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Runs uhttpd and restarts it if it exits (crash or kill), so the web
+# interface comes back on its own. Every exit is logged to syslog.
+#
+child=
+trap '[ -n "$child" ] && kill $child 2>/dev/null; exit 0' TERM INT
+while :; do
+	/usr/bin/uhttpd -f -h /www -r ShareOS -p 80 \
+		-u /ubus -U /var/run/ubus/ubus.sock \
+		-t 60 -T 30 -k 20 -A 1 -n 3 -N 100 -R -S -D &
+	child=$!
+	wait $child
+	rc=$?
+	child=
+	logger -t shareos-uhttpd "uhttpd exited with status $rc$([ $rc -gt 128 ] && echo " (signal $((rc - 128)))"), restarting"
+	sleep 1
+done
