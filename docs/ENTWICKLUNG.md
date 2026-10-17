@@ -1,5 +1,7 @@
 # Wie ShareOS entstanden ist – ein KI-Entwicklungsprotokoll
 
+*English version: [DEVELOPMENT.md](DEVELOPMENT.md)*
+
 ShareOS wurde fast vollständig von einer KI entwickelt: **Claude** (Anthropic).
 Jan hat das Projekt angestoßen und als „Vibe Coder“ geführt: Er hat die Ziele
 vorgegeben, die grundlegenden Entscheidungen getroffen und alles an der echten
