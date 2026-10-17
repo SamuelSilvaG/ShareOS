@@ -153,3 +153,14 @@ TFTP-booted from RAM (`uImage` + `urootfs`, commit d43dcb5), rev A3 box:
 Fixed afterwards: system time from the MCU RTC (`dns320l-daemon -x hctosys`)
 plus busybox ntpd (RTC updated after each clock step), boot message waits for
 the DHCP address, `shareos-check` shows all link modes and the PHY.
+
+## ShareOS from flash (2026-10-17, build a2ca26f)
+
+- `shareos-install-ubi` → UBI in `image` (rootfs 48.1 MiB squashfs volume,
+  rootfs_data 47.3 MiB UBIFS; 1 bad PEB, 19 reserved).
+- `shareos-install-ubi --keep-data` replaced the system, a file in the overlay
+  survived.
+- `shareos-flash-boot` wrote kernel + initramfs into mtd1/mtd2; the stock
+  U-Boot boots ShareOS on its own (no TFTP, no console needed).
+- Clean shutdown: UBIFS mounts without recovery after `reboot`.
+- Alt-F backups of mtd1/mtd2 are taken to `/root/boot-backup` once.

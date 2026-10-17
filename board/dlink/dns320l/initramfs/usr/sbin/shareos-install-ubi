@@ -84,4 +84,4 @@ fi
 sync
 ubinfo -a | grep -E "Volume ID|Name|Size|Data bytes" || true
 ubidetach -m "$N"
-echo "done – reboot to start ShareOS from flash"
+echo "done – system written to flash (boot partitions unchanged; see shareos-flash-boot)"
