@@ -37,13 +37,9 @@ start() {
 	echo 100  > /tmp/sys/pwm1          # fan half speed until the first reading
 	echo 0    > /tmp/sys/fan1_input
 
-	led dns320l:red:sata0 0
-	led dns320l:red:sata1 0
 	led dns320l:orange:usb 0
-	led dns320l:blue:usb 0
-	# blue USB LED blinks while ShareOS is running
-	[ -e /sys/class/leds/dns320l:blue:usb/trigger ] && \
-		echo heartbeat > /sys/class/leds/dns320l:blue:usb/trigger
+	# blue USB LED (heartbeat by default), disk LEDs, power LED: UCI shareos.led
+	/usr/sbin/shareos-leds
 
 	if grep -q "DNS-320L" /proc/device-tree/model 2>/dev/null; then
 		start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "$DAEMON" -- -f

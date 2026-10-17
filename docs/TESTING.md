@@ -1,0 +1,94 @@
+# Testing and installing ShareOS (DNS-320L)
+
+*Deutsche Version: [TESTEN.md](TESTEN.md)*
+
+As of 2026-10-17, ShareOS is in its **test phase**. Installing it on a box that
+runs Alt-F currently needs the **serial console** (header JP1, no soldering, see
+[HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)). Once ShareOS is installed, updates
+go through the web interface.
+
+Every step can be undone: ShareOS first runs from RAM only, then the system
+goes into flash, and the kernel is written last. The Alt-F partitions are
+backed up before anything is overwritten.
+
+## What you need
+
+- the update bundle `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` from a
+  GitHub release
+- a USB-TTL adapter (3.3 V) on JP1: pin 4 = box TX, 3 = GND, 1 = box RX; leave
+  pin 2 (3.3 V) unconnected. Settings: 115200 8N1
+- a PC with a TFTP server, for example `dnsmasq`
+
+## 1. Prepare the PC
+
+```sh
+sudo mkdir -p /srv/tftp && sudo rm -f /srv/tftp/*
+sudo tar xf ShareOS-*.sysupgrade.tar -C /srv/tftp
+cd /srv/tftp && sha256sum -c SHA256SUMS
+sudo dnsmasq --no-daemon --port=0 --enable-tftp --tftp-root=/srv/tftp --tftp-single-port
+```
+The PC's firewall must let UDP port 69 through, for example
+`sudo ufw allow from <net>/24 to any port 69 proto udp`.
+
+## 2. Boot from RAM (writes nothing)
+
+Power the box on and immediately type **space, 1, space, 1 …** until
+`Marvell>>` appears. Then:
+```
+setenv ipaddr <free ip>
+setenv serverip <pc ip>
+setenv netmask 255.255.255.0
+setenv bootargs shareos.netroot=<pc ip>
+tftpboot 0xa00000 uImage
+tftpboot 0xf00000 urootfs
+bootm 0xa00000 0xf00000
+```
+Never type `saveenv`. Log in as `root` / `shareos`. Run `shareos-check` to
+check the hardware.
+
+## 3. Write the system to flash
+
+On the box, still in the network boot from step 2:
+```sh
+shareos-install-ubi tftp://<pc ip>/rootfs.squashfs --yes
+shareos-flash-boot tftp://<pc ip> --yes
+```
+- The first command writes the system to the `image` partition. This
+  replaces Alt-F's extra packages; Alt-F itself still boots.
+- The second command writes the kernel and initramfs. It first backs up
+  Alt-F's partitions to `/root/boot-backup`. Copy that backup to your PC:
+  `scp -O -r root@<ip>:/root/boot-backup .`
+
+Then `reboot`: the box starts ShareOS on its own.
+
+## 4. Web interface
+
+Open `http://<ip>` and log in as `root` / `shareos`. Change the password
+right away under **System → General**.
+
+## 5. Updates
+
+- **From the web interface:** System → Firmware → *Check now*. For test
+  versions, choose the **Beta** channel.
+- **By hand**, with a bundle on the box:
+  ```sh
+  cd /tmp && mkdir u && tar xf ShareOS-*.sysupgrade.tar -C u
+  shareos-flash-boot /tmp/u --yes
+  mkdir -p /overlay/upgrade && cp /tmp/u/rootfs.squashfs /overlay/upgrade/
+  cd /overlay/upgrade && sha256sum rootfs.squashfs > rootfs.squashfs.sha256 && echo <version> > version
+  sync && reboot
+  ```
+  During boot the console shows `upgrade: installing system … done`.
+
+Settings and installed packages are kept across updates.
+
+## If something goes wrong
+
+| Sign | Meaning / fix |
+|---|---|
+| The orange USB LED blinks | Rescue mode: the reason and the SSH address are on the console. `shareos-install-ubi` is available there. |
+| U-Boot reports a bad image header | U-Boot boots the D-Link rescue system on its own. Flash Alt-F from its web page. |
+| The kernel hangs | Boot over TFTP as in step 2 and write the backup back: `flash_erase /dev/mtd1 0 0; nandwrite -p /dev/mtd1 uImage.bin` (mtd2 with `ramdisk.bin`) |
+| Back to Alt-F completely | Write the backup back (row above), then re-flash Alt-F's extra packages from Alt-F |
+
+ShareOS never touches U-Boot, the MAC address or the D-Link rescue system.

@@ -1,5 +1,7 @@
 # Wie ShareOS entstanden ist – ein KI-Entwicklungsprotokoll
 
+*English version: [DEVELOPMENT.md](DEVELOPMENT.md)*
+
 ShareOS wurde fast vollständig von einer KI entwickelt: **Claude** (Anthropic).
 Jan hat das Projekt angestoßen und als „Vibe Coder“ geführt: Er hat die Ziele
 vorgegeben, die grundlegenden Entscheidungen getroffen und alles an der echten
@@ -69,20 +71,28 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 
 ## Die Oberfläche
 
+Standard ist das dunkelblaue Design mit Logo. Grün, Rot, Weiß und Hell sind
+wählbar, das Logo lässt sich abschalten. Die Oberfläche gibt es auf Deutsch und
+Englisch.
+
 | Anmeldung | Übersicht |
 |---|---|
 | ![Anmeldung](images/gui-login.png) | ![Übersicht](images/gui-uebersicht.png) |
 
-| Firmware-Update | Sicherheitsabfrage |
+| Speicher (Spiegel in der Erst-Synchronisierung) | Speicher-Assistent |
 |---|---|
-| ![Firmware](images/gui-firmware.png) | ![Dialog](images/gui-dialog.png) |
+| ![Speicher](images/gui-speicher.png) | ![Assistent](images/gui-assistent.png) |
 
-| Helles Design | Handy |
+| Firmware-Update | Darstellung, Sprache, Logo |
 |---|---|
-| ![Hell](images/gui-hell.png) | ![Handy](images/gui-handy.png) |
+| ![Firmware](images/gui-firmware.png) | ![Darstellung](images/gui-darstellung.png) |
 
-*Screenshots aus dem Emulator. Werte wie Temperatur, Lüfter und Netzverkehr gibt
-es dort nicht, deshalb erscheint auch der Hinweis „läuft nicht aus dem Flash“.*
+| Englisch | Handy |
+|---|---|
+| ![Englisch](images/gui-en-overview.png) | ![Handy](images/gui-handy.png) |
+
+*Screenshots mit Beispieldaten (`tests/mock-ubus.py`): zwei 4-TB-Platten als
+Spiegel und ein verfügbares Update.*
 
 ## Zahlen (Stand 17.10.2026, 16 Uhr)
 

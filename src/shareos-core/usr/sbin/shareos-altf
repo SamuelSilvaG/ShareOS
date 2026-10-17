@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# shareos-altf – read the settings Alt-F left behind
+#
+#   shareos-altf scan      find the newest Alt-F settings archive and print
+#                          what can be taken over (key=value lines)
+#   shareos-altf import    take over hostname, time zone and fan curve; keep
+#                          the rest (users, shares, ...) in /etc/shareos/altf
+#                          for later import
+#
+# Alt-F keeps its settings as set_<date>.tgz files on a jffs2 file system in
+# the flash partition "config" (mtd5 on the DNS-320L). ShareOS only reads it,
+# the partition is never written.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+X=/tmp/shareos-altf
+KEEP=/etc/shareos/altf
+
+die() { echo "error=$*"; exit 1; }
+
+extract() {
+	rm -rf $X; mkdir -p $X/mnt $X/etc
+	mtd=$(sed -n 's/^mtd\([0-9]*\):.*"config"$/\1/p' /proc/mtd)
+	[ -n "$mtd" ] || die "no config partition"
+	modprobe jffs2 2>/dev/null
+	mount -t jffs2 -o ro /dev/mtdblock$mtd $X/mnt 2>/dev/null || { echo "found=0"; exit 0; }
+	last=$(ls $X/mnt/set_*.tgz 2>/dev/null | sort | tail -1)
+	if [ -z "$last" ]; then umount $X/mnt; echo "found=0"; exit 0; fi
+	tar -xzf "$last" -C $X 2>/dev/null
+	umount $X/mnt
+	FILE=${last##*/}
+}
+
+value() { [ -f "$X$1" ] && head -1 "$X$1" | tr -d '\r\n'; }
+
+conf() {   # key file (key=value lines)
+	[ -f "$X$2" ] && sed -n "s/^$1[[:space:]]*=[[:space:]]*//p" "$X$2" | head -1 | tr -d '\r\n"'
+}
+
+scan() {
+	extract
+	echo "found=1"
+	echo "file=$FILE"
+	echo "date=$(echo "$FILE" | sed -n 's/^set_\([0-9-]*\)_\([0-9:]*\)\.tgz$/\1 \2/p')"
+	h=$(value /etc/hostname); [ -n "$h" ] && echo "hostname=$h"
+	tz=$(value /etc/timezone); [ -n "$tz" ] && echo "timezone=$tz"
+	[ -f $X/etc/passwd ] && awk -F: '$3 >= 1000 && $3 < 65534 {print "user=" $1 ":" $5}' $X/etc/passwd
+	[ -f $X/etc/samba/smb.conf ] && sed -n 's/^[[:space:]]*\[\([^]]*\)\].*/\1/p' $X/etc/samba/smb.conf \
+		| grep -viE '^(global|homes|printers|print\$)$' | sed 's/^/share=/'
+	[ -f $X/etc/exports ] && grep -v '^[[:space:]]*#' $X/etc/exports | awk 'NF {print "nfs=" $1}'
+	for k in lo_temp hi_temp fan_off_temp; do
+		v=$(conf $k /etc/sysctrl.conf); [ -n "$v" ] && echo "fan_$k=$v"
+	done
+	ip=$(sed -n 's/^[[:space:]]*address[[:space:]]*//p' $X/etc/network/interfaces 2>/dev/null | head -1)
+	grep -q 'inet static' $X/etc/network/interfaces 2>/dev/null && echo "static_ip=$ip"
+}
+
+import() {
+	( scan ) > $X.scan || true
+	grep -q '^found=1' $X.scan || die "no Alt-F settings found"
+	h=$(sed -n 's/^hostname=//p' $X.scan)
+	if echo "$h" | grep -qE '^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$'; then
+		echo "$h" > /etc/hostname; hostname "$h"; echo "imported=hostname"
+	fi
+	tz=$(sed -n 's/^timezone=//p' $X.scan)
+	if [ -n "$tz" ] && [ -f "/usr/share/zoneinfo/$tz" ]; then
+		ln -sf "/usr/share/zoneinfo/$tz" /etc/localtime; echo "$tz" > /etc/timezone; echo "imported=timezone"
+	fi
+	# Alt-F on the DNS-320L: fan full above lo_temp, half below, off below fan_off_temp
+	lo=$(sed -n 's/^fan_lo_temp=//p' $X.scan); off=$(sed -n 's/^fan_fan_off_temp=//p' $X.scan)
+	if echo "$lo" | grep -qE '^[0-9]+$' && [ "$lo" -ge 35 ] && [ "$lo" -le 70 ]; then
+		uci set shareos.fan=fan
+		uci set shareos.fan.preset=custom
+		uci set shareos.fan.full_temp="$lo"
+		uci set shareos.fan.half_temp="$((lo - 3))"
+		if echo "$off" | grep -qE '^[0-9]+$' && [ "$off" -lt "$lo" ]; then uci set shareos.fan.off_temp="$off"; else uci set shareos.fan.off_temp=0; fi
+		uci commit shareos
+		echo "imported=fan"
+	fi
+	# everything else stays available for the shares/users import
+	rm -rf $KEEP; mkdir -p $KEEP
+	cp -a $X/etc/. $KEEP/ 2>/dev/null
+	chmod -R go-rwx $KEEP
+	echo "kept=$KEEP"
+}
+
+case "$1" in
+	scan) scan ;;
+	import) import ;;
+	*) sed -n '3,13s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

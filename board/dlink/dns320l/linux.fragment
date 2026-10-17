@@ -78,7 +78,9 @@ CONFIG_NTFS3_FS=m
 # CONFIG_MTD_PHYSMAP is not set
 # CONFIG_MTD_M25P80 is not set
 # CONFIG_MTD_SPI_NOR is not set
-# CONFIG_JFFS2_FS is not set
+# read-only access to the Alt-F settings partition (mtd5 "config", jffs2)
+CONFIG_JFFS2_FS=m
+CONFIG_JFFS2_FS_WRITEBUFFER=y
 # CONFIG_CRAMFS is not set
 CONFIG_ISO9660_FS=m
 CONFIG_UDF_FS=m

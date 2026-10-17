@@ -13,7 +13,10 @@ years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
 > Claude (Anthropic): architecture, all code, builds, tests and docs. Jan
 > started the project, made the decisions and tested on the real box.
 > Timeline with timestamps and screenshots:
-> **[docs/ENTWICKLUNG.md](docs/ENTWICKLUNG.md)** (German).
+> **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** ([Deutsch](docs/ENTWICKLUNG.md)).
+>
+> Testing and installing: [docs/TESTING.md](docs/TESTING.md) ([Deutsch](docs/TESTEN.md)).
+> Translating the web interface: [docs/TRANSLATING.md](docs/TRANSLATING.md).
 
 ![ShareOS web interface](docs/images/gui-uebersicht.png)
 

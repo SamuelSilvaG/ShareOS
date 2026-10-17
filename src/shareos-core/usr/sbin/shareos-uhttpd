@@ -2,11 +2,23 @@
 #
 # Runs uhttpd and restarts it if it exits (crash or kill), so the web
 # interface comes back on its own. Every exit is logged to syslog.
+# HTTPS (port 443) and the redirect come from UCI shareos.web.
 #
 child=
 trap '[ -n "$child" ] && kill $child 2>/dev/null; exit 0' TERM INT
+PORT=${SHAREOS_HTTP_PORT:-80}
 while :; do
-	/usr/bin/uhttpd -f -h /www -r ShareOS -p 80 \
+	tls=
+	if [ "$(uci -q get shareos.web.https)" != 0 ]; then
+		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
+		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
+		[ -s "$crt" ] && [ -s "$key" ] || /usr/sbin/shareos-cert ensure >/dev/null 2>&1
+		if [ -s "$crt" ] && [ -s "$key" ]; then
+			tls="-s ${SHAREOS_HTTPS_PORT:-443} -C $crt -K $key"
+			[ "$(uci -q get shareos.web.redirect)" = 1 ] && tls="$tls -q"
+		fi
+	fi
+	/usr/bin/uhttpd -f -h /www -r ShareOS -p $PORT $tls \
 		-u /ubus -U /var/run/ubus/ubus.sock \
 		-t 60 -T 30 -k 20 -A 1 -n 3 -N 100 -R -S -D &
 	child=$!

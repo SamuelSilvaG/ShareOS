@@ -10,3 +10,34 @@ config update 'update'
 config ui 'ui'
 	# 1 = show the ShareOS logo in the web interface, 0 = text only
 	option logo '1'
+	# language of the web interface for everyone: en, de, ... (www/i18n/)
+	option lang 'en'
+
+config web 'web'
+	# HTTPS on port 443 (a self-signed certificate is created on first boot)
+	option https '1'
+	# 1 = send http:// requests to https://
+	option redirect '0'
+	option cert '/etc/ssl/shareos/server.crt'
+	option key '/etc/ssl/shareos/server.key'
+
+config fan 'fan'
+	# preset: quiet | balanced | cool | custom (then the temperatures below)
+	option preset 'balanced'
+	# °C: fan stops below off_temp (0 = never stops), runs full from full_temp,
+	# drops back to half below half_temp
+	option off_temp '0'
+	option full_temp '50'
+	option half_temp '45'
+
+config led 'led'
+	# blue USB LED: heartbeat | on | off
+	option status 'heartbeat'
+	# power LED: on | off | blink
+	option power 'on'
+	# red disk LEDs: off | activity
+	option disks 'off'
+
+config setup 'setup'
+	# 0 = show the first-run wizard after the next login
+	option done '0'

@@ -9,7 +9,7 @@
 // rpcd's main loop is never blocked; the UI polls shareos.update.status.
 'use strict';
 
-import { readfile, writefile, popen, glob, stat } from 'fs';
+import { readfile, writefile, popen, glob, stat, readlink, symlink, unlink } from 'fs';
 import { cursor } from 'uci';
 
 const UPDATER = '/usr/sbin/shareos-update';
@@ -274,7 +274,195 @@ function spawn_storage(args) {
 	return { started: true };
 }
 
+/* ---------- web interface: language, logo, HTTPS ---------- */
+
+const CERT = '/usr/sbin/shareos-cert';
+
+function ui_settings() {
+	let c = cursor();
+	return { lang: c.get('shareos', 'ui', 'lang') ?? 'en', logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0' };
+}
+
+function cert_info() {
+	let r = sh(CERT + ' info');
+	let i = { san: [] };
+	for (let line in split(r.out, '\n')) {
+		let m = match(line, /^([a-z]+)=(.*)$/);
+		if (!m) continue;
+		if (m[1] == 'san') push(i.san, m[2]);
+		else i[m[1]] = m[2];
+	}
+	i.selfsigned = !!(i.issuer && i.issuer == i.subject);
+	return i;
+}
+
+// uhttpd runs under shareos-uhttpd, which reads the settings again on restart
+function restart_uhttpd() {
+	system('(sleep 1; killall uhttpd) >/dev/null 2>&1 &');
+}
+
+/* ---------- hardware settings, first run, Alt-F ---------- */
+
+const FAN_PRESETS = {
+	quiet:    { off_temp: 40, full_temp: 55, half_temp: 50 },
+	balanced: { off_temp: 0,  full_temp: 50, half_temp: 45 },
+	cool:     { off_temp: 0,  full_temp: 45, half_temp: 42 }
+};
+
+function fan_settings() {
+	let c = cursor();
+	let preset = c.get('shareos', 'fan', 'preset') ?? 'balanced';
+	let v = FAN_PRESETS[preset] ?? {
+		off_temp: +(c.get('shareos', 'fan', 'off_temp') ?? 0),
+		full_temp: +(c.get('shareos', 'fan', 'full_temp') ?? 50),
+		half_temp: +(c.get('shareos', 'fan', 'half_temp') ?? 45)
+	};
+	return { preset, ...v };
+}
+
+function led_settings() {
+	let c = cursor();
+	return {
+		status: c.get('shareos', 'led', 'status') ?? 'heartbeat',
+		power: c.get('shareos', 'led', 'power') ?? 'on',
+		disks: c.get('shareos', 'led', 'disks') ?? 'off'
+	};
+}
+
+function timezone() {
+	let t = trim(readfile('/etc/timezone') ?? '');
+	if (t != '') return t;
+	let l = readlink('/etc/localtime');
+	return l ? replace(l, /^.*zoneinfo\//, '') : 'UTC';
+}
+
+function zones() {
+	let list = [];
+	for (let line in split(readfile('/usr/share/zoneinfo/zone1970.tab') ?? readfile('/usr/share/zoneinfo/zone.tab') ?? '', '\n')) {
+		if (substr(line, 0, 1) == '#') continue;
+		let f = split(line, '\t');
+		if (length(f) >= 3) push(list, f[2]);
+	}
+	if (!length(list))
+		for (let d in [ 'Africa', 'America', 'Asia', 'Atlantic', 'Australia', 'Europe', 'Pacific' ])
+			for (let z in glob('/usr/share/zoneinfo/' + d + '/*'))
+				push(list, substr(z, 20));
+	push(list, 'UTC');
+	return sort(uniq(list));
+}
+
+function set_timezone(tz) {
+	if (!match(tz ?? '', /^[A-Za-z0-9_+\-]+(\/[A-Za-z0-9_+\-]+)*$/) || !stat('/usr/share/zoneinfo/' + tz))
+		return false;
+	unlink('/etc/localtime');
+	symlink('/usr/share/zoneinfo/' + tz, '/etc/localtime');
+	writefile('/etc/timezone', tz + '\n');
+	return true;
+}
+
+function altf_scan() {
+	let r = sh('/usr/sbin/shareos-altf scan');
+	let a = { users: [], shares: [], nfs: [] };
+	for (let line in split(r.out, '\n')) {
+		let m = match(line, /^([a-z_]+)=(.*)$/);
+		if (!m) continue;
+		if (m[1] == 'user') push(a.users, m[2]);
+		else if (m[1] == 'share') push(a.shares, m[2]);
+		else if (m[1] == 'nfs') push(a.nfs, m[2]);
+		else a[m[1]] = m[2];
+	}
+	a.found = a.found == '1';
+	return a;
+}
+
+function set_password(pw) {
+	if (length(pw ?? '') < 6) return 'password too short (min. 6)';
+	if (match(pw, /[\n\r:]/)) return 'password contains invalid characters';
+	let p = popen('chpasswd -c sha512 >/dev/null 2>&1', 'w');
+	if (!p) return 'chpasswd not available';
+	p.write('root:' + pw + '\n');
+	return p.close() == 0 ? null : 'chpasswd failed';
+}
+
+function set_hostname(h) {
+	if (!match(h ?? '', /^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/)) return false;
+	writefile('/etc/hostname', h + '\n');
+	sh('hostname ' + shq(h));
+	return true;
+}
+
 return {
+	'shareos.ui': {
+		// public (also before login): language and logo for the login page
+		get: {
+			call: function() { return ui_settings(); }
+		},
+
+		set: {
+			args: { lang: '', logo: false },
+			call: function(req) {
+				let c = cursor();
+				c.set('shareos', 'ui', 'ui');   // section may be missing in configs from older versions
+				if (req.args.lang != null && req.args.lang != '') {
+					if (!match(req.args.lang, /^[a-z]{2}(-[A-Za-z]{2})?$/)) return { error: 'invalid language' };
+					c.set('shareos', 'ui', 'lang', req.args.lang);
+				}
+				if (req.args.logo != null)
+					c.set('shareos', 'ui', 'logo', req.args.logo ? '1' : '0');
+				c.commit('shareos');
+				return ui_settings();
+			}
+		}
+	},
+
+	'shareos.web': {
+		get: {
+			call: function() {
+				let c = cursor();
+				return { https: c.get('shareos', 'web', 'https') != '0', redirect: c.get('shareos', 'web', 'redirect') == '1', cert: cert_info() };
+			}
+		},
+
+		set: {
+			args: { https: true, redirect: false },
+			call: function(req) {
+				let c = cursor();
+				c.set('shareos', 'web', 'web');
+				if (req.args.https != null) c.set('shareos', 'web', 'https', req.args.https ? '1' : '0');
+				if (req.args.redirect != null) c.set('shareos', 'web', 'redirect', req.args.redirect ? '1' : '0');
+				c.commit('shareos');
+				restart_uhttpd();
+				return { ok: true };
+			}
+		},
+
+		selfsigned: {
+			call: function() {
+				let r = sh(CERT + ' selfsigned');
+				if (r.rc != 0) return { error: trim(r.out) };
+				restart_uhttpd();
+				return { ok: true, cert: cert_info() };
+			}
+		},
+
+		install: {
+			// PEM texts; the certificate may be followed by the chain
+			args: { cert: '', key: '' },
+			call: function(req) {
+				let crt = req.args.cert ?? '', key = req.args.key ?? '';
+				if (length(crt) > 65536 || length(key) > 16384) return { error: 'file too large' };
+				let d = trim(sh('mktemp -d').out);
+				writefile(d + '/crt', crt);
+				writefile(d + '/key', key);
+				let r = sh(CERT + ' install ' + shq(d + '/crt') + ' ' + shq(d + '/key'));
+				system('rm -rf ' + shq(d));
+				if (r.rc != 0) return { error: replace(trim(r.out), 'shareos-cert: ', '') };
+				restart_uhttpd();
+				return { ok: true, cert: cert_info() };
+			}
+		}
+	},
+
 	'shareos.system': {
 		info: {
 			call: function() {
@@ -418,6 +606,105 @@ return {
 		}
 	},
 
+
+
+	'shareos.hw': {
+		get: {
+			call: function() {
+				return { fan: fan_settings(), led: led_settings(), presets: FAN_PRESETS,
+					temperature: read_int('/tmp/sys/temp1_input'), fan_pwm: read_int('/tmp/sys/pwm1') };
+			}
+		},
+
+		set_fan: {
+			args: { preset: '', off_temp: 0, full_temp: 0, half_temp: 0 },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (!(a.preset in { quiet: 1, balanced: 1, cool: 1, custom: 1 })) return { error: 'unknown preset' };
+				c.set('shareos', 'fan', 'fan');
+				c.set('shareos', 'fan', 'preset', a.preset);
+				if (a.preset == 'custom') {
+					let o = +a.off_temp, f = +a.full_temp, h = +a.half_temp;
+					if (!(f >= 35 && f <= 70) || !(h >= 30 && h < f) || !(o == 0 || (o >= 25 && o < h)))
+						return { error: 'invalid temperatures (0 or 25 <= off < half < full <= 70)' };
+					c.set('shareos', 'fan', 'off_temp', '' + o);
+					c.set('shareos', 'fan', 'full_temp', '' + f);
+					c.set('shareos', 'fan', 'half_temp', '' + h);
+				}
+				c.commit('shareos');
+				return { ok: true, fan: fan_settings() };
+			}
+		},
+
+		set_led: {
+			args: { status: '', power: '', disks: '' },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				c.set('shareos', 'led', 'led');
+				if (a.status) { if (!(a.status in { heartbeat: 1, on: 1, off: 1 })) return { error: 'invalid status LED mode' }; c.set('shareos', 'led', 'status', a.status); }
+				if (a.power) { if (!(a.power in { on: 1, off: 1, blink: 1 })) return { error: 'invalid power LED mode' }; c.set('shareos', 'led', 'power', a.power); }
+				if (a.disks) { if (!(a.disks in { off: 1, activity: 1 })) return { error: 'invalid disk LED mode' }; c.set('shareos', 'led', 'disks', a.disks); }
+				c.commit('shareos');
+				sh('/usr/sbin/shareos-leds');
+				return { ok: true, led: led_settings() };
+			}
+		}
+	},
+
+	'shareos.setup': {
+		status: {
+			call: function() {
+				let c = cursor();
+				return { done: c.get('shareos', 'setup', 'done') == '1', hostname: read_trim('/proc/sys/kernel/hostname'),
+					timezone: timezone(), lang: c.get('shareos', 'ui', 'lang') ?? 'en', channel: c.get('shareos', 'update', 'channel') ?? 'stable' };
+			}
+		},
+
+		zones: {
+			call: function() { return { zones: zones(), current: timezone() }; }
+		},
+
+		altf: {
+			call: function() { return altf_scan(); }
+		},
+
+		// first-run wizard: everything optional except marking it done
+		apply: {
+			args: { password: '', hostname: '', timezone: '', channel: '', altf: false },
+			call: function(req) {
+				let a = req.args, c = cursor(), done = [];
+				if (a.altf === true) {
+					let r = sh('/usr/sbin/shareos-altf import');
+					for (let line in split(r.out, '\n')) {
+						let m = match(line, /^imported=(.*)$/);
+						if (m) push(done, 'altf:' + m[1]);
+					}
+				}
+				if (a.hostname) { if (!set_hostname(a.hostname)) return { error: 'invalid hostname' }; push(done, 'hostname'); }
+				if (a.timezone) { if (!set_timezone(a.timezone)) return { error: 'unknown time zone' }; push(done, 'timezone'); }
+				if (a.channel) {
+					if (!(a.channel in { stable: 1, beta: 1 })) return { error: 'invalid channel' };
+					c.set('shareos', 'update', 'channel', a.channel); push(done, 'channel');
+				}
+				if (a.password) { let e = set_password(a.password); if (e) return { error: e }; push(done, 'password'); }
+				c.set('shareos', 'setup', 'setup');
+				c.set('shareos', 'setup', 'done', '1');
+				c.commit('shareos');
+				return { ok: true, done };
+			}
+		},
+
+		reset: {
+			// show the wizard again on the next login
+			call: function() {
+				let c = cursor();
+				c.set('shareos', 'setup', 'setup');
+				c.set('shareos', 'setup', 'done', '0');
+				c.commit('shareos');
+				return { ok: true };
+			}
+		}
+	},
 
 	'shareos.storage': {
 		status: {

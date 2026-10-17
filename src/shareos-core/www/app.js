@@ -7,6 +7,15 @@
  */
 'use strict';
 
+/* ---------- language ---------------------------------------------------------- */
+
+// language and logo are system-wide settings (UCI shareos.ui, readable before
+// login via shareos.ui get); the last known values are cached per browser so
+// the first paint already matches
+let LANG = (() => { try { return localStorage.getItem('shareos.lang') || 'en'; } catch (e) { return 'en'; } })();
+let LOC = 'en-GB';
+const LOCALES = { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL', pl: 'pl-PL' };
+
 /* ---------- helpers --------------------------------------------------------- */
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -25,7 +34,7 @@ const fmtBytes = (b, d = 1) => {
 	const u = ['B', 'KB', 'MB', 'GB', 'TB'];
 	let i = 0;
 	while (b >= 1000 && i < u.length - 1) { b /= 1000; i++; }
-	return b.toLocaleString('de-DE', { maximumFractionDigits: i ? d : 0 }) + ' ' + u[i];
+	return b.toLocaleString(LOC, { maximumFractionDigits: i ? d : 0 }) + ' ' + u[i];
 };
 const fmtRate = (b) => (b == null ? '–' : fmtBytes(b, 1) + '/s');
 const fmtUptime = (s) => {
@@ -33,7 +42,7 @@ const fmtUptime = (s) => {
 	const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
 	return d ? `${d} T ${h} h` : h ? `${h} h ${m} min` : `${m} min`;
 };
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('de-DE') : '–');
+const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString(LOC) : '–');
 const pct = (a, b) => (b ? Math.max(0, Math.min(100, (a / b) * 100)) : 0);
 
 const store = {
@@ -127,7 +136,7 @@ const TABS = [
 	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
 	['apps', 'APPS'], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['hardware', 'LÜFTER & LEDS'], ['https', 'HTTPS'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
 
 function applyTheme() {
 	const app = $('#app');
@@ -257,7 +266,7 @@ async function tick() {
 		}
 		S.info = info;
 		renderHeader();
-		if (S.route.tab === 'uebersicht') renderMain();
+		if (S.route.tab === 'uebersicht' && !S.fr) renderMain();
 	} catch (e) {
 		if (e.code === 'offline') renderHeader(true);
 	}
@@ -283,10 +292,11 @@ function brand() {
 
 async function loadUiSettings() {
 	try {
-		const r = await rpc('uci', 'get', { config: 'shareos', section: 'ui' });
-		const on = (r.values?.logo ?? '1') !== '0';
-		if (on !== S.logo) { S.logo = on; store.set('logo', on ? '1' : '0'); renderHeader(); renderMain(); }
+		const r = await rpc('shareos.ui', 'get', {}, ZERO_SID);
+		if (r.logo !== S.logo) { S.logo = r.logo; store.set('logo', r.logo ? '1' : '0'); }
+		if (r.lang && r.lang !== LANG) { try { localStorage.setItem('shareos.lang', r.lang); } catch (e) { } return r.lang; }
 	} catch (e) { }
+	return LANG;
 }
 
 function renderLogin(msg = '') {
@@ -332,7 +342,7 @@ function renderShell() {
 	renderTabs();
 	renderMain();
 	startPolling();
-	loadUiSettings();
+	checkFirstRun();
 }
 
 function renderHeader(offline = false) {
@@ -354,8 +364,8 @@ function renderHeader(offline = false) {
 				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden">${svg(I.power)}</button>
 			</div>
-			<div class="clock">${now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div>
-			<div class="meta">${now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+			<div class="clock">${now.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' })}</div>
+			<div class="meta">${now.toLocaleDateString(LOC, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
 		</div>`.s;
 	const ft = $('#ft');
 	if (ft) ft.innerHTML = html`<span><b>ShareOS</b> ${r.version || ''} · Linux ${i.kernel || ''} · GPLv2</span>
@@ -376,6 +386,7 @@ function parseRoute() {
 function renderMain() {
 	const main = $('#main');
 	if (!main) return;
+	if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); return; }
 	const v = VIEWS[S.route.tab] || VIEWS.uebersicht;
 	main.innerHTML = v().s;
 	VIEWS_AFTER[S.route.tab]?.();
@@ -604,7 +615,7 @@ function storageView() {
 				<td><b>${fsLabel[f.mount] || f.mount}</b><div class="mut" style="font-size:12px">${f.source}</div></td>
 				<td><code>${f.mount}</code></td>
 				<td>${fmtBytes(f.used)} / ${fmtBytes(f.size)}</td>
-				<td><div class="bar"><i class="${pct(f.used, f.size) > 90 ? 'crit' : pct(f.used, f.size) > 75 ? 'warn' : ''}" style="width:${pct(f.used, f.size).toFixed(0)}%"></i></div></td></tr>`)}
+				<td><div class="bar"><i class="${f.mount === '/rom' ? '' : pct(f.used, f.size) > 90 ? 'crit' : pct(f.used, f.size) > 75 ? 'warn' : ''}" style="width:${pct(f.used, f.size).toFixed(0)}%"></i></div></td></tr>`)}
 			</tbody></table></div>
 	</section>`;
 }
@@ -634,7 +645,7 @@ function volumeCard(st, v, running) {
 function fmtMin(s) {
 	const m = parseFloat(s);
 	if (!(m >= 0)) return s;
-	return m >= 90 ? `${(m / 60).toFixed(1).replace('.', ',')} h` : `${Math.round(m)} min`;
+	return m >= 90 ? `${(m / 60).toLocaleString(LOC, { maximumFractionDigits: 1 })} h` : `${Math.round(m)} min`;
 }
 
 function diskCard(st, d, running) {
@@ -742,6 +753,7 @@ async function loadStorage() {
 	S.stActive = true;
 	try {
 		S.storage = await rpc('shareos.storage', 'status');
+		if (S.wizAfterLoad) { S.wizAfterLoad = false; if (!S.storage.volumes.length && S.storage.disks.length) { ACTIONS['wiz-start'](); } }
 		if (S.route.tab === 'speicher' && !(S.wiz && S.wiz.step === 2) && !document.activeElement?.matches('select')) renderMain();
 		const busy = S.storage.job?.state === 'running' || Object.values(S.storage.arrays || {}).some((a) => a.sync);
 		if (S.route.tab === 'speicher') S.stTimer = setTimeout(loadStorage, busy ? 3000 : 15000);
@@ -828,7 +840,8 @@ const SYS = {
 
 	allgemein() {
 		const i = S.info || {};
-		return html`<div class="g2">
+		return html`<div class="acts" style="margin-bottom:16px"><button class="btn ghost" type="button" data-act="fr-again">Ersteinrichtung erneut starten</button></div>
+		<div class="g2">
 			<form class="panel" id="f-host">
 				<div class="ph"><span class="pt">GERÄTENAME</span></div>
 				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>HOSTNAME</span><input name="hostname" value="${i.hostname || ''}" pattern="[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?" required></label></div>
@@ -845,6 +858,88 @@ const SYS = {
 				<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Passwort ändern</button></div>
 			</form>
 		</div>`;
+	},
+
+	hardware() {
+		const h = S.hw;
+		if (!h) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const f = h.fan, l = h.led;
+		const t = h.temperature != null ? (h.temperature / 1000).toFixed(0) + ' °C' : '–';
+		const fs = h.fan_pwm == null ? '–' : h.fan_pwm === 0 ? 'aus' : h.fan_pwm < 128 ? 'halb' : 'voll';
+		const presets = [['quiet', 'Leise', 'Lüfter steht unter 40 °C, voll ab 55 °C'], ['balanced', 'Ausgewogen', 'Lüfter läuft immer, voll ab 50 °C'],
+			['cool', 'Kühl', 'Lüfter läuft immer, voll ab 45 °C'], ['custom', 'Eigene Werte', 'Temperaturen selbst festlegen']];
+		const sel = (id, cur, opts) => html`<select id="${id}">${opts.map(([v, t2]) => html`<option value="${v}"${cur === v ? raw(' selected') : ''}>${t2}</option>`)}</select>`;
+		return html`<div class="g2">
+			<form class="panel" id="f-fan">
+				<div class="ph"><span class="pt">LÜFTER</span><span class="tag ml">jetzt: ${t} · ${fs}</span></div>
+				<div style="display:grid;gap:8px">${presets.map(([id, name, d]) => html`
+					<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px"><input type="radio" name="preset" value="${id}"${f.preset === id ? raw(' checked') : ''} style="accent-color:var(--accent);margin-top:3px">
+						<span><b>${name}</b><br><span class="mut" style="font-size:12px">${d}</span></span></label>`)}</div>
+				<div class="fields" id="fan-custom" style="margin-top:14px"${f.preset === 'custom' ? '' : raw(' hidden')}>
+					<label class="f"><span>AUS UNTER (°C, 0 = NIE)</span><input name="off_temp" type="number" min="0" max="65" value="${f.off_temp}"></label>
+					<label class="f"><span>VOLL AB (°C)</span><input name="full_temp" type="number" min="35" max="70" value="${f.full_temp}"></label>
+					<label class="f"><span>ZURÜCK AUF HALB UNTER (°C)</span><input name="half_temp" type="number" min="30" max="69" value="${f.half_temp}"></label>
+				</div>
+				<p class="note">Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+			</form>
+			<div class="panel">
+				<div class="ph"><span class="pt">LEDS</span><span class="tag ml">sofort aktiv</span></div>
+				<div class="fields" style="grid-template-columns:1fr">
+					<label class="f"><span>STATUS-LED (BLAU)</span>${sel('led-status', l.status, [['heartbeat', 'Herzschlag (ShareOS läuft)'], ['on', 'an'], ['off', 'aus']])}</label>
+					<label class="f"><span>POWER-LED</span>${sel('led-power', l.power, [['on', 'an'], ['blink', 'blinkt'], ['off', 'aus']])}</label>
+					<label class="f"><span>PLATTEN-LEDS (ROT)</span>${sel('led-disks', l.disks, [['off', 'aus'], ['activity', 'Plattenzugriffe anzeigen']])}</label>
+				</div>
+				<p class="note">Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.</p>
+			</div>
+		</div>`;
+	},
+
+	https() {
+		const w = S.web;
+		if (!w) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const c = w.cert || {};
+		const host = location.hostname;
+		return html`<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">VERBINDUNG</span><span class="tag ml ${location.protocol === 'https:' ? 'ok' : 'warn'}">${location.protocol === 'https:' ? 'diese Seite: HTTPS' : 'diese Seite: HTTP'}</span></div>
+				<div style="display:grid;gap:6px">
+					<label class="chk"><input type="checkbox" id="opt-https"${w.https ? raw(' checked') : ''}>HTTPS auf Port 443</label>
+					<label class="chk"><input type="checkbox" id="opt-redirect"${w.redirect ? raw(' checked') : ''}${w.https ? '' : raw(' disabled')}>HTTP-Aufrufe auf HTTPS umleiten</label>
+				</div>
+				<dl class="kv" style="margin-top:14px">
+					<dt>HTTPS</dt><dd><a href="https://${host}/">https://${host}/</a></dd>
+					<dt>HTTP</dt><dd><a href="http://${host}/">http://${host}/</a></dd>
+				</dl>
+				<p class="note">Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.</p>
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">ZERTIFIKAT</span>${c.none ? '' : c.selfsigned ? html`<span class="tag warn ml">selbstsigniert</span>` : html`<span class="tag ok ml">eigenes Zertifikat</span>`}</div>
+				${c.none ? html`<p class="mut" style="margin:0;font-size:13px">Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.</p>` : html`
+				<dl class="kv">
+					<dt>Ausgestellt für</dt><dd>${c.subject || '–'}</dd>
+					<dt>Aussteller</dt><dd>${c.issuer || '–'}</dd>
+					<dt>Gültig ab</dt><dd>${c.from || '–'}</dd>
+					<dt>Gültig bis</dt><dd>${c.until || '–'}</dd>
+					<dt>Namen</dt><dd>${(c.san || []).map((x) => x.replace(/^(dNSName|iPAddress):/, '')).join(', ') || '–'}</dd>
+				</dl>`}
+				${c.selfsigned ? html`<p class="note">Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).</p>` : ''}
+				<div class="acts" style="margin-top:14px"><button class="btn" type="button" data-act="cert-self">Neues selbstsigniertes Zertifikat</button></div>
+			</div>
+		</div>
+		<form class="panel" id="f-cert" style="margin-top:16px">
+			<div class="ph"><span class="pt">EIGENES ZERTIFIKAT HINTERLEGEN</span></div>
+			<div class="g2">
+				<label class="f"><span>ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)</span>
+					<textarea name="cert" rows="8" spellcheck="false" placeholder="-----BEGIN CERTIFICATE-----" style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" data-i18n-skip></textarea>
+					<input type="file" accept=".pem,.crt,.cer" data-target="cert" style="margin-top:6px;font-size:12px;color:var(--muted)"></label>
+				<label class="f"><span>PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)</span>
+					<textarea name="key" rows="8" spellcheck="false" placeholder="-----BEGIN PRIVATE KEY-----" style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" data-i18n-skip></textarea>
+					<input type="file" accept=".pem,.key" data-target="key" style="margin-top:6px;font-size:12px;color:var(--muted)"></label>
+			</div>
+			<p class="note">Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.</p>
+			<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Zertifikat übernehmen</button></div>
+		</form>`;
 	},
 
 	energie() {
@@ -883,6 +978,13 @@ const SYS = {
 			</div>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
+			<div class="ph"><span class="pt">SPRACHE</span><span class="tag ml">gilt für alle</span></div>
+			<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>SPRACHE DER OBERFLÄCHE</span><select id="opt-lang" data-i18n-skip>
+				${(S.languages || [{ code: LANG, name: LANG }]).map((l) => html`<option value="${l.code}"${l.code === LANG ? raw(' selected') : ''}>${l.name}</option>`)}
+			</select></label></div>
+			<p class="note">Weitere Sprachen: eine Datei in <code>/www/i18n/</code> – siehe docs/TRANSLATING.md.</p>
+		</div>
+		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
 			<label class="chk"><input type="checkbox" id="opt-logo"${S.logo ? raw(' checked') : ''}>ShareOS-Logo anzeigen (aus: nur Schriftzug)</label>
 			<div style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)">${brand()}</div>
@@ -918,6 +1020,45 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'protokolle') loadLog();
+		if (sub === 'hardware') {
+			if (!S.hw) loadHw();
+			document.querySelectorAll('#f-fan input[name=preset]').forEach((r) => r.addEventListener('change', () => { $('#fan-custom').hidden = r.value !== 'custom'; }));
+			$('#f-fan')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, preset = $('input[name=preset]:checked', f).value;
+				try {
+					const r = await rpc('shareos.hw', 'set_fan', { preset, off_temp: +f.off_temp.value, full_temp: +f.full_temp.value, half_temp: +f.half_temp.value });
+					S.hw.fan = r.fan; toast('Lüfter gespeichert.');
+				} catch (err) { toast('Lüfter: ' + err.message, true); }
+			});
+			for (const k of ['status', 'power', 'disks'])
+				$('#led-' + k)?.addEventListener('change', async (e) => {
+					try { const r = await rpc('shareos.hw', 'set_led', { [k]: e.target.value }); S.hw.led = r.led; toast('LED gespeichert.'); }
+					catch (err) { toast('LED: ' + err.message, true); }
+				});
+		}
+		if (sub === 'https') {
+			if (!S.web) loadWeb();
+			$('#opt-https')?.addEventListener('change', (e) => webSet({ https: e.target.checked }));
+			$('#opt-redirect')?.addEventListener('change', (e) => webSet({ redirect: e.target.checked }));
+			document.querySelectorAll('#f-cert input[type=file]').forEach((inp) => inp.addEventListener('change', async () => {
+				const f = inp.files[0];
+				if (f) $(`#f-cert textarea[name=${inp.dataset.target}]`).value = await f.text();
+			}));
+			$('#f-cert')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, btn = $('button[type=submit]', f);
+				btn.disabled = true;
+				try {
+					const r = await rpc('shareos.web', 'install', { cert: f.cert.value.trim() + '\n', key: f.key.value.trim() + '\n' });
+					S.web.cert = r.cert;
+					f.reset();
+					toast('Zertifikat übernommen.');
+					afterWebRestart();
+				} catch (err) { toast('Zertifikat: ' + err.message, true); btn.disabled = false; }
+			});
+		}
+
 		if (sub === 'allgemein') {
 			$('#f-host').addEventListener('submit', async (e) => {
 				e.preventDefault();
@@ -934,11 +1075,17 @@ const VIEWS_AFTER = {
 		}
 		if (sub === 'darstellung') {
 			$('#opt-light').addEventListener('change', (e) => { S.theme = e.target.checked ? 'light' : 'dark'; store.set('theme', S.theme); applyTheme(); renderHeader(); });
+			$('#opt-lang').addEventListener('change', async (e) => {
+				try {
+					await rpc('shareos.ui', 'set', { lang: e.target.value });
+					try { localStorage.setItem('shareos.lang', e.target.value); } catch (err) { }
+					location.reload();
+				} catch (err) { toast('Sprache: ' + err.message, true); }
+			});
 			$('#opt-logo').addEventListener('change', async (e) => {
 				const on = e.target.checked;
 				try {
-					await rpc('uci', 'set', { config: 'shareos', section: 'ui', values: { logo: on ? '1' : '0' } });
-					await rpc('uci', 'commit', { config: 'shareos' });
+					await rpc('shareos.ui', 'set', { logo: on });
 					S.logo = on; store.set('logo', on ? '1' : '0'); renderHeader(); renderMain();
 				} catch (err) { e.target.checked = !on; toast('Logo: ' + err.message, true); }
 			});
@@ -964,6 +1111,162 @@ const VIEWS_AFTER = {
 	dienste() { if (!S.services) loadServices(); },
 	uebersicht() { if (!S.services) loadServices(); }
 };
+
+
+
+async function loadHw() {
+	try { S.hw = await rpc('shareos.hw', 'get'); } catch (e) { toast('Hardware: ' + e.message, true); }
+	if (S.route.sub === 'hardware') renderMain();
+}
+
+/* ---------- first-run wizard -------------------------------------------------- */
+
+const FR_STEPS = ['Sprache', 'Alt-F', 'Passwort', 'Name & Zeit', 'Updates', 'Fertig'];
+
+async function checkFirstRun(force = false) {
+	try {
+		const st = await rpc('shareos.setup', 'status');
+		if (st.done && !force) return;
+		const [z, a] = await Promise.all([rpc('shareos.setup', 'zones'), rpc('shareos.setup', 'altf').catch(() => ({ found: false }))]);
+		let step = 0;
+		try { step = +(sessionStorage.getItem('shareos.frstep') || 0); } catch (e) { }
+		S.fr = { step, st, zones: z.zones, altf: a, use_altf: !!a.found, hostname: a.found && a.hostname ? a.hostname : st.hostname,
+			timezone: a.found && a.timezone && z.zones.includes(a.timezone) ? a.timezone : st.timezone, channel: st.channel, password: '' };
+		renderMain();
+	} catch (e) { /* not fatal: the box works without the wizard */ }
+}
+
+function frStepVisible(k) { return k !== 1 || S.fr.altf.found; }
+
+function firstRunView() {
+	const f = S.fr, a = f.altf;
+	const steps = FR_STEPS.map((n, k) => [n, k]).filter(([, k]) => frStepVisible(k));
+	let body;
+	if (f.step === 0) {
+		body = html`<p style="margin:0 0 14px;font-size:14px">Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter <b>System</b> ändern.</p>
+			<div class="fields" style="grid-template-columns:minmax(0,320px)"><label class="f"><span>SPRACHE DER OBERFLÄCHE</span><select id="fr-lang" data-i18n-skip>
+				${(S.languages || [{ code: LANG, name: LANG }]).map((l) => html`<option value="${l.code}"${l.code === LANG ? raw(' selected') : ''}>${l.name}</option>`)}</select></label></div>`;
+	} else if (f.step === 1) {
+		body = html`<p style="margin:0 0 12px;font-size:13px">Auf dieser Box wurden Einstellungen von <b>Alt-F</b> gefunden (${a.date || a.file}).</p>
+			<dl class="kv" style="max-width:560px">
+				${a.hostname ? html`<dt>Gerätename</dt><dd>${a.hostname}</dd>` : ''}
+				${a.timezone ? html`<dt>Zeitzone</dt><dd>${a.timezone}</dd>` : ''}
+				${a.fan_lo_temp ? html`<dt>Lüfter</dt><dd>voll ab ${a.fan_lo_temp} °C</dd>` : ''}
+				${a.users.length ? html`<dt>Benutzer</dt><dd>${a.users.map((u) => u.split(':')[0]).join(', ')}</dd>` : ''}
+				${a.shares.length ? html`<dt>Freigaben</dt><dd>${a.shares.join(', ')}</dd>` : ''}
+				${a.nfs.length ? html`<dt>NFS</dt><dd>${a.nfs.join(', ')}</dd>` : ''}
+			</dl>
+			<label class="chk" style="margin-top:14px"><input type="checkbox" id="fr-altf"${f.use_altf ? raw(' checked') : ''}>Gerätename, Zeitzone und Lüfter übernehmen</label>
+			<p class="note">Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.</p>`;
+	} else if (f.step === 2) {
+		body = html`<p style="margin:0 0 12px;font-size:13px">Das Standardpasswort <code>shareos</code> kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.</p>
+			<div class="fields" style="max-width:560px">
+				<label class="f"><span>NEUES PASSWORT</span><input id="fr-p1" type="password" minlength="6" autocomplete="new-password" value="${f.password}"></label>
+				<label class="f"><span>WIEDERHOLEN</span><input id="fr-p2" type="password" minlength="6" autocomplete="new-password" value="${f.password}"></label>
+			</div>
+			<p class="note">Leer lassen, um das Passwort später zu ändern.</p>`;
+	} else if (f.step === 3) {
+		body = html`<div class="fields" style="max-width:640px">
+				<label class="f"><span>GERÄTENAME</span><input id="fr-host" value="${f.hostname}" pattern="[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?"></label>
+				<label class="f"><span>ZEITZONE</span><select id="fr-tz" data-i18n-skip>${f.zones.map((z) => html`<option${z === f.timezone ? raw(' selected') : ''}>${z}</option>`)}</select></label>
+			</div>
+			<p class="note">Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.</p>`;
+	} else if (f.step === 4) {
+		body = html`<div style="display:grid;gap:10px;max-width:640px">${[['stable', 'Stabil', 'Nur fertige Versionen – empfohlen.'], ['beta', 'Beta', 'Auch Testversionen, mit neuen Funktionen früher.']].map(([id, t, d]) => html`
+			<label class="panel" style="cursor:pointer;display:flex;gap:12px;align-items:flex-start;${f.channel === id ? 'border-color:var(--accent);box-shadow:var(--glow)' : ''}">
+				<input type="radio" name="fr-channel" value="${id}"${f.channel === id ? raw(' checked') : ''} style="margin-top:4px;accent-color:var(--accent)">
+				<span><b class="name" style="font-size:14px">${t}</b><br><span class="mut" style="font-size:12px">${d}</span></span></label>`)}</div>
+			<p class="note">Updates kommen von GitHub und werden unter System → Firmware installiert.</p>`;
+	} else {
+		body = html`<dl class="kv" style="max-width:560px">
+				${a.found ? html`<dt>Alt-F übernehmen</dt><dd>${f.use_altf ? 'ja' : 'nein'}</dd>` : ''}
+				<dt>Passwort</dt><dd>${f.password ? 'wird geändert' : 'bleibt (später ändern)'}</dd>
+				<dt>Gerätename</dt><dd>${f.hostname}</dd>
+				<dt>Zeitzone</dt><dd>${f.timezone}</dd>
+				<dt>Update-Kanal</dt><dd>${f.channel === 'beta' ? 'Beta' : 'Stabil'}</dd>
+			</dl>
+			<p class="note">Danach kannst du gleich die Festplatten einrichten.</p>`;
+	}
+	const last = f.step === 5;
+	return html`<section class="sec"><div class="panel" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">ERSTEINRICHTUNG</span><button class="btn sm ghost ml" type="button" data-act="fr-skip">Überspringen</button></div>
+		<div class="steps" style="margin-bottom:18px">${steps.map(([n, k], i) => html`<div class="step ${k < f.step ? 'done' : k === f.step ? 'act' : ''}"><div class="n">${i + 1}${k < f.step ? ' ✓' : ''}</div>${n}</div>`)}</div>
+		${body}
+		<div class="acts" style="margin-top:18px;justify-content:space-between">
+			<button class="btn ghost" type="button" data-act="fr-back" ${f.step === 0 ? 'disabled' : ''}>Zurück</button>
+			${last ? html`<div class="acts"><button class="btn" type="button" data-act="fr-finish" data-next="overview">Fertig</button><button class="btn primary" type="button" data-act="fr-finish" data-next="storage">Fertig & Speicher einrichten</button></div>`
+				: html`<button class="btn primary" type="button" data-act="fr-next">Weiter</button>`}
+		</div></div></section>`;
+}
+
+function firstRunAfter() {
+	$('#fr-lang')?.addEventListener('change', async (e) => {
+		try {
+			await rpc('shareos.ui', 'set', { lang: e.target.value });
+			try { localStorage.setItem('shareos.lang', e.target.value); sessionStorage.setItem('shareos.frstep', '0'); } catch (err) { }
+			location.reload();
+		} catch (err) { toast(err.message, true); }
+	});
+	document.querySelectorAll('input[name=fr-channel]').forEach((r) => r.addEventListener('change', () => { S.fr.channel = r.value; renderMain(); }));
+}
+
+function frCollect() {
+	const f = S.fr;
+	if (f.step === 1 && $('#fr-altf')) f.use_altf = $('#fr-altf').checked;
+	if (f.step === 3) { f.hostname = $('#fr-host').value.trim(); f.timezone = $('#fr-tz').value; }
+	if (f.step === 2) {
+		const p1 = $('#fr-p1').value, p2 = $('#fr-p2').value;
+		if (p1 || p2) {
+			if (p1 !== p2) return 'Die Passwörter stimmen nicht überein.';
+			if (p1.length < 6) return 'Das Passwort braucht mindestens 6 Zeichen.';
+		}
+		f.password = p1;
+	}
+	if (f.step === 3 && !/^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/.test(f.hostname)) return 'Ungültiger Gerätename.';
+	if (f.step === 1 && f.use_altf && S.fr.altf.hostname) f.hostname = S.fr.altf.hostname;
+	return null;
+}
+
+function frGo(d) {
+	const f = S.fr;
+	do { f.step += d; } while (f.step > 0 && f.step < 5 && !frStepVisible(f.step));
+	try { sessionStorage.setItem('shareos.frstep', String(f.step)); } catch (e) { }
+	renderMain();
+	window.scrollTo(0, 0);
+}
+
+function frEnd(next) {
+	S.fr = null;
+	try { sessionStorage.removeItem('shareos.frstep'); } catch (e) { }
+	S.info = null; tick();
+	if (next === 'storage') { S.wizAfterLoad = true; location.hash = '#/speicher'; }
+	else { location.hash = '#/uebersicht'; renderMain(); }
+}
+
+async function loadWeb() {
+	try { S.web = await rpc('shareos.web', 'get'); } catch (e) { toast('HTTPS: ' + e.message, true); }
+	if (S.route.sub === 'https') renderMain();
+}
+
+// the web server restarts after HTTPS changes: wait for it, keep the page
+function afterWebRestart() {
+	setTimeout(async () => {
+		for (let i = 0; i < 20; i++) {
+			try { await fetch('/', { cache: 'no-store' }); break; } catch (e) { await new Promise((r) => setTimeout(r, 1000)); }
+		}
+		loadWeb();
+	}, 2500);
+}
+
+async function webSet(v) {
+	try {
+		await rpc('shareos.web', 'set', v);
+		Object.assign(S.web, v);
+		toast('Gespeichert – der Webserver startet neu.');
+		if (location.protocol === 'https:' && v.https === false) { setTimeout(() => { location.href = 'http://' + location.host + '/'; }, 2500); return; }
+		afterWebRestart();
+	} catch (e) { toast('HTTPS: ' + e.message, true); }
+}
 
 async function loadLog() {
 	const box = $('#logbox');
@@ -1016,6 +1319,29 @@ const ACTIONS = {
 	logout,
 	accent(el) { S.accent = el.dataset.c; store.set('accent', S.accent); applyTheme(); renderMain(); },
 	check() { checkUpdates(); },
+	'fr-next'() { const e = frCollect(); if (e) { toast(e, true); return; } frGo(1); },
+	'fr-back'() { frCollect(); frGo(-1); },
+	async 'fr-skip'() {
+		if (!await confirmDlg('Ersteinrichtung überspringen?', 'Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.', 'Überspringen')) return;
+		try { await rpc('shareos.setup', 'apply', {}); } catch (e) { }
+		frEnd('overview');
+	},
+	async 'fr-finish'(el) {
+		const f = S.fr;
+		el.disabled = true;
+		try {
+			const tzChanged = f.timezone !== f.st.timezone;
+			await rpc('shareos.setup', 'apply', { altf: f.altf.found && f.use_altf, password: f.password,
+				hostname: f.hostname !== f.st.hostname ? f.hostname : '', timezone: tzChanged ? f.timezone : '', channel: f.channel });
+			toast('Ersteinrichtung abgeschlossen.');
+			frEnd(el.dataset.next);
+		} catch (e) { toast(e.message, true); el.disabled = false; }
+	},
+	async 'fr-again'() {
+		try { await rpc('shareos.setup', 'reset'); try { sessionStorage.setItem('shareos.frstep', '0'); } catch (e) { } checkFirstRun(true); }
+		catch (e) { toast(e.message, true); }
+	},
+
 	'wiz-start'() {
 		const disks = (S.storage?.disks || []).filter((d) => !d.rm && d.tran !== 'usb').map((d) => d.name);
 		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', swap: 1024, names: { __mirror: 'daten' } };
@@ -1094,6 +1420,13 @@ const ACTIONS = {
 		try { S.upd = await rpc('shareos.update', 'cancel'); renderMain(); } catch (e) { toast(e.message, true); }
 	},
 
+
+	async 'cert-self'() {
+		if (!await confirmDlg('Neues selbstsigniertes Zertifikat?', 'Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.', 'Erstellen')) return;
+		try { const r = await rpc('shareos.web', 'selfsigned'); S.web.cert = r.cert; toast('Zertifikat erstellt.'); afterWebRestart(); }
+		catch (e) { toast('Zertifikat: ' + e.message, true); }
+	},
+
 	async reboot() {
 		if (!await confirmDlg('Neu starten?', 'Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).', 'Neu starten')) return;
 		try { await rpc('shareos.system', 'reboot'); } catch (e) { }
@@ -1140,12 +1473,17 @@ window.addEventListener('hashchange', () => {
 // clock in the header without waiting for the next poll
 setInterval(() => {
 	const c = $('.clock');
-	if (c) c.textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+	if (c) c.textContent = new Date().toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' });
 }, 10000);
 
 /* ---------- start ----------------------------------------------------------- */
 
 (async function start() {
+	LANG = await loadUiSettings();
+	LOC = LOCALES[LANG] || LANG;
+	document.documentElement.lang = LANG;
+	if (await i18nLoad(LANG)) i18nStart($('#app'));
+	i18nLanguages().then((l) => { S.languages = l; });
 	applyTheme();
 	if (S.sid) {
 		try {
