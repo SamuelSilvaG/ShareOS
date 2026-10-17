@@ -14,8 +14,20 @@ BOARDPID=/var/run/shareos-board.pid
 
 led() { [ -e "/sys/class/leds/$1/brightness" ] && echo "$2" > "/sys/class/leds/$1/brightness"; }
 
+# The real MAC address is stored at the start of the "mini firmware"
+# partition; without this eth0 keeps the Marvell default 00:50:43:00:02:02.
+set_mac() {
+	mtd=$(sed -n 's/^\(mtd[0-9]*\):.*"mini firmware"$/\1/p' /proc/mtd)
+	[ -n "$mtd" ] || return
+	mac=$(nanddump -q -l 2048 /dev/$mtd 2>/dev/null | grep -aoE '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | head -1)
+	if [ -n "$mac" ]; then
+		ip link set dev eth0 address "$mac" && echo -n "MAC $mac, "
+	fi
+}
+
 start() {
 	printf "Starting board support: "
+	set_mac
 
 	mkdir -p /tmp/sys/power_led
 	echo none > /tmp/sys/power_led/trigger

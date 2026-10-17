@@ -80,3 +80,21 @@ kexec: the Alt-F author states "For the DNS-320L/325 kexec is not working"
 (groups.google.com/g/alt-f/c/PPXssiwm7mo) – consistent with our test where
 even Alt-F's own kernel hangs. Our failed kexec attempts therefore say
 nothing about whether the ShareOS kernel boots from U-Boot.
+
+## Serial console (verified 2026-10-17)
+
+JP1 next to the USB port, pins `[4 3 2 _ 1]`: 4 = TX (box), 3 = GND,
+1 = RX (box), 2 = 3.3 V (leave unconnected). 115200 8N1. Adapter RXD → pin 4,
+TXD → pin 1, GND → pin 3. Stock boot log: U-Boot reads 3 MB each of uImage and
+ramdisk, `Hit any key to stop autoboot` counts down from 1 (bootdelay=1).
+
+Alt-F 1.0 boot facts from the log:
+- kernel cmdline = built-in CMDLINE + U-Boot bootargs
+  (`root=/dev/ram console=ttyS0,115200 :::DB88FXX81:egiga0:none`)
+- no `local-mac-address` in the DT → eth0 starts with the Marvell default
+  `00:50:43:00:02:02`; Alt-F's rcS reads the real MAC from the first 2 KB of
+  the "mini firmware" partition (mtd4) and sets it. ShareOS does the same in
+  `S05board`.
+- NAND: Hynix H27U1G8F2BTR-BC, bad blocks 167 and 1023 on the test box;
+  reading `my-dlink` (mtd6) gives ECC errors – harmless, nothing uses it.
+- `rtc-mv: internal RTC not ticking` is expected, the RTC is in the MCU.
