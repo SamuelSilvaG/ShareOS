@@ -1,0 +1,87 @@
+#!/bin/sh
+#
+# shareos-install-ubi – put the ShareOS system into the 'image' flash partition
+#
+#   shareos-install-ubi [--keep-data] <rootfs.squashfs | tftp://server/file | http://...> --yes
+#
+# Without --keep-data: ubiformat the whole partition (keeps erase counters),
+# create volumes rootfs (squashfs) and rootfs_data (rest, UBIFS created on
+# first mount = factory state).
+# With --keep-data: the partition must already be ShareOS UBI; only the
+# rootfs volume is replaced, settings and packages in rootfs_data stay.
+#
+# Never touches u-boot, uImage, ramdisk, mini firmware, config or my-dlink.
+# Overwrites what Alt-F keeps in 'image' (its extra-package squashfs):
+# Alt-F still boots afterwards but without those packages until re-flashed.
+#
+set -e
+
+KEEP=0; YES=0; SRC=""
+for a in "$@"; do
+	case "$a" in
+		--keep-data) KEEP=1 ;;
+		--yes) YES=1 ;;
+		-*) echo "unknown option $a"; exit 2 ;;
+		*) SRC="$a" ;;
+	esac
+done
+if [ -z "$SRC" ] || [ $YES != 1 ]; then
+	sed -n '3,16s/^# \{0,1\}//p' "$0"
+	echo; echo "Nothing done. Add --yes to really write to flash."
+	exit 2
+fi
+
+die() { echo "shareos-install-ubi: $*" >&2; exit 1; }
+MTD=$(sed -n 's/^\(mtd[0-9]*\):.*"image"$/\1/p' /proc/mtd)
+[ -n "$MTD" ] || die "flash partition 'image' not found"
+N=${MTD#mtd}
+SIZE=$(sed -n "s/^$MTD: \([0-9a-f]*\) .*/\1/p" /proc/mtd)
+[ "$SIZE" = 06400000 ] || die "unexpected size 0x$SIZE of 'image' (expected 0x06400000), refusing"
+
+# get the image
+FILE=/tmp/shareos-rootfs.squashfs
+case "$SRC" in
+	tftp://*)
+		hp=${SRC#tftp://}; host=${hp%%/*}; path=${hp#*/}
+		tftp -b 1468 -g -r "$path" -l "$FILE" "$host" || die "TFTP download failed" ;;
+	http://*|https://*)
+		wget -O "$FILE" "$SRC" || die "download failed" ;;
+	*)
+		FILE="$SRC" ;;
+esac
+[ -s "$FILE" ] || die "$FILE is empty or missing"
+[ "$(head -c 4 "$FILE")" = hsqs ] || die "$FILE is not a squashfs image"
+LEN=$(wc -c < "$FILE")
+echo "rootfs image: $LEN bytes"
+
+# rootfs volume size: image + room for growth, 48 MiB minimum
+VOL=$((48 * 1024 * 1024))
+[ $LEN -lt $VOL ] || VOL=$(( (LEN / 1048576 + 8) * 1048576 ))
+
+# the running system must not use the partition
+if grep -qE 'ubiblock|ubi0:' /proc/mounts; then
+	die "the flash system is in use; boot via netroot or rescue mode to write it"
+fi
+for b in /dev/ubiblock0_*; do [ -e "$b" ] && ubiblock --remove "/dev/ubi0_${b##*_}" 2>/dev/null; done
+[ -e /sys/class/ubi/ubi0 ] && ubidetach -m "$N" 2>/dev/null || true
+
+if [ $KEEP = 1 ]; then
+	[ "$(nanddump -q -l 2048 /dev/$MTD 2>/dev/null | head -c 4)" = "UBI#" ] || die "--keep-data: no ShareOS UBI in $MTD"
+	ubiattach -m "$N"
+	VID=""
+	for v in /sys/class/ubi/ubi0_*; do [ "$(cat "$v/name")" = rootfs ] && VID=$(basename "$v"); done
+	[ -n "$VID" ] || die "no rootfs volume"
+	echo "updating volume rootfs ($VID) ..."
+	ubiupdatevol "/dev/$VID" "$FILE"
+else
+	echo "formatting /dev/$MTD as UBI (all data in 'image' is lost) ..."
+	ubiformat "/dev/$MTD" -y -q
+	ubiattach -m "$N"
+	ubimkvol /dev/ubi0 -N rootfs -s "$VOL"
+	ubiupdatevol /dev/ubi0_0 "$FILE"
+	ubimkvol /dev/ubi0 -N rootfs_data -m
+fi
+sync
+ubinfo -a | grep -E "Volume ID|Name|Size|Data bytes" || true
+ubidetach -m "$N"
+echo "done – reboot to start ShareOS from flash"

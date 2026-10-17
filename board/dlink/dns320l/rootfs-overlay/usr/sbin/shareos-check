@@ -24,8 +24,11 @@ section() { echo; echo "=== $* ==="; }
 	free
 
 	section "Ethernet (A3 Gigabit check)"
-	ethtool eth0 2>&1 | grep -E "Speed|Duplex|Link detected|Auto-negotiation|Supported link modes|Advertised link modes"
-	echo "PHY driver: $(basename "$(readlink /sys/class/net/eth0/phydev/driver 2>/dev/null)" 2>/dev/null)"
+	ethtool eth0 2>&1 | awk '/Supported link modes|Advertised link modes/{p=1} /pause|Supports auto|Advertised auto/{p=0} p; /Speed|Duplex|Link detected|Auto-negotiation/'
+	for d in /sys/bus/mdio_bus/devices/*; do
+		[ -e "$d/phy_id" ] || continue
+		echo "PHY $(basename "$d"): id $(cat "$d/phy_id"), driver $(basename "$(readlink "$d/driver" 2>/dev/null)" 2>/dev/null)"
+	done
 	ip -4 addr show eth0 | grep inet
 
 	section "MCU / fan / temperature"

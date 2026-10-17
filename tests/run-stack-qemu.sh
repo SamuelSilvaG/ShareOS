@@ -17,8 +17,9 @@ PORT=${2:-8080}
 CHECK=${3:-}
 TOP=$(cd "$(dirname "$0")/.." && pwd)
 case "$OUT" in /*) ;; *) OUT="$TOP/$OUT" ;; esac
-CPIO="$OUT/images/rootfs.cpio"
-[ -f "$CPIO" ] || { echo "no $CPIO – build first (make dns320l)"; exit 1; }
+SQFS="$OUT/images/rootfs.squashfs"
+UNSQ="$OUT/host/bin/unsquashfs"
+[ -f "$SQFS" ] || { echo "no $SQFS – build first (make dns320l)"; exit 1; }
 QEMU=$(command -v qemu-arm-static) || { echo "install qemu-user-static"; exit 1; }
 
 R=$(mktemp -d /tmp/shareos-qemu.XXXX)
@@ -36,7 +37,7 @@ if [ ! -e /proc/sys/fs/binfmt_misc/qemu-arm ]; then
 		> /proc/sys/fs/binfmt_misc/register
 fi
 
-(cd "$R" && cpio -id --quiet < "$CPIO")
+rmdir "$R" && "$UNSQ" -q -d "$R" "$SQFS" >/dev/null
 mkdir -p "$R/proc" "$R/dev"
 mount -t proc proc "$R/proc"
 mount --bind /dev "$R/dev"

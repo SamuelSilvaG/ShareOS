@@ -70,9 +70,11 @@ BR2_PACKAGE_LIBCURL_CURL=y
 BR2_PACKAGE_LIBCURL_MBEDTLS=y
 BR2_PACKAGE_CA_CERTIFICATES=y
 
-# --- Images: initramfs (cpio.xz) for the 'ramdisk' partition ---
-BR2_TARGET_ROOTFS_CPIO=y
-BR2_TARGET_ROOTFS_CPIO_XZ=y
+# --- Images ---
+# Full system as squashfs (goes into the UBI volume "rootfs"); the small
+# initramfs for the 'ramdisk' partition is assembled by post-image.sh.
+BR2_TARGET_ROOTFS_SQUASHFS=y
+BR2_TARGET_ROOTFS_SQUASHFS4_XZ=y
 # BR2_TARGET_ROOTFS_TAR is not set
 
 # --- Host tools for the D-Link firmware container ---

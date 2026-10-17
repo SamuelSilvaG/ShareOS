@@ -31,11 +31,15 @@ ZIMAGE="$B/zImage.kirkwood-dns320l"     # zImage with appended DTB
 
 KVER=$(sed -n 's/^BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="\(.*\)"/\1/p' "$BR2_CONFIG")
 
+# small initramfs (rescue system + UBI loader) for the 'ramdisk' partition
+"$BOARD_DIR/mk-initramfs.sh" "$TARGET_DIR" "$B" "$HOST_DIR" "$BOARD_DIR"
+[ -s "$B/rootfs.squashfs" ] || { echo "post-image: rootfs.squashfs missing"; exit 1; }
+
 "$MKIMAGE" -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 \
 	-n "ShareOS-${VERSION}, kernel ${KVER}" -d "$ZIMAGE" "$B/uImage"
 
 "$MKIMAGE" -A arm -O linux -T ramdisk -C none -a 0x00800000 -e 0x00800000 \
-	-n "ShareOS-${VERSION}, initrd" -d "$B/rootfs.cpio.xz" "$B/urootfs"
+	-n "ShareOS-${VERSION}, initrd" -d "$B/initramfs.cpio.xz" "$B/urootfs"
 
 check_size() {
 	local f=$1 max=$2 sz
@@ -68,17 +72,10 @@ cmp "$T/initramfs" "$B/urootfs"
 "$FW" -f "$B/$OUT" || true
 echo "post-image: created $B/$OUT"
 
-# kexec test bundle: start the test system from a running Alt-F without
-# flashing (Alt-F disables its "TryIt" button on Kirkwood boxes)
-KDIR="$(ls -d "$BUILD_DIR"/linux-[0-9]* | grep -v headers | head -1)"
-KT="$B/shareos-kexec-test"
-rm -rf "$KT" && mkdir -p "$KT"
-cp "$KDIR/arch/arm/boot/zImage" "$KT/zImage"
-cp "$KDIR/arch/arm/boot/dts/kirkwood-dns320l.dtb" "$KT/"
-cp "$B/rootfs.cpio.xz" "$KT/rootfs.arm.sqmtd"
-cp "$BOARD_DIR/kexec-test/shareos-kexec-test.sh" "$BOARD_DIR/kexec-test/README.txt" "$KT/"
-(cd "$KT" && sha256sum zImage kirkwood-dns320l.dtb rootfs.arm.sqmtd > SHA256SUMS)
-TAR="shareos-kexec-test-${VERSION}.tar"
-tar -C "$B" -cf "$B/$TAR" shareos-kexec-test
-rm -rf "$KT"
-echo "post-image: created $B/$TAR"
+# netboot bundle: everything needed to run this build from RAM via TFTP
+# (U-Boot loads uImage + urootfs, the initramfs fetches rootfs.squashfs)
+NB="shareos-netboot-${VERSION}.tar"
+(cd "$B" && sha256sum uImage urootfs rootfs.squashfs > SHA256SUMS-netboot \
+	&& tar -cf "$NB" --transform 's/SHA256SUMS-netboot/SHA256SUMS/' uImage urootfs rootfs.squashfs SHA256SUMS-netboot)
+echo "post-image: created $B/$NB"
+echo "post-image: rootfs.squashfs $(stat -c %s "$B/rootfs.squashfs") bytes (UBI volume 'rootfs')"

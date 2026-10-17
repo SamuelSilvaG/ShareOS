@@ -18,33 +18,11 @@ SHAREOS_FWNAME="DNS-320L-rev-Ax"
 SHAREOS_STAGE="dev"
 EOF
 
-# Kernel modules: the 'ramdisk' partition is limited to 3 MB by the stock
-# U-Boot, so only the modules the test system needs stay in the initramfs
-# (plus their dependencies). All modules are packed separately and will
-# live in the UBI image (phase 3).
-KEEP_MODULES="ehci-orion usb-storage ext4"
+# All kernel modules stay in the squashfs root; the small initramfs needs
+# none (UBI, UBIFS, squashfs and overlayfs are built into the kernel).
 
-MODDIR=$(ls -d "$TARGET_DIR"/lib/modules/* 2>/dev/null | head -1)
-if [ -n "$MODDIR" ]; then
-	tar -C "$TARGET_DIR" -cJf "$BINARIES_DIR/modules.tar.xz" lib/modules
-	KDIR=$(mktemp -d)
-	(cd "$MODDIR" && cp -a modules.* "$KDIR"/)
-	# resolve dependencies through modules.dep
-	need=""
-	for m in $KEEP_MODULES; do
-		line=$(grep -E "(^|/)${m//-/[-_]}\.ko(\.[a-z]+)?:" "$MODDIR/modules.dep" || true)
-		[ -n "$line" ] || { echo "post-build: module $m not found" >&2; continue; }
-		need="$need ${line%%:*} ${line#*:}"
-	done
-	for f in $(echo $need | tr ' ' '\n' | sort -u); do
-		mkdir -p "$KDIR/$(dirname "$f")"
-		cp -a "$MODDIR/$f" "$KDIR/$f"
-	done
-	rm -rf "$MODDIR"
-	mv "$KDIR" "$MODDIR"
-	chmod 755 "$MODDIR"
-	echo "post-build: modules kept in initramfs:"; find "$MODDIR" -name "*.ko*" -printf "  %P\n"
-fi
+# The UBI installer is part of both the initramfs and the full system
+install -D -m 0755 "$BOARD_DIR/initramfs/usr/sbin/shareos-install-ubi" "$TARGET_DIR/usr/sbin/shareos-install-ubi"
 
 # Nothing in the test system needs these
 rm -rf "$TARGET_DIR/usr/share/man" "$TARGET_DIR/usr/share/doc" \

@@ -1,0 +1,122 @@
+#!/bin/sh
+#
+# ShareOS initramfs (lives in the 3 MB 'ramdisk' partition)
+#
+# Mounts the real system and switches to it:
+#
+#   flash (default)   UBI on the 'image' partition:
+#                       volume rootfs      squashfs, read-only system
+#                       volume rootfs_data UBIFS, writable overlay (settings, packages)
+#   shareos.netroot=<tftp-server>
+#                     fetch rootfs.squashfs via TFTP into RAM, overlay in tmpfs.
+#                     Nothing is written to flash (development / testing).
+#   shareos.rescue    stay in this initramfs
+#
+# If anything fails, the box stays in rescue mode: network via DHCP, SSH
+# (dropbear) and the serial console, with the flash tools and
+# shareos-install-ubi available. The orange USB LED blinks in rescue mode.
+#
+
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+mkdir -p /dev/pts /run /tmp /mnt/ro /mnt/rw /newroot
+mount -t devpts devpts /dev/pts
+mount -t tmpfs -o mode=0755 tmpfs /run
+exec </dev/console >/dev/console 2>&1
+
+CMDLINE=$(cat /proc/cmdline)
+log() { echo "shareos-init: $*"; }
+arg() { for x in $CMDLINE; do case "$x" in "$1"=*) echo "${x#*=}"; return;; esac; done; }
+has() { case " $CMDLINE " in *" $1 "*) return 0;; esac; return 1; }
+led() { [ -e "/sys/class/leds/$1/trigger" ] && echo "$2" > "/sys/class/leds/$1/trigger"; }
+
+mtd_by_name() { sed -n "s/^\(mtd[0-9]*\):.*\"$1\"\$/\1/p" /proc/mtd; }
+
+# real MAC from the first 2 KB of the "mini firmware" partition (as Alt-F/D-Link)
+set_mac() {
+	m=$(mtd_by_name "mini firmware")
+	[ -n "$m" ] || return
+	mac=$(nanddump -q -l 2048 /dev/$m 2>/dev/null | grep -aoE '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | head -1)
+	[ -n "$mac" ] && ip link set dev eth0 address "$mac"
+}
+
+net_up() {
+	set_mac
+	ip link set lo up
+	ip link set eth0 up
+	i=0; while [ $i -lt 20 ] && [ "$(cat /sys/class/net/eth0/carrier 2>/dev/null)" != 1 ]; do sleep 0.5; i=$((i+1)); done
+	udhcpc -i eth0 -t 10 -T 2 -n -q -s /usr/share/udhcpc/default.script -x hostname:shareos
+}
+
+rescue() {
+	log "RESCUE MODE: $*"
+	led dns320l:orange:usb timer
+	net_up || udhcpc -i eth0 -b -s /usr/share/udhcpc/default.script -x hostname:shareos
+	mkdir -p /etc/dropbear
+	dropbear -R 2>/dev/null
+	ip=$(ip -4 addr show eth0 | sed -n 's/.*inet \([0-9.]*\).*/\1/p')
+	cat > /etc/motd <<-EOF
+
+	ShareOS rescue system – $*
+	  ssh root@${ip:-<no ip>}   (password: shareos)
+	  shareos-install-ubi <rootfs.squashfs>   install the system into flash
+	  reboot
+
+	EOF
+	cat /etc/motd
+	while true; do
+		getty -L 115200 ttyS0 vt100
+		sleep 1
+	done
+}
+
+has shareos.rescue && rescue "requested on the kernel command line"
+
+NETROOT=$(arg shareos.netroot)
+
+if [ -n "$NETROOT" ]; then
+	log "network root from tftp://$NETROOT/rootfs.squashfs"
+	net_up || rescue "no DHCP lease"
+	mount -t tmpfs -o mode=0755 tmpfs /mnt/rw
+	tftp -b 1468 -g -r rootfs.squashfs -l /mnt/rw/rootfs.squashfs "$NETROOT" || rescue "TFTP download failed"
+	mount -t squashfs -o ro,loop /mnt/rw/rootfs.squashfs /mnt/ro || rescue "cannot mount the downloaded rootfs"
+	log "running from RAM – nothing is written to flash"
+else
+	MTD=$(mtd_by_name image)
+	[ -n "$MTD" ] || rescue "flash partition 'image' not found"
+	# only touch the partition if it really carries UBI (never attach foreign data)
+	if [ "$(nanddump -q -l 2048 /dev/$MTD 2>/dev/null | head -c 4)" != "UBI#" ]; then
+		rescue "no ShareOS system in flash yet"
+	fi
+	ubiattach -m "${MTD#mtd}" >/dev/null || rescue "ubiattach failed"
+	ROOTVOL=""
+	for v in /sys/class/ubi/ubi0_*; do
+		[ "$(cat "$v/name" 2>/dev/null)" = rootfs ] && ROOTVOL=$(basename "$v")
+	done
+	[ -n "$ROOTVOL" ] || rescue "UBI volume 'rootfs' missing"
+	ubiblock --create "/dev/$ROOTVOL" || rescue "ubiblock failed"
+	mount -t squashfs -o ro "/dev/ubiblock${ROOTVOL#ubi}" /mnt/ro || rescue "cannot mount rootfs"
+	if [ -e /sys/class/ubi/ubi0 ] && mount -t ubifs ubi0:rootfs_data /mnt/rw 2>/dev/null; then
+		:
+	else
+		log "WARNING: rootfs_data not available, settings will not be kept"
+		mount -t tmpfs -o mode=0755 tmpfs /mnt/rw
+	fi
+fi
+
+mkdir -p /mnt/rw/upper /mnt/rw/work
+mount -t overlay overlay -o lowerdir=/mnt/ro,upperdir=/mnt/rw/upper,workdir=/mnt/rw/work /newroot \
+	|| rescue "overlay mount failed"
+[ -x /newroot/sbin/init ] || rescue "rootfs has no /sbin/init"
+
+mkdir -p /newroot/rom /newroot/overlay
+mount --move /mnt/ro /newroot/rom
+mount --move /mnt/rw /newroot/overlay
+
+umount /dev/pts /run 2>/dev/null
+umount /proc /sys
+mount --move /dev /newroot/dev 2>/dev/null || umount /dev
+exec switch_root /newroot /sbin/init

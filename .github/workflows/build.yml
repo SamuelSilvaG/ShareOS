@@ -67,8 +67,7 @@ jobs:
       - name: Collect images
         run: |
           mkdir -p artifacts
-          cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 output/${{ matrix.board }}/images/shareos-kexec-test-*.tar artifacts/
-          cp output/${{ matrix.board }}/images/modules.tar.xz artifacts/modules-${{ matrix.board }}.tar.xz
+          cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 output/${{ matrix.board }}/images/shareos-netboot-*.tar artifacts/
           ls -l artifacts
 
       - uses: actions/upload-artifact@v4
