@@ -128,6 +128,9 @@ kbd{font:inherit;font-size:11px;color:var(--muted);border:1px solid var(--line);
 .f>span{display:block;color:var(--muted);font-size:11px;letter-spacing:.06em;margin-bottom:5px}
 .f input,.f select{width:100%;min-height:40px;font:inherit;font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:0 10px;outline:none}
 .f input:focus,.f select:focus{border-color:var(--dim);box-shadow:var(--glow)}
+.t select{min-height:34px;font:inherit;font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:0 8px;width:100%}
+.t select:focus{border-color:var(--dim);box-shadow:var(--glow);outline:none}
+.t td svg{width:18px;height:18px;flex:none;color:var(--muted)}
 .chk{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;min-height:32px}
 .chk input{appearance:none;-webkit-appearance:none;width:34px;height:19px;border-radius:10px;background:var(--line);position:relative;margin:0;flex:none;cursor:pointer}
 .chk input::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--muted)}
@@ -187,8 +190,12 @@ body.light-bg{background:#f3f7f4}
 .empty svg{flex:none;width:22px;height:22px;color:var(--dim)}
 .plan{margin:8px 0 0;padding-left:18px;display:grid;gap:4px;font-size:13px}
 .plan li::marker{color:var(--accent)}
-.toast{position:fixed;right:16px;bottom:16px;z-index:50;display:grid;gap:8px;max-width:min(420px,calc(100vw - 32px))}
-.toast div{background:var(--panel);border:1px solid var(--dim);border-radius:10px;padding:10px 14px;font-size:13px;box-shadow:var(--glow)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;display:grid;justify-items:center;gap:8px;width:max-content;max-width:min(560px,calc(100vw - 32px));pointer-events:none}
+.toast div{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--dim);border-radius:10px;padding:12px 18px;font-size:14px;box-shadow:var(--glow),0 8px 24px rgba(0,0,0,.35);animation:toastin .18s ease-out;pointer-events:auto}
+.toast div::before{content:"✓";color:var(--ok);font-weight:700}
+.toast div.bad::before{content:"!";color:var(--red)}
+@keyframes toastin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.toast div{animation:none}}
 .toast div.bad{border-color:color-mix(in srgb,var(--red) 55%,transparent);color:var(--errt)}
 dialog.dlg{border:1px solid var(--dim);border-radius:14px;background:var(--panel);color:var(--text);padding:22px;max-width:min(480px,calc(100vw - 32px));box-shadow:var(--glow);font:inherit}
 dialog.dlg::backdrop{background:rgba(0,0,0,.6)}

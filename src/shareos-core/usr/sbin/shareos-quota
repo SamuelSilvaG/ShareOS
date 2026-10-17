@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# shareos-quota – storage limit per user and volume
+#
+#   shareos-quota apply      set the limits from UCI accounts.<user>.quota (MB,
+#                            0 = no limit) on every mounted ext4 volume
+#   shareos-quota report     user=<name>:<volume>:<used KB>:<limit KB> lines
+#
+# Volumes get the ext4 "quota" feature when they are created or mounted
+# (shareos-storage) and are mounted with usrquota, so the kernel counts every
+# file by its owner. The soft limit is 90 % of the limit (warning only).
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+volumes() {   # mounted volumes with user quota
+	for v in $(uci -q show storage | sed -n "s/^storage\.\([^.=]*\)=volume$/\1/p"); do
+		grep -qE " /mnt/$v ext4 [^ ]*usrquota" /proc/mounts && echo "$v"
+	done
+}
+users() { uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)=user$/\1/p"; }
+
+cmd_apply() {
+	command -v setquota >/dev/null || return 0
+	for v in $(volumes); do
+		for u in $(users); do
+			mb=$(uci -q get accounts."$u".quota); mb=${mb:-0}
+			# MB = 10^6 bytes like every size in the web interface; setquota wants KiB
+			hard=$((mb * 15625 / 16)); soft=$((hard * 9 / 10))
+			setquota -u "$u" $soft $hard 0 0 "/mnt/$v" 2>/dev/null || logger -t shareos-quota "cannot set the limit of $u on $v"
+		done
+	done
+}
+
+cmd_report() {
+	command -v repquota >/dev/null || return 0
+	for v in $(volumes); do
+		# repquota -p: limits in KB; columns: user -- used soft hard grace files ...
+		repquota -u -p "/mnt/$v" 2>/dev/null | awk -v v="$v" '
+			/^[a-z][a-z0-9_]* +[-+][-+] / { print "user=" $1 ":" v ":" $3 ":" $5 }'
+	done
+}
+
+case "$1" in
+	apply) cmd_apply ;;
+	report) cmd_report ;;
+	*) sed -n '3,12s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

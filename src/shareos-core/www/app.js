@@ -82,6 +82,9 @@ const I = {
 	box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
 	table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/>',
 	grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+	user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+	users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+	key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/>',
 	net: '<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/>'
 };
 const SVC_ICON = { dropbear: I.term, uhttpd: I.globe, ntpd: I.clock, crond: I.clock, rpcd: I.bus, ubus: I.bus, syslogd: I.list, board: I.fan };
@@ -143,6 +146,8 @@ const TABS = [
 ];
 const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
+const SHR_SUBS = [['freigaben', 'FREIGABEN'], ['benutzer', 'BENUTZER'], ['gruppen', 'GRUPPEN']];
+const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
 // pages that moved: old link -> new place
 const SUB_MOVED = { hardware: 'energie', https: 'netzwerk' };
 
@@ -227,18 +232,22 @@ function confirmDlg(title, text, okLabel, danger = false) {
 	});
 }
 
-function promptDlg(title, text, value, okLabel) {
+async function shareGlobal(v) {
+	try { S.shares = await rpc('shareos.shares', 'global', v); toast('Gespeichert.'); renderMain(); } catch (e) { toast(e.message, true); }
+}
+
+function promptDlg(title, text, value, okLabel, type = 'text') {
 	return new Promise((resolve) => {
 		const d = document.createElement('dialog');
 		d.className = 'dlg';
 		d.innerHTML = html`<form method="dialog"><h3>${title}</h3><p>${text}</p>
-			<label class="f" style="margin-bottom:16px"><input name="v" value="${value}" maxlength="16" required></label>
+			<label class="f" style="margin-bottom:16px"><input name="v" value="${value}" type="${type}" maxlength="${type === 'password' ? 128 : 32}"${type === 'password' ? raw(' minlength="6" autocomplete="new-password"') : ''} required></label>
 			<div class="acts"><button class="btn ghost" type="button" value="no">Abbrechen</button>
 			<button class="btn primary" type="submit" value="yes">${okLabel}</button></div></form>`.s;
 		$('#app').append(d);
 		let result = null;
 		$('button[value=no]', d).addEventListener('click', () => d.close());
-		$('form', d).addEventListener('submit', () => { result = $('input', d).value.trim(); });
+		$('form', d).addEventListener('submit', () => { result = type === 'password' ? $('input', d).value : $('input', d).value.trim(); });
 		d.addEventListener('close', () => { d.remove(); resolve(result); });
 		d.showModal();
 		$('input', d).select();
@@ -289,6 +298,15 @@ async function login(user, pass, keep) {
 	S.user = user;
 	store.set('sid', S.sid, keep);
 	store.set('user', user, true);
+	// tell the box which account this session belongs to (role, own area)
+	try { S.me = await rpc('shareos.me', 'bind', { username: user, password: pass }); }
+	catch (e) { S.me = { name: user, role: 'admin' }; }
+}
+
+// admins get the full interface, everybody else "Mein ShareOS"
+function enter() {
+	if (S.me && S.me.role !== 'admin') renderUserShell();
+	else renderShell();
 }
 
 async function logout() {
@@ -376,7 +394,7 @@ function renderLogin(msg = '') {
 		$('#login-err').textContent = '';
 		try {
 			await login(f.user.value.trim(), f.pass.value, f.keep.checked);
-			renderShell();
+			enter();
 		} catch (err) {
 			$('#login-err').textContent = err.code === 'offline' ? 'Box nicht erreichbar.' : 'Benutzer oder Passwort falsch.';
 			btn.disabled = false;
@@ -404,6 +422,7 @@ function renderShell() {
 function renderHeader(offline = false) {
 	const hd = $('#hd');
 	if (!hd) return;
+	if (S.me && S.me.role !== 'admin') { renderUserHeader(); return; }
 	const i = S.info || {}, r = i.release || {}, ip = i.network?.eth0?.ipv4?.address;
 	const now = new Date();
 	const upd = S.check?.update_available ? S.check.latest : null;
@@ -438,6 +457,7 @@ function parseRoute() {
 	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'uebersicht', sub: SUB_MOVED[sub] || sub || '' };
 	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'firmware';
 	if (S.route.tab === 'dienste' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
+	if (S.route.tab === 'freigaben' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'freigaben';
 }
 
 function renderMain() {
@@ -550,7 +570,13 @@ const VIEWS = {
 
 	speicher: () => storageView(),
 
-	freigaben: () => planned('Freigaben, Benutzer & Gruppen', 'Phase 4', ['Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA', 'Benutzer & Gruppen mit Rechten pro Freigabe', 'Netzlaufwerke einbinden (CIFS/NFS)', 'Backup-Jobs (rsync)'], I.folder),
+	freigaben() {
+		const sub = S.route.sub;
+		return html`
+		<nav class="subtabs" aria-label="Freigaben">${SHR_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/freigaben/${id}">${label}</a>`)}</nav>
+		${!S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
+			: sub === 'benutzer' ? usersView() : sub === 'gruppen' ? groupsView() : sharesView()}`;
+	},
 	apps: () => planned('Apps & Pakete', 'Phase 4', ['Paketquelle (opkg-Feed) über GitHub', 'Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange', 'Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte'], I.box),
 	cloud: () => planned('Cloud-Speicher', 'Phase 5', ['Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP', 'Sync-Jobs: kopieren, spiegeln, bidirektional', 'Verschlüsselung (crypt), Bandbreite und Zeitplan'], I.cloud),
 	paperless: () => planned('Paperless-ngx', 'Phase 5', ['Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)', 'Status der Übertragungen über /api/tasks/', 'Tags und Korrespondent je Ordner, Export-Backup aufs NAS'], I.doc),
@@ -622,6 +648,268 @@ async function loadServices() {
 	} catch (e) { if (e.code !== 'auth') toast('Dienste: ' + e.message, true); }
 }
 
+
+
+/* ---------- shares, users, groups (Freigaben) -------------------------------- */
+
+const ACCESS_TXT = { rw: 'lesen & schreiben', ro: 'nur lesen', '': 'kein Zugriff' };
+const fmtMB = (mb) => (mb ? fmtBytes(mb * 1e6, 0) : 'unbegrenzt');
+
+async function loadShareData() {
+	try {
+		const [sh, acc, st] = await Promise.all([rpc('shareos.shares', 'list'), rpc('shareos.accounts', 'list'), rpc('shareos.storage', 'status')]);
+		S.shares = sh; S.acc = acc; S.vols = st.volumes || [];
+	} catch (e) { if (e.code !== 'auth') toast('Freigaben: ' + e.message, true); }
+	if (S.route.tab === 'freigaben' && !document.activeElement?.matches('input,select,textarea')) renderMain();
+}
+
+function accessOf(sh, tag) { return sh.rw.includes(tag) ? 'rw' : sh.ro.includes(tag) ? 'ro' : ''; }
+
+function shareAccessSummary(sh) {
+	const parts = [...sh.rw.map((x) => x + ' (rw)'), ...sh.ro.map((x) => x + ' (r)')];
+	if (sh.guest) parts.unshift('Gäste (r)');
+	return parts.join(', ') || 'noch niemand';
+}
+
+function sharesView() {
+	const d = S.shares, host = S.info?.hostname || location.hostname, ip = S.info?.network?.eth0?.ipv4?.address || location.hostname;
+	const e = S.shEdit;
+	const list = d.shares;
+	return html`
+	${e ? shareEditor(e) : ''}
+	<section class="sec">
+		${secHead('shares', 'FREIGABEN', list.length ? list.length + ' eingerichtet' : 'noch keine')}
+		${!S.vols.length ? html`<div class="panel"><div class="empty">${svg(I.info)}<span>Für Freigaben wird ein Laufwerk gebraucht – zuerst unter <a href="#/speicher">Speicher</a> einrichten.</span></div></div>`
+			: !list.length ? html`<div class="panel"><div class="empty">${svg(I.folder)}<div><span>Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.</span>
+				<div class="acts" style="margin-top:12px">${e ? '' : html`<button class="btn primary" type="button" data-act="sh-new">Freigabe anlegen</button>`}</div></div></div></div>`
+			: isTable('shares') ? html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>FREIGABE</th><th>ORDNER</th><th>PROTOKOLLE</th><th>ZUGRIFF</th><th></th></tr></thead>
+				<tbody>${list.map((x) => html`<tr>
+					<td><b>${x.name}</b>${x.comment ? html`<div class="mut" style="font-size:12px">${x.comment}</div>` : ''}</td>
+					<td><code>${x.fullpath || x.volume + '/' + x.path}</code>${x.mounted ? '' : html` <span class="tag err">Laufwerk fehlt</span>`}</td>
+					<td>${shareTags(x)}</td><td class="mut" style="font-size:12px">${shareAccessSummary(x)}</td>
+					<td><div class="acts">${shareActions(x)}</div></td></tr>`)}</tbody></table></div>`
+			: html`<div class="grid">${list.map((x) => html`<div class="card${x.mounted ? '' : ' off'}">
+				<div class="icon">${svg(I.folder)}<span class="dot ${x.mounted ? 'up' : 'down'}"></span></div>
+				<div class="info"><div class="name">${x.name}</div>
+					<div class="desc">${x.comment || (x.fullpath || x.volume + '/' + x.path)}</div>
+					<div class="desc" style="margin-top:8px">${shareTags(x)}</div>
+					<div class="desc" style="margin-top:6px">${shareAccessSummary(x)}</div>
+					<div class="ip">${x.smb ? '\\\\' + host + '\\' + x.name : x.fullpath || ''}</div>
+					<div class="acts" style="margin-top:12px">${shareActions(x)}</div></div></div>`)}</div>`}
+		${list.length && !e ? html`<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="sh-new">Neue Freigabe</button></div>` : ''}
+	</section>
+	<section class="sec">
+		<h2 class="gh">DIENSTE</h2>
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">SMB (WINDOWS, MACOS, LINUX)</span><span class="tag ml ${d.smb_running ? 'ok' : ''}">${d.smb_running ? 'läuft' : 'aus'}</span></div>
+				<label class="chk"><input type="checkbox" id="opt-smb"${d.smb_enabled ? raw(' checked') : ''}>SMB-Freigaben anbieten</label>
+				<div class="fields" style="grid-template-columns:1fr;margin-top:12px"><label class="f"><span>ARBEITSGRUPPE</span><input id="opt-wg" value="${d.workgroup}" maxlength="15"></label></div>
+				<dl class="kv" style="margin-top:12px">
+					<dt>Windows</dt><dd><code>\\\\${host}\\&lt;freigabe&gt;</code></dd>
+					<dt>macOS / Linux</dt><dd><code>smb://${ip}/&lt;freigabe&gt;</code></dd>
+				</dl>
+				<p class="note">Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als <code>\\\\${host}\\&lt;benutzer&gt;</code>.</p>
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">NFS (LINUX, PROXMOX)</span><span class="tag ml ${d.nfs_running ? 'ok' : ''}">${d.nfs_running ? 'läuft' : 'aus'}</span></div>
+				<label class="chk"><input type="checkbox" id="opt-nfs"${d.nfs_enabled ? raw(' checked') : ''}>NFS-Freigaben anbieten</label>
+				<p class="note">NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als <code>nobody:users</code> gespeichert. Einbinden z. B. mit <code>mount ${ip}:/mnt/&lt;laufwerk&gt;/&lt;ordner&gt; /ziel</code>.</p>
+			</div>
+		</div>
+	</section>`;
+}
+
+function shareTags(x) {
+	return html`${x.smb ? html`<span class="tag">SMB</span> ` : ''}${x.nfs ? html`<span class="tag">NFS${x.nfs_rw ? '' : ' (r)'}</span> ` : ''}${x.guest ? html`<span class="tag warn">GAST</span>` : ''}${!x.smb && !x.nfs ? html`<span class="tag err">kein Protokoll</span>` : ''}`;
+}
+function shareActions(x) {
+	return html`<button class="btn sm" type="button" data-act="sh-edit" data-name="${x.name}">Bearbeiten</button>
+		<button class="btn sm ghost" type="button" data-act="sh-del" data-name="${x.name}">Entfernen</button>`;
+}
+
+function shareEditor(e) {
+	const x = e.data, accs = S.acc;
+	const rows = [...accs.users.map((u) => [u.name, u.fullname ? `${u.name} – ${u.fullname}` : u.name, I.user]),
+		...accs.groups.map((g) => ['@' + g.name, `Gruppe ${g.name}`, I.users])];
+	return html`<section class="sec"><form class="panel" id="f-share" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">${e.mode === 'new' ? 'NEUE FREIGABE' : 'FREIGABE ' + x.name.toUpperCase()}</span><button class="btn sm ghost ml" type="button" data-act="sh-cancel">Abbrechen</button></div>
+		<div class="fields">
+			<label class="f"><span>NAME</span><input name="name" value="${x.name}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required${e.mode === 'edit' ? raw(' readonly') : ''}></label>
+			<label class="f"><span>LAUFWERK</span><select name="volume">${S.vols.map((v) => html`<option value="${v.name}"${x.volume === v.name ? raw(' selected') : ''}>${v.name} (${LAYOUT_TXT[v.layout] || v.layout})</option>`)}</select></label>
+			<label class="f"><span>ORDNER AUF DEM LAUFWERK</span><input name="path" value="${x.path}" placeholder="wie der Name"></label>
+			<label class="f"><span>BESCHREIBUNG</span><input name="comment" value="${x.comment}" maxlength="64"></label>
+		</div>
+		<div class="pt" style="margin:18px 0 8px">ZUGRIFF ÜBER SMB</div>
+		<div style="display:grid;gap:6px">
+			<label class="chk"><input type="checkbox" name="smb"${x.smb ? raw(' checked') : ''}>Über SMB freigeben (Windows, macOS, Linux)</label>
+			<label class="chk"><input type="checkbox" name="guest"${x.guest ? raw(' checked') : ''}>Gäste dürfen ohne Passwort lesen</label>
+		</div>
+		${rows.length ? html`<div class="tw" style="margin-top:12px"><table class="t" style="min-width:420px"><thead><tr><th>BENUTZER / GRUPPE</th><th style="width:220px">RECHT</th></tr></thead>
+			<tbody>${rows.map(([tag, label, icon]) => html`<tr><td><span style="display:inline-flex;gap:8px;align-items:center">${svg(icon)}${label}</span></td>
+				<td><select class="acl" data-tag="${tag}" aria-label="Recht für ${label}">${['', 'ro', 'rw'].map((v) => html`<option value="${v}"${accessOf(x, tag) === v ? raw(' selected') : ''}>${ACCESS_TXT[v]}</option>`)}</select></td></tr>`)}</tbody></table></div>`
+			: html`<p class="note">Noch keine Benutzer – unter <a href="#/freigaben/benutzer">Benutzer</a> anlegen, oder Gastzugang erlauben.</p>`}
+		<div class="pt" style="margin:18px 0 8px">ZUGRIFF ÜBER NFS</div>
+		<div style="display:grid;gap:6px">
+			<label class="chk"><input type="checkbox" name="nfs"${x.nfs ? raw(' checked') : ''}>Über NFS freigeben</label>
+			<label class="chk"><input type="checkbox" name="nfs_rw"${x.nfs_rw ? raw(' checked') : ''}>NFS-Clients dürfen schreiben</label>
+		</div>
+		<div class="fields" style="grid-template-columns:1fr;margin-top:10px"><label class="f"><span>NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)</span><input name="nfs_hosts" value="${x.nfs_hosts.join(', ')}" placeholder="192.168.1.0/24"></label></div>
+		<p class="note">Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.</p>
+		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
+}
+
+function usageLine(u) {
+	if (!u.usage?.length) return u.quota ? html`Limit ${fmtMB(u.quota)} je Laufwerk` : html`<span class="mut">kein Limit</span>`;
+	return html`${u.usage.map((x) => { const p = x.limit ? pct(x.used, x.limit) : 0; return html`<div style="margin-top:4px"><span class="mut">${x.volume}:</span> ${fmtBytes(x.used)}${x.limit ? html` von ${fmtBytes(x.limit)}` : ''}
+		${x.limit ? html`<div class="bar" style="margin-top:4px"><i class="${p > 95 ? 'crit' : p > 85 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}</div>`; })}`;
+}
+
+function usersView() {
+	const a = S.acc, e = S.uEdit;
+	return html`
+	${e ? userEditor(e) : ''}
+	<section class="sec">
+		${secHead('users', 'BENUTZER', a.users.length ? a.users.length + ' angelegt' : 'noch keine')}
+		${!a.users.length ? html`<div class="panel"><div class="empty">${svg(I.user)}<div><span>Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.</span>
+			<div class="acts" style="margin-top:12px">${e ? '' : html`<button class="btn primary" type="button" data-act="u-new">Benutzer anlegen</button>`}
+			<button class="btn ghost" type="button" data-act="u-altf">Von Alt-F übernehmen</button></div></div></div></div>`
+		: isTable('users') ? html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>BENUTZER</th><th>ROLLE</th><th>GRUPPEN</th><th>PERSÖNLICHER ORDNER</th><th>SPEICHER</th><th></th></tr></thead>
+			<tbody>${a.users.map((u) => html`<tr>
+				<td><b>${u.name}</b>${u.fullname ? html`<div class="mut" style="font-size:12px">${u.fullname}</div>` : ''}</td>
+				<td>${roleTag(u)}</td><td class="mut">${u.groups.join(', ') || '–'}</td>
+				<td class="mut">${u.home ? '/mnt/' + u.home + '/home/' + u.name : '–'}</td>
+				<td style="font-size:12px;min-width:160px">${usageLine(u)}</td>
+				<td><div class="acts">${userActions(u)}</div></td></tr>`)}</tbody></table></div>`
+		: html`<div class="grid">${a.users.map((u) => html`<div class="card">
+			<div class="icon">${svg(I.user)}<span class="dot up"></span></div>
+			<div class="info"><div class="name">${u.name} ${roleTag(u)}</div>
+				<div class="desc">${u.fullname || ''}${u.groups.length ? (u.fullname ? ' · ' : '') + u.groups.join(', ') : ''}</div>
+				<div class="desc" style="margin-top:8px;font-size:12px">${usageLine(u)}</div>
+				<div class="ip">${u.home ? '/mnt/' + u.home + '/home/' + u.name : 'kein persönlicher Ordner'}</div>
+				<div class="acts" style="margin-top:12px">${userActions(u)}</div></div></div>`)}</div>`}
+		${a.users.length && !e ? html`<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="u-new">Neuer Benutzer</button>
+			<button class="btn ghost" type="button" data-act="u-altf">Von Alt-F übernehmen</button></div>` : ''}
+		<p class="note">Rollen: <b>Administrator</b> – alles, auch SSH. <b>Benutzer</b> – eigener Bereich „Mein ShareOS“ in der Weboberfläche. <b>Nur Freigaben</b> – Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto <code>root</code> bleibt immer Administrator.</p>
+	</section>`;
+}
+
+function roleTag(u) {
+	return html`<span class="tag ${u.role === 'admin' ? 'warn' : ''}">${ROLE_TXT[u.role] || u.role}${u.role === 'user' && !u.web ? ' · ohne Web' : ''}</span>`;
+}
+function userActions(u) {
+	return html`<button class="btn sm" type="button" data-act="u-edit" data-name="${u.name}">Bearbeiten</button>
+		<button class="btn sm" type="button" data-act="u-pass" data-name="${u.name}">${svg(I.key)}Passwort</button>
+		<button class="btn sm ghost" type="button" data-act="u-del" data-name="${u.name}">Löschen</button>`;
+}
+
+function userEditor(e) {
+	const u = e.data, isNew = e.mode === 'new';
+	return html`<section class="sec"><form class="panel" id="f-user" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">${isNew ? 'NEUER BENUTZER' : 'BENUTZER ' + u.name.toUpperCase()}</span><button class="btn sm ghost ml" type="button" data-act="u-cancel">Abbrechen</button></div>
+		<div class="fields">
+			<label class="f"><span>BENUTZERNAME</span><input name="name" value="${u.name}" maxlength="32" pattern="[a-z][a-z0-9_]{0,31}" required autocomplete="off"${isNew ? '' : raw(' readonly')}></label>
+			<label class="f"><span>VOLLER NAME</span><input name="fullname" value="${u.fullname}" maxlength="64"></label>
+			<label class="f"><span>ROLLE</span><select name="role">${Object.entries(ROLE_TXT).map(([k, t]) => html`<option value="${k}"${u.role === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+			<label class="f"><span>PERSÖNLICHER ORDNER</span><select name="home"><option value="">keiner</option>${S.vols.map((v) => html`<option value="${v.name}"${u.home === v.name ? raw(' selected') : ''}>auf ${v.name}</option>`)}</select></label>
+			<label class="f"><span>SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)</span><input name="quota" type="number" min="0" step="1" value="${Math.round((u.quota || 0) / 1000)}"></label>
+			${isNew ? html`<label class="f"><span>PASSWORT</span><input name="p1" type="password" minlength="6" autocomplete="new-password" required></label>
+				<label class="f"><span>WIEDERHOLEN</span><input name="p2" type="password" minlength="6" autocomplete="new-password" required></label>` : ''}
+		</div>
+		<label class="chk" style="margin-top:12px" id="u-web-row"${u.role === 'user' ? '' : raw(' hidden')}><input type="checkbox" name="web"${u.web ? raw(' checked') : ''}>Darf sich an der Weboberfläche anmelden („Mein ShareOS“)</label>
+		${S.acc.groups.length ? html`<div class="pt" style="margin:16px 0 8px">GRUPPEN</div><div style="display:flex;flex-wrap:wrap;gap:6px 18px">${S.acc.groups.map((g) => html`
+			<label class="chk"><input type="checkbox" class="u-group" value="${g.name}"${u.groups.includes(g.name) ? raw(' checked') : ''}>${g.name}</label>`)}</div>` : ''}
+		<p class="note">Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.</p>
+		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">${isNew ? 'Anlegen' : 'Speichern'}</button></div>
+	</form></section>`;
+}
+
+function groupsView() {
+	const a = S.acc;
+	return html`<section class="sec">
+		<h2 class="gh">GRUPPEN <span>${a.groups.length ? a.groups.length + ' angelegt' : 'noch keine'}</span></h2>
+		${a.groups.length ? html`<div class="tw"><table class="t" style="min-width:560px"><thead><tr><th>GRUPPE</th><th>BESCHREIBUNG</th><th>MITGLIEDER</th><th></th></tr></thead>
+			<tbody>${a.groups.map((g) => html`<tr><td><b>${g.name}</b></td><td class="mut">${g.desc || '–'}</td><td>${g.members.join(', ') || html`<span class="mut">keine</span>`}</td>
+				<td><button class="btn sm ghost" type="button" data-act="g-del" data-name="${g.name}">Löschen</button></td></tr>`)}</tbody></table></div>`
+			: html`<div class="panel"><div class="empty">${svg(I.users)}<span>Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.</span></div></div>`}
+		<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="g-new">Neue Gruppe</button></div>
+		<p class="note">Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).</p>
+	</section>`;
+}
+
+/* ---------- "Mein ShareOS" for plain users ------------------------------------ */
+
+function renderUserShell() {
+	$('#root').innerHTML = html`
+		<header class="hd" id="hd"></header>
+		<main id="main"></main>
+		<footer class="ft" id="ft"></footer>`.s;
+	renderUserHeader();
+	renderUserMain();
+}
+
+function renderUserHeader() {
+	const m = S.me || {}, now = new Date();
+	const hd = $('#hd');
+	if (!hd) return;
+	hd.innerHTML = html`
+		<div>${brand()}<div class="sub"><b>${m.fullname || m.name}</b> · ${m.host || location.hostname}</div></div>
+		<div class="side">
+			<div class="row">
+				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten">${svg(I.moon)}</button>
+				<button class="ib" type="button" data-act="logout" aria-label="Abmelden" title="Abmelden">${svg(I.power)}</button>
+			</div>
+			<div class="clock">${now.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' })}</div>
+			<div class="meta">${now.toLocaleDateString(LOC, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+		</div>`.s;
+	$('#ft').innerHTML = html`<span><b>ShareOS</b> · Mein ShareOS</span><span><a href="https://github.com/UniqueDroid/ShareOS" target="_blank" rel="noopener">github.com/UniqueDroid/ShareOS</a></span>`.s;
+}
+
+function renderUserMain() {
+	const m = S.me || {}, host = m.host || location.hostname, ip = location.hostname;
+	$('#main').innerHTML = html`
+	<section class="sec">
+		<h2 class="gh">MEIN SHAREOS <span>${m.name}</span></h2>
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">SPEICHER</span>${m.quota ? html`<span class="tag ml">Limit ${fmtMB(m.quota)} je Laufwerk</span>` : html`<span class="tag ml">kein Limit</span>`}</div>
+				${m.usage?.length ? usageLine(m) : html`<p class="mut" style="margin:0;font-size:13px">Noch nichts gespeichert.</p>`}
+				${m.home ? html`<dl class="kv" style="margin-top:14px">
+					<dt>Persönlicher Ordner</dt><dd><code>\\\\${host}\\${m.name}</code></dd>
+					<dt>macOS / Linux</dt><dd><code>smb://${ip}/${m.name}</code></dd></dl>` : html`<p class="note">Kein persönlicher Ordner eingerichtet.</p>`}
+			</div>
+			<form class="panel" id="f-mypass">
+				<div class="ph"><span class="pt">PASSWORT ÄNDERN</span></div>
+				<div class="fields" style="grid-template-columns:1fr">
+					<label class="f"><span>AKTUELLES PASSWORT</span><input name="old" type="password" autocomplete="current-password" required></label>
+					<label class="f"><span>NEUES PASSWORT</span><input name="p1" type="password" minlength="6" autocomplete="new-password" required></label>
+					<label class="f"><span>WIEDERHOLEN</span><input name="p2" type="password" minlength="6" autocomplete="new-password" required></label>
+				</div>
+				<p class="note">Gilt für die Freigaben und diese Oberfläche.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Passwort ändern</button></div>
+			</form>
+		</div>
+	</section>
+	<section class="sec">
+		<h2 class="gh">MEINE FREIGABEN <span>${(m.shares || []).length}</span></h2>
+		${(m.shares || []).length ? html`<div class="grid">${m.shares.map((x) => html`<div class="card">
+			<div class="icon">${svg(I.folder)}<span class="dot up"></span></div>
+			<div class="info"><div class="name">${x.name}</div><div class="desc">${x.comment || ''}</div>
+				<div class="desc" style="margin-top:6px"><span class="tag ${x.access === 'rw' ? 'ok' : ''}">${ACCESS_TXT[x.access]}</span></div>
+				<div class="ip">\\\\${host}\\${x.name}</div></div></div>`)}</div>`
+			: html`<div class="panel"><div class="empty">${svg(I.info)}<span>Dir wurde noch keine Freigabe zugewiesen.</span></div></div>`}
+	</section>
+	<section class="sec"><div class="panel"><div class="ph"><span class="pt">APPS & CLOUD</span><span class="tag ml">geplant</span></div>
+		<p class="mut" style="margin:0;font-size:13px">Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.</p></div></section>`.s;
+	$('#f-mypass').addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target;
+		if (f.p1.value !== f.p2.value) { toast('Die Passwörter stimmen nicht überein.', true); return; }
+		try { await rpc('shareos.me', 'passwd', { old: f.old.value, password: f.p1.value }); f.reset(); toast('Passwort geändert.'); }
+		catch (err) { toast('Passwort: ' + err.message, true); }
+	});
+}
 
 /* ---------- storage (Speicher) ---------------------------------------------- */
 
@@ -988,6 +1276,24 @@ const SYS = {
 				<p class="note">Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.</p>
 				<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Passwort ändern</button></div>
 			</form>
+		</div>
+		<h2 class="gh" style="margin-top:22px">EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN</h2>
+		<div class="g2">
+			<form class="panel" id="f-backup">
+				<div class="ph"><span class="pt">SICHERN</span><span class="tag ml">JSON-Datei</span></div>
+				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)</span><input name="pw" type="password" minlength="6" autocomplete="new-password" placeholder="leer = unverschlüsselt"></label></div>
+				<p class="note">Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">${svg(I.dl)}Sicherung herunterladen</button></div>
+			</form>
+			<form class="panel" id="f-restore">
+				<div class="ph"><span class="pt">WIEDERHERSTELLEN</span></div>
+				<div class="fields" style="grid-template-columns:1fr">
+					<label class="f"><span>SICHERUNGSDATEI</span><input name="file" type="file" accept=".json,application/json" required style="padding-top:8px"></label>
+					<label class="f"><span>PASSWORT (FALLS VERSCHLÜSSELT)</span><input name="pw" type="password" autocomplete="off"></label>
+				</div>
+				<div id="restore-preview"></div>
+				<div class="acts" style="margin-top:12px"><button class="btn" type="submit">Prüfen</button></div>
+			</form>
 		</div>`;
 	},
 
@@ -1250,6 +1556,55 @@ const VIEWS_AFTER = {
 				try { await rpc('shareos.system', 'set_hostname', { hostname: e.target.hostname.value.trim() }); toast('Hostname gespeichert.'); tick(); }
 				catch (err) { toast('Hostname: ' + err.message, true); }
 			});
+			$('#f-backup').addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, btn = $('button[type=submit]', f);
+				btn.disabled = true;
+				try {
+					const r = await rpc('shareos.backup', 'export', { password: f.pw.value });
+					const a = document.createElement('a');
+					a.href = URL.createObjectURL(new Blob([r.content], { type: 'application/json' }));
+					a.download = r.filename;
+					document.body.append(a); a.click(); a.remove();
+					setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+					f.reset();
+					toast(r.encrypted ? 'Verschlüsselte Sicherung heruntergeladen.' : 'Sicherung heruntergeladen.');
+				} catch (err) { toast('Sichern: ' + err.message, true); }
+				btn.disabled = false;
+			});
+			$('#f-restore').addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, file = f.file.files[0];
+				if (!file) return;
+				const content = await file.text();
+				const box = $('#restore-preview');
+				try {
+					const p = await rpc('shareos.backup', 'restore', { content, password: f.pw.value, apply: false });
+					box.innerHTML = html`<dl class="kv" style="margin-top:12px">
+						<dt>Gerät</dt><dd>${p.host || '–'}</dd>
+						<dt>Erstellt</dt><dd>${p.created ? new Date(p.created * 1000).toLocaleString(LOC) : '–'}</dd>
+						<dt>ShareOS</dt><dd>${p.version || '–'}</dd>
+						<dt>Benutzerkonten</dt><dd>${p.users.join(', ') || '–'}</dd>
+						<dt>Freigaben</dt><dd>${p.shares.join(', ') || '–'}</dd>
+						<dt>Zertifikat</dt><dd>${p.certificate ? 'ja' : 'nein'}</dd></dl>
+						<p class="note" style="color:var(--amber)">Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.</p>
+						<div class="acts" style="margin-top:10px"><button class="btn danger" type="button" id="restore-apply">Wiederherstellen</button></div>`.s;
+					$('#restore-apply').addEventListener('click', async () => {
+						if (!await confirmDlg('Einstellungen wiederherstellen?', 'Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.', 'Wiederherstellen', true)) return;
+						try {
+							await rpc('shareos.backup', 'restore', { content, password: f.pw.value, apply: true });
+							if (await confirmDlg('Wiederhergestellt', 'Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?', 'Neu starten')) {
+								try { await rpc('shareos.system', 'reboot'); } catch (err) { }
+								stopPolling();
+								waitForBox('Neustart läuft', 'ShareOS startet neu');
+							}
+						} catch (err) { toast('Wiederherstellen: ' + err.message, true); }
+					});
+				} catch (err) {
+					box.innerHTML = '';
+					toast(err.message === 'password required' ? 'Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.' : 'Sicherung: ' + err.message, true);
+				}
+			});
 			$('#f-pass').addEventListener('submit', async (e) => {
 				e.preventDefault();
 				const f = e.target;
@@ -1291,6 +1646,37 @@ const VIEWS_AFTER = {
 		$('#spindown')?.addEventListener('change', async (e) => {
 			try { await rpc('shareos.storage', 'spindown', { minutes: +e.target.value }); toast('Ruhezustand gespeichert.'); }
 			catch (err) { toast('Ruhezustand: ' + err.message, true); }
+		});
+	},
+	freigaben() {
+		if (!S.shares || !S.acc) { loadShareData(); return; }
+		$('#opt-smb')?.addEventListener('change', (e) => shareGlobal({ smb: e.target.checked }));
+		$('#opt-nfs')?.addEventListener('change', (e) => shareGlobal({ nfs: e.target.checked }));
+		$('#opt-wg')?.addEventListener('change', (e) => shareGlobal({ workgroup: e.target.value.trim() }));
+		$('#f-user select[name=role]')?.addEventListener('change', (e) => { $('#u-web-row').hidden = e.target.value !== 'user'; });
+		$('#f-share')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target, rw = [], ro = [];
+			document.querySelectorAll('#f-share select.acl').forEach((s2) => { if (s2.value === 'rw') rw.push(s2.dataset.tag); if (s2.value === 'ro') ro.push(s2.dataset.tag); });
+			const args = { name: f.name.value.trim().toLowerCase(), volume: f.volume.value, path: f.path.value.trim() || f.name.value.trim().toLowerCase(), comment: f.comment.value.trim(),
+				smb: f.smb.checked, guest: f.guest.checked, nfs: f.nfs.checked, nfs_rw: f.nfs_rw.checked,
+				nfs_hosts: f.nfs_hosts.value.split(/[\s,;]+/).filter(Boolean), rw, ro };
+			if (args.nfs && !args.nfs_hosts.length) { toast('Für NFS mindestens einen Client (IP oder Netz) eintragen.', true); return; }
+			try { S.shares = await rpc('shareos.shares', 'set', args); S.shEdit = null; toast(`Freigabe „${args.name}“ gespeichert.`); renderMain(); }
+			catch (err) { toast('Freigabe: ' + err.message, true); }
+		});
+		$('#f-user')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target, isNew = S.uEdit.mode === 'new';
+			const args = { name: f.name.value.trim().toLowerCase(), fullname: f.fullname.value.trim(), role: f.role.value, home: f.home.value,
+				quota: Math.max(0, Math.round(+f.quota.value || 0)) * 1000, web: f.web.checked,
+				groups: [...document.querySelectorAll('#f-user .u-group:checked')].map((x) => x.value) };
+			if (isNew) {
+				if (f.p1.value !== f.p2.value) { toast('Die Passwörter stimmen nicht überein.', true); return; }
+				args.password = f.p1.value;
+			}
+			try { S.acc = await rpc('shareos.accounts', isNew ? 'add' : 'set', args); S.uEdit = null; toast(`Benutzer „${args.name}“ ${isNew ? 'angelegt' : 'gespeichert'}.`); renderMain(); }
+			catch (err) { toast('Benutzer: ' + err.message, true); }
 		});
 	},
 	dienste() {
@@ -1416,7 +1802,7 @@ function firstRunView() {
 				${a.hostname ? html`<dt>Gerätename</dt><dd>${a.hostname}</dd>` : ''}
 				${a.timezone ? html`<dt>Zeitzone</dt><dd>${a.timezone}</dd>` : ''}
 				${a.fan_lo_temp ? html`<dt>Lüfter</dt><dd>voll ab ${a.fan_lo_temp} °C</dd>` : ''}
-				${a.users.length ? html`<dt>Benutzer</dt><dd>${a.users.map((u) => u.split(':')[0]).join(', ')}</dd>` : ''}
+				${a.users.length ? html`<dt>Benutzerkonten</dt><dd>${a.users.map((u) => u.split(':')[0]).join(', ')}</dd>` : ''}
 				${a.shares.length ? html`<dt>Freigaben</dt><dd>${a.shares.join(', ')}</dd>` : ''}
 				${a.nfs.length ? html`<dt>NFS</dt><dd>${a.nfs.join(', ')}</dd>` : ''}
 			</dl>
@@ -1588,10 +1974,59 @@ const ACTIONS = {
 		S.theme = effTheme() === 'light' ? 'dark' : 'light';
 		applyTheme(); renderHeader();
 		if (S.route.sub === 'darstellung') renderMain();
-		saveLook({ theme: S.theme });
+		// plain users only change it for themselves (the look for everyone is an admin setting)
+		if (S.me && S.me.role !== 'admin') store.set('theme', S.theme); else saveLook({ theme: S.theme });
 	},
 	logout,
 	accent(el) { S.accent = el.dataset.c; applyTheme(); renderHeader(); renderMain(); saveLook({ accent: S.accent }); },
+	'sh-new'() {
+		S.shEdit = { mode: 'new', data: { name: '', volume: S.vols[0]?.name || '', path: '', comment: '', smb: true, guest: false, nfs: false, nfs_rw: false, nfs_hosts: [], rw: [], ro: [] } };
+		renderMain(); window.scrollTo(0, 0);
+	},
+	'sh-edit'(el) { S.shEdit = { mode: 'edit', data: structuredClone(S.shares.shares.find((x) => x.name === el.dataset.name)) }; renderMain(); window.scrollTo(0, 0); },
+	'sh-cancel'() { S.shEdit = null; renderMain(); },
+	async 'sh-del'(el) {
+		const n = el.dataset.name;
+		if (!await confirmDlg(`Freigabe „${n}“ entfernen?`, 'Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.', 'Entfernen')) return;
+		try { S.shares = await rpc('shareos.shares', 'del', { name: n }); toast(`Freigabe „${n}“ entfernt.`); renderMain(); } catch (e) { toast(e.message, true); }
+	},
+	'u-new'() {
+		S.uEdit = { mode: 'new', data: { name: '', fullname: '', role: 'share', home: S.vols[0]?.name || '', quota: 0, web: true, groups: [] } };
+		renderMain(); window.scrollTo(0, 0);
+	},
+	'u-edit'(el) { S.uEdit = { mode: 'edit', data: structuredClone(S.acc.users.find((x) => x.name === el.dataset.name)) }; renderMain(); window.scrollTo(0, 0); },
+	'u-cancel'() { S.uEdit = null; renderMain(); },
+	async 'u-pass'(el) {
+		const n = el.dataset.name;
+		const p = await promptDlg(`Passwort für ${n}`, 'Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.', '', 'Setzen', 'password');
+		if (p == null) return;
+		try { await rpc('shareos.accounts', 'passwd', { name: n, password: p }); toast(`Passwort von ${n} geändert.`); } catch (e) { toast(e.message, true); }
+	},
+	async 'u-del'(el) {
+		const n = el.dataset.name, u = S.acc.users.find((x) => x.name === n);
+		if (!await confirmDlg(`Benutzer „${n}“ löschen?`, `Das Konto wird entfernt; Rechte an Freigaben entfallen.${u?.home ? ' Der persönliche Ordner bleibt erhalten.' : ''}`, 'Löschen', true)) return;
+		try { S.acc = await rpc('shareos.accounts', 'del', { name: n }); toast(`Benutzer „${n}“ gelöscht.`); loadShareData(); } catch (e) { toast(e.message, true); }
+	},
+	async 'u-altf'() {
+		if (!await confirmDlg('Benutzer von Alt-F übernehmen?', 'Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.', 'Übernehmen')) return;
+		try {
+			const r = await rpc('shareos.accounts', 'import_altf');
+			S.acc = r;
+			toast(r.imported.length ? `Übernommen: ${r.imported.join(', ')}` : 'Keine neuen Benutzer gefunden.');
+			if (r.skipped.length) toast(`Übersprungen: ${r.skipped.join(', ')}`, true);
+			renderMain();
+		} catch (e) { toast('Alt-F: ' + e.message, true); }
+	},
+	async 'g-new'() {
+		const g = ((await promptDlg('Neue Gruppe', 'Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):', '', 'Anlegen')) || '').toLowerCase();
+		if (!g) return;
+		try { S.acc = await rpc('shareos.accounts', 'group_add', { name: g }); toast(`Gruppe „${g}“ angelegt.`); renderMain(); } catch (e) { toast(e.message, true); }
+	},
+	async 'g-del'(el) {
+		const g = el.dataset.name;
+		if (!await confirmDlg(`Gruppe „${g}“ löschen?`, 'Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.', 'Löschen', true)) return;
+		try { S.acc = await rpc('shareos.accounts', 'group_del', { name: g }); toast(`Gruppe „${g}“ gelöscht.`); loadShareData(); } catch (e) { toast(e.message, true); }
+	},
 	view(el) {
 		const id = el.dataset.id;
 		S.views[id] = isTable(id) ? 'tiles' : 'table';
@@ -1757,6 +2192,8 @@ window.addEventListener('hashchange', () => {
 	if (!S.sid || !$('#main')) return;
 	parseRoute();
 	if (S.route.tab !== 'speicher') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
+	if (S.route.tab !== 'freigaben') { S.shEdit = null; S.uEdit = null; }
+	else if (S.shares) loadShareData();
 	renderTabs();
 	renderMain();
 	window.scrollTo(0, 0);
@@ -1785,8 +2222,15 @@ setInterval(() => {
 	}
 	if (S.sid) {
 		try {
-			await rpc('session', 'access', { scope: 'ubus', object: 'shareos.system', function: 'info' });
-			renderShell();
+			await rpc('session', 'access', { scope: 'ubus', object: 'shareos.ui', function: 'get' });
+			try { S.me = await rpc('shareos.me', 'get'); }
+			catch (e) {
+				// a session from before accounts existed: only root could log in then
+				if (e.code !== 'app') throw e;
+				S.me = { name: S.user, role: S.user === 'root' ? 'admin' : 'user', unbound: true };
+				if (S.user !== 'root') throw e;
+			}
+			enter();
 			return;
 		} catch (e) { S.sid = null; store.del('sid'); }
 	}

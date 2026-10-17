@@ -1,0 +1,16 @@
+#!/bin/sh
+# accounts (groups, web logins, home folders), quotas and SMB/NFS shares
+case "$1" in
+	start)
+		printf "Starting shares: "
+		/usr/sbin/shareos-users sync >/dev/null 2>&1
+		echo "OK"
+		;;
+	stop)
+		printf "Stopping shares: "
+		/usr/sbin/shareos-shares stop >/dev/null 2>&1
+		echo "OK"
+		;;
+	restart|reload) "$0" stop; "$0" start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

@@ -1,0 +1,13 @@
+# Accounts for shares, the web interface and apps – managed by shareos-users
+# (web interface: Shares → Users). Example:
+#
+# config user 'jan'
+#	option role 'admin'          # admin | user | share
+#	option fullname 'Jan'
+#	list groups 'familie'
+#	option home 'daten'          # volume for the personal folder ('' = none)
+#	option quota '0'             # MB per volume, 0 = no limit
+#	option web '1'               # role user: may log in to the web interface
+#
+# config group 'familie'
+#	option desc 'Family'

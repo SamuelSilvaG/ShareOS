@@ -1,0 +1,153 @@
+#!/bin/bash
+#
+# Tests accounts (shareos-users), shares (shareos-shares) and the rpcd methods
+# shareos.accounts / shareos.shares / shareos.me with the built ARM userland
+# (qemu-user) in a chroot. Services (ksmbd, nfsd) are not started – they need
+# the box kernel; their configuration files are checked instead.
+#
+#   sudo tests/test-users.sh [output/dns320l]
+#
+set -u
+OUT=${1:-output/dns320l}
+TOP=$(cd "$(dirname "$0")/.." && pwd)
+case "$OUT" in /*) ;; *) OUT="$TOP/$OUT" ;; esac
+SQFS="$OUT/images/rootfs.squashfs"
+UNSQ="$OUT/host/bin/unsquashfs"
+QEMU=$(command -v qemu-arm-static) || { echo "install qemu-user-static"; exit 1; }
+[ -f "$SQFS" ] || { echo "no $SQFS"; exit 1; }
+
+T=$(mktemp -d /tmp/shareos-users-test.XXXX)
+R=$T/root
+cleanup() {
+	chroot "$R" /bin/sh -c '/etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
+	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
+	rm -rf "$T"
+}
+trap cleanup EXIT
+
+if [ ! -e /proc/sys/fs/binfmt_misc/qemu-arm ]; then
+	[ -e /proc/sys/fs/binfmt_misc/register ] || mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
+	echo ":qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$QEMU:F" \
+		> /proc/sys/fs/binfmt_misc/register
+fi
+
+"$UNSQ" -q -d "$R" "$SQFS" >/dev/null
+mount -t proc proc "$R/proc"
+mount -t sysfs sysfs "$R/sys"
+mount --bind /dev "$R/dev"
+mount -t tmpfs tmpfs "$R/tmp"
+mkdir -p "$R/var/run/ubus" "$R/var/log" "$R/mnt/daten"
+# a "volume" for shares and home folders
+mount -t tmpfs tmpfs "$R/mnt/daten"
+
+run() { chroot "$R" /bin/sh -c "$*" 2>&1; }
+pass=0; failed=0
+check() { if eval "$2"; then echo "PASS  $1"; pass=$((pass+1)); else echo "FAIL  $1"; failed=$((failed+1)); fi; }
+rpc() { run "ubus call $1 $2 '$3'"; }
+js() { python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if ($1) else 1)"; }
+
+run "uci set storage.daten=volume; uci set storage.daten.uuid=0; uci commit storage"
+run "uci set shares.global.smb=0; uci set shares.global.nfs=0; uci commit shares"
+
+# --- shareos-users ------------------------------------------------------------
+o=$(run "shareos-users group-add familie --desc=Familie")
+check "group added" "run 'uci get accounts.familie' | grep -qx group && grep -q '^familie:x:1[0-9][0-9][0-9]:' $R/etc/group"
+o=$(run "echo geheim1 | shareos-users add jan admin --fullname=Jan --groups=familie --home=daten")
+check "admin added" "grep -q '^jan:x:1[0-9][0-9][0-9]:100:Jan:/mnt/daten/home/jan:/bin/sh\$' $R/etc/passwd"
+o=$(run "echo anna1234 | shareos-users add anna user --groups=familie --quota=5000")
+check "user added without SSH shell" "grep -q '^anna:.*:/bin/false\$' $R/etc/passwd"
+o=$(run "echo tvtvtv | shareos-users add tv share")
+check "share-only user added" "run 'uci get accounts.tv.role' | grep -qx share"
+o=$(run "echo short | shareos-users add bob share")
+check "short password rejected" "echo \"\$o\" | grep -q '6 characters' && ! grep -q '^bob:' $R/etc/passwd"
+o=$(run "echo geheim1 | shareos-users add root share")
+check "reserved name rejected" "echo \"\$o\" | grep -q reserved"
+o=$(run "echo geheim1 | shareos-users add Bad share")
+check "invalid name rejected" "echo \"\$o\" | grep -q 'invalid name'"
+check "group members written" "grep -qE '^familie:x:[0-9]+:(jan,anna|anna,jan)\$' $R/etc/group"
+check "home folder created, private" "[ -d $R/mnt/daten/home/jan ] && [ \"\$(stat -c %a $R/mnt/daten/home/jan)\" = 700 ]"
+check "web login for the admin" "run 'uci get rpcd.acc_jan.read' | grep -qx '\*'"
+check "web login for the user (own area)" "run 'uci get rpcd.acc_anna.read' | grep -qx shareos-user"
+check "no web login for share-only" "! run 'uci -q get rpcd.acc_tv' | grep -q login"
+check "Linux password set (sha512)" "grep -q '^anna:\\\$6\\\$' $R/etc/shadow"
+check "SMB password set" "grep -q '^anna:' $R/etc/ksmbd/ksmbdpwd.db"
+o=$(run "shareos-users set anna --web=0")
+check "web access can be withdrawn" "! run 'uci -q get rpcd.acc_anna' | grep -q login"
+run "shareos-users set anna --web=1" >/dev/null
+
+# --- rpcd: login, bind, me, accounts ----------------------------------------
+run '/etc/init.d/S12ubus start && /etc/init.d/S13rpcd start' >/dev/null
+i=0; until run "ubus list shareos.me" >/dev/null 2>&1 || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
+L=$(rpc session login '{"username":"anna","password":"anna1234"}')
+SID=$(echo "$L" | python3 -c 'import json,sys; print(json.load(sys.stdin)["ubus_rpc_session"])' 2>/dev/null)
+check "user can log in" "[ -n \"\$SID\" ]"
+check "user has only the own-area ACL" "echo '$L' | js \"'shareos.me' in d['acls']['ubus'] and 'shareos.system' not in d['acls']['ubus']\""
+check "share-only user cannot log in" "! rpc session login '{\"username\":\"tv\",\"password\":\"tvtvtv\"}' | grep -q ubus_rpc_session"
+check "bind with a wrong password fails" "rpc shareos.me bind '{\"username\":\"anna\",\"password\":\"nope\",\"ubus_rpc_session\":\"$SID\"}' | grep -q 'login failed'"
+B=$(rpc shareos.me bind "{\"username\":\"anna\",\"password\":\"anna1234\",\"ubus_rpc_session\":\"$SID\"}")
+check "bind returns the own account" "echo '$B' | js \"d['name']=='anna' and d['role']=='user' and d['quota']==5000\""
+check "me: session is linked" "rpc shareos.me get '{\"ubus_rpc_session\":\"$SID\"}' | js \"d['name']=='anna'\""
+check "me: other sessions are not" "rpc shareos.me get '{\"ubus_rpc_session\":\"0123456789abcdef0123456789abcdef\"}' | grep -q 'not bound'"
+check "me: password change needs the old one" "rpc shareos.me passwd '{\"old\":\"x\",\"password\":\"neu12345\",\"ubus_rpc_session\":\"$SID\"}' | grep -q wrong"
+check "me: password changed" "rpc shareos.me passwd '{\"old\":\"anna1234\",\"password\":\"neu12345\",\"ubus_rpc_session\":\"$SID\"}' | js \"d['ok']\" && rpc session login '{\"username\":\"anna\",\"password\":\"neu12345\"}' | grep -q ubus_rpc_session"
+A=$(rpc shareos.accounts list '{}')
+check "accounts list" "echo '$A' | js \"[u['name'] for u in d['users']]==['anna','jan','tv'] and d['groups'][0]['members']==['anna','jan'] or d['groups'][0]['members']==['jan','anna']\""
+check "rpc: add with an invalid role rejected" "rpc shareos.accounts add '{\"name\":\"max\",\"role\":\"boss\",\"password\":\"geheim1\"}' | grep -q 'invalid role'"
+check "rpc: add" "rpc shareos.accounts add '{\"name\":\"max\",\"role\":\"share\",\"password\":\"geheim1\",\"groups\":[\"familie\"]}' | js \"any(u['name']=='max' for u in d['users'])\""
+check "rpc: unknown group rejected" "rpc shareos.accounts set '{\"name\":\"max\",\"groups\":[\"nope\"]}' | grep -q 'unknown group'"
+
+# --- shares -------------------------------------------------------------------
+S1=$(rpc shareos.shares set '{"name":"fotos","volume":"daten","path":"Fotos","comment":"Familienfotos","smb":true,"rw":["jan"],"ro":["@familie"]}')
+check "share created" "echo '$S1' | js \"d['shares'][0]['name']=='fotos' and d['shares'][0]['mounted']\""
+check "share folder created (root:users 2775)" "[ \"\$(stat -c '%U:%G %a' $R/mnt/daten/Fotos)\" = 'root:users 2775' ]"
+check "ksmbd share section" "grep -q '^\[fotos\]' $R/etc/ksmbd/ksmbd.conf && grep -q 'path = /mnt/daten/Fotos' $R/etc/ksmbd/ksmbd.conf"
+check "ksmbd access lists" "grep -q 'valid users = jan @familie' $R/etc/ksmbd/ksmbd.conf && grep -q 'write list = jan' $R/etc/ksmbd/ksmbd.conf && grep -q 'read list = @familie' $R/etc/ksmbd/ksmbd.conf"
+check "ksmbd home folders" "grep -q '^\[homes\]' $R/etc/ksmbd/ksmbd.conf"
+check "unknown user in a share rejected" "rpc shareos.shares set '{\"name\":\"x\",\"volume\":\"daten\",\"rw\":[\"ghost\"]}' | grep -q 'unknown user'"
+check "path escaping the volume rejected" "rpc shareos.shares set '{\"name\":\"x\",\"volume\":\"daten\",\"path\":\"../etc\"}' | grep -q 'invalid folder'"
+S2=$(rpc shareos.shares set '{"name":"medien","volume":"daten","smb":true,"guest":true,"nfs":true,"nfs_rw":false,"nfs_hosts":["10.0.0.0/24"]}')
+check "guest share" "grep -A8 '^\[medien\]' $R/etc/ksmbd/ksmbd.conf | grep -q 'guest ok = yes'"
+check "NFS export" "grep -q '^/mnt/daten/medien 10.0.0.0/24(ro,sync,no_subtree_check,all_squash,anonuid=65534,anongid=100)' $R/etc/exports"
+check "user sees own shares" "rpc shareos.me get '{\"ubus_rpc_session\":\"$SID\"}' | js \"sorted((s['name'],s['access']) for s in d['shares'])==[('fotos','ro'),('medien','ro')]\""
+check "share removed, folder kept" "rpc shareos.shares del '{\"name\":\"medien\"}' | js \"[s['name'] for s in d['shares']]==['fotos']\" && [ -d $R/mnt/daten/medien ] && ! grep -q medien $R/etc/exports"
+
+# --- delete, Alt-F import -----------------------------------------------------
+check "rpc: delete" "rpc shareos.accounts del '{\"name\":\"tv\"}' | js \"all(u['name']!='tv' for u in d['users'])\" && ! grep -q '^tv:' $R/etc/passwd $R/etc/shadow"
+mkdir -p $R/etc/shareos/altf/samba
+printf 'root:x:0:0:root:/root:/bin/sh\nmaria:x:1001:100:Maria,,,:/home/maria:/bin/sh\nBad.Name:x:1002:100::/:/bin/sh\n' > $R/etc/shareos/altf/passwd
+printf 'maria:$1$abcdefgh$0123456789abcdefghijk.:19000:0:99999:7:::\n' > $R/etc/shareos/altf/shadow
+printf 'users:x:100:\nmusik:x:1005:maria\n' > $R/etc/shareos/altf/group
+printf 'maria:1001:AAD3B435B51404EEAAD3B435B51404EE:8846F7EAEE8FB117AD06BDD830B7586C:[U          ]:LCT-00000000:\n' > $R/etc/shareos/altf/samba/smbpasswd
+I=$(rpc shareos.accounts import_altf '{}')
+check "Alt-F: users imported, bad names skipped" "echo '$I' | js \"d['imported']==['maria'] and 'Bad.Name' in d['skipped']\""
+check "Alt-F: group and membership" "grep -q '^musik:x:[0-9]*:maria\$' $R/etc/group"
+check "Alt-F: Linux password hash kept" "grep -q '^maria:\\\$1\\\$abcdefgh\\\$0123456789abcdefghijk\\.:' $R/etc/shadow"
+check "Alt-F: SMB hash kept" "grep -qx 'maria:iEb36u6PsRetBr3YMLdYbA==' $R/etc/ksmbd/ksmbdpwd.db"
+
+# --- settings backup ------------------------------------------------------------
+E1=$(rpc shareos.backup export '{}')
+echo "$E1" | python3 -c 'import json,sys; print(json.load(sys.stdin)["content"])' > $T/plain.json
+check "backup: plain JSON with accounts and shares" "python3 -c \"import json; d=json.load(open('$T/plain.json')); assert d['shareos_backup']==1 and any(l.startswith('jan:') for l in d['accounts']['passwd']) and 'fotos' in d['configs']['shares']\""
+check "backup: short password rejected" "rpc shareos.backup export '{\"password\":\"abc\"}' | grep -q '6 characters'"
+E2=$(rpc shareos.backup export '{"password":"backup-pw"}')
+echo "$E2" | python3 -c 'import json,sys; print(json.load(sys.stdin)["content"])' > $T/enc.json
+check "backup: encrypted file hides the content" "python3 -c \"import json; d=json.load(open('$T/enc.json')); assert d['encrypted'] and 'accounts' not in d\" && ! grep -q jan $T/enc.json"
+cat > $T/req.py <<'PY'
+import json, sys
+c = open(sys.argv[1]).read()
+print(json.dumps({"content": c, "password": sys.argv[2], "apply": sys.argv[3] == "1"}))
+PY
+python3 $T/req.py $T/enc.json nope 0 > $R/tmp/req-wrong.json
+check "restore: wrong password" "run 'ubus call shareos.backup restore \"\$(cat /tmp/req-wrong.json)\"' | grep -q 'wrong password'"
+python3 $T/req.py $T/enc.json backup-pw 0 > $R/tmp/req-preview.json
+python3 $T/req.py $T/enc.json backup-pw 1 > $R/tmp/req-apply.json
+P=$(run 'ubus call shareos.backup restore "$(cat /tmp/req-preview.json)"')
+check "restore: preview of the encrypted backup" "echo '$P' | js \"d['preview'] and 'jan' in d['users'] and 'fotos' in d['shares']\""
+run "shareos-users del max" >/dev/null; run "uci delete shares.fotos; uci commit shares" >/dev/null
+check "restore: (max and the share are gone now)" "! grep -q '^max:' $R/etc/passwd && ! run 'uci -q get shares.fotos' | grep -q share"
+A2=$(run 'ubus call shareos.backup restore "$(cat /tmp/req-apply.json)"')
+check "restore: applied" "echo '$A2' | js \"d['ok']\" && grep -q '^max:' $R/etc/passwd && grep -q '^max:' $R/etc/shadow && run 'uci get shares.fotos' | grep -qx share"
+check "restore: web logins rebuilt" "run 'uci get rpcd.acc_jan.read' | grep -qx '\*'"
+
+echo; echo "$pass passed, $failed failed"
+[ $failed -eq 0 ]

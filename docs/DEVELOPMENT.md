@@ -66,6 +66,10 @@ the box for why the web server was not running.
 | 20:15 | **First online update on real hardware:** the box downloads `0.1.0-beta.1` from GitHub, verifies it, writes kernel and initramfs and installs the system on restart. The first-run wizard works without problems. |
 | 20:18 | Jan's feedback: after "Install" nothing visible happens. Claude adds a progress bar with the individual steps. |
 | 20:31 | New requirements from Jan: menu as in "Haupt-Funktion" (Services → Autostart, System → Network), tile/table view per section, light/dark/system, logo and browser icon in the accent colour. Network settings with automatic rollback so nobody locks themselves out. |
+| 22:50 | Jan tests `beta.2` end to end – everything works. Feedback: logo off centre on the login page, Install button stays active, notices at the bottom right go unnoticed. |
+| 23:00 | Concept **users, shares, apps**: one account for everything (shares, web interface, apps, cloud). Jan decides: own area "My ShareOS" for users, storage limit per user, cloud sync per device and per user, ksmbd as SMB server. |
+| 23:05 | Jan's log shows ECC errors: `blkid`/`lsblk` read the raw flash partitions on every storage query, including D-Link's unreadable "my-dlink". Claude switches the flash block devices off. |
+| 23:30 | **Shares (SMB/NFS), users, groups, storage limits, "My ShareOS", backup/restore** (JSON, optionally AES-256). Alt-F users are imported including their passwords. 52 checks in the ARM emulator. |
 
 ## Notable problems solved
 
@@ -103,6 +107,18 @@ the right of its heading. The interface is available in German and English.
 | Table view | Accent colours, light and dark |
 |---|---|
 | ![Table view](images/gui-tabelle.png) | ![Colours](images/gui-farben.png) |
+
+| Shares | Permissions per user and group |
+|---|---|
+| ![Shares](images/gui-freigaben.png) | ![Permissions](images/gui-freigabe-rechte.png) |
+
+| Users | "My ShareOS" for users |
+|---|---|
+| ![Users](images/gui-benutzer.png) | ![My ShareOS](images/gui-mein-shareos.png) |
+
+| Backup & restore | |
+|---|---|
+| ![Backup](images/gui-sichern.png) | |
 
 | Update with progress | Phone |
 |---|---|

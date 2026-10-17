@@ -1,0 +1,338 @@
+#!/bin/sh
+#
+# shareos-users – accounts for shares, the web interface and apps
+#
+#   shareos-users add <name> <admin|user|share> [options]   password on stdin
+#   shareos-users set <name> [options]
+#   shareos-users passwd <name>                             password on stdin
+#   shareos-users del <name> [--remove-home]
+#   shareos-users group-add <name> [--desc=TEXT]
+#   shareos-users group-del <name>
+#   shareos-users sync           rebuild group members, web logins and homes
+#   shareos-users import-altf    users, groups and passwords kept from Alt-F
+#
+# options: --fullname=TEXT --groups=a,b --home=<volume>|"" --quota=<MB>
+#          --web=0|1 (role "user": may log in to the web interface)
+#
+# One account is used everywhere: Linux (/etc/passwd, /etc/shadow; SSH only
+# for admins), SMB (ksmbd password database) and the web interface (rpcd
+# login, generated). Settings live in UCI /etc/config/accounts.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+NAME_RE='^[a-z][a-z0-9_]{0,31}$'
+FIRST_ID=1000
+ALTF=/etc/shareos/altf
+
+die() { echo "error: $*" >&2; exit 1; }
+log() { logger -t shareos-users "$*"; echo "$*"; }
+
+valid_name() { echo "$1" | grep -qE "$NAME_RE"; }
+system_name() {    # names that belong to the system (uid/gid below 1000 or reserved)
+	case "$1" in root|admin|users|nobody|shareos|guest) return 0 ;; esac
+	awk -F: -v n="$1" -v f=$FIRST_ID '$1 == n && $3 < f {found = 1} END {exit !found}' /etc/passwd /etc/group
+}
+user_exists() { [ "$(uci -q get accounts."$1")" = user ]; }
+group_exists() { [ "$(uci -q get accounts."$1")" = group ]; }
+linux_user() { grep -q "^$1:" /etc/passwd; }
+linux_group() { grep -q "^$1:" /etc/group; }
+
+next_id() {   # first free id >= 1000 in passwd ($1=/etc/passwd) or group
+	awk -F: -v f=$FIRST_ID '{used[$3] = 1} END {for (i = f; i < 60000; i++) if (!(i in used)) {print i; exit}}' "$1"
+}
+
+read_password() {
+	IFS= read -r PASS || true
+	[ ${#PASS} -ge 6 ] || die "the password needs at least 6 characters"
+	case "$PASS" in *:*) die "the password must not contain ':'" ;; esac
+}
+
+set_linux_password() {   # name password
+	printf '%s:%s\n' "$1" "$2" | chpasswd -c sha512 >/dev/null 2>&1 \
+		|| printf '%s:%s\n' "$1" "$2" | chpasswd >/dev/null || die "cannot set the password"
+}
+
+# SMB password (ksmbd keeps its own NT hashes)
+set_smb_password() {   # name password
+	command -v ksmbd.adduser >/dev/null || return 0
+	mkdir -p /etc/ksmbd
+	# without -a/-u ksmbd.adduser adds or updates
+	ksmbd.adduser -p "$2" "$1" >/dev/null 2>&1 || log "warning: cannot set the SMB password of $1"
+}
+del_smb_user() {
+	command -v ksmbd.adduser >/dev/null || return 0
+	ksmbd.adduser -d "$1" >/dev/null 2>&1
+}
+
+# --- options --------------------------------------------------------------------
+parse_opts() {
+	O_FULLNAME= O_GROUPS= O_HOME= O_QUOTA= O_WEB= O_ROLE= O_REMOVE_HOME=0 O_DESC=
+	S_FULLNAME=0 S_GROUPS=0 S_HOME=0 S_QUOTA=0 S_WEB=0 S_ROLE=0
+	for a; do
+		case "$a" in
+			--fullname=*) O_FULLNAME=${a#*=}; S_FULLNAME=1 ;;
+			--groups=*) O_GROUPS=$(echo "${a#*=}" | tr ',' ' '); S_GROUPS=1 ;;
+			--home=*) O_HOME=${a#*=}; S_HOME=1 ;;
+			--quota=*) O_QUOTA=${a#*=}; S_QUOTA=1 ;;
+			--web=*) O_WEB=${a#*=}; S_WEB=1 ;;
+			--role=*) O_ROLE=${a#*=}; S_ROLE=1 ;;
+			--desc=*) O_DESC=${a#*=} ;;
+			--remove-home) O_REMOVE_HOME=1 ;;
+			*) die "unknown option $a" ;;
+		esac
+	done
+	case "$O_FULLNAME" in *[:\'\"\\]*) die "the full name must not contain : ' \" or \\" ;; esac
+	[ ${#O_FULLNAME} -le 64 ] || die "the full name is too long"
+	[ $S_QUOTA = 0 ] || echo "$O_QUOTA" | grep -qE '^[0-9]{1,9}$' || die "invalid quota"
+	[ $S_WEB = 0 ] || case "$O_WEB" in 0|1) ;; *) die "invalid --web" ;; esac
+	[ $S_ROLE = 0 ] || case "$O_ROLE" in admin|user|share) ;; *) die "invalid role" ;; esac
+	if [ $S_HOME = 1 ] && [ -n "$O_HOME" ]; then
+		[ "$(uci -q get storage."$O_HOME")" = volume ] || die "unknown volume $O_HOME"
+	fi
+	for g in $O_GROUPS; do group_exists "$g" || die "unknown group $g"; done
+}
+
+apply_opts() {   # name
+	n=$1
+	[ $S_ROLE = 1 ] && uci set accounts."$n".role="$O_ROLE"
+	[ $S_FULLNAME = 1 ] && uci set accounts."$n".fullname="$O_FULLNAME"
+	[ $S_HOME = 1 ] && uci set accounts."$n".home="$O_HOME"
+	[ $S_QUOTA = 1 ] && uci set accounts."$n".quota="$O_QUOTA"
+	[ $S_WEB = 1 ] && uci set accounts."$n".web="$O_WEB"
+	if [ $S_GROUPS = 1 ]; then
+		uci -q delete accounts."$n".groups
+		for g in $O_GROUPS; do uci add_list accounts."$n".groups="$g"; done
+	fi
+	uci commit accounts
+	# GECOS and shell follow the settings
+	role=$(uci -q get accounts."$n".role)
+	shell=/bin/false; [ "$role" = admin ] && shell=/bin/sh
+	full=$(uci -q get accounts."$n".fullname)
+	awk -F: -v OFS=: -v n="$n" -v g="$full" -v s="$shell" '$1 == n {$5 = g; $7 = s} {print}' /etc/passwd > /etc/passwd.new \
+		&& cat /etc/passwd.new > /etc/passwd && rm -f /etc/passwd.new
+}
+
+# --- sync: everything derived from UCI -------------------------------------------
+sync_groups() {
+	# create missing groups, then write the member lists
+	for g in $(uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)=group$/\1/p"); do
+		linux_group "$g" || addgroup -g "$(next_id /etc/group)" "$g" >/dev/null || log "cannot create group $g"
+	done
+	members() {   # group -> comma list of users having it
+		for u in $(uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)=user$/\1/p"); do
+			for x in $(uci -q get accounts."$u".groups); do [ "$x" = "$1" ] && printf '%s,' "$u"; done
+		done
+	}
+	tmp=/etc/group.new
+	: > $tmp
+	while IFS=: read -r name pw gid list; do
+		if group_exists "$name"; then
+			m=$(members "$name"); list=${m%,}
+		elif [ "$name" = admin ]; then
+			list=$(for u in $(uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)\.role='admin'$/\1/p"); do printf '%s,' "$u"; done); list=${list%,}
+		fi
+		echo "$name:$pw:$gid:$list" >> $tmp
+	done < /etc/group
+	cat $tmp > /etc/group; rm -f $tmp
+}
+
+sync_web() {
+	# one rpcd login per account that may use the web interface
+	for s in $(uci -q show rpcd | sed -n "s/^rpcd\.\([^.=]*\)\.shareos_account='1'$/\1/p"); do uci -q delete rpcd."$s"; done
+	for u in $(uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)=user$/\1/p"); do
+		role=$(uci -q get accounts."$u".role)
+		web=$(uci -q get accounts."$u".web || echo 1)
+		case "$role" in
+			admin) acl='*' ;;
+			user) [ "$web" = 1 ] || continue; acl='shareos-user' ;;
+			*) continue ;;
+		esac
+		s="acc_$u"
+		uci set rpcd."$s"=login
+		uci set rpcd."$s".username="$u"
+		uci set rpcd."$s".password="\$p\$$u"
+		uci set rpcd."$s".shareos_account=1
+		uci add_list rpcd."$s".read="$acl"
+		uci add_list rpcd."$s".write="$acl"
+	done
+	uci commit rpcd
+}
+
+home_dir() {   # name -> path or nothing
+	v=$(uci -q get accounts."$1".home)
+	[ -n "$v" ] && echo "/mnt/$v/home/$1"
+}
+
+sync_homes() {
+	for u in $(uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)=user$/\1/p"); do
+		h=$(home_dir "$u") || continue
+		[ -n "$h" ] || continue
+		grep -q " ${h%/home/*} " /proc/mounts || continue      # volume not mounted
+		if [ ! -d "$h" ]; then
+			mkdir -p "$h" && chmod 0755 "${h%/*}" && chown "$u":users "$h" && chmod 0700 "$h" || log "cannot create $h"
+		fi
+		awk -F: -v OFS=: -v n="$u" -v h="$h" '$1 == n {$6 = h} {print}' /etc/passwd > /etc/passwd.new \
+			&& cat /etc/passwd.new > /etc/passwd && rm -f /etc/passwd.new
+	done
+}
+
+cmd_sync() {
+	[ -f /etc/config/accounts ] || : > /etc/config/accounts
+	sync_groups
+	sync_web
+	sync_homes
+	command -v shareos-shares >/dev/null && shareos-shares apply >/dev/null 2>&1
+	command -v shareos-quota >/dev/null && shareos-quota apply >/dev/null 2>&1
+	return 0
+}
+
+# --- commands ---------------------------------------------------------------------
+cmd_add() {
+	n=$1 role=$2; shift 2 || die "usage: add <name> <admin|user|share>"
+	valid_name "$n" || die "invalid name (a-z, 0-9 and _, starting with a letter, max. 32)"
+	system_name "$n" && die "the name $n is reserved"
+	user_exists "$n" && die "user $n exists"
+	group_exists "$n" && die "there is a group named $n"
+	case "$role" in admin|user|share) ;; *) die "invalid role" ;; esac
+	parse_opts "$@"
+	read_password
+	uid=$(next_id /etc/passwd)
+	adduser -D -H -h / -s /bin/false -G users -u "$uid" "$n" >/dev/null || die "cannot create the account"
+	uci set accounts."$n"=user
+	uci set accounts."$n".role="$role"
+	uci set accounts."$n".uid="$uid"
+	S_ROLE=0 apply_opts "$n"
+	set_linux_password "$n" "$PASS"
+	set_smb_password "$n" "$PASS"
+	cmd_sync
+	log "user $n added ($role)"
+}
+
+cmd_set() {
+	n=$1; shift || die "usage: set <name> [options]"
+	user_exists "$n" || die "unknown user $n"
+	parse_opts "$@"
+	apply_opts "$n"
+	cmd_sync
+	log "user $n changed"
+}
+
+cmd_passwd() {
+	n=$1
+	user_exists "$n" || [ "$n" = root ] || die "unknown user $n"
+	read_password
+	set_linux_password "$n" "$PASS"
+	[ "$n" = root ] || set_smb_password "$n" "$PASS"
+	log "password of $n changed"
+}
+
+cmd_del() {
+	n=$1; shift || die "usage: del <name>"
+	user_exists "$n" || die "unknown user $n"
+	parse_opts "$@"
+	h=$(home_dir "$n")
+	del_smb_user "$n"
+	deluser "$n" 2>/dev/null
+	linux_user "$n" && sed -i "/^$n:/d" /etc/passwd /etc/shadow
+	uci delete accounts."$n"; uci commit accounts
+	if [ $O_REMOVE_HOME = 1 ] && [ -n "$h" ] && echo "$h" | grep -qE "^/mnt/[a-z0-9_-]+/home/$n\$" && [ -d "$h" ]; then
+		rm -rf "$h"
+	fi
+	cmd_sync
+	log "user $n deleted"
+}
+
+cmd_group_add() {
+	g=$1; shift || die "usage: group-add <name>"
+	valid_name "$g" || die "invalid name"
+	system_name "$g" && die "the name $g is reserved"
+	group_exists "$g" && die "group $g exists"
+	user_exists "$g" && die "there is a user named $g"
+	parse_opts "$@"
+	uci set accounts."$g"=group
+	[ -n "$O_DESC" ] && uci set accounts."$g".desc="$O_DESC"
+	uci commit accounts
+	cmd_sync
+	log "group $g added"
+}
+
+cmd_group_del() {
+	g=$1
+	group_exists "$g" || die "unknown group $g"
+	for u in $(uci -q show accounts | sed -n "s/^accounts\.\([^.=]*\)=user$/\1/p"); do
+		uci -q del_list accounts."$u".groups="$g"
+	done
+	uci delete accounts."$g"; uci commit accounts
+	delgroup "$g" >/dev/null 2>&1
+	cmd_sync
+	log "group $g deleted"
+}
+
+# Alt-F kept /etc/passwd, /etc/shadow, /etc/group and samba/smbpasswd in its
+# settings archive; shareos-altf import copied them to $ALTF.
+cmd_import_altf() {
+	[ -f $ALTF/passwd ] || die "no Alt-F settings kept (System → General → first-run wizard)"
+	imported= skipped=
+	# groups first (gid >= 1000)
+	while IFS=: read -r g x gid members; do
+		[ "${gid:-0}" -ge $FIRST_ID ] 2>/dev/null && [ "$gid" -lt 65534 ] || continue
+		if ! valid_name "$g" || system_name "$g" || group_exists "$g" || user_exists "$g"; then skipped="$skipped $g"; continue; fi
+		uci set accounts."$g"=group; uci set accounts."$g".desc="Alt-F"
+	done < $ALTF/group
+	uci commit accounts
+	while IFS=: read -r u x uid gid gecos home shell; do
+		[ "${uid:-0}" -ge $FIRST_ID ] 2>/dev/null && [ "$uid" -lt 65534 ] || continue
+		if ! valid_name "$u" || system_name "$u" || user_exists "$u" || linux_user "$u"; then skipped="$skipped $u"; continue; fi
+		nid=$(next_id /etc/passwd)
+		adduser -D -H -h / -s /bin/false -G users -u "$nid" "$u" >/dev/null || { skipped="$skipped $u"; continue; }
+		uci set accounts."$u"=user
+		uci set accounts."$u".role=share
+		uci set accounts."$u".uid="$nid"
+		uci set accounts."$u".fullname="$(echo "$gecos" | cut -d, -f1 | tr -d "'\"\\\\")"
+		# Alt-F group memberships
+		for g in $(awk -F: -v u="$u" '{n = split($4, m, ","); for (i = 1; i <= n; i++) if (m[i] == u) print $1}' $ALTF/group); do
+			group_exists "$g" && uci add_list accounts."$u".groups="$g"
+		done
+		# keep the Linux password hash
+		hash=$(awk -F: -v u="$u" '$1 == u {print $2}' $ALTF/shadow 2>/dev/null)
+		case "$hash" in ''|'!'*|'*'*|x) ;; *)
+			awk -F: -v OFS=: -v u="$u" -v h="$hash" '$1 == u {$2 = h} {print}' /etc/shadow > /etc/shadow.new \
+				&& cat /etc/shadow.new > /etc/shadow && rm -f /etc/shadow.new ;;
+		esac
+		# keep the SMB password (NT hash from smbpasswd)
+		nt=$(awk -F: -v u="$u" '$1 == u {print $4}' $ALTF/samba/smbpasswd 2>/dev/null)
+		if echo "$nt" | grep -qE '^[0-9A-Fa-f]{32}$' && command -v ksmbd.adduser >/dev/null; then
+			smb_hash_import "$u" "$nt"
+		fi
+		imported="$imported $u"
+	done < $ALTF/passwd
+	uci commit accounts
+	cmd_sync
+	echo "imported=${imported# }"
+	echo "skipped=${skipped# }"
+}
+
+# ksmbd stores "<user>:<base64 of the NT hash>" in its password database
+smb_hash_import() {   # user hexhash
+	db=/etc/ksmbd/ksmbdpwd.db
+	mkdir -p /etc/ksmbd
+	# hex -> bytes (\xHH escapes for printf) -> base64
+	b64=$(printf "$(echo "$2" | sed 's/../\\x&/g')" | base64)
+	[ -n "$b64" ] || return 0
+	touch $db; chmod 600 $db
+	sed -i "/^$1:/d" $db
+	echo "$1:$b64" >> $db
+}
+
+[ -f /etc/config/accounts ] || : > /etc/config/accounts
+cmd=$1; shift 2>/dev/null
+case "$cmd" in
+	add) cmd_add "$@" ;;
+	set) cmd_set "$@" ;;
+	passwd) cmd_passwd "$@" ;;
+	del) cmd_del "$@" ;;
+	group-add) cmd_group_add "$@" ;;
+	group-del) cmd_group_del "$@" ;;
+	sync) cmd_sync ;;
+	import-altf) cmd_import_altf ;;
+	*) sed -n '3,21s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

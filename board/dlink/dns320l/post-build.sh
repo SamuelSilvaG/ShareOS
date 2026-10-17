@@ -58,3 +58,11 @@ if [ -f "$DS" ]; then
 	sed -i -e 's/ # \$interface" >> \$RESOLV_CONF/" >> $RESOLV_CONF/' \
 		-e 's/grep -vE "# \$interface\\\$" \$RESOLV_CONF/grep -vE "^(nameserver|search|domain) " $RESOLV_CONF/' "$DS"
 fi
+
+# NFS and rpcbind only run when there is an NFS share: shareos-shares starts
+# them, so they must not start at boot by themselves
+for f in S30rpcbind:rpcbind S60nfs:nfs; do
+	if [ -f "$TARGET_DIR/etc/init.d/${f%%:*}" ]; then
+		mv "$TARGET_DIR/etc/init.d/${f%%:*}" "$TARGET_DIR/etc/init.d/${f#*:}"
+	fi
+done

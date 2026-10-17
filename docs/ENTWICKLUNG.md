@@ -67,6 +67,10 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 20:15 | **Erstes Online-Update auf echter Hardware:** Die Box lädt `0.1.0-beta.1` von GitHub, prüft es, schreibt Kernel und Startsystem, installiert das System beim Neustart. Ersteinrichtung läuft ohne Probleme. |
 | 20:18 | Jans Rückmeldung: Nach „Installieren“ sieht man nichts. Claude baut einen Fortschrittsbalken mit den einzelnen Schritten. |
 | 20:31 | Neue Vorgaben von Jan: Menü nach „Haupt-Funktion“ (Dienste → Autostart, System → Netzwerk), Kachel-/Tabellenansicht je Bereich, Hell/Dunkel/System, Logo und Browser-Symbol in der Akzentfarbe. Netzwerk-Einstellungen mit automatischem Rückfall, damit man sich nicht aussperrt. |
+| 22:50 | Jan testet `beta.2` komplett durch – alles läuft. Rückmeldungen: Logo auf der Anmeldeseite nicht mittig, Installieren-Knopf bleibt aktiv, Hinweise rechts unten gehen unter. |
+| 23:00 | Konzept **Benutzer, Freigaben, Apps**: ein Konto für alles (Freigaben, Weboberfläche, Apps, Cloud). Jan entscheidet: eigener Bereich „Mein ShareOS“ für Benutzer, Speicherlimit je Benutzer, Cloud-Sync für Gerät und Benutzer, ksmbd als SMB-Server. |
+| 23:05 | In Jans Protokoll fallen ECC-Fehler auf: `blkid`/`lsblk` lasen bei jeder Speicherabfrage auch die rohen Flash-Partitionen, darunter D-Links unlesbare „my-dlink“. Claude schaltet die Flash-Blockgeräte ab. |
+| 23:30 | **Freigaben (SMB/NFS), Benutzer, Gruppen, Speicherlimits, „Mein ShareOS“, Sichern/Wiederherstellen** (JSON, optional AES-256). Alt-F-Benutzer werden mitsamt Passwörtern übernommen. 52 Prüfungen im ARM-Emulator. |
 
 ## Bemerkenswerte Problemlösungen
 
@@ -105,6 +109,18 @@ Englisch.
 | Tabellenansicht | Akzentfarben, Hell und Dunkel |
 |---|---|
 | ![Tabellenansicht](images/gui-tabelle.png) | ![Farben](images/gui-farben.png) |
+
+| Freigaben | Rechte je Benutzer und Gruppe |
+|---|---|
+| ![Freigaben](images/gui-freigaben.png) | ![Rechte](images/gui-freigabe-rechte.png) |
+
+| Benutzer | „Mein ShareOS“ für Benutzer |
+|---|---|
+| ![Benutzer](images/gui-benutzer.png) | ![Mein ShareOS](images/gui-mein-shareos.png) |
+
+| Sichern & Wiederherstellen | |
+|---|---|
+| ![Sichern](images/gui-sichern.png) | |
 
 | Update mit Fortschritt | Englisch |
 |---|---|

@@ -335,7 +335,7 @@
 		"Auf dieser Box wurden Einstellungen von": "This box has settings from",
 		"gefunden": "",
 		"Ausgewogen": "Balanced",
-		"Benutzer": "Users",
+		"Benutzer": "User",
 		"Freigaben": "Shares",
 		"NFS": "NFS",
 		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "Users and shares are kept and offered in the \"Shares\" area. The Alt-F data in flash stays untouched.",
@@ -464,9 +464,252 @@
 		"in Ordnung": "OK",
 		"Sync wartet": "Sync waiting",
 		"STATUS": "STATUS",
-		"AUTOSTART": "AUTOSTART"
+		"AUTOSTART": "AUTOSTART",
+		"GRUPPEN": "GROUPS",
+		"Administrator": "Administrator",
+		"Nur Freigaben": "Shares only",
+		"lesen & schreiben": "read & write",
+		"nur lesen": "read only",
+		"kein Zugriff": "no access",
+		"unbegrenzt": "unlimited",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "Shares need a drive – first set one up under",
+		"einrichten.": ".",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "No share yet. A share makes a folder on a drive reachable on the network – from Windows, macOS and Linux.",
+		"Freigabe anlegen": "Create a share",
+		"Neue Freigabe": "New share",
+		"FREIGABE": "SHARE",
+		"ORDNER": "FOLDER",
+		"ZUGRIFF": "ACCESS",
+		"Laufwerk fehlt": "drive missing",
+		"noch niemand": "nobody yet",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS, MACOS, LINUX)",
+		"SMB-Freigaben anbieten": "Offer SMB shares",
+		"ARBEITSGRUPPE": "WORKGROUP",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "The SMB service starts automatically as soon as there is a share. Personal folders appear as",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX, PROXMOX)",
+		"NFS-Freigaben anbieten": "Offer NFS shares",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "NFS has no user accounts: the listed computers or networks get access. Files are stored as",
+		"gespeichert. Einbinden z. B. mit": ". Mount e.g. with",
+		"kein Protokoll": "no protocol",
+		"GAST": "GUEST",
+		"Bearbeiten": "Edit",
+		"Löschen": "Delete",
+		"Anlegen": "Create",
+		"NEUE FREIGABE": "NEW SHARE",
+		"NAME": "NAME",
+		"ORDNER AUF DEM LAUFWERK": "FOLDER ON THE DRIVE",
+		"wie der Name": "same as the name",
+		"ZUGRIFF ÜBER SMB": "ACCESS VIA SMB",
+		"Über SMB freigeben (Windows, macOS, Linux)": "Share via SMB (Windows, macOS, Linux)",
+		"Gäste dürfen ohne Passwort lesen": "Guests may read without a password",
+		"BENUTZER / GRUPPE": "USER / GROUP",
+		"RECHT": "PERMISSION",
+		"Noch keine Benutzer – unter": "No users yet – create them under",
+		"anlegen, oder Gastzugang erlauben.": ", or allow guest access.",
+		"ZUGRIFF ÜBER NFS": "ACCESS VIA NFS",
+		"Über NFS freigeben": "Share via NFS",
+		"NFS-Clients dürfen schreiben": "NFS clients may write",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "NFS CLIENTS (IP OR NETWORK, COMMA-SEPARATED)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "The folder is created if it is missing. Removing a share keeps the folder and its files.",
+		"kein Limit": "no limit",
+		"von": "of",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "No users yet. One account works everywhere: for shares, the web interface and later for apps and cloud sync.",
+		"Benutzer anlegen": "Create a user",
+		"Von Alt-F übernehmen": "Import from Alt-F",
+		"Neuer Benutzer": "New user",
+		"ROLLE": "ROLE",
+		"PERSÖNLICHER ORDNER": "PERSONAL FOLDER",
+		"kein persönlicher Ordner": "no personal folder",
+		"Rollen:": "Roles:",
+		"– alles, auch SSH.": "– everything, including SSH.",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– own area “My ShareOS” in the web interface.",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– access to shares, no web login. The account",
+		"bleibt immer Administrator.": "is always an administrator.",
+		" · ohne Web": " · no web",
+		"NEUER BENUTZER": "NEW USER",
+		"BENUTZERNAME": "USER NAME",
+		"VOLLER NAME": "FULL NAME",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "STORAGE LIMIT PER DRIVE (GB, 0 = UNLIMITED)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "May log in to the web interface (“My ShareOS”)",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "User name: lower-case letters, digits and _, starting with a letter. The password is used for shares and – depending on the role – for the web interface.",
+		"GRUPPE": "GROUP",
+		"MITGLIEDER": "MEMBERS",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "Groups bring users together, e.g. “family” or “media”. Share permissions can then be given to the whole group.",
+		"Neue Gruppe": "New group",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "Members are set on the user (Users → Edit).",
+		"MEIN SHAREOS": "MY SHAREOS",
+		"Noch nichts gespeichert.": "Nothing stored yet.",
+		"Persönlicher Ordner": "Personal folder",
+		"Kein persönlicher Ordner eingerichtet.": "No personal folder set up.",
+		"PASSWORT ÄNDERN": "CHANGE PASSWORD",
+		"AKTUELLES PASSWORT": "CURRENT PASSWORD",
+		"Gilt für die Freigaben und diese Oberfläche.": "Used for the shares and this interface.",
+		"MEINE FREIGABEN": "MY SHARES",
+		"Dir wurde noch keine Freigabe zugewiesen.": "No share has been assigned to you yet.",
+		"APPS & CLOUD": "APPS & CLOUD",
+		"geplant": "planned",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "The apps released for you and your own cloud sync jobs will appear here later.",
+		"Mein ShareOS": "My ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "Enter at least one client (IP or network) for NFS.",
+		"Gespeichert.": "Saved.",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "The share disappears from the network. The folder and all files in it stay on the drive.",
+		"Benutzer von Alt-F übernehmen?": "Import users from Alt-F?",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "Users and groups from the kept Alt-F settings are created (role “Shares only”). Passwords are taken over where Alt-F stored them.",
+		"Keine neuen Benutzer gefunden.": "No new users found.",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "Group name (a–z, 0–9 and _, starting with a letter):",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "The members stay, but lose the permissions given through this group.",
+		"Setzen": "Set",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "New password (at least 6 characters). Used for shares and – depending on the role – for the web interface.",
+		"Bitte neu anmelden.": "Please log in again.",
+		" Der persönliche Ordner bleibt erhalten.": " The personal folder is kept.",
+		"Benutzerkonten": "User accounts",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "BACK UP & RESTORE SETTINGS",
+		"SICHERN": "BACK UP",
+		"JSON-Datei": "JSON file",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "PASSWORD FOR ENCRYPTION (OPTIONAL)",
+		"leer = unverschlüsselt": "empty = not encrypted",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Contains all settings, users with their passwords (as hashes), shares, network and the HTTPS certificate including its key. Without a password the file is readable – keep it safe. With a password: AES-256, the password is needed to restore.",
+		"Sicherung herunterladen": "Download backup",
+		"WIEDERHERSTELLEN": "RESTORE",
+		"SICHERUNGSDATEI": "BACKUP FILE",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "PASSWORD (IF ENCRYPTED)",
+		"Erstellt": "Created",
+		"Zertifikat": "Certificate",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "Restoring replaces the current settings, users and shares. A restart is needed afterwards. Data on the drives is not touched.",
+		"Wiederherstellen": "Restore",
+		"Einstellungen wiederherstellen?": "Restore settings?",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "The current settings, users and shares are replaced by the backup.",
+		"Wiederhergestellt": "Restored",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "The settings are restored. Restart now so that everything applies?",
+		"Verschlüsselte Sicherung heruntergeladen.": "Encrypted backup downloaded.",
+		"Sicherung heruntergeladen.": "Backup downloaded.",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "The backup is encrypted – please enter the password."
 	},
 	"patterns": [
+		[
+			"^Wiederherstellen: (.*)$",
+			"Restore: $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"Backup: $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"Backup: $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"$1 created"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"SHARE $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"USER $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"Group $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"Permission for $1"
+		],
+		[
+			"^auf (\\S+)$",
+			"on $1"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"Limit $1 per drive"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"Guests (r)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"Share “$1” saved."
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"Remove share “$1”?"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"Share “$1” removed."
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"User “$1” created."
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"User “$1” saved."
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"Delete user “$1”?"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"User “$1” deleted."
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"The account is removed; its share permissions are dropped.$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"Group “$1” created."
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"Delete group “$1”?"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"Group “$1” deleted."
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"Password for $1"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"Password of $1 changed."
+		],
+		[
+			"^Übernommen: (.+)$",
+			"Imported: $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"Skipped: $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"Shares: $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"Share: $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"User: $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"Password: $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F: $1"
+		],
 		[
 			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
 			"The change takes effect at once. The box then waits $1 seconds for a confirmation from the new address – if none comes, it restores the previous settings. So you cannot lock yourself out."
@@ -886,6 +1129,11 @@
 			"^Hardware: ",
 			"Hardware: ",
 			""
+		],
+		[
+			"\\bGruppe\\b",
+			"group",
+			"g"
 		]
 	]
 }
