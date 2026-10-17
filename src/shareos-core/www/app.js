@@ -7,6 +7,19 @@
  */
 'use strict';
 
+/* ---------- language ---------------------------------------------------------- */
+
+const LANG = (() => {
+	try { const l = localStorage.getItem('shareos.lang'); if (l) return l; } catch (e) { }
+	return (navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
+})();
+const LOC = LANG === 'en' ? 'en-GB' : 'de-DE';
+
+function setLang(l) {
+	try { localStorage.setItem('shareos.lang', l); } catch (e) { }
+	location.reload();
+}
+
 /* ---------- helpers --------------------------------------------------------- */
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -25,7 +38,7 @@ const fmtBytes = (b, d = 1) => {
 	const u = ['B', 'KB', 'MB', 'GB', 'TB'];
 	let i = 0;
 	while (b >= 1000 && i < u.length - 1) { b /= 1000; i++; }
-	return b.toLocaleString('de-DE', { maximumFractionDigits: i ? d : 0 }) + ' ' + u[i];
+	return b.toLocaleString(LOC, { maximumFractionDigits: i ? d : 0 }) + ' ' + u[i];
 };
 const fmtRate = (b) => (b == null ? '–' : fmtBytes(b, 1) + '/s');
 const fmtUptime = (s) => {
@@ -33,7 +46,7 @@ const fmtUptime = (s) => {
 	const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
 	return d ? `${d} T ${h} h` : h ? `${h} h ${m} min` : `${m} min`;
 };
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('de-DE') : '–');
+const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString(LOC) : '–');
 const pct = (a, b) => (b ? Math.max(0, Math.min(100, (a / b) * 100)) : 0);
 
 const store = {
@@ -301,6 +314,10 @@ function renderLogin(msg = '') {
 			<label class="chk"><input name="keep" type="checkbox">Angemeldet bleiben (7 Tage)</label>
 			<p class="err" id="login-err">${msg}</p>
 			<button class="btn primary" type="submit" style="min-height:44px">Anmelden</button>
+			<div class="acts" style="justify-content:center;font-size:12px">
+				<button class="btn sm ghost${LANG === 'de' ? ' on' : ''}" type="button" data-act="lang" data-l="de" aria-pressed="${LANG === 'de'}">Deutsch</button>
+				<button class="btn sm ghost${LANG === 'en' ? ' on' : ''}" type="button" data-act="lang" data-l="en" aria-pressed="${LANG === 'en'}">English</button>
+			</div>
 		</form>
 	</div>`.s;
 	$('#login-form').addEventListener('submit', async (e) => {
@@ -354,8 +371,8 @@ function renderHeader(offline = false) {
 				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden">${svg(I.power)}</button>
 			</div>
-			<div class="clock">${now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div>
-			<div class="meta">${now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+			<div class="clock">${now.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' })}</div>
+			<div class="meta">${now.toLocaleDateString(LOC, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
 		</div>`.s;
 	const ft = $('#ft');
 	if (ft) ft.innerHTML = html`<span><b>ShareOS</b> ${r.version || ''} · Linux ${i.kernel || ''} · GPLv2</span>
@@ -604,7 +621,7 @@ function storageView() {
 				<td><b>${fsLabel[f.mount] || f.mount}</b><div class="mut" style="font-size:12px">${f.source}</div></td>
 				<td><code>${f.mount}</code></td>
 				<td>${fmtBytes(f.used)} / ${fmtBytes(f.size)}</td>
-				<td><div class="bar"><i class="${pct(f.used, f.size) > 90 ? 'crit' : pct(f.used, f.size) > 75 ? 'warn' : ''}" style="width:${pct(f.used, f.size).toFixed(0)}%"></i></div></td></tr>`)}
+				<td><div class="bar"><i class="${f.mount === '/rom' ? '' : pct(f.used, f.size) > 90 ? 'crit' : pct(f.used, f.size) > 75 ? 'warn' : ''}" style="width:${pct(f.used, f.size).toFixed(0)}%"></i></div></td></tr>`)}
 			</tbody></table></div>
 	</section>`;
 }
@@ -634,7 +651,7 @@ function volumeCard(st, v, running) {
 function fmtMin(s) {
 	const m = parseFloat(s);
 	if (!(m >= 0)) return s;
-	return m >= 90 ? `${(m / 60).toFixed(1).replace('.', ',')} h` : `${Math.round(m)} min`;
+	return m >= 90 ? `${(m / 60).toLocaleString(LOC, { maximumFractionDigits: 1 })} h` : `${Math.round(m)} min`;
 }
 
 function diskCard(st, d, running) {
@@ -883,6 +900,13 @@ const SYS = {
 			</div>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
+			<div class="ph"><span class="pt">SPRACHE</span><span class="tag ml">nur in diesem Browser</span></div>
+			<div class="acts">
+				<button class="btn sm${LANG === 'de' ? ' primary' : ''}" type="button" data-act="lang" data-l="de">Deutsch</button>
+				<button class="btn sm${LANG === 'en' ? ' primary' : ''}" type="button" data-act="lang" data-l="en">English</button>
+			</div>
+		</div>
+		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
 			<label class="chk"><input type="checkbox" id="opt-logo"${S.logo ? raw(' checked') : ''}>ShareOS-Logo anzeigen (aus: nur Schriftzug)</label>
 			<div style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)">${brand()}</div>
@@ -1014,6 +1038,7 @@ async function refreshUpdateStatus() {
 const ACTIONS = {
 	theme() { S.theme = S.theme === 'light' ? 'dark' : 'light'; store.set('theme', S.theme); applyTheme(); renderHeader(); },
 	logout,
+	lang(el) { if (el.dataset.l !== LANG) setLang(el.dataset.l); },
 	accent(el) { S.accent = el.dataset.c; store.set('accent', S.accent); applyTheme(); renderMain(); },
 	check() { checkUpdates(); },
 	'wiz-start'() {
@@ -1140,12 +1165,14 @@ window.addEventListener('hashchange', () => {
 // clock in the header without waiting for the next poll
 setInterval(() => {
 	const c = $('.clock');
-	if (c) c.textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+	if (c) c.textContent = new Date().toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' });
 }, 10000);
 
 /* ---------- start ----------------------------------------------------------- */
 
 (async function start() {
+	document.documentElement.lang = LANG;
+	if (LANG === 'en' && typeof i18nStart === 'function') i18nStart($('#app'));
 	applyTheme();
 	if (S.sid) {
 		try {

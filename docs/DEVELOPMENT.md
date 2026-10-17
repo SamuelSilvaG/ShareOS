@@ -70,21 +70,28 @@ the box for why the web server was not running.
 
 ## The web interface
 
-| Login | Overview |
-|---|---|
-| ![Login](images/gui-login.png) | ![Overview](images/gui-uebersicht.png) |
+The default is the dark blue theme with the logo. Green, red, white and a light
+theme can be chosen, and the logo can be switched off. The interface is
+available in German and English.
 
-| Firmware update | Confirmation |
+| Overview (English) | Storage wizard (English) |
 |---|---|
-| ![Firmware](images/gui-firmware.png) | ![Dialog](images/gui-dialog.png) |
+| ![Overview](images/gui-en-overview.png) | ![Wizard](images/gui-en-wizard.png) |
 
-| Light theme | Phone |
+| Login | Storage (mirror in initial sync) |
 |---|---|
-| ![Light](images/gui-hell.png) | ![Phone](images/gui-handy.png) |
+| ![Login](images/gui-login.png) | ![Storage](images/gui-speicher.png) |
 
-*Screenshots from the emulator. Values such as temperature, fan and network
-traffic do not exist there, which is also why the "not running from flash"
-notice appears.*
+| Firmware update | Appearance, language, logo |
+|---|---|
+| ![Firmware](images/gui-firmware.png) | ![Appearance](images/gui-darstellung.png) |
+
+| Overview (German) | Phone |
+|---|---|
+| ![Overview](images/gui-uebersicht.png) | ![Phone](images/gui-handy.png) |
+
+*Screenshots with sample data (`tests/mock-ubus.py`): two 4 TB disks as a
+mirror and an update available.*
 
 ## Numbers (as of 17 Oct 2026, 16:00)
 

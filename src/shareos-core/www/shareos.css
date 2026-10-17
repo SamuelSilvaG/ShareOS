@@ -206,3 +206,4 @@ dialog.dlg .acts{justify-content:flex-end}
 .login .brandlogo{height:auto;width:min(100%,300px);margin:0 auto 4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:640px){.brandlogo{height:52px}}
+.btn.ghost.on{color:var(--accent);border-color:var(--dim)}
