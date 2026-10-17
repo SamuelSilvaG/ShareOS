@@ -402,6 +402,7 @@ return {
 			args: { lang: '', logo: false },
 			call: function(req) {
 				let c = cursor();
+				c.set('shareos', 'ui', 'ui');   // section may be missing in configs from older versions
 				if (req.args.lang != null && req.args.lang != '') {
 					if (!match(req.args.lang, /^[a-z]{2}(-[A-Za-z]{2})?$/)) return { error: 'invalid language' };
 					c.set('shareos', 'ui', 'lang', req.args.lang);
@@ -426,6 +427,7 @@ return {
 			args: { https: true, redirect: false },
 			call: function(req) {
 				let c = cursor();
+				c.set('shareos', 'web', 'web');
 				if (req.args.https != null) c.set('shareos', 'web', 'https', req.args.https ? '1' : '0');
 				if (req.args.redirect != null) c.set('shareos', 'web', 'redirect', req.args.redirect ? '1' : '0');
 				c.commit('shareos');
