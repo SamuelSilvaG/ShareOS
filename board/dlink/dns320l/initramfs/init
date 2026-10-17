@@ -116,6 +116,16 @@ mkdir -p /newroot/rom /newroot/overlay
 mount --move /mnt/ro /newroot/rom
 mount --move /mnt/rw /newroot/overlay
 
+# hand the network back unconfigured (the MAC stays): the system's own
+# S40network brings up lo and eth0 again and fails on existing addresses
+if [ -n "$NETROOT" ]; then
+	killall udhcpc 2>/dev/null
+	ip addr flush dev eth0
+	ip route flush dev eth0 2>/dev/null
+	ip addr flush dev lo
+	ip link set lo down
+fi
+
 umount /dev/pts /run 2>/dev/null
 umount /proc /sys
 mount --move /dev /newroot/dev 2>/dev/null || umount /dev

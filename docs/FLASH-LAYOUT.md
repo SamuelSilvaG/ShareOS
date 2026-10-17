@@ -51,12 +51,18 @@ In U-Boot (stop with `<space>1`):
 
 ```
 setenv ipaddr <free ip>; setenv serverip <pc ip>; setenv netmask 255.255.255.0
-setenv bootargs root=/dev/ram console=ttyS0,115200 shareos.netroot=<pc ip>
+setenv bootargs shareos.netroot=<pc ip>
 tftpboot 0xa00000 uImage
 tftpboot 0xf00000 urootfs
 bootm 0xa00000 0xf00000
 ```
-(no `saveenv` – U-Boot keeps its stock settings)
+(no `saveenv` – U-Boot keeps its stock settings). The kernel's built-in
+command line already has `console=` and `root=`; bootargs are appended.
+
+Verified on hardware 2026-10-17 (build cad09bb): TFTP download of the
+squashfs, `/rom` (squashfs on loop0) + tmpfs `/overlay`, overlay as `/`,
+all services up. Fixed afterwards: the initramfs now drops its IP addresses
+before `switch_root`, otherwise `S40network` failed with "File exists".
 
 ## Sizes (build cad09bb)
 
