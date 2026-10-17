@@ -71,3 +71,16 @@ before `switch_root`, otherwise `S40network` failed with "File exists".
 | uImage (kernel + DTB) | 2.38 MB | 3 MB |
 | initramfs | 0.92 MB | 3 MB |
 | rootfs.squashfs | 5.0 MB | 48 MB volume |
+
+## Flashing the boot partitions (ShareOS starts without TFTP)
+
+Once the system is in `image` (UBI), `shareos-flash-boot tftp://<pc ip> --yes`
+(or a local directory with uImage, urootfs, SHA256SUMS) writes the kernel
+into `uImage` and the initramfs into `ramdisk`. It checks SHA256SUMS, the
+U-Boot header magic, the `ShareOS-` image name and the 3 MB limit, saves the
+old partitions once to `/root/boot-backup/`, and verifies by reading back.
+
+Back to Alt-F: boot ShareOS via TFTP and write the backups with
+`flash_erase /dev/mtdN 0 0; nandwrite -p /dev/mtdN <file>` (mtd1 uImage,
+mtd2 ramdisk) – or flash Alt-F from the D-Link rescue web page if U-Boot
+cannot start the kernel (bad CRC → rescue firmware).
