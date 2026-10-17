@@ -10,6 +10,7 @@ section() { echo; echo "=== $* ==="; }
 
 {
 	echo "ShareOS hardware check – $(date)"
+	echo "MCU RTC: $(dns320l-daemon -x ReadRtc 2>/dev/null)"
 	cat /etc/shareos-release 2>/dev/null
 
 	section "Board"

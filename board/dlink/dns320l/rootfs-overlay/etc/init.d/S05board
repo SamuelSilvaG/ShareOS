@@ -46,6 +46,12 @@ start() {
 	if grep -q "DNS-320L" /proc/device-tree/model 2>/dev/null; then
 		start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "$DAEMON" -- -f
 		start-stop-daemon -S -q -b -m -p "$BOARDPID" -x /usr/sbin/shareos-board
+		# system time from the MCU's RTC (UTC); ntpd refines it later
+		i=0
+		while [ $i -lt 10 ]; do
+			"$DAEMON" -x hctosys >/dev/null 2>&1 && { echo -n "time $(date '+%F %T'), "; break; }
+			sleep 0.5; i=$((i + 1))
+		done
 		echo "OK"
 	else
 		echo "not a DNS-320L, skipped"
@@ -54,6 +60,8 @@ start() {
 
 stop() {
 	printf "Stopping board support: "
+	# keep the MCU's RTC in sync, but never write a clock that was never set
+	[ "$(date +%Y)" -ge 2025 ] && "$DAEMON" -x systohc >/dev/null 2>&1
 	start-stop-daemon -K -q -p "$BOARDPID" 2>/dev/null
 	start-stop-daemon -K -q -p "$PIDFILE" 2>/dev/null
 	sleep 1

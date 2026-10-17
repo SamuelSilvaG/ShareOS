@@ -1,0 +1,4 @@
+# ShareOS additions to buildroot's busybox config
+CONFIG_NTPD=y
+# CONFIG_FEATURE_NTPD_SERVER is not set
+CONFIG_FEATURE_NTPD_CONF=y

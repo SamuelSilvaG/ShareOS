@@ -133,3 +133,23 @@ tftpboot 0xf00000 urootfs
 bootm 0xa00000 0xf00000       # never saveenv
 ```
 PC: `dnsmasq --no-daemon --port=0 --enable-tftp --tftp-root=/srv/tftp --tftp-single-port`.
+
+## First boot of ShareOS on hardware (2026-10-17)
+
+TFTP-booted from RAM (`uImage` + `urootfs`, commit d43dcb5), rev A3 box:
+
+| Check | Result |
+|---|---|
+| Kernel 6.18.57 + ported DTS | boots, model "D-Link DNS-320L-rev-Ax NAS", 256 MB |
+| NAND | 7 partitions as in Alt-F, same bad blocks |
+| Ethernet | 1000 Mb/s full duplex, DHCP lease, real MAC from mtd4 |
+| MCU (dns320l-daemon) | running, temperature read (36–38 °C), fan runs |
+| LEDs / buttons | all 4 LEDs, gpio-keys; blue USB LED heartbeat |
+| Power button / poweroff | MCU switches the box off |
+| ubusd / rpcd / uhttpd | web test page works (system info, login) |
+| SSH | works |
+| Kernel log | clean (only `orion_wdt: Initial timeout 25 sec`) |
+
+Fixed afterwards: system time from the MCU RTC (`dns320l-daemon -x hctosys`)
+plus busybox ntpd (RTC updated after each clock step), boot message waits for
+the DHCP address, `shareos-check` shows all link modes and the PHY.

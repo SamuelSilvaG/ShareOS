@@ -1,0 +1,8 @@
+#!/bin/sh
+# called by busybox ntpd: $1 = step | stratum | unsync | periodic
+case "$1" in
+	step|stratum)
+		[ "$(date +%Y)" -ge 2025 ] && /usr/sbin/dns320l-daemon -x systohc >/dev/null 2>&1
+		logger -t ntpd "clock $1, RTC updated: $(date '+%F %T')"
+		;;
+esac
