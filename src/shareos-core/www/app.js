@@ -765,6 +765,17 @@ async function loadStorage() {
 /* ---------- system sub pages ------------------------------------------------ */
 
 const STEP_NAMES = ['Herunterladen', 'Prüfen', 'Bereit', 'Schreiben', 'Neustart'];
+// flashing sub-steps reported by shareos-update -> [progress %, label]
+const FLASH_STEPS = {
+	'check bundle': [5, 'Paket wird erneut geprüft'],
+	'stage rootfs': [20, 'System wird für den Neustart bereitgelegt'],
+	'erase ramdisk': [45, 'Startsystem: Flash wird gelöscht'],
+	'write ramdisk': [50, 'Startsystem wird geschrieben'],
+	'verify ramdisk': [58, 'Startsystem wird geprüft'],
+	'erase uImage': [64, 'Kernel: Flash wird gelöscht'],
+	'write uImage': [72, 'Kernel wird geschrieben'],
+	'verify uImage': [88, 'Kernel wird geprüft']
+};
 function stepIndex(state) {
 	return { downloading: 0, verifying: 1, ready: 2, flashing: 3, flashed: 4 }[state] ?? -1;
 }
@@ -797,8 +808,9 @@ const SYS = {
 					${si >= 0 ? html`
 						<div class="pt" style="margin:18px 0 8px">ABLAUF · ${u.release?.version || ''}</div>
 						<div class="steps">${STEP_NAMES.map((n, k) => html`<div class="step ${k < si || u.state === 'flashed' ? 'done' : k === si ? 'act' : ''}"><div class="n">${k + 1}${k < si || (u.state === 'flashed' && k <= si) ? ' ✓' : k === si ? ' · LÄUFT' : ''}</div>${n}</div>`)}</div>
-						${prog != null ? html`<div class="bar big" style="margin-top:12px"><i style="width:${prog.toFixed(0)}%"></i></div><p class="note">${fmtBytes(u.progress.bytes)} von ${fmtBytes(u.progress.total)}</p>` : ''}
-						${u.state === 'flashing' ? html`<p class="note">${u.step || ''} – <b>nicht ausschalten</b>.</p>` : ''}
+						${prog != null ? html`<div class="bar big busy" style="margin-top:12px"><i style="width:${prog.toFixed(0)}%"></i></div><p class="note">${fmtBytes(u.progress.bytes)} von ${fmtBytes(u.progress.total)}</p>` : ''}
+						${u.state === 'verifying' ? html`<div class="bar big busy" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Paket wird geprüft …</b> SHA-256 und Inhalt, dauert etwa eine halbe Minute.</p>` : ''}
+						${u.state === 'flashing' ? (() => { const [fp, fl] = FLASH_STEPS[u.step] || [2, 'Wird gestartet']; return html`<div class="bar big busy" style="margin-top:12px"><i style="width:${fp}%"></i></div><p class="note"><b>${fl} …</b> (${fp} %) – Box <b>nicht ausschalten</b>, das dauert etwa 1–2 Minuten.</p>`; })() : ''}
 						${u.state === 'ready' ? html`<div class="acts" style="margin-top:14px"><button class="btn primary" type="button" data-act="apply" data-tag="${u.release.tag}" ${bootOk ? '' : 'disabled'}>${svg(I.dl)}${u.release.version} installieren</button><button class="btn ghost" type="button" data-act="cancel">Verwerfen</button></div>
 							<p class="note">Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.</p>` : ''}`
 					: ''}
@@ -1405,15 +1417,19 @@ const ACTIONS = {
 	},
 
 	async download(el) {
-		try { await rpc('shareos.update', 'download', { tag: el.dataset.tag }); S.upd = { ...S.upd, state: 'downloading' }; refreshUpdateStatus(); }
-		catch (e) { toast('Download: ' + e.message, true); }
+		S.upd = { ...S.upd, state: 'downloading', progress: null };
+		renderMain();
+		try { await rpc('shareos.update', 'download', { tag: el.dataset.tag }); refreshUpdateStatus(); }
+		catch (e) { toast('Download: ' + e.message, true); refreshUpdateStatus(); }
 	},
 
 	async apply(el) {
 		const tag = el.dataset.tag;
 		if (!await confirmDlg('Update installieren?', `ShareOS ${tag.replace(/^v/, '')} wird in den Flash geschrieben. Danach ist ein Neustart nötig, bei dem das neue System installiert wird. Während des Schreibens die Box nicht ausschalten.`, 'Installieren')) return;
-		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); S.upd = { ...S.upd, state: 'flashing' }; refreshUpdateStatus(); }
-		catch (e) { toast('Installieren: ' + e.message, true); }
+		S.upd = { ...S.upd, state: 'flashing', step: '' };
+		renderMain();
+		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
+		catch (e) { toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
 	},
 
 	async cancel() {

@@ -393,9 +393,27 @@
 		"Lüfter gespeichert.": "Fan saved.",
 		"LED gespeichert.": "LED saved.",
 		"Ungültiger Gerätename.": "Invalid device name.",
-		"Das Passwort braucht mindestens 6 Zeichen.": "The password needs at least 6 characters."
+		"Das Passwort braucht mindestens 6 Zeichen.": "The password needs at least 6 characters.",
+		"Paket wird erneut geprüft …": "Checking the bundle again …",
+		"System wird für den Neustart bereitgelegt …": "Staging the system for the restart …",
+		"Startsystem: Flash wird gelöscht …": "Boot system: erasing flash …",
+		"Startsystem wird geschrieben …": "Writing the boot system …",
+		"Startsystem wird geprüft …": "Verifying the boot system …",
+		"Kernel: Flash wird gelöscht …": "Kernel: erasing flash …",
+		"Kernel wird geschrieben …": "Writing the kernel …",
+		"Kernel wird geprüft …": "Verifying the kernel …",
+		"Wird gestartet …": "Starting …",
+		"nicht ausschalten": "do not switch off",
+		", das dauert etwa 1–2 Minuten.": ", this takes about 1–2 minutes.",
+		"Paket wird geprüft …": "Checking the bundle …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 and contents, takes about half a minute.",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– the new system is installed on the next start (about 1 minute, do not switch off the box)."
 	},
 	"patterns": [
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
 		[
 			"^Kanal (\\S+)$",
 			"Channel $1"

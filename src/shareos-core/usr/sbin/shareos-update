@@ -385,11 +385,14 @@ function cmd_apply(tag) {
 	if (mounted_on('/overlay') != 'ubifs')
 		fail(s, 'not running from flash (no UBIFS on /overlay) – use shareos-install-ubi');
 
-	// re-check right before writing; /tmp could have been touched
+	// re-check right before writing; /tmp could have been touched. This takes
+	// a while on the box, so report it as the first step of flashing.
+	s.state = 'flashing';
+	s.step = 'check bundle';
+	save_state(s);
 	verify_image(s, dir, s.release);
 	let x = dir + '/x';
 
-	s.state = 'flashing';
 	s.step = 'stage rootfs';
 	save_state(s);
 	let up = ROOT + '/overlay/upgrade';

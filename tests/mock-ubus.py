@@ -125,6 +125,17 @@ def call(obj, method, args):
             return storage()
         return {'ok': True}
     if obj == 'shareos.update':
+        if method == 'apply':
+            STATE['apply_t'] = time.time()
+            return {'started': True}
+        if method == 'status' and STATE.get('apply_t'):
+            # walk through the flashing steps, 3 s each
+            steps = ['check bundle', 'stage rootfs', 'erase ramdisk', 'write ramdisk', 'verify ramdisk', 'erase uImage', 'write uImage', 'verify uImage']
+            i = int((time.time() - STATE['apply_t']) / 3)
+            rel = {'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1'}
+            if i < len(steps):
+                return {'state': 'flashing', 'step': steps[i], 'current': '0.1.0-beta.1', 'release': rel}
+            return {'state': 'flashed', 'current': '0.1.0-beta.1', 'release': rel, 'pending_reboot': True}
         check = {'time': int(time.time()), 'channel': STATE['channel'], 'repo': 'UniqueDroid/ShareOS', 'releases': RELEASES,
                  'latest': 'v0.2.0-beta.1', 'update_available': True}
         if method == 'check':
