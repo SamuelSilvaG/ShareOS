@@ -1394,6 +1394,14 @@ return {
 				system(NET + ' confirm');
 				return { ok: true, cert_renewed: cert_refresh() };
 			}
+		},
+
+		// hide the "rolled back" message
+		dismiss: {
+			call: function() {
+				unlink(NET_ST + '/result');
+				return { ok: true };
+			}
 		}
 	},
 
@@ -1580,6 +1588,16 @@ return {
 				let r = sh(STORAGE + ' ' + act + ' ' + shq(n));
 				if (r.rc == 0) system(USERS + ' sync >/dev/null 2>&1');
 				return r.rc == 0 ? { ok: true } : { error: trim(r.out) || act + ' failed' };
+			}
+		},
+
+		// hide the message of a finished or failed setup job
+		job_clear: {
+			call: function() {
+				if (storage_job()?.state == 'running')
+					return { error: 'a storage job is running' };
+				unlink(SMART_DIR + '/job');
+				return { ok: true };
 			}
 		},
 
@@ -2392,6 +2410,13 @@ return {
 		cancel: {
 			call: function() {
 				return run_updater([ 'cancel' ]);
+			}
+		},
+
+		// hide the "last update" message
+		ack: {
+			call: function() {
+				return run_updater([ 'ack' ]);
 			}
 		},
 

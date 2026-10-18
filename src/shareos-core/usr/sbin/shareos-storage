@@ -188,7 +188,15 @@ release_disk() {
 
 partition() {   # disk type(L|R) -> [swap partition] + data partition; prints the data partition
 	local disk=$1 sw p i
-	wipefs -q -a /dev/$disk || die "wipefs $disk failed"
+	# still claimed by something (RAID, device mapper)? say what instead of failing blindly
+	for h in /sys/block/$disk/holders/* /sys/block/$disk/$disk*/holders/*; do
+		[ -e "$h" ] && die "$disk is still in use by ${h##*/} (RAID or another firmware) – restart the box and try again"
+	done
+	out=$(wipefs -q -a /dev/$disk 2>&1) || {
+		# the kernel may still hold the old partition table for a moment
+		sleep 2; blockdev --rereadpt /dev/$disk 2>/dev/null
+		out=$(wipefs -q -a -f /dev/$disk 2>&1) || die "erasing $disk failed: $(echo "$out" | tail -1)"
+	}
 	if [ "$SWAP_MB" -gt 0 ]; then
 		printf 'label: gpt\n,%sMiB,S\n,,%s\n' "$SWAP_MB" "$2"
 	else

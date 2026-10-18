@@ -497,6 +497,8 @@ def call(obj, method, args):
         if method == 'apply':
             STATE['apply_t'] = time.time()
             return {'started': True}
+        if method == 'ack':
+            STATE['acked'] = True
         if method == 'bin_ticket':
             return {'url': '/cgi-bin/files?t=upload'}
         if method == 'bin_info':
@@ -522,7 +524,10 @@ def call(obj, method, args):
                  'latest': 'v0.2.0-beta.1', 'update_available': True}
         if method == 'check':
             return {'current': '0.1.0-beta.1', 'fwname': 'DNS-320L-rev-Ax', **check}
-        return {'state': 'idle', 'current': '0.1.0-beta.1', 'check': check, 'last_upgrade': 'ok 0.1.0-beta.1'}
+        r = {'state': 'idle', 'current': '0.1.0-beta.1', 'check': check, 'last_upgrade': 'ok 0.1.0-beta.1'}
+        if STATE.get('acked'):
+            del r['last_upgrade']
+        return r
     if obj == 'uci':
         if method == 'get':
             return {'values': {}}

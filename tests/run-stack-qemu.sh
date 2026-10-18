@@ -108,6 +108,13 @@ if [ "$CHECK" = "--check" ]; then
 	t "network: broadcast address rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.255","netmask":"255.255.255.0","confirm":true}')" "'broadcast' in d['result'][1]['error']"
 	t "network: bad DNS rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.5","netmask":"255.255.255.0","dns":["1.2.3"],"confirm":true}')" "'DNS' in d['result'][1]['error']"
 	t "network: confirm without change is harmless" "$(rpc $SID shareos.net confirm)" "d['result'][1]['ok']"
+	# messages that can be closed for good
+	chroot "$R" /bin/sh -c 'mkdir -p /overlay /tmp/shareos-storage /tmp/shareos-net; echo "ok 0.1.0" > /overlay/upgrade-result; printf "state=error\nerror=test\n" > /tmp/shareos-storage/job; echo rolledback > /tmp/shareos-net/result'
+	t "last update shown" "$(rpc $SID shareos.update status)" "d['result'][1]['last_upgrade']=='ok 0.1.0'"
+	t "last update message can be closed" "$(rpc $SID shareos.update ack)" "'last_upgrade' not in d['result'][1]"
+	t "failed storage job shown" "$(rpc $SID shareos.storage status)" "d['result'][1]['job']['state']=='error'"
+	t "storage job message can be closed" "$(rpc $SID shareos.storage job_clear >/dev/null; rpc $SID shareos.storage status)" "d['result'][1]['job'] is None"
+	t "network rollback message can be closed" "$(rpc $SID shareos.net dismiss >/dev/null; rpc $SID shareos.net get)" "d['result'][1]['result'] is None"
 	# firmware file in D-Link format (.bin): upload over HTTP, info, write refused off the box
 	BIN=$(ls -t "$OUT"/images/ShareOS-*.bin | head -1)
 	t "bin: info without upload" "$(rpc $SID shareos.update bin_info)" "'no uploaded' in d['result'][1]['error']"

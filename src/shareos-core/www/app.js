@@ -75,6 +75,7 @@ const I = {
 	info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
 	warn: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/>',
 	ok: '<path d="m5 12 5 5 9-10"/>',
+	x: '<path d="M6 6l12 12M18 6 6 18"/>',
 	reboot: '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
 	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
 	ul: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
@@ -1376,6 +1377,9 @@ function smartLine(sm) {
 		${bad ? html` · <span style="color:var(--red)">${sm.reallocated || 0} umgelagert, ${sm.pending || 0} schwebend</span>` : ''}`;
 }
 
+// small "x" that hides a message for good (the box forgets it)
+const closeX = (act) => html`<button class="bx" type="button" data-act="${act}" title="Schließen" aria-label="Schließen">${svg(I.x)}</button>`;
+
 function storageView() {
 	const st = S.storage, i = S.info || {};
 	if (!st) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Laufwerke …</span></div></div>`;
@@ -1383,7 +1387,7 @@ function storageView() {
 	const running = job?.state === 'running';
 	return html`
 	${running ? html`<div class="banner" style="border-color:var(--dim)"><div class="spin" style="margin:0;width:20px;height:20px"></div><span><b>Einrichtung läuft</b> – ${job.step || ''}. Box nicht ausschalten.</span></div>` : ''}
-	${job?.state === 'error' ? html`<div class="banner">${svg(I.warn)}<span><b>Einrichtung fehlgeschlagen:</b> ${job.error}</span></div>` : ''}
+	${job?.state === 'error' ? html`<div class="banner">${svg(I.warn)}<span style="flex:1"><b>Einrichtung fehlgeschlagen:</b> ${job.error}</span>${closeX('job-clear')}</div>` : ''}
 	${S.wiz ? wizardView(st) : ''}
 	<section class="sec">
 		${secHead('volumes', 'VOLUMES', st.volumes.length ? st.volumes.length + ' eingerichtet' : 'noch keine')}
@@ -1628,7 +1632,7 @@ const SYS = {
 		const bootOk = i.boot === 'flash';
 		return html`
 		${(u.pending_reboot || u.state === 'flashed') && !busy ? html`<div class="banner">${svg(I.reboot)}<span style="flex:1;min-width:240px"><b>Neustart nötig</b> – das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).</span><button class="btn primary" type="button" data-act="reboot">Jetzt neu starten</button></div>` : ''}
-		${u.last_upgrade ? html`<div class="banner" style="${u.last_upgrade.startsWith('ok') ? 'border-color:var(--dim)' : ''}">${svg(u.last_upgrade.startsWith('ok') ? I.ok : I.warn)}<span>Letztes Update: <b>${u.last_upgrade.startsWith('ok') ? 'erfolgreich installiert (' + u.last_upgrade.slice(3) + ')' : u.last_upgrade}</b></span></div>` : ''}
+		${u.last_upgrade ? html`<div class="banner" style="${u.last_upgrade.startsWith('ok') ? 'border-color:var(--dim)' : ''}">${svg(u.last_upgrade.startsWith('ok') ? I.ok : I.warn)}<span style="flex:1">Letztes Update: <b>${u.last_upgrade.startsWith('ok') ? 'erfolgreich installiert (' + u.last_upgrade.slice(3) + ')' : u.last_upgrade}</b></span>${closeX('upd-ack')}</div>` : ''}
 		${!bootOk && i.boot ? html`<div class="banner">${svg(I.warn)}<span>Die Box läuft gerade nicht aus dem Flash (<b>${i.boot}</b>). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.</span></div>` : ''}
 		<div class="split">
 			<section class="main">
@@ -1847,7 +1851,7 @@ const SYS = {
 		const v = (k, d) => (st ? n[k] : '') || d;
 		return html`
 		${n.pending ? html`<div class="banner">${svg(I.warn)}<span style="flex:1;min-width:240px"><b>Neue Netzwerkeinstellungen warten auf Bestätigung</b> – ohne Bestätigung kehrt die Box in ${n.pending.left} s zu den alten zurück.</span><button class="btn primary" type="button" data-act="net-confirm">Behalten</button></div>` : ''}
-		${n.result === 'rolledback' && !n.pending ? html`<div class="banner">${svg(I.warn)}<span>Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.</span></div>` : ''}
+		${n.result === 'rolledback' && !n.pending ? html`<div class="banner">${svg(I.warn)}<span style="flex:1">Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.</span>${closeX('net-dismiss')}</div>` : ''}
 		<h2 class="gh">NETZWERK <span>eth0 · ${e.speed ? e.speed + ' Mbit/s' : 'kein Link'}</span></h2>
 		<div class="g2">
 			<form class="panel" id="f-net">
@@ -2802,6 +2806,18 @@ const ACTIONS = {
 		renderMain();
 		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
 		catch (e) { S.updPending = null; toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
+	},
+
+	async 'upd-ack'() {
+		try { S.upd = await rpc('shareos.update', 'ack'); renderMain(); } catch (e) { toast(e.message, true); }
+	},
+
+	async 'job-clear'() {
+		try { await rpc('shareos.storage', 'job_clear'); if (S.storage) S.storage.job = null; renderMain(); } catch (e) { toast(e.message, true); }
+	},
+
+	async 'net-dismiss'() {
+		try { await rpc('shareos.net', 'dismiss'); if (S.net) S.net.result = null; renderMain(); } catch (e) { toast(e.message, true); }
 	},
 
 	async cancel() {

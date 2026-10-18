@@ -107,12 +107,14 @@
 				"shareos.storage": [
 					"setup",
 					"volume",
+					"job_clear",
 					"spindown"
 				],
 				"shareos.update": [
 					"download",
 					"apply",
 					"cancel",
+					"ack",
 					"bin_ticket",
 					"bin_write"
 				],
@@ -147,7 +149,8 @@
 				],
 				"shareos.net": [
 					"set",
-					"confirm"
+					"confirm",
+					"dismiss"
 				],
 				"shareos.accounts": [
 					"add",
