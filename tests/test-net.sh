@@ -17,7 +17,7 @@ mkdir -p $R/etc/config $R/etc/network $R/etc/shareos $R/tmp $T/bin
 cp "$TOP/src/shareos-core/etc/config/network" $R/etc/config/network
 : > $R/etc/resolv.conf
 
-for c in ifup ifdown ip logger; do
+for c in ifup ifdown ip logger start-stop-daemon udhcpc; do
 	printf '#!/bin/sh\necho "%s $*" >> %s/calls\n' $c "$T" > $T/bin/$c
 done
 printf '#!/bin/sh\nexec %q -c %q "$@"\n' "$(readlink -f "$UCI")" "$R/etc/config" > $T/bin/uci
@@ -31,11 +31,20 @@ u() { $T/bin/uci "$@"; }
 sh "$NET" start >/dev/null
 check "dhcp: interfaces file uses dhcp with hostname" "grep -q 'iface eth0 inet dhcp' $R/etc/network/interfaces && grep -q 'hostname' $R/etc/network/interfaces"
 check "start runs ifup -a" "grep -q '^ifup -a' $T/calls"
+check "dhcp without answer: fallback address and DHCP watcher" "grep -q '^ip addr add 192.168.0.32/24 dev eth0 label eth0:fb' $T/calls && grep -q '^start-stop-daemon -S -b .* watch' $T/calls"
+: > $T/calls
+sh "$NET" stop >/dev/null
+check "stop removes the fallback address" "grep -q '^ip addr del 192.168.0.32/24 dev eth0' $T/calls"
+u set network.lan.fallback=off; u commit network
+: > $T/calls
+sh "$NET" start >/dev/null
+check "fallback can be switched off" "! grep -q 'addr add' $T/calls"
 
 u set network.lan.proto=static; u set network.lan.ipaddr=192.168.7.20; u set network.lan.netmask=255.255.255.0
 u set network.lan.gateway=192.168.7.1; u set network.lan.dns='192.168.7.2 9.9.9.9'; u commit network
 : > $T/calls
 sh "$NET" restart >/dev/null
+check "static: no fallback address" "! grep -q 'label eth0:fb' $T/calls"
 check "static: address, netmask, gateway written" "grep -q 'address 192.168.7.20' $R/etc/network/interfaces && grep -q 'netmask 255.255.255.0' $R/etc/network/interfaces && grep -q 'gateway 192.168.7.1' $R/etc/network/interfaces"
 check "static: resolv.conf from the DNS list" "[ \"\$(cat $R/etc/resolv.conf)\" = \"\$(printf 'nameserver 192.168.7.2\nnameserver 9.9.9.9')\" ]"
 check "restart: ifdown before ifup" "[ \"\$(grep -E '^if(up|down)' $T/calls | cut -d' ' -f1 | tr '\n' ' ')\" = 'ifdown ifup ' ]"

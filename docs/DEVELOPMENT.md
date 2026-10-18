@@ -80,6 +80,11 @@ the box for why the web server was not running.
 | 01:00 | **Cloud sync with rclone**: rclone is downloaded from GitHub on demand (checksum verified) and lives in the apps area. Accounts (WebDAV/Nextcloud, S3, SFTP or a section from `rclone.conf`) and jobs (upload, download, mirror) with schedule and bandwidth limit – for the device and, if allowed, for each user with their own credentials. 29 checks against a fake Paperless and a local WebDAV server. |
 | 01:20 | **Installable as an app** (icon, shortcuts) and a **status address for widget apps** such as KWGT – Chrome offers no home-screen widgets for web apps. |
 | 01:40 | Re-running all tests shows that since the cloud work, plain users could not log in: a function was used before the line that defines it (ucode has no hoisting). Fixed before it reached a box; a new CI check now finds such cases automatically. |
+| 09:20 | Jan publishes `v0.1.0-beta.4`. Shares, users and groups work "very well" on the box. |
+| 10:00 | Jan's feedback: a long field label pushes its input down, file buttons look different from the others, wish for a **file browser** (admin: everything, users: own folder, enabled per user) and an **own look** for users. |
+| 10:09 | Question about the update notice: so far only an open web interface checked. Now the box checks by itself every 6 hours. |
+| 10:30 | Login text `user@shareos`, certificate follows name and IP. Recommendation instead of a fixed factory IP: DHCP, name via mDNS (`shareos.local`) and a fallback address `192.168.0.32` without DHCP. Jan: "Yes, please." |
+| 11:00 | File browser with upload/download through one-time tickets; users' files are read and written with their own rights. A uhttpd patch keeps large transfers from being cut off after 60 s. While testing in the cloud workspace a cleanup step accidentally emptied its `/dev` – the test scripts now only delete when nothing is mounted any more. |
 
 ## Notable problems solved
 
@@ -137,6 +142,14 @@ the right of its heading. The interface is available in German and English.
 | "My ShareOS": Paperless and cloud | App & widgets |
 |---|---|
 | ![My ShareOS with Paperless and cloud](images/gui-mein-paperless-cloud.png) | ![App and widgets](images/gui-app-widgets.png) |
+
+| File browser (admin) | File browser (user) |
+|---|---|
+| ![Files](images/gui-en-files.png) | ![Files user](images/gui-dateien-benutzer.png) |
+
+| Own look (user) | Create user |
+|---|---|
+| ![Look user](images/gui-darstellung-benutzer.png) | ![Create user](images/gui-benutzer-editor.png) |
 
 | Update with progress | Phone |
 |---|---|

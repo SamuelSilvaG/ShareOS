@@ -21,7 +21,7 @@ R=$T/root
 cleanup() {
 	chroot "$R" /bin/sh -c '/etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
-	rm -rf "$T"
+	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2; else rm -rf "$T"; fi
 }
 trap cleanup EXIT
 
@@ -110,6 +110,48 @@ check "guest share" "grep -A8 '^\[medien\]' $R/etc/ksmbd/ksmbd.conf | grep -q 'g
 check "NFS export" "grep -q '^/mnt/daten/medien 10.0.0.0/24(ro,sync,no_subtree_check,all_squash,anonuid=65534,anongid=100)' $R/etc/exports"
 check "user sees own shares" "rpc shareos.me get '{\"ubus_rpc_session\":\"$SID\"}' | js \"sorted((s['name'],s['access']) for s in d['shares'])==[('fotos','ro'),('medien','ro')]\""
 check "share removed, folder kept" "rpc shareos.shares del '{\"name\":\"medien\"}' | js \"[s['name'] for s in d['shares']]==['fotos']\" && [ -d $R/mnt/daten/medien ] && ! grep -q medien $R/etc/exports"
+
+# --- file browser, own look ---------------------------------------------------
+o=$(run "echo lisa1234 | shareos-users add lisa user --home=daten --files=1")
+L2=$(rpc session login '{"username":"lisa","password":"lisa1234"}')
+SL=$(echo "$L2" | python3 -c 'import json,sys; print(json.load(sys.stdin)["ubus_rpc_session"])' 2>/dev/null)
+rpc shareos.me bind "{\"username\":\"lisa\",\"password\":\"lisa1234\",\"ubus_rpc_session\":\"$SL\"}" >/dev/null
+fs() { rpc shareos.files "$1" "{\"ubus_rpc_session\":\"$SL\"${2:+,$2}}"; }
+check "files: users get the file browser in their ACL" "echo '$L2' | js \"'shareos.files' in d['acls']['ubus'] and 'ticket' in d['acls']['ubus']['shareos.files']\""
+check "files: allowed user sees the flag" "rpc shareos.me get '{\"ubus_rpc_session\":\"$SL\"}' | js \"d['files'] and d['ui']=={'theme':None,'accent':None}\""
+check "files: user without the right is refused" "rpc shareos.files roots '{\"ubus_rpc_session\":\"$SID\"}' | grep -q 'not allowed'"
+check "files: user root is the personal folder only" "fs roots '' | js \"d['roots']==[{'name':'home','home':True}]\""
+check "files: user cannot pick a volume" "fs list '\"root\":\"daten\",\"path\":\"\"' | grep -q 'unknown folder'"
+check "files: mkdir as the user" "fs mkdir '\"root\":\"home\",\"path\":\"\",\"name\":\"Docs\"' | js \"d['ok']\" && [ \"\$(run 'stat -c %U /mnt/daten/home/lisa/Docs')\" = lisa ]"
+check "files: .. is rejected" "fs list '\"root\":\"home\",\"path\":\"../jan\"' | grep -q 'invalid path'"
+check "files: bad names rejected" "fs mkdir '\"root\":\"home\",\"path\":\"\",\"name\":\"a/b\"' | grep -q 'invalid name'"
+ln -s /mnt/daten/home/jan "$R/mnt/daten/home/lisa/esc"
+check "files: symlink out of the folder is not followed" "fs list '\"root\":\"home\",\"path\":\"esc\"' | grep -q 'not found'"
+rm -f "$R/mnt/daten/home/lisa/esc"
+TK=$(fs ticket '"root":"home","path":"Docs","name":"a b.txt","mode":"put"' | python3 -c 'import json,sys; print(json.load(sys.stdin)["url"].split("t=")[1])')
+printf 'hallo welt\n' > "$R/tmp/up.txt"
+o=$(run "QUERY_STRING=t=$TK REQUEST_METHOD=POST CONTENT_LENGTH=11 /www/cgi-bin/files < /tmp/up.txt")
+check "files: upload through the CGI" "echo \"\$o\" | grep -q 'Status: 200' && [ \"\$(cat '$R/mnt/daten/home/lisa/Docs/a b.txt')\" = 'hallo welt' ] && [ \"\$(run 'stat -c %U \"/mnt/daten/home/lisa/Docs/a b.txt\"')\" = lisa ]"
+o=$(run "QUERY_STRING=t=$TK REQUEST_METHOD=POST CONTENT_LENGTH=11 /www/cgi-bin/files < /tmp/up.txt")
+check "files: a ticket works only once" "echo \"\$o\" | grep -q 'Status: 403'"
+check "files: existing file needs overwrite" "fs ticket '\"root\":\"home\",\"path\":\"Docs\",\"name\":\"a b.txt\",\"mode\":\"put\"' | grep -q 'already exists'"
+TK=$(fs ticket '"root":"home","path":"Docs","name":"a b.txt","mode":"get"' | python3 -c 'import json,sys; print(json.load(sys.stdin)["url"].split("t=")[1])')
+o=$(run "QUERY_STRING=t=$TK REQUEST_METHOD=GET /www/cgi-bin/files")
+check "files: download through the CGI" "echo \"\$o\" | grep -q 'Content-Length: 11' && echo \"\$o\" | grep -q \"filename\*=UTF-8''a%20b.txt\" && echo \"\$o\" | grep -q '^hallo welt'"
+check "files: list shows the file" "fs list '\"root\":\"home\",\"path\":\"Docs\"' | js \"[(e['name'],e['type'],e['size']) for e in d['entries']]==[('a b.txt','file',11)]\""
+check "files: rename" "fs rename '\"root\":\"home\",\"path\":\"Docs\",\"name\":\"a b.txt\",\"to\":\"c.txt\"' | js \"d['ok']\" && [ -f $R/mnt/daten/home/lisa/Docs/c.txt ]"
+check "files: copy" "fs move '\"root\":\"home\",\"path\":\"Docs\",\"names\":[\"c.txt\"],\"dest\":\"\",\"copy\":true' | js \"d['ok']\" && [ -f $R/mnt/daten/home/lisa/c.txt ] && [ -f $R/mnt/daten/home/lisa/Docs/c.txt ]"
+check "files: folder cannot go into itself" "fs move '\"root\":\"home\",\"path\":\"\",\"names\":[\"Docs\"],\"dest\":\"Docs\"' | grep -q 'into itself'"
+check "files: delete" "fs delete '\"root\":\"home\",\"path\":\"\",\"names\":[\"c.txt\",\"Docs\"]' | js \"d['ok']\" && [ -z \"\$(ls -A $R/mnt/daten/home/lisa)\" ]"
+LJ=$(rpc session login '{"username":"jan","password":"geheim1"}')
+SJ=$(echo "$LJ" | python3 -c 'import json,sys; print(json.load(sys.stdin)["ubus_rpc_session"])' 2>/dev/null)
+rpc shareos.me bind "{\"username\":\"jan\",\"password\":\"geheim1\",\"ubus_rpc_session\":\"$SJ\"}" >/dev/null
+check "files: admins see whole volumes" "rpc shareos.files list '{\"ubus_rpc_session\":\"$SJ\",\"root\":\"daten\",\"path\":\"\"}' | js \"'home' in [e['name'] for e in d['entries']] and d['free']>0\""
+check "files: right can be withdrawn" "run 'shareos-users set lisa --files=0' >/dev/null; fs roots '' | grep -q 'not allowed'"
+check "look: own theme and accent" "rpc shareos.me ui_set '{\"ubus_rpc_session\":\"$SL\",\"theme\":\"light\",\"accent\":\"green\"}' | js \"d=={'theme':'light','accent':'green'}\" && rpc shareos.me get '{\"ubus_rpc_session\":\"$SL\"}' | js \"d['ui']['theme']=='light'\""
+check "look: invalid accent rejected" "rpc shareos.me ui_set '{\"ubus_rpc_session\":\"$SL\",\"accent\":\"pink\"}' | grep -q 'invalid accent'"
+check "look: back to the look for everyone" "rpc shareos.me ui_set '{\"ubus_rpc_session\":\"$SL\",\"theme\":\"\",\"accent\":\"\"}' | js \"d=={'theme':None,'accent':None}\""
+run "shareos-users del lisa" >/dev/null
 
 # --- delete, Alt-F import -----------------------------------------------------
 check "rpc: delete" "rpc shareos.accounts del '{\"name\":\"tv\"}' | js \"all(u['name']!='tv' for u in d['users'])\" && ! grep -q '^tv:' $R/etc/passwd $R/etc/shadow"

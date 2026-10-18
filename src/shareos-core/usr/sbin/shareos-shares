@@ -15,6 +15,7 @@
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 SMBCONF=/etc/ksmbd/ksmbd.conf
 EXPORTS=/etc/exports
+AVAHI_SMB=/etc/avahi/services/smb.service
 
 log() { logger -t shareos-shares "$*"; echo "$*"; }
 
@@ -125,6 +126,27 @@ smb_stop() {
 }
 smb_reload() { ksmbd.control -r >/dev/null 2>&1 || { smb_stop; smb_start; }; }
 
+# announce the SMB server in the network (Finder, Linux file managers)
+smb_announce() {   # 1 | 0
+	[ -d "${AVAHI_SMB%/*}" ] || return 0
+	if [ "$1" = 1 ]; then
+		[ -f $AVAHI_SMB ] && return 0
+		cat > $AVAHI_SMB <<'X'
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name replace-wildcards="yes">%h</name>
+  <service><type>_smb._tcp</type><port>445</port></service>
+</service-group>
+X
+	else
+		[ -f $AVAHI_SMB ] || return 0
+		rm -f $AVAHI_SMB
+	fi
+	avahi-daemon -r >/dev/null 2>&1
+	return 0
+}
+
 nfs_start() {
 	modprobe nfsd 2>/dev/null
 	# rpcbind and nfs are started here, not at boot (post-build renames them)
@@ -147,7 +169,7 @@ cmd_apply() {
 	done
 	write_smb
 	write_nfs
-	if smb_wanted; then pidof ksmbd.mountd >/dev/null && smb_reload || smb_start; else smb_stop; fi
+	if smb_wanted; then pidof ksmbd.mountd >/dev/null && smb_reload || smb_start; smb_announce 1; else smb_stop; smb_announce 0; fi
 	if nfs_wanted; then nfs_start; else nfs_stop; fi
 	return 0
 }

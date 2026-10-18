@@ -14,6 +14,7 @@
 # options: --fullname=TEXT --groups=a,b --home=<volume>|"" --quota=<MB>
 #          --web=0|1 (role "user": may log in to the web interface)
 #          --cloud=0|1 (may set up own cloud sync jobs)
+#          --files=0|1 (file browser for the personal folder in the web interface)
 #
 # One account is used everywhere: Linux (/etc/passwd, /etc/shadow; SSH only
 # for admins), SMB (ksmbd password database) and the web interface (rpcd
@@ -66,8 +67,8 @@ del_smb_user() {
 
 # --- options --------------------------------------------------------------------
 parse_opts() {
-	O_FULLNAME= O_GROUPS= O_HOME= O_QUOTA= O_WEB= O_ROLE= O_REMOVE_HOME=0 O_DESC= O_CLOUD=
-	S_FULLNAME=0 S_GROUPS=0 S_HOME=0 S_QUOTA=0 S_WEB=0 S_ROLE=0 S_CLOUD=0
+	O_FULLNAME= O_GROUPS= O_HOME= O_QUOTA= O_WEB= O_ROLE= O_REMOVE_HOME=0 O_DESC= O_CLOUD= O_FILES=
+	S_FULLNAME=0 S_GROUPS=0 S_HOME=0 S_QUOTA=0 S_WEB=0 S_ROLE=0 S_CLOUD=0 S_FILES=0
 	for a; do
 		case "$a" in
 			--fullname=*) O_FULLNAME=${a#*=}; S_FULLNAME=1 ;;
@@ -76,6 +77,7 @@ parse_opts() {
 			--quota=*) O_QUOTA=${a#*=}; S_QUOTA=1 ;;
 			--web=*) O_WEB=${a#*=}; S_WEB=1 ;;
 			--cloud=*) O_CLOUD=${a#*=}; S_CLOUD=1 ;;
+			--files=*) O_FILES=${a#*=}; S_FILES=1 ;;
 			--role=*) O_ROLE=${a#*=}; S_ROLE=1 ;;
 			--desc=*) O_DESC=${a#*=} ;;
 			--remove-home) O_REMOVE_HOME=1 ;;
@@ -87,6 +89,7 @@ parse_opts() {
 	[ $S_QUOTA = 0 ] || echo "$O_QUOTA" | grep -qE '^[0-9]{1,9}$' || die "invalid quota"
 	[ $S_WEB = 0 ] || case "$O_WEB" in 0|1) ;; *) die "invalid --web" ;; esac
 	[ $S_CLOUD = 0 ] || case "$O_CLOUD" in 0|1) ;; *) die "invalid --cloud" ;; esac
+	[ $S_FILES = 0 ] || case "$O_FILES" in 0|1) ;; *) die "invalid --files" ;; esac
 	[ $S_ROLE = 0 ] || case "$O_ROLE" in admin|user|share) ;; *) die "invalid role" ;; esac
 	if [ $S_HOME = 1 ] && [ -n "$O_HOME" ]; then
 		[ "$(uci -q get storage."$O_HOME")" = volume ] || die "unknown volume $O_HOME"
@@ -102,6 +105,7 @@ apply_opts() {   # name
 	[ $S_QUOTA = 1 ] && uci set accounts."$n".quota="$O_QUOTA"
 	[ $S_WEB = 1 ] && uci set accounts."$n".web="$O_WEB"
 	[ $S_CLOUD = 1 ] && uci set accounts."$n".cloud="$O_CLOUD"
+	[ $S_FILES = 1 ] && uci set accounts."$n".files="$O_FILES"
 	if [ $S_GROUPS = 1 ]; then
 		uci -q delete accounts."$n".groups
 		for g in $O_GROUPS; do uci add_list accounts."$n".groups="$g"; done

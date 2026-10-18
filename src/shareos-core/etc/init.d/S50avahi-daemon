@@ -1,0 +1,18 @@
+#!/bin/sh
+# mDNS: the box answers as <hostname>.local (ShareOS version with restart)
+DAEMON=/usr/sbin/avahi-daemon
+
+# /etc/passwd lives in the overlay since the first account was created, so a
+# system user added by a later firmware is missing there
+ensure_user() {
+	grep -q '^avahi:' /etc/group || echo 'avahi:x:101:' >> /etc/group
+	grep -q '^avahi:' /etc/passwd || echo 'avahi:x:100:101::/:/bin/false' >> /etc/passwd
+	grep -q '^avahi:' /etc/shadow || echo 'avahi:*:::::::' >> /etc/shadow
+}
+case "$1" in
+	start) ensure_user; $DAEMON -c 2>/dev/null || $DAEMON -D ;;
+	stop) $DAEMON -c 2>/dev/null && $DAEMON -k; i=0; while pidof avahi-daemon >/dev/null && [ $i -lt 20 ]; do sleep 0.2; i=$((i+1)); done ;;
+	restart) "$0" stop; "$0" start ;;
+	reload) $DAEMON -c 2>/dev/null && $DAEMON -r ;;
+	*) echo "Usage: $0 {start|stop|restart|reload}" >&2; exit 1 ;;
+esac

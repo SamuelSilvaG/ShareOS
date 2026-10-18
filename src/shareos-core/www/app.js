@@ -77,6 +77,13 @@ const I = {
 	ok: '<path d="m5 12 5 5 9-10"/>',
 	reboot: '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
 	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+	ul: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+	up: '<path d="M12 19V5M5 12l7-7 7 7"/>',
+	trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+	pen: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/>',
+	plus: '<path d="M12 5v14M5 12h14"/>',
+	move: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+	copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
 	cloud: '<path d="M7 18a4.5 4.5 0 0 1-.5-9 6 6 0 0 1 11.5 1.5A3.75 3.75 0 0 1 17.5 18z"/>',
 	doc: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
 	box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
@@ -146,7 +153,7 @@ const TABS = [
 ];
 const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
-const SHR_SUBS = [['freigaben', 'FREIGABEN'], ['benutzer', 'BENUTZER'], ['gruppen', 'GRUPPEN']];
+const SHR_SUBS = [['freigaben', 'FREIGABEN'], ['dateien', 'DATEIEN'], ['benutzer', 'BENUTZER'], ['gruppen', 'GRUPPEN']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
 // pages that moved: old link -> new place
 const SUB_MOVED = { hardware: 'energie', https: 'netzwerk' };
@@ -194,7 +201,10 @@ function tintFavicon() {
 
 async function saveLook(v) {
 	store.set('theme', S.theme); store.set('accent', S.accent);
-	try { await rpc('shareos.ui', 'set', v); } catch (e) { toast('Darstellung: ' + e.message, true); }
+	try {
+		if (isUser()) S.me.ui = await rpc('shareos.me', 'ui_set', v);
+		else { await rpc('shareos.ui', 'set', v); S.sysLook = { theme: S.theme, accent: S.accent }; }
+	} catch (e) { toast('Darstellung: ' + e.message, true); }
 }
 
 /* --- tiles or table per section (icon at the right of the section heading) --- */
@@ -238,12 +248,12 @@ async function shareGlobal(v) {
 	try { S.shares = await rpc('shareos.shares', 'global', v); toast('Gespeichert.'); renderMain(); } catch (e) { toast(e.message, true); }
 }
 
-function promptDlg(title, text, value, okLabel, type = 'text') {
+function promptDlg(title, text, value, okLabel, type = 'text', max = 0) {
 	return new Promise((resolve) => {
 		const d = document.createElement('dialog');
 		d.className = 'dlg';
 		d.innerHTML = html`<form method="dialog"><h3>${title}</h3><p>${text}</p>
-			<label class="f" style="margin-bottom:16px"><input name="v" value="${value}" type="${type}" maxlength="${type === 'password' ? 128 : 32}"${type === 'password' ? raw(' minlength="6" autocomplete="new-password"') : ''} required></label>
+			<label class="f" style="margin-bottom:16px"><input name="v" value="${value}" type="${type}" maxlength="${max || (type === 'password' ? 128 : 32)}"${type === 'password' ? raw(' minlength="6" autocomplete="new-password"') : ''} required></label>
 			<div class="acts"><button class="btn ghost" type="button" value="no">Abbrechen</button>
 			<button class="btn primary" type="submit" value="yes">${okLabel}</button></div></form>`.s;
 		$('#app').append(d);
@@ -306,8 +316,18 @@ async function login(user, pass, keep) {
 }
 
 // admins get the full interface, everybody else "Mein ShareOS"
+const isUser = () => !!(S.me && S.me.role !== 'admin');
+
+// plain users may have their own look; otherwise the look for everyone
+function applyOwnLook() {
+	const sys = S.sysLook || { theme: S.theme, accent: S.accent }, own = isUser() ? S.me.ui || {} : {};
+	S.theme = own.theme || sys.theme; S.accent = own.accent || sys.accent;
+	applyTheme();
+}
+
 function enter() {
-	if (S.me && S.me.role !== 'admin') renderUserShell();
+	applyOwnLook();
+	if (isUser()) renderUserShell();
 	else renderShell();
 }
 
@@ -316,6 +336,8 @@ async function logout() {
 	S.sid = null;
 	store.del('sid');
 	stopPolling();
+	S.me = null; S.fb = null;
+	applyOwnLook();
 	renderLogin();
 }
 
@@ -369,6 +391,7 @@ async function loadUiSettings() {
 		if (r.logo !== S.logo) { S.logo = r.logo; store.set('logo', r.logo ? '1' : '0'); }
 		if (r.theme) { S.theme = r.theme; store.set('theme', r.theme); }
 		if (r.accent) { S.accent = r.accent; store.set('accent', r.accent); }
+		S.sysLook = { theme: r.theme || S.theme, accent: r.accent || S.accent };
 		if (r.lang && r.lang !== LANG) { try { localStorage.setItem('shareos.lang', r.lang); } catch (e) { } return r.lang; }
 	} catch (e) { }
 	return LANG;
@@ -380,7 +403,7 @@ function renderLogin(msg = '') {
 		<form class="panel" id="login-form" autocomplete="on">
 			${brand()}
 			<p class="prompt">Verwaltung – bitte anmelden.</p>
-			<p class="prompt"><b>root@shareos</b>:~$ login<span class="cursor"></span></p>
+			<p class="prompt"><b>user@shareos</b>:~$ login<span class="cursor"></span></p>
 			<label class="f"><span>BENUTZER</span><input name="user" type="text" value="${S.user}" autocomplete="username" required></label>
 			<label class="f"><span>PASSWORT</span><input name="pass" type="password" autocomplete="current-password" required autofocus></label>
 			<label class="chk"><input name="keep" type="checkbox">Angemeldet bleiben (7 Tage)</label>
@@ -576,7 +599,7 @@ const VIEWS = {
 		const sub = S.route.sub;
 		return html`
 		<nav class="subtabs" aria-label="Freigaben">${SHR_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/freigaben/${id}">${label}</a>`)}</nav>
-		${!S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
+		${sub === 'dateien' ? filesView() : !S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
 			: sub === 'benutzer' ? usersView() : sub === 'gruppen' ? groupsView() : sharesView()}`;
 	},
 	apps: () => planned('Apps & Pakete', 'Phase 4', ['Paketquelle (opkg-Feed) über GitHub', 'Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange', 'Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte'], I.box),
@@ -815,15 +838,16 @@ function userEditor(e) {
 			<label class="f"><span>VOLLER NAME</span><input name="fullname" value="${u.fullname}" maxlength="64"></label>
 			<label class="f"><span>ROLLE</span><select name="role">${Object.entries(ROLE_TXT).map(([k, t]) => html`<option value="${k}"${u.role === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
 			<label class="f"><span>PERSÖNLICHER ORDNER</span><select name="home"><option value="">keiner</option>${S.vols.map((v) => html`<option value="${v.name}"${u.home === v.name ? raw(' selected') : ''}>auf ${v.name}</option>`)}</select></label>
-			<label class="f"><span>SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)</span><input name="quota" type="number" min="0" step="1" value="${Math.round((u.quota || 0) / 1000)}"></label>
+			<label class="f"><span>SPEICHERLIMIT (GB)</span><input name="quota" type="number" min="0" step="1" value="${Math.round((u.quota || 0) / 1000)}"></label>
 			${isNew ? html`<label class="f"><span>PASSWORT</span><input name="p1" type="password" minlength="6" autocomplete="new-password" required></label>
 				<label class="f"><span>WIEDERHOLEN</span><input name="p2" type="password" minlength="6" autocomplete="new-password" required></label>` : ''}
 		</div>
 		<label class="chk" style="margin-top:12px" id="u-web-row"${u.role === 'user' ? '' : raw(' hidden')}><input type="checkbox" name="web"${u.web ? raw(' checked') : ''}>Darf sich an der Weboberfläche anmelden („Mein ShareOS“)</label>
 		<label class="chk" style="margin-top:6px"><input type="checkbox" name="cloud"${u.cloud ? raw(' checked') : ''}>Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)</label>
+		<label class="chk" style="margin-top:6px"><input type="checkbox" name="files"${u.files ? raw(' checked') : ''}>Dateibrowser für den persönlichen Ordner in der Weboberfläche</label>
 		${S.acc.groups.length ? html`<div class="pt" style="margin:16px 0 8px">GRUPPEN</div><div style="display:flex;flex-wrap:wrap;gap:6px 18px">${S.acc.groups.map((g) => html`
 			<label class="chk"><input type="checkbox" class="u-group" value="${g.name}"${u.groups.includes(g.name) ? raw(' checked') : ''}>${g.name}</label>`)}</div>` : ''}
-		<p class="note">Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.</p>
+		<p class="note">Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.</p>
 		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">${isNew ? 'Anlegen' : 'Speichern'}</button></div>
 	</form></section>`;
 }
@@ -1145,13 +1169,50 @@ function cloudAfter(scope) {
 
 /* ---------- "Mein ShareOS" for plain users ------------------------------------ */
 
+function userTabs() {
+	return [['mein', 'MEIN SHAREOS'], ...(S.me?.files ? [['dateien', 'DATEIEN']] : []), ['darstellung', 'DARSTELLUNG']];
+}
+
+function parseUserRoute() {
+	const t = location.hash.replace(/^#\/?/, '').split('/')[0];
+	S.utab = userTabs().some((x) => x[0] === t) ? t : 'mein';
+}
+
+function renderUserTabs() {
+	$('#tabs').innerHTML = userTabs().map(([id, label]) =>
+		html`<a class="tab${S.utab === id ? ' on' : ''}" href="#/${id}"${S.utab === id ? raw(' aria-current="page"') : ''}>${label}</a>`.s).join('');
+}
+
 function renderUserShell() {
 	$('#root').innerHTML = html`
 		<header class="hd" id="hd"></header>
+		<nav class="tabs" id="tabs" aria-label="Hauptmenü"></nav>
 		<main id="main"></main>
 		<footer class="ft" id="ft"></footer>`.s;
+	parseUserRoute();
 	renderUserHeader();
+	renderUserTabs();
 	renderUserMain();
+}
+
+function userLookView() {
+	const names = { green: 'Grün', red: 'Rot', blue: 'Blau', white: 'Weiß' };
+	const own = S.me.ui || {}, sys = S.sysLook || {};
+	const themeTxt = { dark: 'Dunkel', light: 'Hell', system: 'Wie das Betriebssystem (automatisch)' };
+	return html`<section class="sec"><div class="panel" style="max-width:560px">
+		<div class="ph"><span class="pt">DARSTELLUNG</span><span class="tag ml">nur für dich</span></div>
+		<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>HELL ODER DUNKEL</span><select id="opt-utheme">
+			<option value=""${!own.theme ? raw(' selected') : ''}>Wie für alle (${themeTxt[sys.theme] || '–'})</option>
+			${Object.entries(themeTxt).map(([v, t]) => html`<option value="${v}"${own.theme === v ? raw(' selected') : ''}>${t}</option>`)}
+		</select></label></div>
+		<div class="pt" style="margin:14px 0 8px">AKZENTFARBE</div>
+		<div class="row">${Object.keys(names).map((c) => html`<button class="sw c-${c}${S.accent === c ? ' on' : ''}" type="button" data-act="accent" data-c="${c}" aria-label="Akzentfarbe ${names[c]}" aria-pressed="${S.accent === c}" title="${names[c]}"><i></i></button>`)}</div>
+		<p class="note">Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.</p>
+		<div style="display:grid;gap:6px;margin-top:14px">
+			<label class="chk"><input type="checkbox" id="opt-uscan"${S.scan ? raw(' checked') : ''}>Scanlines (nur in diesem Browser)</label>
+		</div>
+		${own.theme || own.accent ? html`<div class="acts" style="margin-top:14px"><button class="btn ghost" type="button" data-act="look-reset">Wie für alle</button></div>` : ''}
+	</div></section>`;
 }
 
 function renderUserHeader() {
@@ -1199,6 +1260,24 @@ function myPaperless() {
 }
 
 function renderUserMain() {
+	const main = $('#main');
+	if (!main) return;
+	if (S.utab === 'dateien' && S.me?.files) { main.innerHTML = filesView().s; return; }
+	if (S.utab === 'darstellung') {
+		main.innerHTML = userLookView().s;
+		$('#opt-utheme').addEventListener('change', (e) => {
+			const v = e.target.value;
+			S.me.ui = { ...S.me.ui, theme: v || null };
+			S.theme = v || S.sysLook?.theme || 'dark'; applyTheme(); renderUserHeader(); renderUserMain();
+			saveLook({ theme: v });
+		});
+		$('#opt-uscan').addEventListener('change', (e) => { S.scan = e.target.checked; store.set('scan', S.scan ? '1' : '0'); applyTheme(); });
+		return;
+	}
+	renderUserHome();
+}
+
+function renderUserHome() {
 	const m = S.me || {}, host = m.host || location.hostname, ip = location.hostname;
 	$('#main').innerHTML = html`
 	<section class="sec">
@@ -1632,7 +1711,7 @@ const SYS = {
 			<form class="panel" id="f-restore">
 				<div class="ph"><span class="pt">WIEDERHERSTELLEN</span></div>
 				<div class="fields" style="grid-template-columns:1fr">
-					<label class="f"><span>SICHERUNGSDATEI</span><input name="file" type="file" accept=".json,application/json" required style="padding-top:8px"></label>
+					<label class="f"><span>SICHERUNGSDATEI</span><input name="file" type="file" accept=".json,application/json" required></label>
 					<label class="f"><span>PASSWORT (FALLS VERSCHLÜSSELT)</span><input name="pw" type="password" autocomplete="off"></label>
 				</div>
 				<div id="restore-preview"></div>
@@ -1715,10 +1794,10 @@ const SYS = {
 			<div class="g2">
 				<label class="f"><span>ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)</span>
 					<textarea name="cert" rows="8" spellcheck="false" placeholder="-----BEGIN CERTIFICATE-----" style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" data-i18n-skip></textarea>
-					<input type="file" accept=".pem,.crt,.cer" data-target="cert" style="margin-top:6px;font-size:12px;color:var(--muted)"></label>
+					<input type="file" accept=".pem,.crt,.cer" data-target="cert" style="margin-top:6px"></label>
 				<label class="f"><span>PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)</span>
 					<textarea name="key" rows="8" spellcheck="false" placeholder="-----BEGIN PRIVATE KEY-----" style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" data-i18n-skip></textarea>
-					<input type="file" accept=".pem,.key" data-target="key" style="margin-top:6px;font-size:12px;color:var(--muted)"></label>
+					<input type="file" accept=".pem,.key" data-target="key" style="margin-top:6px"></label>
 			</div>
 			<p class="note">Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.</p>
 			<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Zertifikat übernehmen</button></div>
@@ -1911,7 +1990,11 @@ const VIEWS_AFTER = {
 			$('#widget-copy')?.addEventListener('click', () => copyText($('#widget-url').value));
 			$('#f-host').addEventListener('submit', async (e) => {
 				e.preventDefault();
-				try { await rpc('shareos.system', 'set_hostname', { hostname: e.target.hostname.value.trim() }); toast('Hostname gespeichert.'); tick(); }
+				try {
+					const r = await rpc('shareos.system', 'set_hostname', { hostname: e.target.hostname.value.trim() });
+					toast(r.cert_renewed ? 'Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.' : 'Hostname gespeichert.');
+					tick();
+				}
 				catch (err) { toast('Hostname: ' + err.message, true); }
 			});
 			$('#f-backup').addEventListener('submit', async (e) => {
@@ -2034,6 +2117,7 @@ const VIEWS_AFTER = {
 		});
 	},
 	freigaben() {
+		if (S.route.sub === 'dateien') return;
 		if (!S.shares || !S.acc) { loadShareData(); return; }
 		$('#opt-smb')?.addEventListener('change', (e) => shareGlobal({ smb: e.target.checked }));
 		$('#opt-nfs')?.addEventListener('change', (e) => shareGlobal({ nfs: e.target.checked }));
@@ -2054,7 +2138,7 @@ const VIEWS_AFTER = {
 			e.preventDefault();
 			const f = e.target, isNew = S.uEdit.mode === 'new';
 			const args = { name: f.name.value.trim().toLowerCase(), fullname: f.fullname.value.trim(), role: f.role.value, home: f.home.value,
-				quota: Math.max(0, Math.round(+f.quota.value || 0)) * 1000, web: f.web.checked, cloud: f.cloud.checked,
+				quota: Math.max(0, Math.round(+f.quota.value || 0)) * 1000, web: f.web.checked, cloud: f.cloud.checked, files: f.files.checked,
 				groups: [...document.querySelectorAll('#f-user .u-group:checked')].map((x) => x.value) };
 			if (isNew) {
 				if (f.p1.value !== f.p2.value) { toast('Die Passwörter stimmen nicht überein.', true); return; }
@@ -2399,9 +2483,12 @@ async function refreshUpdateStatus() {
 		const pend = S.updPending;
 		if (pend && Date.now() < pend.until && ['ready', 'idle'].includes(S.upd.state)) S.upd = { ...S.upd, state: pend.state, step: '' };
 		else S.updPending = null;
-		if (S.upd.check && !S.check) S.check = { ...S.upd.check, current: S.upd.current };
-		// look for updates now and then (GitHub allows 60 anonymous API calls per hour)
-		if (!prev && !S.checking && (!S.upd.check || Date.now() / 1000 - S.upd.check.time > 6 * 3600)) checkUpdates(true);
+		// the box checks GitHub every 6 hours by itself; show what it found
+		const had = S.check?.update_available ? S.check.latest : null;
+		if (S.upd.check && (!S.check || S.upd.check.time >= (S.check.time || 0))) S.check = { ...S.upd.check, current: S.upd.current };
+		if ((S.check?.update_available ? S.check.latest : null) !== had) renderHeader();
+		// no result yet (fresh start) or an old one: ask now (GitHub allows 60 anonymous API calls per hour)
+		if (!S.checking && !S.autoChecked && (!S.upd.check || Date.now() / 1000 - S.upd.check.time > 6 * 3600)) { S.autoChecked = true; checkUpdates(true); }
 		if (S.route.tab === 'system' && S.route.sub === 'firmware' && !document.activeElement?.matches('select')) renderMain();
 		if (prev && prev !== S.upd.state && S.upd.state === 'ready') toast('Update geladen und geprüft.');
 		if (prev && prev !== S.upd.state && S.upd.state === 'flashed') toast('Update geschrieben – bitte neu starten.');
@@ -2417,13 +2504,26 @@ async function refreshUpdateStatus() {
 const ACTIONS = {
 	theme() {
 		S.theme = effTheme() === 'light' ? 'dark' : 'light';
+		if (isUser()) S.me.ui = { ...S.me.ui, theme: S.theme };
 		applyTheme(); renderHeader();
-		if (S.route.sub === 'darstellung') renderMain();
-		// plain users only change it for themselves (the look for everyone is an admin setting)
-		if (S.me && S.me.role !== 'admin') store.set('theme', S.theme); else saveLook({ theme: S.theme });
+		if (isUser()) { renderUserHeader(); if (S.utab === 'darstellung') renderUserMain(); }
+		else if (S.route.sub === 'darstellung') renderMain();
+		// plain users change it only for themselves (the look for everyone is an admin setting)
+		saveLook({ theme: S.theme });
 	},
 	logout,
-	accent(el) { S.accent = el.dataset.c; applyTheme(); renderHeader(); renderMain(); saveLook({ accent: S.accent }); },
+	accent(el) {
+		S.accent = el.dataset.c; applyTheme();
+		if (isUser()) { S.me.ui = { ...S.me.ui, accent: S.accent }; renderUserHeader(); renderUserMain(); } else { renderHeader(); renderMain(); }
+		saveLook({ accent: S.accent });
+	},
+	async 'look-reset'() {
+		try {
+			S.me.ui = await rpc('shareos.me', 'ui_set', { theme: '', accent: '' });
+			applyOwnLook(); store.set('theme', S.theme); store.set('accent', S.accent);
+			renderUserHeader(); renderUserMain(); toast('Darstellung wie für alle.');
+		} catch (e) { toast('Darstellung: ' + e.message, true); }
+	},
 	async 'pl-run'() { try { await rpc('shareos.paperless', 'run'); toast('Übertragung gestartet.'); setTimeout(loadPaperless, 5000); } catch (e) { toast(e.message, true); } },
 	'pl-new'() { S.plEdit = { mode: 'new', data: { name: '', owner: '', share: '', tags: [], enabled: true } }; renderMain(); },
 	async 'pl-edit'(el) {
@@ -2701,9 +2801,16 @@ document.addEventListener('change', (e) => {
 
 window.addEventListener('hashchange', () => {
 	if (!S.sid || !$('#main')) return;
+	if (isUser()) {
+		parseUserRoute();
+		if (S.fb && S.utab === 'dateien') S.fb.roots = null;
+		renderUserTabs(); renderUserMain(); window.scrollTo(0, 0);
+		return;
+	}
 	parseRoute();
 	if (S.route.tab !== 'speicher') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
 	if (S.route.tab !== 'freigaben') { S.shEdit = null; S.uEdit = null; }
+	if (S.fb && S.route.sub === 'dateien') S.fb.roots = null;   // volumes may have changed
 	if (S.route.tab !== 'paperless') { S.plEdit = null; S.plLog = null; } else if (S.pl) loadPaperless();
 	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
 	else if (S.cloud?.scope === 'admin') loadCloud('admin');
@@ -2718,6 +2825,208 @@ setInterval(() => {
 	const c = $('.clock');
 	if (c) c.textContent = new Date().toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' });
 }, 10000);
+
+/* ---------- file browser (admins: all volumes, users: personal folder) ------- */
+
+function fbInit() {
+	if (!S.fb) S.fb = { roots: null, root: '', path: '', data: null, sel: new Set(), hidden: false, uploads: [], err: null };
+	return S.fb;
+}
+
+const fbRootLabel = (r) => (r.home ? 'Persönlicher Ordner' : r.name);
+const fbJoin = (a, b) => (a ? a + '/' + b : b);
+
+async function fbLoad(path) {
+	const f = fbInit();
+	try {
+		if (!f.roots) {
+			f.roots = (await rpc('shareos.files', 'roots')).roots || [];
+			if (!f.roots.some((r) => r.name === f.root)) { f.root = f.roots[0]?.name || ''; f.path = ''; }
+		}
+		if (f.root) {
+			const d = await rpc('shareos.files', 'list', { root: f.root, path: path ?? f.path, hidden: f.hidden });
+			f.data = d; f.path = d.path; f.sel = new Set(); f.err = null;
+		}
+	} catch (e) {
+		f.err = e.message;
+		if (path != null && path !== f.path) { toast('Dateien: ' + e.message, true); f.err = null; }
+	}
+	fbRender();
+}
+
+function fbRender() {
+	const box = $('#fb');
+	if (box) box.innerHTML = fbInner().s;
+}
+
+function filesView() {
+	const f = fbInit();
+	if (!f.roots && !f.err) fbLoad();
+	return html`<section class="sec"><div id="fb">${fbInner()}</div></section>`;
+}
+
+function fbInner() {
+	const f = S.fb, d = f.data;
+	if (f.err && !d) return html`<div class="panel"><div class="empty">${svg(I.warn)}<span>${f.err}</span></div></div>`;
+	if (!f.roots) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	if (!f.roots.length) return html`<div class="panel"><div class="empty">${svg(I.info)}<span>${S.me?.role === 'admin' || !S.me ? 'Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.' : 'Kein persönlicher Ordner vorhanden.'}</span></div></div>`;
+	if (!d) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	const root = f.roots.find((r) => r.name === f.root) || f.roots[0];
+	const parts = f.path ? f.path.split('/') : [];
+	const n = f.sel.size, all = d.entries.length && n === d.entries.length;
+	const busy = f.uploads.some((u) => u.pct != null && u.pct < 100 && !u.err);
+	return html`<div class="panel fb" id="fb-drop">
+		<div class="fbbar">
+			${f.roots.length > 1 ? html`<select id="fb-root" class="btn sm ghost" aria-label="Laufwerk">${f.roots.map((r) => html`<option value="${r.name}"${r.name === f.root ? raw(' selected') : ''}>${fbRootLabel(r)}</option>`)}</select>` : ''}
+			<nav class="crumbs" aria-label="Pfad">
+				<button type="button" data-act="fb-crumb" data-p="">${svg(I.folder)}${fbRootLabel(root)}</button>${parts.map((p, i) => html`<span>/</span><button type="button" data-act="fb-crumb" data-p="${parts.slice(0, i + 1).join('/')}">${p}</button>`)}
+			</nav>
+			${d.free != null ? html`<span class="tag ml">${fmtBytes(d.free)} frei</span>` : ''}
+		</div>
+		<div class="acts fbtools">
+			<button class="btn sm ghost" type="button" data-act="fb-up" ${parts.length ? '' : 'disabled'} title="Ordner nach oben" aria-label="Ordner nach oben">${svg(I.up)}</button>
+			<button class="btn sm" type="button" data-act="fb-mkdir">${svg(I.plus)}Neuer Ordner</button>
+			<label class="btn sm${busy ? ' dis' : ''}">${svg(I.ul)}Hochladen<input type="file" id="fb-file" multiple hidden ${busy ? 'disabled' : ''}></label>
+			<span class="sep"></span>
+			<button class="btn sm ghost" type="button" data-act="fb-rename" ${n === 1 ? '' : 'disabled'}>${svg(I.pen)}Umbenennen</button>
+			<button class="btn sm ghost" type="button" data-act="fb-move" ${n ? '' : 'disabled'}>${svg(I.move)}Verschieben</button>
+			<button class="btn sm ghost" type="button" data-act="fb-copy" ${n ? '' : 'disabled'}>${svg(I.copy)}Kopieren</button>
+			<button class="btn sm danger" type="button" data-act="fb-del" ${n ? '' : 'disabled'}>${svg(I.trash)}Löschen</button>
+			<label class="chk ml"><input type="checkbox" id="fb-hidden"${f.hidden ? raw(' checked') : ''}>Versteckte</label>
+		</div>
+		${f.uploads.length ? html`<div class="fbup">${f.uploads.map((u) => html`<div class="fbuprow"><span class="nm">${u.name}</span>
+			${u.err ? html`<span class="tag err">${u.err}</span>` : u.pct >= 100 ? html`<span class="tag ok">fertig</span>` : html`<div class="bar busy"><i style="width:${u.pct || 0}%"></i></div><span class="vv">${u.pct || 0} %</span>`}</div>`)}</div>` : ''}
+		${d.entries.length ? html`<div class="tw"><table class="t fbt">
+			<thead><tr><th style="width:34px"><input type="checkbox" class="fb-all" aria-label="Alle auswählen"${all ? raw(' checked') : ''}></th><th>NAME</th><th class="r">GRÖSSE</th><th>GEÄNDERT</th><th></th></tr></thead>
+			<tbody>${d.entries.map((e) => {
+				const dir = e.type === 'dir' || e.type === 'dirlink';
+				return html`<tr class="${f.sel.has(e.name) ? 'sel' : ''}">
+					<td><input type="checkbox" class="fb-sel" data-name="${e.name}" aria-label="${e.name} auswählen"${f.sel.has(e.name) ? raw(' checked') : ''}></td>
+					<td class="nm">${dir ? html`<button type="button" class="lnk" data-act="fb-open" data-name="${e.name}">${svg(I.folder)}<span>${e.name}</span></button>`
+						: e.type === 'file' ? html`<button type="button" class="lnk" data-act="fb-dl" data-name="${e.name}" title="Herunterladen">${svg(I.doc)}<span>${e.name}</span></button>`
+						: html`<span class="lnk mut">${svg(I.doc)}<span>${e.name}</span></span>`}</td>
+					<td class="r mut">${dir ? '' : fmtBytes(e.size)}</td>
+					<td class="mut">${fmtTime(e.mtime)}</td>
+					<td class="r">${e.type === 'file' ? html`<button class="btn sm ghost" type="button" data-act="fb-dl" data-name="${e.name}" title="Herunterladen" aria-label="${e.name} herunterladen">${svg(I.dl)}</button>` : ''}</td></tr>`;
+			})}</tbody></table></div>`
+			: html`<div class="empty">${svg(I.folder)}<span>Dieser Ordner ist leer.</span></div>`}
+		${d.truncated ? html`<p class="note">Es werden nur die ersten 2000 Einträge gezeigt.</p>` : ''}
+		<p class="note">Dateien lassen sich auch einfach hierher ziehen. ${n ? html`<b>${n} ausgewählt.</b>` : ''}</p>
+	</div>`;
+}
+
+async function fbDownload(name) {
+	const f = S.fb;
+	try {
+		const r = await rpc('shareos.files', 'ticket', { root: f.root, path: f.path, name, mode: 'get' });
+		const a = document.createElement('a');
+		a.href = r.url; a.download = name;
+		document.body.append(a); a.click(); a.remove();
+	} catch (e) { toast('Herunterladen: ' + e.message, true); }
+}
+
+function fbSend(url, file, onpct) {
+	return new Promise((resolve, reject) => {
+		const x = new XMLHttpRequest();
+		x.open('POST', url);
+		x.upload.onprogress = (ev) => { if (ev.lengthComputable) onpct(Math.floor(ev.loaded * 100 / ev.total)); };
+		x.onload = () => {
+			let j = {};
+			try { j = JSON.parse(x.responseText); } catch (e) { }
+			x.status === 200 && j.ok ? resolve() : reject(new Error(j.error || 'HTTP ' + x.status));
+		};
+		x.onerror = () => reject(new Error('Verbindung unterbrochen'));
+		x.send(file);
+	});
+}
+
+async function fbUpload(files) {
+	const f = S.fb;
+	if (!files?.length || !f?.root) return;
+	const root = f.root, path = f.path;
+	const list = [...files].map((file) => ({ file, name: file.name, pct: 0, err: null }));
+	f.uploads = list;
+	fbRender();
+	for (const u of list) {
+		try {
+			let t;
+			try { t = await rpc('shareos.files', 'ticket', { root, path, name: u.name, mode: 'put' }); }
+			catch (e) {
+				if (e.message !== 'already exists') throw e;
+				if (!await confirmDlg('Datei ersetzen?', `„${u.name}“ gibt es in diesem Ordner schon.`, 'Ersetzen', true)) { u.err = 'übersprungen'; fbRender(); continue; }
+				t = await rpc('shareos.files', 'ticket', { root, path, name: u.name, mode: 'put', overwrite: true });
+			}
+			let last = 0;
+			await fbSend(t.url, u.file, (p) => { u.pct = p; if (p - last >= 3 || p === 100) { last = p; fbRender(); } });
+			u.pct = 100;
+		} catch (e) { u.err = e.message; }
+		fbRender();
+	}
+	const bad = list.filter((u) => u.err && u.err !== 'übersprungen').length;
+	toast(bad ? `${bad} Datei(en) nicht hochgeladen.` : `${list.length} Datei(en) hochgeladen.`, !!bad);
+	if (S.fb && S.fb.root === root && S.fb.path === path) await fbLoad();
+	setTimeout(() => { if (S.fb && S.fb.uploads === list && !list.some((u) => u.err)) { S.fb.uploads = []; fbRender(); } }, 4000);
+}
+
+async function fbTransfer(copy) {
+	const f = S.fb, names = [...f.sel];
+	const dest = await promptDlg(copy ? 'Kopieren nach' : 'Verschieben nach',
+		`${names.length} Eintrag/Einträge. Zielordner als Pfad in „${fbRootLabel(f.roots.find((r) => r.name === f.root))}“, z. B. Fotos/2026 (leer = oberste Ebene).`,
+		f.path, copy ? 'Kopieren' : 'Verschieben', 'text', 1024);
+	if (dest == null) return;
+	try {
+		await rpc('shareos.files', 'move', { root: f.root, path: f.path, names, dest: dest.replace(/^\/+|\/+$/g, ''), copy });
+		toast(copy ? 'Kopiert.' : 'Verschoben.');
+		fbLoad();
+	} catch (e) { toast((copy ? 'Kopieren: ' : 'Verschieben: ') + e.message, true); }
+}
+
+Object.assign(ACTIONS, {
+	'fb-open'(el) { fbLoad(fbJoin(S.fb.path, el.dataset.name)); },
+	'fb-crumb'(el) { fbLoad(el.dataset.p); },
+	'fb-up'() { const p = S.fb.path.split('/'); p.pop(); fbLoad(p.join('/')); },
+	'fb-dl'(el) { fbDownload(el.dataset.name); },
+	async 'fb-mkdir'() {
+		const name = await promptDlg('Neuer Ordner', 'Name des neuen Ordners:', '', 'Anlegen', 'text', 255);
+		if (!name) return;
+		try { await rpc('shareos.files', 'mkdir', { root: S.fb.root, path: S.fb.path, name }); fbLoad(); }
+		catch (e) { toast('Ordner: ' + e.message, true); }
+	},
+	async 'fb-rename'() {
+		const old = [...S.fb.sel][0];
+		const to = await promptDlg('Umbenennen', `Neuer Name für „${old}“:`, old, 'Umbenennen', 'text', 255);
+		if (!to || to === old) return;
+		try { await rpc('shareos.files', 'rename', { root: S.fb.root, path: S.fb.path, name: old, to }); fbLoad(); }
+		catch (e) { toast('Umbenennen: ' + e.message, true); }
+	},
+	'fb-move'() { fbTransfer(false); },
+	'fb-copy'() { fbTransfer(true); },
+	async 'fb-del'() {
+		const names = [...S.fb.sel];
+		if (!await confirmDlg(`${names.length} Eintrag/Einträge löschen?`, `${names.slice(0, 5).join(', ')}${names.length > 5 ? ' …' : ''} – Ordner samt Inhalt. Das lässt sich nicht rückgängig machen.`, 'Löschen', true)) return;
+		try { await rpc('shareos.files', 'delete', { root: S.fb.root, path: S.fb.path, names }); toast('Gelöscht.'); fbLoad(); }
+		catch (e) { toast('Löschen: ' + e.message, true); }
+	}
+});
+
+document.addEventListener('change', (e) => {
+	const t = e.target, f = S.fb;
+	if (!f || !t.closest?.('#fb')) return;
+	if (t.id === 'fb-root') { f.root = t.value; f.path = ''; f.data = null; fbRender(); fbLoad(''); }
+	else if (t.id === 'fb-hidden') { f.hidden = t.checked; fbLoad(); }
+	else if (t.id === 'fb-file') fbUpload(t.files);
+	else if (t.classList.contains('fb-sel')) { t.checked ? f.sel.add(t.dataset.name) : f.sel.delete(t.dataset.name); fbRender(); }
+	else if (t.classList.contains('fb-all')) { f.sel = t.checked ? new Set(f.data.entries.map((x) => x.name)) : new Set(); fbRender(); }
+});
+for (const ev of ['dragover', 'dragleave', 'drop']) {
+	document.addEventListener(ev, (e) => {
+		const box = e.target.closest?.('#fb-drop');
+		if (!box || !e.dataTransfer?.types?.includes('Files')) return;
+		e.preventDefault();
+		box.classList.toggle('drag', ev === 'dragover');
+		if (ev === 'drop') fbUpload(e.dataTransfer.files);
+	});
+}
 
 /* ---------- start ----------------------------------------------------------- */
 

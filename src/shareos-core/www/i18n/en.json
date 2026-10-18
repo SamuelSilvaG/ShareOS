@@ -722,7 +722,40 @@
 		"Kopiert.": "Copied.",
 		"Bitte die Adresse selbst markieren und kopieren.": "Please select and copy the address yourself.",
 		"ShareOS ist als App installiert.": "ShareOS is installed as an app.",
-		"· Mein ShareOS": "· My ShareOS"
+		"· Mein ShareOS": "· My ShareOS",
+		"DATEIEN": "FILES",
+		"Neuer Ordner": "New folder",
+		"Hochladen": "Upload",
+		"Umbenennen": "Rename",
+		"Verschieben": "Move",
+		"Versteckte": "Hidden",
+		"GEÄNDERT": "MODIFIED",
+		"Dateien lassen sich auch einfach hierher ziehen.": "You can also simply drag files here.",
+		"Pfad": "Path",
+		"Ordner nach oben": "Folder up",
+		"Alle auswählen": "Select all",
+		"Verschieben nach": "Move to",
+		"Kopieren nach": "Copy to",
+		"Name des neuen Ordners:": "Name of the new folder:",
+		"Dieser Ordner ist leer.": "This folder is empty.",
+		"SPEICHERLIMIT (GB)": "STORAGE LIMIT (GB)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "File browser for the personal folder in the web interface",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "User name: lower-case letters, digits and _, starting with a letter. The storage limit applies per drive, 0 = unlimited. The password is used for shares and – depending on the role – for the web interface.",
+		"nur für dich": "just for you",
+		"Wie für alle": "Same as for everyone",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "Applies only to your login, on every device. Logo and browser icon take on the accent colour.",
+		"Datei ersetzen?": "Replace file?",
+		"Ersetzen": "Replace",
+		"übersprungen": "skipped",
+		"fertig": "done",
+		"Verbindung unterbrochen": "Connection lost",
+		"Gelöscht.": "Deleted.",
+		"Verschoben.": "Moved.",
+		"Darstellung wie für alle.": "Look reset to the one for everyone.",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "No drive mounted – set one up under STORAGE first.",
+		"Kein persönlicher Ordner vorhanden.": "There is no personal folder.",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "Only the first 2000 entries are shown.",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "Hostname saved. The HTTPS certificate was reissued for the new name – the browser will ask once more."
 	},
 	"patterns": [
 		[
@@ -1208,6 +1241,82 @@
 		[
 			"^Prüfen fehlgeschlagen: (.*)$",
 			"Check failed: $1"
+		],
+		[
+			"^(.+) frei$",
+			"$1 free"
+		],
+		[
+			"^(.+) auswählen$",
+			"select $1"
+		],
+		[
+			"^(.+) herunterladen$",
+			"download $1"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"$1 selected."
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"New name for “$1”:"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"$1 item(s). Target folder as a path in “$2”, e.g. Photos/2026 (empty = top level)."
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"Delete $1 item(s)?"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – folders with their content. This cannot be undone."
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"“$1” already exists in this folder."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"$1 file(s) uploaded."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"$1 file(s) not uploaded."
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"Same as for everyone ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"Download: $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"Folder: $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"Rename: $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"Delete: $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"Move: $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"Copy: $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"Files: $1"
 		]
 	],
 	"words": [

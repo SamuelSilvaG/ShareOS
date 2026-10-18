@@ -118,6 +118,15 @@ o=$(run download v0.0.7);check "non-ShareOS kernel is rejected" "$o" "d['state']
 o=$(run download v0.0.6);check "kernel over 3 MB is rejected" "$o" "d['state']=='error' and 'only loads' in d['error']"
 o=$(run download v0.2.0-beta.1); check "download + verify beta" "$o" "d['state']=='ready' and d['release']['tag']=='v0.2.0-beta.1'"
 o=$(run status);         check "status reports ready" "$o" "d['state']=='ready' and d['current']=='0.0-20261016-test'"
+sed -i "s|option api .*|option api 'http://127.0.0.1:1'|" "$ROOT/etc/config/shareos"
+run auto >/dev/null
+o=$(run status);         check "background check offline: no error, download stays ready" "$o" "d['state']=='ready' and 'error' not in d"
+sed -i "s|option api .*|option api '$API'|" "$ROOT/etc/config/shareos"
+run auto >/dev/null
+o=$(run status);         check "background check (cron) stores the result" "$o" "d['state']=='ready' and d['check']['update_available'] and d['check']['latest']"
+sed -i 's/^SHAREOS_VERSION=.*/SHAREOS_VERSION="9.9.9"/' "$ROOT/etc/shareos-release"
+o=$(run status);         check "old check result does not offer an older version" "$o" "d['check']['update_available']==False"
+sed -i 's/^SHAREOS_VERSION=.*/SHAREOS_VERSION="0.0-20261016-test"/' "$ROOT/etc/shareos-release"
 o=$(run apply v0.1.0);   check "apply of a different tag is refused" "$o" "d['state']=='error' and 'not downloaded' in d['error']"
 run download v0.1.0 >/dev/null
 o=$(run apply v0.1.0);   check "apply refuses on a non-DNS-320L board" "$o" "d['state']=='error' and 'unexpected board' in d['error']"

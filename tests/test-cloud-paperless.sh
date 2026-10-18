@@ -27,7 +27,7 @@ cleanup() {
 	for p in $PIDS; do kill $p 2>/dev/null; done
 	chroot "$R" /bin/sh -c '/etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
-	rm -rf "$T"
+	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2; else rm -rf "$T"; fi
 }
 trap cleanup EXIT
 

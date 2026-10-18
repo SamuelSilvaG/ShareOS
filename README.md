@@ -20,11 +20,16 @@ years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
 
 ![ShareOS web interface](docs/images/gui-uebersicht.png)
 
-## Status: runs from flash on the DNS-320L – storage in progress
+## Status: public test versions (beta) for the DNS-320L
 
-ShareOS is being rebuilt on a current, maintainable base while keeping
-what made Alt-F easy to use: the stock U-Boot, the stock flash layout and
-installing from the vendor web interface.
+ShareOS runs from flash on the DNS-320L (kernel, initramfs and the system in
+UBI with a persistent overlay for settings and packages). Test releases
+(`v0.1.0-beta.x`, pre-releases, for test devices only) are published on
+[GitHub Releases](https://github.com/UniqueDroid/ShareOS/releases); a running
+ShareOS updates itself from there.
+
+ShareOS is built on a current, maintainable base while keeping what made
+Alt-F easy to use: the stock U-Boot and the stock flash layout.
 
 | | Alt-F (legacy) | ShareOS |
 |---|---|---|
@@ -32,14 +37,30 @@ installing from the vendor web interface.
 | Toolchain | GCC 7.4, uClibc-ng | GCC 14, musl |
 | Kernel | 4.14 (EOL) | 6.18 LTS |
 | Configuration | scattered files, shell CGIs | UCI + ubus/rpcd/ucode |
-| Updates | manual upload | GitHub Releases (verified, not yet tested on hw) |
+| Web interface | shell CGIs | new interface (light/dark, accent colours, tiles or tables), installable as an app |
+| Updates | manual upload | GitHub Releases, checked every 6 hours, verified, with progress – tested on hardware |
+| Shares | Samba 3.6 | ksmbd (SMB 2/3), NFS v4 |
 
-The current image is a **test system**: SSH, a hardware check and the new
-backend (UCI, ubus, rpcd + ucode, uhttpd) with the GitHub release updater –
-see [docs/BACKEND.md](docs/BACKEND.md). The web interface is still a test
-page. On the DNS-320L, testing on real hardware needs the serial console,
-see [docs/HARDWARE-DNS320L.md](docs/HARDWARE-DNS320L.md); the backend can be
-run on a build host with qemu (`tests/run-stack-qemu.sh`).
+What is in it:
+
+- **Storage:** setup assistant, ext4, RAID 1, SMART, disk standby, swap
+- **Shares and users:** SMB/NFS shares with permissions per user and group, storage limit per user, one account for shares, web interface and apps, import of Alt-F users with their passwords
+- **"My ShareOS":** users with web access get their own area (storage, shares, password, look, file browser, Paperless, cloud)
+- **File browser:** admins for all drives, users for their personal folder (per user)
+- **Cloud sync** with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive and more) for the device and per user
+- **Paperless-ngx:** inbox folders per user or shared (e.g. for a scanner)
+- **System:** first-run assistant, network with automatic rollback, HTTPS (own certificate possible), services and autostart, fan/LEDs, logs, settings backup (JSON, optionally AES-256), status address for widget apps
+- English and German interface (more languages: [docs/TRANSLATING.md](docs/TRANSLATING.md))
+
+The **first installation** still needs the serial console (TFTP boot, then
+writing the system to flash) – see [docs/TESTING.md](docs/TESTING.md) and
+[docs/HARDWARE-DNS320L.md](docs/HARDWARE-DNS320L.md). Installing from the
+Alt-F or D-Link web interface is not released yet. The backend can be run on
+a build host with qemu (`tests/run-stack-qemu.sh`), the web interface with
+sample data via `tests/mock-ubus.py`.
+
+Next: hardware tests of the current betas, apps from a package feed,
+notifications, more devices (DNS-320/325/327L), a public beta.
 
 ## Layout
 
@@ -50,7 +71,7 @@ package/                 ShareOS buildroot packages
 src/alt-f-utils/         Alt-F device tools (MCU daemon, dns323-fw, sysctrl)
 patches/                 hashes/patches for buildroot packages
 src/shareos-core/        backend: rpcd ucode plugin, updater, UCI defaults, init scripts
-tests/                   host tests (updater, qemu stack)
+tests/                   host and emulator tests (updater, network, users/shares, storage, cloud/Paperless, qemu stack), UI mock
 scripts/                 helper scripts
 legacy/alt-f/            the original Alt-F tree, kept for reference
 ```

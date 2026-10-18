@@ -1,0 +1,58 @@
+#!/bin/sh
+# ShareOS file browser: download and upload with a one-time ticket
+#   GET  /cgi-bin/files?t=<ticket>    send the file
+#   POST /cgi-bin/files?t=<ticket>    request body = new file content
+# Tickets come from the rpcd method shareos.files.ticket (logged-in session),
+# are valid for 2 minutes and only once. Files of plain users are read and
+# written with their own rights, so links they plant cannot reach other data.
+DIR=/tmp/shareos-files
+
+reply() {   # status json
+	printf 'Status: %s\r\nContent-Type: application/json\r\nCache-Control: no-store\r\n\r\n%s\n' "$1" "$2"
+	exit 0
+}
+
+t=
+IFS='&'
+for kv in $QUERY_STRING; do
+	case "$kv" in t=*) t=${kv#t=} ;; esac
+done
+unset IFS
+case "$t" in *[!0-9a-f]*|'') reply '403 Forbidden' '{"error":"invalid ticket"}' ;; esac
+[ ${#t} -eq 32 ] && [ -f "$DIR/$t" ] || reply '403 Forbidden' '{"error":"invalid ticket"}'
+{ read -r mode; read -r user; read -r path; read -r exp; read -r enc; } < "$DIR/$t"
+rm -f "$DIR/$t"
+[ "$(date +%s)" -le "${exp:-0}" ] || reply '403 Forbidden' '{"error":"ticket expired"}'
+
+q() { printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"; }
+as_user() {   # shell command (with the account's rights)
+	if [ "$user" = root ]; then sh -c "$1"
+	else su -s /bin/sh "$user" -c "$1"; fi
+}
+P=$(q "$path")
+
+case "$mode:$REQUEST_METHOD" in
+	get:GET)
+		size=$(as_user "stat -c %s -- $P" 2>/dev/null) || reply '404 Not Found' '{"error":"not found"}'
+		printf 'Status: 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %s\r\n' "$size"
+		printf "Content-Disposition: attachment; filename*=UTF-8''%s\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n" "$enc"
+		as_user "cat -- $P"
+		;;
+	put:POST|put:PUT)
+		len=${CONTENT_LENGTH:-0}
+		case "$len" in *[!0-9]*|'') reply '411 Length Required' '{"error":"length required"}' ;; esac
+		part=$(q "${path%/*}/.${path##*/}.part")
+		um=077; [ "$user" = root ] && um=002
+		if head -c "$len" | as_user "umask $um; cat > $part"; then
+			got=$(as_user "stat -c %s -- $part" 2>/dev/null)
+			if [ "$got" = "$len" ] && as_user "mv -f -- $part $P"; then
+				reply '200 OK' '{"ok":true}'
+			fi
+		fi
+		as_user "rm -f -- $part"
+		reply '500 Internal Server Error' '{"error":"upload failed (storage limit or drive full?)"}'
+		;;
+	*)
+		reply '405 Method Not Allowed' '{"error":"method not allowed"}'
+		;;
+esac

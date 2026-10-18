@@ -123,11 +123,16 @@ kbd{font:inherit;font-size:11px;color:var(--muted);border:1px solid var(--line);
 .tag.err{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
 .tag.new{color:var(--bg);background:var(--amber);border-color:var(--amber);font-weight:600}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
-.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 14px;align-items:end}
 .f{display:block;min-width:0}
 .f>span{display:block;color:var(--muted);font-size:11px;letter-spacing:.06em;margin-bottom:5px}
 .f input,.f select{width:100%;min-height:40px;font:inherit;font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:0 10px;outline:none}
 .f input:focus,.f select:focus{border-color:var(--dim);box-shadow:var(--glow)}
+/* file pickers: the button looks like the other buttons */
+input[type=file]{font:inherit;font-size:12px;color:var(--muted);max-width:100%}
+input[type=file]::file-selector-button{font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:var(--panel);border:1px solid var(--dim);border-radius:7px;min-height:30px;padding:0 12px;margin-right:10px;cursor:pointer}
+input[type=file]::file-selector-button:hover{background:var(--ph);box-shadow:var(--glow)}
+.f input[type=file]{padding:4px 5px;display:flex;align-items:center}
 .t select{min-height:34px;font:inherit;font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:0 8px;width:100%}
 .t select:focus{border-color:var(--dim);box-shadow:var(--glow);outline:none}
 .t td svg{width:18px;height:18px;flex:none;color:var(--muted)}
@@ -222,3 +227,33 @@ dialog.dlg .acts{justify-content:flex-end}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:640px){.brandlogo{height:52px}}
 .btn.ghost.on{color:var(--accent);border-color:var(--dim)}
+
+/* Dateibrowser */
+.fbbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.fbbar select{width:auto}
+.crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:2px;min-width:0;font-size:13px}
+.crumbs button{display:inline-flex;align-items:center;gap:6px;font:inherit;color:var(--accent);background:none;border:0;border-radius:6px;padding:4px 6px;cursor:pointer;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crumbs button:hover{background:var(--ph)}
+.crumbs button svg{width:16px;height:16px;flex:none}
+.crumbs span{color:var(--muted)}
+.fbtools{flex-wrap:wrap;margin-bottom:12px}
+.fbtools .sep{width:1px;align-self:stretch;background:var(--line);margin:0 4px}
+.fbtools .chk{font-size:12px}
+label.btn{position:relative}
+label.btn.dis{opacity:.45;cursor:not-allowed}
+.fbup{display:grid;gap:6px;margin-bottom:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.fbuprow{display:grid;grid-template-columns:minmax(0,1fr) minmax(80px,200px) 48px;gap:10px;align-items:center;font-size:12px}
+.fbuprow .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbuprow .tag{grid-column:2/4;justify-self:start}
+.fbuprow .vv{text-align:right;font-variant-numeric:tabular-nums}
+.fbt td.nm{max-width:0;width:60%}
+.fbt .lnk{display:flex;align-items:center;gap:8px;font:inherit;color:var(--text);background:none;border:0;padding:0;cursor:pointer;text-align:left;max-width:100%}
+.fbt .lnk span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbt .lnk:hover span{color:var(--accent);text-decoration:underline}
+.fbt .lnk svg{width:18px;height:18px;flex:none;color:var(--muted)}
+.fbt button.lnk svg{color:var(--accent)}
+.fbt tr.sel td{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.fbt input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.fbt .r{text-align:right}
+.fb.drag{border-color:var(--accent);box-shadow:var(--glow)}
+@media (max-width:640px){.fbt th:nth-child(4),.fbt td:nth-child(4){display:none}.fbtools .sep{display:none}}

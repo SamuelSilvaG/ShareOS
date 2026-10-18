@@ -24,11 +24,14 @@ QEMU=$(command -v qemu-arm-static) || { echo "install qemu-user-static"; exit 1;
 
 R=$(mktemp -d /tmp/shareos-qemu.XXXX)
 cleanup() {
-	chroot "$R" /bin/sh -c '/etc/init.d/S50uhttpd stop; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1 || true
-	umount "$R/dev" "$R/proc" 2>/dev/null || true
-	rm -rf "$R"
+	chroot "$R" /bin/sh -c '/etc/init.d/S50avahi-daemon stop; /etc/init.d/S50uhttpd stop; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1 || true
+	umount -l "$R/dev" 2>/dev/null; umount -l "$R/proc" 2>/dev/null
+	# never delete through a mount that is still there (it would be the host's /dev)
+	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2
+	else rm -rf "$R"; fi
 }
 trap cleanup EXIT
+trap 'exit 1' INT TERM
 
 # binfmt for ARM ELF -> qemu (F = fix binary, works inside the chroot)
 if [ ! -e /proc/sys/fs/binfmt_misc/qemu-arm ]; then
@@ -119,6 +122,14 @@ if [ "$CHECK" = "--check" ]; then
 	t "widget status: old token denied after renew" "$(st "?token=$TOK")" "d['c']==403"
 	t "app manifest served as JSON" "$(curl -s -o /dev/null -w '{"c":%{http_code},"t":"%{content_type}"}' http://127.0.0.1:$PORT/manifest.json)" "d['c']==200 and d['t'].startswith('application/json')"
 	t "service worker and icons served" "$(curl -s -o /dev/null -w '{"s":%{http_code},' http://127.0.0.1:$PORT/sw.js; curl -s -o /dev/null -w '"i":%{http_code}}' http://127.0.0.1:$PORT/icon-512.png)" "d['s']==200 and d['i']==200"
+	sed 's|^\thost=$(cat /proc/sys/kernel/hostname)|\thost=old-name|' "$R/usr/sbin/shareos-cert" > "$R/tmp/cert-old"
+	chroot "$R" /bin/sh /tmp/cert-old selfsigned >/dev/null 2>&1
+	t "self-signed certificate renewed after a name change" "$(chroot "$R" /usr/sbin/shareos-cert ensure | python3 -c 'import json,sys; print(json.dumps({"o":sys.stdin.read()}))')" "'renewed' in d['o']"
+	t "renewed certificate names this box and its IP" "$(chroot "$R" /usr/sbin/shareos-cert info | python3 -c 'import json,sys; print(json.dumps({"l":sys.stdin.read().split()}))')" "any(x.startswith('san=iPAddress:') for x in d['l']) and 'san=dNSName:old-name' not in d['l']"
+	t "a current certificate is left alone" "$(chroot "$R" /usr/sbin/shareos-cert ensure | python3 -c 'import json,sys; print(json.dumps({"o":sys.stdin.read()}))')" "d['o']==''"
+	chroot "$R" /etc/init.d/S50avahi-daemon start >/dev/null 2>&1; sleep 3
+	t "mDNS: <hostname>.local answers with the box address" "$(python3 "$TOP/tests/mdns-query.py" "$(cat /proc/sys/kernel/hostname).local" | python3 -c 'import json,sys; print(json.dumps({"ip":sys.stdin.read().strip()}))')" "d['ip'].count('.')==3"
+	t "mDNS: avahi user exists after an upgrade (overlay passwd)" "$(grep -c '^avahi:' "$R/etc/passwd" | python3 -c 'import json,sys; print(json.dumps({"n":int(sys.stdin.read())}))')" "d['n']==1"
 	t "GUI assets served" "$(curl -s -o /dev/null -w '{"a":%{http_code},' http://127.0.0.1:$PORT/app.js; curl -s -o /dev/null -w '"c":%{http_code}}' http://127.0.0.1:$PORT/shareos.css)" "d['a']==200 and d['c']==200"
 	echo; [ $fails -eq 0 ] && echo "all checks passed" || { echo "$fails check(s) failed"; exit 1; }
 	exit 0
@@ -127,4 +138,4 @@ fi
 echo
 echo "ShareOS stack running: http://127.0.0.1:$PORT/  (root / shareos)"
 echo "Press Ctrl-C to stop."
-while sleep 3600; do :; done
+while :; do sleep 3600 & wait $!; done

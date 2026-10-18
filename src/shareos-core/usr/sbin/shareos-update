@@ -169,18 +169,26 @@ function releases_for_box(list, fwname, channel) {
 	return sort(found, (a, b) => vcmp(b.version, a.version));
 }
 
-function cmd_check(channel) {
+// auto: the regular background check (cron) – skipped while an update is
+// running, and a failure (box offline, GitHub limit) leaves no error state
+function cmd_check(channel, auto) {
 	let cfg = config();
 	let rel = release_info();
 	channel = channel ?? cfg.channel;
 	let s = load_state();
 
+	if (auto && (s.state in { downloading: 1, verifying: 1, flashing: 1 }))
+		exit(0);
 	if (!rel.SHAREOS_FWNAME)
 		fail(s, 'unknown firmware name (/etc/shareos-release)');
 
 	let list = fetch_releases(cfg);
-	if (type(list) != 'array')
+	if (type(list) != 'array') {
+		if (auto) { warn('shareos-update: check failed: ' + list.error + '\n'); exit(1); }
 		fail(s, 'cannot fetch releases from ' + cfg.api + ' (' + cfg.repo + '): ' + list.error);
+	}
+	// the state may have changed while asking GitHub (a download started)
+	s = load_state();
 
 	let found = releases_for_box(list, rel.SHAREOS_FWNAME, channel);
 	let latest = found[0];
@@ -429,6 +437,9 @@ function cmd_status() {
 		s.progress = { bytes: st?.size ?? 0, total: s.release?.size ?? 0 };
 	}
 	s.current = release_info().SHAREOS_VERSION;
+	// a check from before an update would still offer the version now running
+	if (s.check)
+		s.check.update_available = !!s.check.releases?.[0] && vcmp(s.check.releases[0].version, s.current) > 0;
 	// written by the initramfs after installing a staged system
 	let res = trim(readfile(ROOT + '/overlay/upgrade-result') ?? '');
 	if (res != '')
@@ -453,11 +464,12 @@ function cmd_cancel() {
 let cmd = ARGV[0];
 switch (cmd) {
 case 'check':    cmd_check(ARGV[1]); break;
+case 'auto':     cmd_check(null, true); break;
 case 'download': cmd_download(ARGV[1]); break;
 case 'apply':    cmd_apply(ARGV[1]); break;
 case 'status':   cmd_status(); break;
 case 'cancel':   cmd_cancel(); break;
 default:
-	warn('usage: shareos-update check [stable|beta] | download <tag> | apply <tag> | status | cancel\n');
+	warn('usage: shareos-update check [stable|beta] | auto | download <tag> | apply <tag> | status | cancel\n');
 	exit(2);
 }
