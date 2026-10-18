@@ -8,6 +8,8 @@ pre-releases for test devices only.
 
 - Fix: an own HTTPS certificate (e.g. a wildcard certificate of an own CA) was always refused with "certificate and key do not match" when uploaded in the web interface – the check failed because of file permissions, not because of the certificate.
 - Main menu: labels are centred vertically in the buttons (before they sat slightly too high).
+- Fix: apps with a minimum ShareOS version (e.g. Webpad, "0.1.0") were refused on the betas with "needs a newer ShareOS". A minimum without beta is now met by the betas of that version.
+- Fix: versions are compared number by number also in the beta part, so `beta.10` counts as newer than `beta.9` (firmware updates and apps).
 
 ## 0.1.0-beta.7
 

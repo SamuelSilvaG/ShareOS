@@ -45,6 +45,8 @@ publish() { # <bundle name> <version>
 mkdir -p "$WEB/repos/UniqueDroid/ShareOS" "$WEB/dl"
 bundle good 0.1.0;                 publish good 0.1.0
 bundle beta 0.2.0-beta.1;          publish beta 0.2.0-beta.1
+bundle beta9 0.2.0-beta.9;         publish beta9 0.2.0-beta.9
+bundle beta10 0.2.0-beta.10;       publish beta10 0.2.0-beta.10        # beta.10 > beta.9 (not as text)
 bundle other 0.1.1 DNS-325-rev-Ax; publish other 0.1.1                       # wrong box
 bundle broken 0.0.9;               publish broken 0.0.9
 echo "0000000000000000000000000000000000000000000000000000000000000000  x" > "$WEB/dl/ShareOS-0.0.9-$FWN.sysupgrade.tar.sha256"
@@ -61,6 +63,8 @@ rel() { # tag prerelease body version
 {
 	echo '['
 	echo ' {"tag_name":"v0.3.0","draft":true,"prerelease":false,"assets":[]},'
+	rel v0.2.0-beta.9 true beta9 0.2.0-beta.9; echo ','
+	rel v0.2.0-beta.10 true beta10 0.2.0-beta.10; echo ','
 	rel v0.2.0-beta.1 true beta 0.2.0-beta.1; echo ','
 	rel v0.1.1 false "wrong box" 0.1.1; echo ','
 	rel v0.1.0 false "first release" 0.1.0; echo ','
@@ -108,8 +112,8 @@ check() { # name, json-output, python expression on d
 
 o=$(run check);          check "check stable: newest is v0.1.1, drafts/betas/other boards hidden" "$o" \
 	"d['latest']=='v0.1.1' and [r['tag'] for r in d['releases']]==['v0.1.1','v0.1.0','v0.0.9','v0.0.8','v0.0.7','v0.0.6'] and d['update_available']"
-o=$(run check beta);     check "check beta: v0.2.0-beta.1 first" "$o" \
-	"d['latest']=='v0.2.0-beta.1' and len(d['releases'])==7"
+o=$(run check beta);     check "check beta: v0.2.0-beta.10 first (numeric beta order)" "$o" \
+	"d['latest']=='v0.2.0-beta.10' and [r['tag'] for r in d['releases']][:3]==['v0.2.0-beta.10','v0.2.0-beta.9','v0.2.0-beta.1'] and len(d['releases'])==9"
 o=$(run download v9.9);  check "download unknown tag is rejected" "$o" "d['state']=='error' and 'unknown release' in d['error']"
 o=$(run download v0.1.1);check "bundle for another box is rejected" "$o" "d['state']=='error' and 'DNS-325' in d['error']"
 o=$(run download v0.0.9);check "corrupted bundle is rejected (SHA-256)" "$o" "d['state']=='error' and 'SHA-256' in d['error']"
