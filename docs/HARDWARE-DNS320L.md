@@ -85,7 +85,14 @@ nothing about whether the ShareOS kernel boots from U-Boot.
 
 JP1 next to the USB port, pins `[4 3 2 _ 1]`: 4 = TX (box), 3 = GND,
 1 = RX (box), 2 = 3.3 V (leave unconnected). 115200 8N1. Adapter RXD → pin 4,
-TXD → pin 1, GND → pin 3. Stock boot log: U-Boot reads 3 MB each of uImage and
+TXD → pin 1, GND → pin 3. Pin 1 is the square pad; no soldering needed – wires
+pushed through the holes and held with hot glue work fine.
+
+| JP1 pinout | Connected | Board (DNS-320L rev A3) |
+|---|---|---|
+| ![JP1](images/hw-jp1.jpg) | ![JP1 wired](images/hw-jp1-kabel.jpg) | ![Board](images/hw-platine.jpg) |
+
+Stock boot log: U-Boot reads 3 MB each of uImage and
 ramdisk, `Hit any key to stop autoboot` counts down from 1 (bootdelay=1).
 
 **Stopping autoboot needs `<space>` followed by `1`** (D-Link change in

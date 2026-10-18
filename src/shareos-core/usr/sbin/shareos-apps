@@ -1,0 +1,303 @@
+#!/usr/bin/ucode -S
+//
+// shareos-apps – ShareOS apps (packages .sapp) from a catalog or an upload
+//
+//   shareos-apps catalog            fetch the catalogs of all sources (JSON)
+//   shareos-apps cached             the last fetched catalog, no network (JSON)
+//   shareos-apps list               installed apps (JSON)
+//   shareos-apps install <id> [ver] download from the catalog, verify, install
+//   shareos-apps install-file <f>   install an uploaded package (not verified)
+//   shareos-apps remove <id>
+//   shareos-apps status             state of the last install job (JSON)
+//
+// A package is a tar.gz with app.json at the top and the app's files:
+//   { "id": "webpad", "name": "Webpad", "version": "1.0.0",
+//     "publisher": "…", "description": { "de": "…", "en": "…" },
+//     "type": "webapp", "entry": "index.html", "icon": "icon.svg",
+//     "category": "tools", "license": "…", "homepage": "…",
+//     "min_shareos": "0.1.0", "permissions": [] }
+// Web apps are served by their own web server (port apps.store.port, default
+// 8081) from /www-apps/<id>/ – another origin than the admin interface, so an
+// app cannot use the admin's login.
+//
+// Catalog (index.json, one URL per source in apps.store.source):
+//   { "schema": 1, "apps": [ { "id", "name", "publisher", "description",
+//     "category", "icon_url", "homepage", "type",
+//     "versions": [ { "version", "date", "prerelease", "url", "sha256",
+//                     "size", "min_shareos", "notes_url" } ] } ] }
+//
+'use strict';
+
+import { readfile, writefile, mkdir, stat, lsdir, unlink, rename, popen } from 'fs';
+import { cursor } from 'uci';
+
+const ROOT = getenv('SHAREOS_ROOT') ?? '';
+const APPS = ROOT + '/www-apps';
+const ST = ROOT + '/tmp/shareos-apps';
+const CA = '/etc/ssl/certs/ca-certificates.crt';
+const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10',
+	...(stat(CA) ? [ '--cacert', CA ] : []) ];
+const MAX_PKG = 64 * 1048576;       // download / upload
+const MAX_FILES = 40 * 1048576;     // unpacked
+const ID_RE = /^[a-z][a-z0-9-]{1,31}$/;
+// the test suite serves catalogs and packages from files
+const URL_RE = getenv('SHAREOS_APPS_ALLOW_FILE') ? /^(https|file):\/\// : /^https:\/\//;
+
+function shq(s) { return "'" + replace(s, "'", "'\\''") + "'"; }
+
+function capture(cmd) {
+	let p = popen('(' + cmd + ') 2>&1', 'r');
+	if (!p) return { rc: -1, out: '' };
+	let o = p.read('all') ?? '';
+	return { rc: p.close(), out: o };
+}
+
+function out(o) { print(sprintf('%J\n', o)); return o; }
+
+function die(msg) { out({ error: msg }); exit(1); }
+
+function vparse(v) {
+	let m = match(v ?? '', /^v?([0-9]+)\.([0-9]+)(\.([0-9]+))?(-(.+))?$/);
+	return m ? { n: [ +m[1], +m[2], +(m[4] ?? 0) ], pre: m[6] } : null;
+}
+
+function vcmp(a, b) {
+	let x = vparse(a), y = vparse(b);
+	if (!x || !y) return x ? 1 : (y ? -1 : 0);
+	for (let i = 0; i < 3; i++)
+		if (x.n[i] != y.n[i]) return x.n[i] < y.n[i] ? -1 : 1;
+	if (x.pre == y.pre) return 0;
+	if (!x.pre) return 1;
+	if (!y.pre) return -1;
+	return x.pre < y.pre ? -1 : 1;
+}
+
+function shareos_version() {
+	let m = match(readfile(ROOT + '/etc/shareos-release') ?? '', /SHAREOS_VERSION="?([^"\n]*)/);
+	return m ? m[1] : '0';
+}
+
+// development builds (0.0-<date>-<commit>) take every app
+function too_old(min) {
+	let v = shareos_version();
+	return !!min && !match(v, /^0\.0-/) && !!vparse(v) && vcmp(v, min) < 0;
+}
+
+function conf() {
+	let c = ROOT ? cursor(ROOT + '/etc/config') : cursor();
+	let src = c.get('apps', 'store', 'source');
+	return { c, channel: c.get('apps', 'store', 'channel') ?? 'stable',
+		sources: type(src) == 'array' ? src : (src ? [ src ] : []) };
+}
+
+function sect(id) { return 'app_' + replace(id, '-', '_'); }
+
+function job(o) {
+	mkdir(ST);
+	writefile(ST + '/job.json', sprintf('%J', { ...o, time: time() }));
+}
+
+/* ---------- installed apps ---------- */
+
+function installed() {
+	let c = conf().c, list = [];
+	for (let id in sort(lsdir(APPS) ?? [])) {
+		if (!match(id, ID_RE)) continue;
+		let a = json(readfile(APPS + '/' + id + '/app.json') ?? 'null');
+		if (type(a) != 'object') continue;
+		let s = sect(id);
+		let users = c.get('apps', s, 'users');
+		push(list, { id, name: a.name ?? id, version: a.version, publisher: a.publisher ?? '',
+			description: a.description ?? '', type: a.type ?? 'webapp', entry: a.entry ?? 'index.html',
+			icon: a.icon ?? null, category: a.category ?? '', homepage: a.homepage ?? '', license: a.license ?? '',
+			permissions: a.permissions ?? [],
+			verified: c.get('apps', s, 'verified') == '1', source: c.get('apps', s, 'source') ?? '',
+			installed: +(c.get('apps', s, 'installed') ?? 0),
+			users: type(users) == 'array' ? users : (users ? [ users ] : []) });
+	}
+	return list;
+}
+
+/* ---------- catalog ---------- */
+
+function fetch_catalog(url) {
+	let r = capture(join(' ', map([ ...CURL, '--max-time', '20', url ], shq)));
+	if (r.rc != 0) {
+		let m = match(r.out, /curl: \([0-9]+\)[^\n]*/);
+		return { error: m ? m[0] : 'curl exit ' + r.rc };
+	}
+	let d = json(r.out);
+	if (type(d) != 'object' || type(d.apps) != 'array') return { error: 'not a ShareOS app catalog' };
+	return d;
+}
+
+function merge(catalogs, channel) {
+	let inst = {}, apps = [];
+	for (let a in installed()) inst[a.id] = a;
+	for (let cat in catalogs) {
+		for (let a in cat.apps) {
+			if (type(a) != 'object' || !match(a.id ?? '', ID_RE) || type(a.versions) != 'array') continue;
+			let vs = filter(a.versions, (v) => type(v) == 'object' && vparse(v.version) && match(v.url ?? '', URL_RE)
+				&& match(v.sha256 ?? '', /^[0-9a-f]{64}$/) && (channel == 'beta' || !v.prerelease));
+			vs = sort(vs, (x, y) => -vcmp(x.version, y.version));
+			if (!length(vs)) continue;
+			let i = inst[a.id];
+			push(apps, { id: a.id, name: a.name ?? a.id, publisher: a.publisher ?? '', description: a.description ?? '',
+				category: a.category ?? '', icon_url: a.icon_url ?? null, homepage: a.homepage ?? '',
+				type: a.type ?? 'webapp', source: cat.url, versions: vs, latest: vs[0].version,
+				installed: i?.version ?? null,
+				update_available: !!i && vcmp(vs[0].version, i.version) > 0,
+				compatible: !too_old(vs[0].min_shareos) });
+		}
+	}
+	return sort(apps, (x, y) => lc(x.name) < lc(y.name) ? -1 : 1);
+}
+
+function cmd_catalog() {
+	let K = conf(), channel = K.channel, sources = K.sources;
+	let cats = [], errors = [];
+	for (let u in sources) {
+		let d = fetch_catalog(u);
+		if (d.error) push(errors, { source: u, error: d.error });
+		else push(cats, { ...d, url: u });
+	}
+	mkdir(ST);
+	writefile(ST + '/catalogs.json', sprintf('%J', cats));
+	let res = { time: time(), channel, sources, errors, apps: merge(cats, channel) };
+	writefile(ST + '/catalog-time', '' + res.time);
+	return out(res);
+}
+
+function cmd_cached() {
+	let K = conf(), channel = K.channel, sources = K.sources;
+	let cats = json(readfile(ST + '/catalogs.json') ?? '[]') ?? [];
+	return out({ time: +(readfile(ST + '/catalog-time') ?? 0), channel, sources, errors: [], apps: merge(cats, channel) });
+}
+
+/* ---------- install ---------- */
+
+function check_tar(file) {
+	// busybox tar here has no -z: unpack with gunzip
+	let r = capture('gunzip -c ' + shq(file) + ' | tar -tvf - && gunzip -t ' + shq(file));
+	if (r.rc != 0) return 'not a valid package (tar.gz)';
+	let total = 0, has_json = false;
+	for (let l in split(trim(r.out), '\n')) {
+		if (l == '') continue;
+		// busybox strips "../" and leading "/" itself, but such a package is not trustworthy
+		if (match(l, /^tar: /)) return match(l, /removing leading/) ? 'unsafe path in package' : 'not a valid package (' + trim(l) + ')';
+		let f = split(trim(l), /\s+/);
+		// busybox: perms owner size date time name
+		if (length(f) < 6) return 'unexpected package listing';
+		let kind = substr(f[0], 0, 1), name = join(' ', slice(f, 5));
+		if (kind != '-' && kind != 'd') return 'package contains links or special files: ' + name;
+		name = replace(name, /^\.\//, '');
+		if (substr(name, 0, 1) == '/' || match(name, /(^|\/)\.\.(\/|$)/)) return 'unsafe path in package: ' + name;
+		if (name == 'app.json') has_json = true;
+		total += +f[2];
+	}
+	if (!has_json) return 'app.json missing at the top of the package';
+	if (total > MAX_FILES) return 'package too large when unpacked';
+	return null;
+}
+
+function check_app(dir) {
+	let a = json(readfile(dir + '/app.json') ?? 'null');
+	if (type(a) != 'object') return { error: 'app.json is not valid JSON' };
+	if (!match(a.id ?? '', ID_RE)) return { error: 'invalid app id (a-z, 0-9 and -)' };
+	if (!vparse(a.version)) return { error: 'invalid version' };
+	if (type(a.name) != 'string' || !length(a.name) || length(a.name) > 64) return { error: 'invalid name' };
+	let t = a.type ?? 'webapp';
+	if (t != 'webapp') return { error: 'app type "' + t + '" is not supported by this ShareOS version yet' };
+	let e = a.entry ?? 'index.html';
+	if (match(e, /(^\/|\.\.)/) || stat(dir + '/' + e)?.type != 'file') return { error: 'entry file ' + e + ' missing' };
+	if (too_old(a.min_shareos))
+		return { error: 'needs ShareOS ' + a.min_shareos + ' or newer' };
+	return a;
+}
+
+function install_file(file, verified, source) {
+	let err = check_tar(file);
+	if (err) return { error: err };
+	mkdir(APPS);
+	let tmp = APPS + '/.new-' + time();
+	capture('rm -rf ' + shq(tmp));
+	mkdir(tmp);
+	let r = capture(sprintf('gunzip -c %s | tar -xf - -C %s', shq(file), shq(tmp)));
+	if (r.rc != 0) { capture('rm -rf ' + shq(tmp)); return { error: 'unpacking failed: ' + trim(r.out) }; }
+	let a = check_app(tmp);
+	if (a.error) { capture('rm -rf ' + shq(tmp)); return a; }
+	capture(sprintf('chown -R 0:0 %s; chmod -R u=rwX,go=rX %s', shq(tmp), shq(tmp)));
+	let dst = APPS + '/' + a.id;
+	capture(sprintf('rm -rf %s.old; [ -d %s ] && mv %s %s.old; mv %s %s && rm -rf %s.old',
+		shq(dst), shq(dst), shq(dst), shq(dst), shq(tmp), shq(dst), shq(dst)));
+	if (stat(dst + '/app.json')?.type != 'file') return { error: 'installing failed' };
+	let c = conf().c, s = sect(a.id);
+	let first = c.get('apps', s) != 'app';
+	c.set('apps', s, 'app');
+	c.set('apps', s, 'id', a.id);
+	c.set('apps', s, 'version', a.version);
+	c.set('apps', s, 'verified', verified ? '1' : '0');
+	c.set('apps', s, 'source', source ?? 'upload');
+	c.set('apps', s, 'installed', '' + time());
+	if (first) c.set('apps', s, 'users', [ '*' ]);
+	c.commit('apps');
+	return { ok: true, id: a.id, version: a.version, verified };
+}
+
+function cmd_install(id, version) {
+	if (!match(id ?? '', ID_RE)) die('invalid app id');
+	let cats = json(readfile(ST + '/catalogs.json') ?? '[]') ?? [];
+	let channel = conf().channel;
+	let app = filter(merge(cats, 'beta'), (a) => a.id == id)[0];
+	if (!app) die('unknown app – refresh the store first');
+	let v = version ? filter(app.versions, (x) => x.version == version)[0] : filter(app.versions, (x) => channel == 'beta' || !x.prerelease)[0];
+	if (!v) die('unknown version');
+	job({ state: 'downloading', id, version: v.version });
+	mkdir(ST);
+	let f = ST + '/dl-' + id + '.sapp';
+	let r = capture(join(' ', map([ ...CURL, '--max-time', '600', '--max-filesize', '' + MAX_PKG, '-o', f, v.url ], shq)));
+	if (r.rc != 0) { unlink(f); job({ state: 'error', id, error: 'download failed' }); die('download failed: ' + trim(r.out)); }
+	job({ state: 'verifying', id, version: v.version });
+	let sum = split(trim(capture('sha256sum ' + shq(f)).out), ' ')[0];
+	if (sum != v.sha256) { unlink(f); job({ state: 'error', id, error: 'checksum mismatch' }); die('checksum mismatch – package not installed'); }
+	job({ state: 'installing', id, version: v.version });
+	let res = install_file(f, true, app.source);
+	unlink(f);
+	if (res.error) { job({ state: 'error', id, error: res.error }); die(res.error); }
+	if (res.id != id) { job({ state: 'error', id, error: 'package contains another app' }); die('package contains another app (' + res.id + ')'); }
+	job({ state: 'done', id, version: res.version });
+	return out(res);
+}
+
+function cmd_install_file(f) {
+	let st = stat(f ?? '');
+	if (st?.type != 'file') die('file not found');
+	if (st.size > MAX_PKG) die('package too large');
+	job({ state: 'installing', id: '', version: '' });
+	let res = install_file(f, false, 'upload');
+	if (res.error) { job({ state: 'error', error: res.error }); die(res.error); }
+	job({ state: 'done', id: res.id, version: res.version });
+	return out(res);
+}
+
+function cmd_remove(id) {
+	if (!match(id ?? '', ID_RE) || stat(APPS + '/' + id)?.type != 'directory') die('unknown app');
+	capture('rm -rf ' + shq(APPS + '/' + id));
+	let c = conf().c;
+	c.delete('apps', sect(id));
+	c.commit('apps');
+	return out({ ok: true });
+}
+
+switch (ARGV[0]) {
+case 'catalog': cmd_catalog(); break;
+case 'cached': cmd_cached(); break;
+case 'list': out({ apps: installed() }); break;
+case 'install': cmd_install(ARGV[1], ARGV[2]); break;
+case 'install-file': cmd_install_file(ARGV[1]); break;
+case 'remove': cmd_remove(ARGV[1]); break;
+case 'status': out(json(readfile(ST + '/job.json') ?? 'null') ?? { state: 'idle' }); break;
+default:
+	warn('usage: shareos-apps catalog | cached | list | install <id> [version] | install-file <file> | remove <id> | status\n');
+	exit(2);
+}

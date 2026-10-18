@@ -86,6 +86,9 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 10:09 | Frage nach der Update-Anzeige: Bisher prüfte nur die geöffnete Oberfläche. Jetzt prüft die Box selbst alle 6 Stunden. |
 | 10:30 | Login-Text `user@shareos`, Zertifikat folgt Name und IP. Empfehlung statt fester Werks-IP: DHCP, Name per mDNS (`shareos.local`) und eine Rückfall-Adresse `192.168.0.32` ohne DHCP. Jan: „Ja gerne.“ |
 | 11:00 | Dateibrowser mit Hoch- und Herunterladen über einmalige Tickets; Dateien von Benutzern werden mit deren Rechten gelesen und geschrieben. Ein uhttpd-Patch verhindert, dass große Übertragungen nach 60 s abbrechen. Beim Testen in der Cloud-Umgebung hat ein Aufräumschritt versehentlich deren `/dev` geleert – die Testskripte löschen seitdem nur noch, wenn nichts mehr eingehängt ist. |
+| 11:53 | Jan veröffentlicht `v0.1.0-beta.5` und bringt Ideen für die Roadmap: App-Store mit Docker/Compose und ein Benachrichtigungssystem. Claude schreibt eine Machbarkeitsstudie: Docker passt nicht auf den DNS-320L (ARMv5, 256 MB, keine Images); stattdessen „Apps light“ mit nativen Paketen, Benachrichtigungen über ubus. Jan: „Container sind raus.“ |
+| 12:12 | Jan schickt sein Webpad: Es soll **ShareOS-WebApps** als nachinstallierbare Pakete mit App-JSON (Version, Herausgeber) geben, angeboten wie die Firmware-Versionen, aus einem eigenen Repo. Jan legt `ShareOS-Apps` an. |
+| 12:45 | App-Repo mit Paketformat `.sapp`, Build, Releases je Version und Katalog `index.json` per GitHub Actions; Webpad 1.0.0 als erste App, mit eingepackten Bibliotheken (läuft offline). In der Firmware: APPS-Bereich mit Store, Installation mit SHA-256-Prüfung, eigener Web-Server-Port für Apps, Sichtbarkeit je Benutzer, eigene Pakete hochladen. |
 
 ## Bemerkenswerte Problemlösungen
 
@@ -156,6 +159,10 @@ Englisch.
 | Eigene Darstellung (Benutzer) | Benutzer anlegen |
 |---|---|
 | ![Darstellung Benutzer](images/gui-darstellung-benutzer.png) | ![Benutzer anlegen](images/gui-benutzer-editor.png) |
+
+| App-Store | Installierte Apps |
+|---|---|
+| ![Store](images/gui-apps-store.png) | ![Installiert](images/gui-apps-installiert.png) |
 
 | Handy | |
 |---|---|

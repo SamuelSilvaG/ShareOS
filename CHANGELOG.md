@@ -1,0 +1,43 @@
+# Changelog
+
+Changes per release (newest first). The section of a version is added to its
+GitHub release automatically when the release is built. Test versions are
+pre-releases for test devices only.
+
+## 0.1.0-beta.6
+
+- **APPS area with a store** for ShareOS apps from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps): install and update with SHA-256 check, upload own packages (`.sapp`), more catalogs as sources, visibility per user/group, apps in "My ShareOS". First app: Webpad.
+- Web apps run on their own port (8081 / 8444) – another origin than the admin interface.
+- Firmware update: "Restart now" appears only after the installation has finished; the progress bar ends at 100 %.
+- Settings backup also covers Paperless, cloud and apps.
+- Docs: photos of the board and the serial console (JP1).
+
+## 0.1.0-beta.5
+
+- File browser: admins for all drives, users for their personal folder (enabled per user); upload/download with progress, drag and drop, large files.
+- Own look (light/dark, accent) per user.
+- Reachable as `<name>.local` (mDNS); fallback address `192.168.0.32` when no DHCP server answers.
+- The box checks for new firmware every 6 hours by itself.
+- The self-signed certificate follows hostname and IP address.
+- Forms: fields aligned, file pickers look like buttons; login prompt `user@shareos`.
+
+## 0.1.0-beta.4
+
+- Paperless-ngx: inbox folders per user or shared (e.g. for a scanner).
+- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user.
+- Installable as an app (PWA) and a status address for widget apps.
+
+## 0.1.0-beta.3
+
+- Shares (ksmbd SMB, NFS) with permissions per user and group, storage limit per user.
+- Users and groups, "My ShareOS" for users, import of Alt-F users with passwords.
+- Settings backup and restore (JSON, optionally AES-256).
+
+## 0.1.0-beta.2
+
+- Menu after the concept, network page with automatic rollback, services with autostart, tile/table views, light/dark/system look with accent colours.
+- Progress for download, check and installation of updates.
+
+## 0.1.0-beta.1
+
+- First test release: runs from flash, storage assistant, web interface, online update from GitHub releases.

@@ -47,6 +47,7 @@ What is in it:
 - **Shares and users:** SMB/NFS shares with permissions per user and group, storage limit per user, one account for shares, web interface and apps, import of Alt-F users with their passwords
 - **"My ShareOS":** users with web access get their own area (storage, shares, password, look, file browser, Paperless, cloud)
 - **File browser:** admins for all drives, users for their personal folder (per user)
+- **Apps:** store with one-click install from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) (web apps such as Webpad; own apps and catalogs possible), visibility per user
 - **Cloud sync** with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive and more) for the device and per user
 - **Paperless-ngx:** inbox folders per user or shared (e.g. for a scanner)
 - **System:** first-run assistant, network with automatic rollback, HTTPS (own certificate possible), services and autostart, fan/LEDs, logs, settings backup (JSON, optionally AES-256), status address for widget apps
@@ -59,8 +60,8 @@ Alt-F or D-Link web interface is not released yet. The backend can be run on
 a build host with qemu (`tests/run-stack-qemu.sh`), the web interface with
 sample data via `tests/mock-ubus.py`.
 
-Next: hardware tests of the current betas, apps from a package feed,
-notifications, more devices (DNS-320/325/327L), a public beta.
+Next: hardware tests of the current betas, notifications, native apps
+(MiniDLNA, Transmission, Syncthing …) in the same store, more devices (DNS-320/325/327L), a public beta.
 
 ## Layout
 

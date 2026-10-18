@@ -1,0 +1,11 @@
+# ShareOS apps: store (catalog sources) and installed apps (written by
+# shareos-apps; one "app" section per app with the users allowed to see it).
+
+config store 'store'
+	# stable = releases only, beta = also pre-releases
+	option channel 'stable'
+	# app catalogs (index.json); more sources can be added for own apps
+	list source 'https://github.com/UniqueDroid/ShareOS-Apps/releases/download/catalog/index.json'
+	# web server for web apps (own origin, so apps cannot use the admin login)
+	option port '8081'
+	option https_port '8444'

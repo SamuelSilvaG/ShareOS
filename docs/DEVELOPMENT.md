@@ -85,6 +85,9 @@ the box for why the web server was not running.
 | 10:09 | Question about the update notice: so far only an open web interface checked. Now the box checks by itself every 6 hours. |
 | 10:30 | Login text `user@shareos`, certificate follows name and IP. Recommendation instead of a fixed factory IP: DHCP, name via mDNS (`shareos.local`) and a fallback address `192.168.0.32` without DHCP. Jan: "Yes, please." |
 | 11:00 | File browser with upload/download through one-time tickets; users' files are read and written with their own rights. A uhttpd patch keeps large transfers from being cut off after 60 s. While testing in the cloud workspace a cleanup step accidentally emptied its `/dev` – the test scripts now only delete when nothing is mounted any more. |
+| 11:53 | Jan publishes `v0.1.0-beta.5` and brings roadmap ideas: an app store with Docker/Compose and a notification system. Claude writes a feasibility study: Docker does not fit the DNS-320L (ARMv5, 256 MB, no images); instead "apps light" with native packages, notifications over ubus. Jan: "Containers are out." |
+| 12:12 | Jan sends his Webpad: there should be **ShareOS web apps** as installable packages with an app JSON (version, publisher), offered like the firmware versions, from their own repository. Jan creates `ShareOS-Apps`. |
+| 12:45 | App repository with the `.sapp` package format, build, one release per version and the catalog `index.json` via GitHub Actions; Webpad 1.0.0 as the first app with its libraries packaged (works offline). In the firmware: APPS area with store, install with SHA-256 check, own web server port for apps, visibility per user, upload of own packages. |
 
 ## Notable problems solved
 
@@ -150,6 +153,10 @@ the right of its heading. The interface is available in German and English.
 | Own look (user) | Create user |
 |---|---|
 | ![Look user](images/gui-darstellung-benutzer.png) | ![Create user](images/gui-benutzer-editor.png) |
+
+| App store | Installed apps |
+|---|---|
+| ![Store](images/gui-apps-store.png) | ![Installed](images/gui-apps-installiert.png) |
 
 | Update with progress | Phone |
 |---|---|

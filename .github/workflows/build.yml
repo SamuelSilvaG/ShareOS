@@ -37,6 +37,8 @@ jobs:
       - name: rpcd plugin compiles, no forward references
         run: |
           tests/check-ucode-order.py src/shareos-core/usr/share/rpcd/ucode/shareos.uc
+          tests/check-ucode-order.py src/shareos-core/usr/sbin/shareos-apps
+          LD_LIBRARY_PATH="$HOME/hostroot/lib" "$HOME/hostroot/bin/ucode" -c -o /tmp/apps.ucc src/shareos-core/usr/sbin/shareos-apps
           LD_LIBRARY_PATH="$HOME/hostroot/lib" "$HOME/hostroot/bin/ucode" -c -o /tmp/shareos.ucc src/shareos-core/usr/share/rpcd/ucode/shareos.uc
 
   firmware:
@@ -79,9 +81,22 @@ jobs:
           name: shareos-${{ matrix.board }}
           path: artifacts/
 
+      - name: Release notes from CHANGELOG.md
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          v=${GITHUB_REF_NAME#v}
+          awk -v v="$v" '$0 ~ "^## " {p = ($2 == v)} p' CHANGELOG.md | tail -n +2 > notes.md
+          if [ -s notes.md ]; then
+            { echo; echo "---"; echo; cat notes.md; } > notes.tmp && mv notes.tmp notes.md
+          else
+            echo "::warning::CHANGELOG.md has no section '## $v' – please add the changes of this release"
+          fi
+
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: artifacts/*
           prerelease: ${{ contains(github.ref_name, '-') }}
+          body_path: notes.md
+          append_body: true

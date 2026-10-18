@@ -27,7 +27,7 @@ for m in re.finditer(r'^function\s+([A-Za-z_]\w*)\s*\(', code, re.M):
     else:
         e = re.compile(r'^}', re.M).search(code, m.end())
         body = code[m.end():e.start() if e else len(code)]
-    for name in set(re.findall(r'(?<![\w.])([A-Za-z_]\w*)\b', body)):
+    for name in set(re.findall(r'(?<![\w.])([A-Za-z_]\w*)\b(?!\s*:(?!:))', body)):
         if name in decl and decl[name] > start:
             line = code.count('\n', 0, start) + 1
             print(f'{sys.argv[1]}:{line}: {m.group(1)}() uses {name}, declared later (line {code.count(chr(10), 0, decl[name]) + 1})')

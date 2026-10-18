@@ -19,6 +19,25 @@ werden vorher gesichert.
   Box; Pin 2 (3,3 V) bleibt frei. Einstellung 115200 8N1
 - einen PC mit TFTP-Server, zum Beispiel `dnsmasq`
 
+### Serielle Konsole anschließen (ohne Löten)
+
+JP1 sitzt neben dem USB-Anschluss und ist nicht bestückt. Es reicht, die
+Drähte des Adapters (Dupont-Kabel) durch die Lötaugen zu stecken und mit etwas
+Heißkleber zu sichern. Pin 1 ist das eckige Lötauge (Pfeil auf der Platine),
+zwischen Pin 1 und Pin 2 ist eine Lücke.
+
+| Belegung von JP1 | So sieht es angeschlossen aus |
+|---|---|
+| ![JP1-Belegung](images/hw-jp1.jpg) | ![JP1 mit Kabeln](images/hw-jp1-kabel.jpg) |
+
+| Aufbau mit USB-Seriell-Adapter | Platine im Überblick |
+|---|---|
+| ![Aufbau](images/hw-seriell-aufbau.jpg) | ![Platine](images/hw-platine.jpg) |
+
+Am PC: `screen /dev/ttyUSB0 115200` (oder PuTTY/minicom). Der Adapter muss
+auf **3,3 V** stehen – 5 V kann die Box beschädigen. TX und RX werden über
+Kreuz verbunden: TXD des Adapters an Pin 1 (RX der Box), RXD an Pin 4.
+
 ## 1. PC vorbereiten
 
 ```sh
@@ -154,6 +173,14 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Benutzer:** Im Benutzerkonto „Dateibrowser für den persönlichen Ordner“ einschalten. Dann gibt es in „Mein ShareOS“ den Reiter **Dateien**, nur für den eigenen Ordner und mit den eigenen Rechten.
 - **Darstellung:** Benutzer mit Web-Zugang stellen unter **Darstellung** Hell/Dunkel und Akzentfarbe für sich ein. „Wie für alle“ nimmt wieder die Vorgabe des Admins.
 - Testidee: eine große Datei (z. B. 1 GB) hochladen und wieder herunterladen. Das darf nicht nach 60 s abbrechen.
+
+## 12. Apps (Store)
+
+- **APPS → Store → Jetzt aktualisieren** lädt den Katalog aus dem Repo [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps). Bei **Webpad** auf **Installieren**: Die Box lädt das Paket, prüft die SHA-256-Summe und installiert es.
+- **APPS → Installiert → Öffnen ↗** startet die App in einem neuen Tab auf Port **8081** (bzw. 8444 mit HTTPS). Das ist absichtlich eine andere Adresse als die Verwaltung.
+- **Benutzer** legt fest, wem die App in „Mein ShareOS“ angezeigt wird (alle, einzelne Benutzer, Gruppen).
+- **Eigene App:** unter Store → *Paket installieren* eine `.sapp`-Datei hochladen (gebaut mit `tools/build.py` aus dem App-Repo). Sie wird als „eigene / ungeprüft“ markiert.
+- **Weitere Quellen** (eigene Kataloge) unter APPS → Quellen.
 
 ## Wenn etwas schiefgeht
 
