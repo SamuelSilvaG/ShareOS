@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "Permitir e instalar",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "O app é excluído, com suas tarefas e seus dados na caixa.",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Agenda no formato cron (minuto hora dia mês dia_semana), no máximo a cada 5 minutos, por ex.",
-		"= täglich 3:30 Uhr.": "= diariamente às 3:30."
+		"= täglich 3:30 Uhr.": "= diariamente às 3:30.",
+		"Update ohne Internet:": "Atualizar sem internet:",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "envie o .sysupgrade.tar de uma versão do ShareOS, de preferência com o arquivo .sha256. É verificado como uma atualização pelo GitHub.",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "SOMA DE VERIFICAÇÃO (.SHA256, OPCIONAL)",
+		"Hochgeladen – das Paket wird geprüft.": "Enviado – o pacote está sendo verificado.",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Arquivo enviado – verificado: SHA-256 do arquivo .sha256, somas de todas as partes, adequado para este dispositivo. Configurações e pacotes são mantidos.",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Arquivo enviado – verificado: somas de todas as partes, adequado para este dispositivo (sem arquivo .sha256). Configurações e pacotes são mantidos."
 	},
 	"patterns": [
 		[

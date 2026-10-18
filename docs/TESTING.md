@@ -209,6 +209,13 @@ their permissions.
 - **More sources** (own catalogs) under APPS → Sources.
 - **Scheduled tasks** (from beta.7, for apps with the permission `cron`): the install dialog lists the permissions. **APPS → Installed → Tasks** shows schedule, on/off and the last run; *Run now*, then *Log* shows the output. A changed schedule stays after an app update. Check with `crontab -l` (line `shareos-apps run-job`) and `ps` (the job runs as user `app-<id>`).
 
+## 12a. Update without internet
+
+- Download `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` and its `.sha256` from a release on the PC.
+- **System → Firmware → Install firmware file**: choose the `.tar` as *File* and the `.sha256` as *Checksum*, **Upload & check**. After about half a minute the update panel shows "<version> install" with "Uploaded file – verified …".
+- **Install**, then **Restart now** – the same as an update from GitHub.
+- Wrong `.sha256`, a file for another device or a damaged file are refused with a message.
+
 ## 13. File systems and USB drives
 
 - **Storage → Wizard**: in the "Name" step every volume gets a choice of **ext4** (recommended, everything), **Btrfs** (no storage limit per user), **exFAT** and **NTFS** (also readable on Windows/macOS; no permissions per user, no storage limit, no personal folders, no apps). The summary shows the chosen file system. "Erase & format" on a disk has the same field.

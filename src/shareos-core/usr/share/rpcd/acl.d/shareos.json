@@ -128,7 +128,9 @@
 					"cancel",
 					"ack",
 					"bin_ticket",
-					"bin_write"
+					"bin_write",
+					"local_ticket",
+					"local"
 				],
 				"shareos.ui": [
 					"set"
