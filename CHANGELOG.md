@@ -6,13 +6,6 @@ pre-releases for test devices only.
 
 ## 0.1.0-beta.8
 
-- **File system per volume:** ext4 (recommended), Btrfs, exFAT or NTFS in the storage wizard and when formatting a disk; the interface says what each choice means (permissions, storage limit, personal folders, apps).
-- **USB sticks and disks:** mounted automatically at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), visible in the file browser for admins, **Safely remove** button, **Format** with exFAT, FAT32, NTFS or ext4. The disks in the bays are never touched by this.
-- Tools on board: mkfs for Btrfs, exFAT, FAT and NTFS.
-- **System → Time:** time zone, NTP on/off with own time servers (e.g. the router), *sync now*, set the clock by hand (or take the time of the browser); the battery clock of the box is set too.
-- Page addresses in English (`#/storage`, `#/shares/users`, `#/system/time` …); old German links and app shortcuts are redirected.
-- **10 languages:** English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese and Russian. Translations other than English/German by AI – corrections welcome.
-- **Scheduled tasks for apps** (permission `cron`): an app can declare tasks in its `app.json` (script from the package, schedule, time limit). They run as the app's own restricted user (`app-<id>`), only in its data folder, at most every 5 minutes and up to 5 per app. The install dialog lists the permissions; *Apps → Tasks* changes the schedule, switches tasks on/off, runs them now and shows the last log.
 - Fix: an own HTTPS certificate (e.g. a wildcard certificate of an own CA) was always refused with "certificate and key do not match" when uploaded in the web interface – the check failed because of file permissions, not because of the certificate.
 - Main menu: labels are centred vertically in the buttons (before they sat slightly too high).
 
@@ -25,6 +18,13 @@ pre-releases for test devices only.
 - Fix: the system log used UTC instead of the time zone set on the box.
 - Messages such as "Last update: installed" or a failed disk setup can be closed with an **x**; the box forgets them.
 - Disk setup: a disk still held by a RAID or another firmware is named in the message; erasing retries once and reports the reason.
+- **File system per volume:** ext4 (recommended), Btrfs, exFAT or NTFS in the storage wizard and when formatting a disk; the interface says what each choice means (permissions, storage limit, personal folders, apps).
+- **USB sticks and disks:** mounted automatically at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), visible in the file browser for admins, **Safely remove** button, **Format** with exFAT, FAT32, NTFS or ext4. The disks in the bays are never touched by this.
+- Tools on board: mkfs for Btrfs, exFAT, FAT and NTFS.
+- **System → Time:** time zone, NTP on/off with own time servers (e.g. the router), *sync now*, set the clock by hand (or take the time of the browser); the battery clock of the box is set too.
+- Page addresses in English (`#/storage`, `#/shares/users`, `#/system/time` …); old German links and app shortcuts are redirected.
+- **10 languages:** English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese and Russian. Translations other than English/German by AI – corrections welcome.
+- **Scheduled tasks for apps** (permission `cron`): an app can declare tasks in its `app.json` (script from the package, schedule, time limit). They run as the app's own restricted user (`app-<id>`), only in its data folder, at most every 5 minutes and up to 5 per app. The install dialog lists the permissions; *Apps → Tasks* changes the schedule, switches tasks on/off, runs them now and shows the last log.
 
 ## 0.1.0-beta.6
 
