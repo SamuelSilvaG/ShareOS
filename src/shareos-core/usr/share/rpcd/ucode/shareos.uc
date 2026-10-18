@@ -6,11 +6,13 @@
 //   shareos.net      get | set | confirm   (network with automatic rollback)
 //   shareos.accounts list | add | set | passwd | del | group_add | group_del | import_altf
 //   shareos.shares   list | set | del | global
-//   shareos.me       bind | get | passwd   (the logged-in account, also for plain users)
+//   shareos.me       bind | get | passwd | ui_set   (the logged-in account, also for plain users)
 //   shareos.backup   export | restore      (settings as JSON, optionally encrypted)
 //   shareos.paperless get | set_global | test | inbox_set | inbox_del | run | tags | log
 //   shareos.cloud    status | install | remotes | remote_add | remote_del | remote_test |
 //                    jobs | job_set | job_del | job_run | job_stop | job_log
+//   shareos.files    roots | list | mkdir | rename | move | delete | ticket
+//                    (file browser: admins all volumes, users their personal folder)
 //   shareos.widget   get | set | status   (status page for widget apps, token protected)
 //   shareos.update   check | status | download | apply | cancel
 //
@@ -18,7 +20,7 @@
 // rpcd's main loop is never blocked; the UI polls shareos.update.status.
 'use strict';
 
-import { readfile, writefile, popen, glob, stat, readlink, symlink, unlink } from 'fs';
+import { readfile, writefile, popen, glob, stat, lstat, lsdir, realpath, readlink, symlink, unlink } from 'fs';
 import { cursor } from 'uci';
 
 const UPDATER = '/usr/sbin/shareos-update';
@@ -36,6 +38,7 @@ const SERVICES = {
 	rpcd:     { proc: 'rpcd',     label: 'API (rpcd)', desc: 'Schnittstelle für diese Oberfläche' },
 	ubus:     { proc: 'ubusd',    label: 'Systembus (ubus)', desc: 'Nachrichten zwischen den Diensten' },
 	syslogd:  { proc: 'syslogd',  label: 'Systemprotokoll', desc: 'syslogd, im RAM' },
+	'avahi-daemon': { proc: 'avahi-daemon', label: 'Netzwerkname (mDNS)', desc: 'macht die Box als <name>.local erreichbar' },
 	board:    { proc: 'dns320l-daemon', label: 'Gerätesteuerung', desc: 'Lüfter, Temperatur, Taster, MCU-Uhr' }
 };
 // services that must not be stopped from the UI (it would cut itself off)
@@ -391,6 +394,15 @@ function restart_uhttpd() {
 	system('(sleep 1; killall uhttpd) >/dev/null 2>&1 &');
 }
 
+// our self-signed certificate names hostname and IP: renew it after a change
+function cert_refresh() {
+	if (cursor().get('shareos', 'web', 'https') == '0') return false;
+	let r = sh(CERT + ' ensure');
+	if (!match(r.out, /renewed/)) return false;
+	restart_uhttpd();
+	return true;
+}
+
 /* ---------- hardware settings, first run, Alt-F ---------- */
 
 const FAN_PRESETS = {
@@ -511,6 +523,7 @@ function opt_args(a) {
 	if (a.web != null) push(o, '--web=' + (a.web ? '1' : '0'));
 	if (a.role != null) push(o, '--role=' + a.role);
 	if (a.cloud != null) push(o, '--cloud=' + (a.cloud ? '1' : '0'));
+	if (a.files != null) push(o, '--files=' + (a.files ? '1' : '0'));
 	return join(' ', map(o, shq));
 }
 
@@ -533,7 +546,7 @@ function accounts() {
 	c.foreach('accounts', 'user', (x) => {
 		push(users, {
 			name: x['.name'], role: x.role ?? 'share', fullname: x.fullname ?? '', uid: +(x.uid ?? 0),
-			groups: list_of(x.groups), home: x.home ?? '', quota: +(x.quota ?? 0), web: (x.web ?? '1') != '0', cloud: x.cloud == '1',
+			groups: list_of(x.groups), home: x.home ?? '', quota: +(x.quota ?? 0), web: (x.web ?? '1') != '0', cloud: x.cloud == '1', files: x.files == '1',
 			usage: usage[x['.name']] ?? []
 		});
 	});
@@ -874,6 +887,101 @@ function cloud_log(c, name, n) {
 
 function me_cloud_allowed(u) { return u != 'root' && cursor().get('accounts', u, 'cloud') == '1' && !!cursor().get('accounts', u, 'home'); }
 
+/* ---------- file browser ---------- */
+
+const FILES_TICKETS = '/tmp/shareos-files';
+const FILES_MAX = 2000;            // entries listed per folder
+
+function acc_role(u) { return u == 'root' ? 'admin' : (cursor().get('accounts', u, 'role') ?? 'share'); }
+
+// admins: every mounted volume; users: their personal folder, if allowed
+function files_allowed(u) {
+	if (acc_role(u) == 'admin') return true;
+	let c = cursor();
+	return acc_role(u) == 'user' && c.get('accounts', u, 'files') == '1' && c.get('accounts', u, 'web') != '0' && !!c.get('accounts', u, 'home');
+}
+
+function files_roots(u) {
+	let c = cursor(), roots = [];
+	if (!u || !files_allowed(u)) return roots;
+	let mounts = readfile('/proc/mounts') ?? '';
+	if (acc_role(u) == 'admin') {
+		c.foreach('storage', 'volume', (x) => {
+			let mp = '/mnt/' + x['.name'];
+			if (index(mounts, ' ' + mp + ' ') >= 0) push(roots, { name: x['.name'], path: mp, home: false });
+		});
+	} else {
+		let v = c.get('accounts', u, 'home'), p = '/mnt/' + v + '/home/' + u;
+		if (index(mounts, ' /mnt/' + v + ' ') >= 0 && stat(p)?.type == 'directory') push(roots, { name: 'home', path: p, home: true });
+	}
+	return roots;
+}
+
+function name_ok(n) {
+	return type(n) == 'string' && length(n) >= 1 && length(n) <= 255 && n != '.' && n != '..' && !match(n, /[\/[:cntrl:]]/);
+}
+
+// root + relative path -> absolute path inside that root (no "..", no
+// symlinks pointing outside); want: 'dir' | 'any' | 'parent' (may not exist)
+function files_path(u, root, rel, want) {
+	let r = filter(files_roots(u), (x) => x.name == root)[0];
+	if (!r) return { error: 'unknown folder' };
+	if (rel != null && type(rel) != 'string') return { error: 'invalid path' };
+	let parts = filter(split(rel ?? '', '/'), (p) => p != '' && p != '.');
+	for (let p in parts) if (!name_ok(p)) return { error: 'invalid path' };
+	let abs = r.path + (length(parts) ? '/' + join('/', parts) : '');
+	let base = realpath(r.path);
+	let chk = want == 'parent' ? (length(parts) ? r.path + (length(parts) > 1 ? '/' + join('/', slice(parts, 0, -1)) : '') : null) : abs;
+	if (want == 'parent' && !length(parts)) return { error: 'invalid path' };
+	let rp = realpath(chk);
+	if (!rp || !base || (rp != base && index(rp, base + '/') != 0)) return { error: 'not found' };
+	if (want == 'dir' && stat(rp)?.type != 'directory') return { error: 'not a folder' };
+	return { root: r, abs, rel: join('/', parts), admin: acc_role(u) == 'admin' };
+}
+
+// run a command with the rights of the account (admins: root)
+function files_sh(u, cmd) {
+	if (acc_role(u) == 'admin') return sh('umask 002; ' + cmd);
+	return sh(sprintf('su -s /bin/sh %s -c %s', shq(u), shq('umask 077; ' + cmd)));
+}
+
+function files_err(r) {
+	let o = trim(r.out);
+	o = replace(o, /^(mkdir|mv|rm|cp): (can't [a-z]+ )?/, '');
+	if (match(o, /Permission denied/)) return 'permission denied';
+	if (match(o, /File exists/)) return 'already exists';
+	if (match(o, /No space left/)) return 'no space left on the drive';
+	if (match(o, /Disk quota exceeded/)) return 'storage limit reached';
+	return o || 'failed';
+}
+
+function files_list(u, root, rel, hidden) {
+	let p = files_path(u, root, rel, 'dir');
+	if (p.error) return p;
+	let names = lsdir(p.abs) ?? [], out = [], n = 0;
+	for (let name in sort(names)) {
+		if (!hidden && substr(name, 0, 1) == '.') continue;
+		if (++n > FILES_MAX) break;
+		let st = lstat(p.abs + '/' + name);
+		if (!st) continue;
+		let t = st.type == 'directory' ? 'dir' : st.type == 'link' ? (stat(p.abs + '/' + name)?.type == 'directory' ? 'dirlink' : 'link') : st.type == 'file' ? 'file' : 'other';
+		push(out, { name, type: t, size: st.size, mtime: st.mtime });
+	}
+	out = sort(out, (a, b) => ((a.type == 'dir') != (b.type == 'dir')) ? (a.type == 'dir' ? -1 : 1) : (lc(a.name) < lc(b.name) ? -1 : 1));
+	let df = split(trim(split(sh('df -k ' + shq(p.root.path)).out, '\n')[1] ?? ''), /\s+/);
+	return { root, path: p.rel, entries: out, truncated: n > FILES_MAX,
+		free: length(df) >= 4 ? +df[3] * 1024 : null, size: length(df) >= 4 ? +df[1] * 1024 : null };
+}
+
+function pct_enc(s) {
+	let o = '';
+	for (let i = 0; i < length(s); i++) {
+		let c = ord(s, i);
+		o += (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || index('-._~', chr(c)) >= 0 ? chr(c) : sprintf('%%%02X', c);
+	}
+	return o;
+}
+
 function me_info(u) {
 	let c = cursor();
 	let role = u == 'root' ? 'admin' : (c.get('accounts', u, 'role') ?? 'share');
@@ -894,6 +1002,8 @@ function me_info(u) {
 	info.shares = mine;
 	info.host = read_trim('/proc/sys/kernel/hostname');
 	info.cloud = me_cloud_allowed(u);
+	info.files = u != 'root' && role != 'admin' && files_allowed(u);
+	info.ui = u == 'root' ? null : { theme: c.get('accounts', u, 'theme') ?? null, accent: c.get('accounts', u, 'accent') ?? null };
 	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
 	return info;
 }
@@ -1138,7 +1248,9 @@ return {
 					return { error: 'invalid hostname' };
 				writefile('/etc/hostname', h + '\n');
 				sh('hostname ' + shq(h));
-				return { ok: true, hostname: h };
+				// mDNS name (<hostname>.local) follows
+				system('[ -x /etc/init.d/S50avahi-daemon ] && pidof avahi-daemon >/dev/null && /etc/init.d/S50avahi-daemon restart >/dev/null 2>&1 &');
+				return { ok: true, hostname: h, cert_renewed: cert_refresh() };
 			}
 		}
 	},
@@ -1250,7 +1362,7 @@ return {
 			call: function() {
 				if (!net_state().pending) return { ok: true, pending: false };
 				system(NET + ' confirm');
-				return { ok: true };
+				return { ok: true, cert_renewed: cert_refresh() };
 			}
 		}
 	},
@@ -1459,7 +1571,7 @@ return {
 		},
 
 		add: {
-			args: { name: '', role: '', password: '', fullname: '', groups: [], home: '', quota: 0, web: true, cloud: false },
+			args: { name: '', role: '', password: '', fullname: '', groups: [], home: '', quota: 0, web: true, cloud: false, files: false },
 			call: function(req) {
 				let a = req.args;
 				if (!acc_name_ok(a.name)) return { error: 'invalid name (a-z, 0-9 and _, starting with a letter)' };
@@ -1471,7 +1583,7 @@ return {
 		},
 
 		set: {
-			args: { name: '', role: '', fullname: '', groups: [], home: '', quota: 0, web: true, cloud: false },
+			args: { name: '', role: '', fullname: '', groups: [], home: '', quota: 0, web: true, cloud: false, files: false },
 			call: function(req) {
 				let a = req.args;
 				if (!acc_name_ok(a.name)) return { error: 'invalid name' };
@@ -1723,6 +1835,23 @@ return {
 			}
 		},
 
+		ui_set: {
+			// own look; null/'' = back to the look for everyone
+			args: { theme: '', accent: '' },
+			call: function(req) {
+				let u = session_user(req), a = req.args, c = cursor();
+				if (!u || u == 'root' || c.get('accounts', u) != 'user') return { error: 'session not bound' };
+				if (a.theme && !(a.theme in { dark: 1, light: 1, system: 1 })) return { error: 'invalid theme' };
+				if (a.accent && !(a.accent in { blue: 1, green: 1, red: 1, white: 1 })) return { error: 'invalid accent' };
+				for (let k in [ 'theme', 'accent' ]) {
+					if (!(k in a)) continue;
+					if (a[k]) c.set('accounts', u, k, a[k]); else c.delete('accounts', u, k);
+				}
+				c.commit('accounts');
+				return { theme: c.get('accounts', u, 'theme') ?? null, accent: c.get('accounts', u, 'accent') ?? null };
+			}
+		},
+
 		passwd: {
 			args: { old: '', password: '' },
 			call: function(req) {
@@ -1953,6 +2082,109 @@ return {
 				let c = cursor();
 				if (c.get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
 				return { lines: cloud_log(c, req.args.name, 80) };
+			}
+		}
+	},
+
+	'shareos.files': {
+		roots: {
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				return { roots: map(files_roots(u), (r) => ({ name: r.name, home: r.home })) };
+			}
+		},
+
+		list: {
+			args: { root: '', path: '', hidden: false },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				return files_list(u, req.args.root, req.args.path, req.args.hidden === true);
+			}
+		},
+
+		mkdir: {
+			args: { root: '', path: '', name: '' },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				if (!name_ok(a.name)) return { error: 'invalid name' };
+				let p = files_path(u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let r = files_sh(u, 'mkdir -- ' + shq(p.abs + '/' + a.name));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		rename: {
+			args: { root: '', path: '', name: '', to: '' },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				if (!name_ok(a.name) || !name_ok(a.to)) return { error: 'invalid name' };
+				let p = files_path(u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				if (lstat(p.abs + '/' + a.to)) return { error: 'already exists' };
+				let r = files_sh(u, sprintf('mv -- %s %s', shq(p.abs + '/' + a.name), shq(p.abs + '/' + a.to)));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		move: {
+			// names from one folder into another folder of the same root; copy: keep the originals
+			args: { root: '', path: '', names: [], dest: '', copy: false },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				if (type(a.names) != 'array' || !length(a.names)) return { error: 'nothing selected' };
+				for (let n in a.names) if (!name_ok(n)) return { error: 'invalid name' };
+				let p = files_path(u, a.root, a.path, 'dir'), d = files_path(u, a.root, a.dest, 'dir');
+				if (p.error) return p;
+				if (d.error) return d;
+				for (let n in a.names) {
+					let src = (p.rel != '' ? p.rel + '/' : '') + n;
+					if (d.rel == src || index(d.rel + '/', src + '/') == 0) return { error: 'a folder cannot be moved into itself' };
+					if (lstat(d.abs + '/' + n)) return { error: 'already exists: ' + n };
+				}
+				let r = files_sh(u, sprintf('%s -- %s %s', a.copy ? 'cp -a' : 'mv', join(' ', map(a.names, (n) => shq(p.abs + '/' + n))), shq(d.abs + '/')));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		delete: {
+			args: { root: '', path: '', names: [] },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				if (type(a.names) != 'array' || !length(a.names)) return { error: 'nothing selected' };
+				for (let n in a.names) if (!name_ok(n)) return { error: 'invalid name' };
+				let p = files_path(u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let r = files_sh(u, 'rm -rf -- ' + join(' ', map(a.names, (n) => shq(p.abs + '/' + n))));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		ticket: {
+			// one-time address for /cgi-bin/files: get = download a file,
+			// put = upload into path/name (overwrite: replace an existing file)
+			args: { root: '', path: '', name: '', mode: 'get', overwrite: false },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				if (!name_ok(a.name)) return { error: 'invalid name' };
+				let p = files_path(u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let target = p.abs + '/' + a.name, st = lstat(target);
+				if (a.mode == 'get') { if (st?.type != 'file') return { error: 'not a file' }; }
+				else if (a.mode == 'put') { if (st && (!a.overwrite || st.type != 'file')) return { error: 'already exists' }; }
+				else return { error: 'invalid mode' };
+				system('mkdir -p ' + FILES_TICKETS + ' && chmod 700 ' + FILES_TICKETS);
+				system('find ' + FILES_TICKETS + ' -type f -mmin +5 -delete 2>/dev/null');
+				let t = new_token();
+				writefile(FILES_TICKETS + '/' + t, sprintf('%s\n%s\n%s\n%d\n%s\n', a.mode, acc_role(u) == 'admin' ? 'root' : u, target, time() + 120, pct_enc(a.name)));
+				return { url: '/cgi-bin/files?t=' + t };
 			}
 		}
 	},

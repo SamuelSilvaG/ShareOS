@@ -1,0 +1,40 @@
+From: ShareOS <noreply@github.com>
+Subject: [PATCH] proc: script timeout counts from the last transfer
+
+The CGI script timeout (-t) is a hard limit for the whole request, so a
+large upload or download through a CGI is cut off after 60 s even while
+data is flowing. Re-arm the timeout whenever data is written to the
+script or the client took output from it: a script still only gets
+killed when it hangs.
+
+--- a/proc.c	2026-10-18 10:02:56.714287275 +0200
++++ b/proc.c	2026-10-18 10:02:56.716013418 +0200
+@@ -268,10 +268,18 @@
+ 	client_poll_post_data(cl);
+ }
+ 
++/* data is flowing: the script timeout counts from the last transfer */
++static void proc_touch(struct dispatch_proc *p)
++{
++	if (conf.script_timeout > 0)
++		uloop_timeout_set(&p->timeout, conf.script_timeout * 1000);
++}
++
+ static void proc_relay_write_cb(struct client *cl)
+ {
+ 	struct dispatch_proc *p = &cl->dispatch.proc;
+ 
++	proc_touch(p);
+ 	if (ustream_pending_data(cl->us, true))
+ 		return;
+ 
+@@ -307,6 +315,9 @@
+ 		data += ret;
+ 	}
+ 
++	if (retlen)
++		proc_touch(p);
++
+ 	if (len)
+ 		uloop_fd_add(&p->wrfd, ULOOP_WRITE);
+ 	else

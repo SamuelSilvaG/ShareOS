@@ -13,6 +13,10 @@ SHAREOS_CORE_DEPENDENCIES = uci ubus ucode rpcd uhttpd libcurl alt-f-utils mbedt
 ifeq ($(BR2_PACKAGE_IFUPDOWN_SCRIPTS),y)
 SHAREOS_CORE_DEPENDENCIES += ifupdown-scripts
 endif
+# our avahi-daemon.conf replaces the default one
+ifeq ($(BR2_PACKAGE_AVAHI_DAEMON),y)
+SHAREOS_CORE_DEPENDENCIES += avahi
+endif
 # same for rcS (skips services with autostart off)
 ifeq ($(BR2_PACKAGE_INITSCRIPTS),y)
 SHAREOS_CORE_DEPENDENCIES += initscripts
@@ -55,6 +59,9 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cron $(TARGET_DIR)/usr/sbin/shareos-cron
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/paperless $(TARGET_DIR)/etc/config/paperless
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/cloud $(TARGET_DIR)/etc/config/cloud
+	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S50avahi-daemon $(TARGET_DIR)/etc/init.d/S50avahi-daemon
+	$(INSTALL) -D -m 0644 $(@D)/etc/avahi/avahi-daemon.conf $(TARGET_DIR)/etc/avahi/avahi-daemon.conf
+	$(INSTALL) -D -m 0644 $(@D)/etc/avahi/services/shareos-web.service $(TARGET_DIR)/etc/avahi/services/shareos-web.service
 	rm -rf $(TARGET_DIR)/www
 	cp -a $(@D)/www $(TARGET_DIR)/www
 endef

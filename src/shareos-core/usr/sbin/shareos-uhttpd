@@ -12,7 +12,7 @@ while :; do
 	if [ "$(uci -q get shareos.web.https)" != 0 ]; then
 		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
 		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
-		[ -s "$crt" ] && [ -s "$key" ] || /usr/sbin/shareos-cert ensure >/dev/null 2>&1
+		/usr/sbin/shareos-cert ensure >/dev/null 2>&1   # also renews our self-signed one after an IP/name change
 		if [ -s "$crt" ] && [ -s "$key" ]; then
 			tls="-s ${SHAREOS_HTTPS_PORT:-443} -C $crt -K $key"
 			[ "$(uci -q get shareos.web.redirect)" = 1 ] && tls="$tls -q"

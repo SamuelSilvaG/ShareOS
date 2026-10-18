@@ -68,11 +68,18 @@ Then `reboot`: the box starts ShareOS on its own.
 
 ## 4. Web interface
 
-Open `http://<ip>` and log in as `root` / `shareos`. Change the password
-right away under **System → General**.
+Open `http://shareos.local` (or `http://shareos.fritz.box`, `http://<ip>`) and
+log in as `root` / `shareos`. Change the password right away under
+**System → General**.
+
+- The box gets its address by **DHCP** from the router and registers its name there.
+- Via **mDNS** it also answers as `<name>.local` (Windows 10/11, macOS, iOS, Android, Linux).
+- If no DHCP server answers (box connected straight to a PC), it takes the **fallback address `192.168.0.32`** after about 15 s. Set the PC to e.g. `192.168.0.10/24`. As soon as a DHCP server answers, the box switches by itself.
+- The self-signed HTTPS certificate names the hostname, `<name>.local` and the current IP. After a change it is reissued (the browser asks once more).
 
 ## 5. Updates
 
+- **Automatically:** the box looks at GitHub every 6 hours. A new release shows up at the top as **UPDATE … available** once GitHub has built the update bundle (about 45 minutes after publishing).
 - **From the web interface:** System → Firmware → *Check now*. For test
   versions, choose the **Beta** channel.
 - **By hand**, with a bundle on the box:
@@ -140,6 +147,13 @@ their permissions.
   curl "http://<box>/cgi-bin/status?token=<token>"
   ```
   In KWGT (Android) values can be shown with `$wg("<address>", json, ".volumes[0].used_pct")$`. **New key** makes the old address invalid.
+
+## 11. File browser and own look
+
+- **Admins:** Shares → **Files** shows every mounted drive: create folders, upload (also by dragging), download, rename, move, copy, delete.
+- **Users:** enable "File browser for the personal folder" in the user account. "My ShareOS" then has a **Files** tab, only for the own folder and with the user's own rights.
+- **Look:** users with web access set light/dark and the accent colour for themselves under **Appearance**. "Same as for everyone" goes back to the admin's choice.
+- Test idea: upload a large file (e.g. 1 GB) and download it again. It must not stop after 60 s.
 
 ## If something goes wrong
 

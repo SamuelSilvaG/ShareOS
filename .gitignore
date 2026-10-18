@@ -5,3 +5,4 @@
 /sqimage
 /kernel
 /initramfs
+__pycache__/

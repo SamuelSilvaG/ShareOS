@@ -74,6 +74,10 @@
 					"remotes",
 					"jobs",
 					"job_log"
+				],
+				"shareos.files": [
+					"roots",
+					"list"
 				]
 			},
 			"uci": [
@@ -186,6 +190,13 @@
 					"job_del",
 					"job_run",
 					"job_stop"
+				],
+				"shareos.files": [
+					"mkdir",
+					"rename",
+					"move",
+					"delete",
+					"ticket"
 				]
 			},
 			"uci": [
@@ -204,6 +215,10 @@
 				],
 				"shareos.ui": [
 					"get"
+				],
+				"shareos.files": [
+					"roots",
+					"list"
 				]
 			}
 		},
@@ -217,7 +232,15 @@
 					"cloud_remote_del",
 					"cloud_job_set",
 					"cloud_job_del",
-					"cloud_job_run"
+					"cloud_job_run",
+					"ui_set"
+				],
+				"shareos.files": [
+					"mkdir",
+					"rename",
+					"move",
+					"delete",
+					"ticket"
 				]
 			}
 		}

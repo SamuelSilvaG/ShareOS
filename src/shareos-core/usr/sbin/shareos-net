@@ -8,6 +8,10 @@
 #                                 the previous settings come back
 #   shareos-net confirm           keep the new settings
 #
+# DHCP without an answer: the box takes the fallback address
+# (network.lan.fallback, default 192.168.0.32 like D-Link's firmware) so it
+# can be reached directly from a PC, and keeps asking for DHCP every 30 s.
+#
 # Before "apply", the caller copies the old /etc/config/network to
 # /etc/shareos/network.rollback. State for the web interface is kept in
 # /tmp/shareos-net (pending, result).
@@ -20,6 +24,7 @@ RESOLV=$ROOT/etc/resolv.conf
 ROLLBACK=$ROOT/etc/shareos/network.rollback
 ST=$ROOT/tmp/shareos-net
 IF=eth0
+FBPID=$ROOT/run/shareos-net-fallback.pid
 
 log() { logger -t shareos-net "$*"; echo "$*"; }
 
@@ -57,16 +62,58 @@ write_resolv() {
 	cat "$RESOLV.new" > "$RESOLV"; rm -f "$RESOLV.new"
 }
 
+has_ip() { ip -4 -o addr show dev $IF 2>/dev/null | grep -v " $IF:fb" | grep -q ' inet '; }
+
+fallback_ip() {
+	f=$(get fallback 2>/dev/null) || f=192.168.0.32
+	case "$f" in off|none|0|'') ;; *) echo "${f%%/*}" ;; esac
+}
+
+fallback_up() {
+	fb=$(fallback_ip)
+	[ -n "$fb" ] || return 0
+	ip link set $IF up
+	ip addr add "$fb/24" dev $IF label $IF:fb 2>/dev/null
+	log "no answer from a DHCP server – reachable at $fb, still asking for DHCP"
+	start-stop-daemon -S -b -m -p $FBPID -x /bin/sh -- "$0" watch
+}
+
+fallback_down() {
+	[ -f $FBPID ] && kill "$(cat $FBPID)" 2>/dev/null
+	rm -f $FBPID
+	fb=$(fallback_ip)
+	[ -n "$fb" ] && ip addr del "$fb/24" dev $IF 2>/dev/null
+	return 0
+}
+
+# ask for DHCP now and then; once a server answers, start over with it
+watch() {
+	while sleep 30; do
+		[ "$(get proto)" = static ] && exit 0
+		if udhcpc -n -q -t 2 -T 3 -i $IF -s /bin/true >/dev/null 2>&1; then
+			log "a DHCP server answers – leaving the fallback address"
+			rm -f $FBPID
+			fb=$(fallback_ip); [ -n "$fb" ] && ip addr del "$fb/24" dev $IF 2>/dev/null
+			ifdown $IF 2>/dev/null; ifup $IF
+			# the self-signed certificate names the address
+			shareos-cert ensure 2>/dev/null | grep -q renewed && killall uhttpd 2>/dev/null
+			exit 0
+		fi
+	done
+}
+
 start() {
 	mkdir -p $ROOT/run/network
 	write_config
 	ifup -a
 	rc=$?
 	write_resolv
+	if [ "$(get proto)" != static ] && ! has_ip; then fallback_up; rc=0; fi
 	return $rc
 }
 
 stop() {
+	fallback_down
 	ifdown -a 2>/dev/null
 	# take down what ifdown might have missed (e.g. an address set by hand)
 	ip addr flush dev $IF 2>/dev/null
@@ -108,5 +155,6 @@ case "$1" in
 	restart) stop; start ;;
 	apply) apply "$2" ;;
 	confirm) [ -e $ST/pending ] && touch $ST/confirmed ;;
-	*) sed -n '3,14s/^# \{0,1\}//p' "$0"; exit 2 ;;
+	watch) watch ;;
+	*) sed -n '3,18s/^# \{0,1\}//p' "$0"; exit 2 ;;
 esac

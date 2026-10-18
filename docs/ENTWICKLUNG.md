@@ -81,6 +81,11 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 01:00 | **Cloud-Sync mit rclone**: rclone wird bei Bedarf von GitHub geladen (mit Prüfsumme) und liegt im Apps-Bereich. Konten (WebDAV/Nextcloud, S3, SFTP oder ein Abschnitt aus `rclone.conf`) und Aufträge (hochladen, herunterladen, spiegeln) mit Zeitplan und Bandbreitengrenze – für das Gerät und, wenn erlaubt, für jeden Benutzer mit eigenen Zugangsdaten. 29 Prüfungen mit einem nachgebauten Paperless und einem lokalen WebDAV-Server. |
 | 01:20 | **Als App installierbar** (Symbol, Kurzbefehle) und eine **Status-Adresse für Widget-Apps** wie KWGT – Chrome bietet für Web-Apps keine Startbildschirm-Widgets. |
 | 01:40 | Beim erneuten Durchlauf aller Tests fällt auf: Seit dem Cloud-Umbau scheiterte die Anmeldung normaler Benutzer an einer Funktion, die im Skript erst weiter unten stand (ucode kennt kein Hoisting). Behoben, bevor es eine Box erreicht hat; eine neue Prüfung im CI findet solche Fälle künftig automatisch. |
+| 09:20 | Jan veröffentlicht `v0.1.0-beta.4`. Freigaben, Benutzer und Gruppen laufen auf der Box „sehr gut“. |
+| 10:00 | Jans Rückmeldungen: ein zu langes Feld-Label verschiebt das Eingabefeld, Datei-Knöpfe sehen anders aus als die übrigen, Wunsch nach einem **Dateibrowser** (Admin: alles, Benutzer: eigener Ordner, je Benutzer freischaltbar) und **eigener Darstellung** für Benutzer. |
+| 10:09 | Frage nach der Update-Anzeige: Bisher prüfte nur die geöffnete Oberfläche. Jetzt prüft die Box selbst alle 6 Stunden. |
+| 10:30 | Login-Text `user@shareos`, Zertifikat folgt Name und IP. Empfehlung statt fester Werks-IP: DHCP, Name per mDNS (`shareos.local`) und eine Rückfall-Adresse `192.168.0.32` ohne DHCP. Jan: „Ja gerne.“ |
+| 11:00 | Dateibrowser mit Hoch- und Herunterladen über einmalige Tickets; Dateien von Benutzern werden mit deren Rechten gelesen und geschrieben. Ein uhttpd-Patch verhindert, dass große Übertragungen nach 60 s abbrechen. Beim Testen in der Cloud-Umgebung hat ein Aufräumschritt versehentlich deren `/dev` geleert – die Testskripte löschen seitdem nur noch, wenn nichts mehr eingehängt ist. |
 
 ## Bemerkenswerte Problemlösungen
 
@@ -143,6 +148,14 @@ Englisch.
 | „Mein ShareOS“: Paperless und Cloud | App & Widgets |
 |---|---|
 | ![Mein ShareOS mit Paperless und Cloud](images/gui-mein-paperless-cloud.png) | ![App und Widgets](images/gui-app-widgets.png) |
+
+| Dateibrowser (Admin) | Dateibrowser (Benutzer) |
+|---|---|
+| ![Dateien](images/gui-dateien.png) | ![Dateien Benutzer](images/gui-dateien-benutzer.png) |
+
+| Eigene Darstellung (Benutzer) | Benutzer anlegen |
+|---|---|
+| ![Darstellung Benutzer](images/gui-darstellung-benutzer.png) | ![Benutzer anlegen](images/gui-benutzer-editor.png) |
 
 | Handy | |
 |---|---|

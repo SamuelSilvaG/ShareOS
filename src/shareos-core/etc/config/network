@@ -10,3 +10,5 @@ config interface 'lan'
 	option gateway ''
 	# DNS servers for static addresses (empty = the gateway)
 	option dns ''
+	# with dhcp: address used when no DHCP server answers (off = none)
+	option fallback '192.168.0.32'

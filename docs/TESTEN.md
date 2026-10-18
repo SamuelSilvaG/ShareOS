@@ -68,11 +68,18 @@ Danach `reboot`: Die Box startet ShareOS allein.
 
 ## 4. Weboberfläche
 
-`http://<ip>` öffnen und mit `root` / `shareos` anmelden. Das Passwort
-gleich unter **System → Allgemein** ändern.
+`http://shareos.local` öffnen (oder `http://shareos.fritz.box`, `http://<ip>`)
+und mit `root` / `shareos` anmelden. Das Passwort gleich unter
+**System → Allgemein** ändern.
+
+- Die Box holt sich ihre Adresse per **DHCP** vom Router und meldet sich dort mit ihrem Namen an.
+- Per **mDNS** ist sie zusätzlich unter `<name>.local` erreichbar (Windows 10/11, macOS, iOS, Android, Linux).
+- Antwortet kein DHCP-Server (Box direkt am PC), nimmt sie nach etwa 15 s die **Rückfall-Adresse `192.168.0.32`**. Den PC dann auf z. B. `192.168.0.10/24` stellen. Sobald ein DHCP-Server antwortet, wechselt sie von selbst.
+- Das selbst ausgestellte HTTPS-Zertifikat nennt Name, `<name>.local` und die aktuelle IP. Nach einer Änderung wird es neu ausgestellt (der Browser fragt dann einmal neu nach).
 
 ## 5. Updates
 
+- **Automatisch:** Die Box sieht alle 6 Stunden auf GitHub nach. Ein neues Release erscheint oben als **UPDATE … verfügbar**, sobald GitHub das Update-Paket gebaut hat (etwa 45 Minuten nach dem Veröffentlichen).
 - **Über die Weboberfläche:** System → Firmware → *Jetzt prüfen*. Für
   Testversionen den Kanal **Beta** wählen.
 - **Von Hand**, mit einem Paket auf der Box:
@@ -140,6 +147,13 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
   curl "http://<box>/cgi-bin/status?token=<token>"
   ```
   In KWGT (Android) kann man die Werte mit `$wg("<adresse>", json, ".volumes[0].used_pct")$` anzeigen. **Neuer Schlüssel** macht die alte Adresse ungültig.
+
+## 11. Dateibrowser und eigene Darstellung
+
+- **Admins:** Freigaben → **Dateien** zeigt alle eingehängten Laufwerke: Ordner anlegen, hochladen (auch per Ziehen), herunterladen, umbenennen, verschieben, kopieren, löschen.
+- **Benutzer:** Im Benutzerkonto „Dateibrowser für den persönlichen Ordner“ einschalten. Dann gibt es in „Mein ShareOS“ den Reiter **Dateien**, nur für den eigenen Ordner und mit den eigenen Rechten.
+- **Darstellung:** Benutzer mit Web-Zugang stellen unter **Darstellung** Hell/Dunkel und Akzentfarbe für sich ein. „Wie für alle“ nimmt wieder die Vorgabe des Admins.
+- Testidee: eine große Datei (z. B. 1 GB) hochladen und wieder herunterladen. Das darf nicht nach 60 s abbrechen.
 
 ## Wenn etwas schiefgeht
 

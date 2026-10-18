@@ -6,6 +6,8 @@ config update 'update'
 	# stable = releases only, beta = releases and pre-releases
 	option channel 'stable'
 	option api 'https://api.github.com'
+	# 1 = look for a new release every 6 hours (shown in the web interface)
+	option auto '1'
 
 config ui 'ui'
 	# 1 = show the ShareOS logo in the web interface, 0 = text only

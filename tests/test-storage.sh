@@ -28,7 +28,7 @@ cleanup() {
 	[ -d "$R/proc/self" ] && chroot "$R" /bin/sh -c 'for s in $(awk "NR>1 && /loop/ {print \$1}" /proc/swaps); do swapoff $s; done' 2>/dev/null
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
 	for l in $LOOPS; do losetup -d "$l" 2>/dev/null; done
-	rm -rf "$T"
+	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2; else rm -rf "$T"; fi
 }
 trap cleanup EXIT
 

@@ -20,7 +20,7 @@ SID = 'c0ffee00c0ffee00c0ffee00c0ffee00'
 T0 = time.time()
 STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full_temp': 50, 'half_temp': 45}, 'led': {'status': 'heartbeat', 'power': 'on', 'disks': 'off'}, 'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False, 'theme': 'dark', 'accent': 'blue', 'autostart_off': ['crond'],
          'users': {'jan': {'role': 'admin', 'fullname': 'Jan', 'groups': ['familie'], 'home': 'daten', 'quota': 0, 'web': True, 'pw': 'shareos'},
-                   'anna': {'role': 'user', 'fullname': 'Anna', 'groups': ['familie'], 'home': 'daten', 'quota': 200000, 'web': True, 'cloud': True, 'pw': 'anna123'},
+                   'anna': {'role': 'user', 'fullname': 'Anna', 'groups': ['familie'], 'home': 'daten', 'quota': 200000, 'web': True, 'cloud': True, 'files': True, 'pw': 'anna123'},
                    'tv': {'role': 'share', 'fullname': 'Fernseher', 'groups': ['medien'], 'home': '', 'quota': 0, 'web': True, 'pw': 'tv1234'}},
          'groups': {'familie': 'Familie', 'medien': 'Mediengeräte'},
          'shares': {'fotos': {'volume': 'daten', 'path': 'Fotos', 'comment': 'Familienfotos', 'smb': True, 'nfs': False, 'guest': False, 'rw': ['jan'], 'ro': ['@familie'], 'nfs_rw': False, 'nfs_hosts': []},
@@ -117,7 +117,8 @@ def me(user):
     return {'name': user, 'role': x['role'], 'fullname': x['fullname'], 'groups': x['groups'], 'quota': x['quota'],
             'home': {'volume': x['home'], 'path': f"/mnt/{x['home']}/home/{user}", 'smb': user} if x['home'] else None,
             'usage': [{'volume': 'daten', 'used': 61_500_000_000, 'limit': x['quota'] * 1000000}], 'shares': mine, 'host': 'skynet-nas',
-            'cloud': x.get('cloud', False), 'paperless': bool(x['home'])}
+            'cloud': x.get('cloud', False), 'paperless': bool(x['home']), 'files': x.get('files', False) and x['role'] == 'user',
+            'ui': x.get('ui', {'theme': None, 'accent': None})}
 
 
 PL_LOG = [
@@ -150,6 +151,63 @@ def cloud_jobs(owner):
     return out
 
 
+T0F = int(time.time())
+FS = {   # root -> path -> list of (name, type, size)
+    'daten': {'': [('Fotos', 'dir', 0), ('Medien', 'dir', 0), ('home', 'dir', 0), ('Rechnungen 2026', 'dir', 0), ('notizen.txt', 'file', 2310), ('backup-router.tar.gz', 'file', 48_200_000)],
+              'Fotos': [('2025', 'dir', 0), ('2026', 'dir', 0), ('Urlaub_Ostsee_001.jpg', 'file', 4_812_000), ('Urlaub_Ostsee_002.jpg', 'file', 5_120_400)],
+              'Fotos/2025': [], 'Fotos/2026': [], 'Medien': [('Filme', 'dir', 0), ('Musik', 'dir', 0)], 'Medien/Filme': [], 'Medien/Musik': [], 'home': [],
+              'Rechnungen 2026': [('Stadtwerke-09.pdf', 'file', 182_000), ('Telekom-09.pdf', 'file', 95_400)]},
+    'home': {'': [('Paperless', 'dir', 0), ('Dokumente', 'dir', 0), ('Handy-Fotos', 'dir', 0), ('Lebenslauf.pdf', 'file', 310_220), ('Einkaufsliste.txt', 'file', 412)],
+             'Paperless': [], 'Dokumente': [('Steuer 2025.pdf', 'file', 1_204_000)], 'Handy-Fotos': [('IMG_2041.jpg', 'file', 3_400_000)]},
+}
+TICKETS = {}
+
+
+def fs_entries(root, path):
+    out = []
+    for i, (n, t, sz) in enumerate(FS[root].get(path, [])):
+        out.append({'name': n, 'type': t, 'size': sz, 'mtime': T0F - 3600 * (i + 1) * 7})
+    return sorted(out, key=lambda e: (e['type'] != 'dir', e['name'].lower()))
+
+
+def files_call(user, method, args):
+    roots = [{'name': 'daten', 'home': False}] if user == 'root' or STATE['users'].get(user, {}).get('role') == 'admin' else [{'name': 'home', 'home': True}]
+    if method == 'roots':
+        return {'roots': roots}
+    root, path = args.get('root'), (args.get('path') or '').strip('/')
+    if root not in [r['name'] for r in roots] or path not in FS[root]:
+        return {'error': 'not found'}
+    d = FS[root][path]
+    if method == 'list':
+        e = [x for x in fs_entries(root, path) if args.get('hidden') or not x['name'].startswith('.')]
+        return {'root': root, 'path': path, 'entries': e, 'truncated': False, 'free': 3_120_000_000_000, 'size': 3_936_000_000_000}
+    if method == 'mkdir':
+        d.append((args['name'], 'dir', 0)); FS[root][(path + '/' if path else '') + args['name']] = []
+        return {'ok': True}
+    if method == 'rename':
+        FS[root][path] = [(args['to'] if n == args['name'] else n, t, sz) for n, t, sz in d]
+        return {'ok': True}
+    if method == 'delete':
+        FS[root][path] = [x for x in d if x[0] not in args['names']]
+        return {'ok': True}
+    if method == 'move':
+        dest = (args.get('dest') or '').strip('/')
+        if dest not in FS[root]:
+            return {'error': 'not found'}
+        moved = [x for x in d if x[0] in args['names']]
+        FS[root][dest] += moved
+        if not args.get('copy'):
+            FS[root][path] = [x for x in d if x[0] not in args['names']]
+        return {'ok': True}
+    if method == 'ticket':
+        t = os.urandom(16).hex()
+        TICKETS[t] = (root, path, args['name'], args.get('mode'))
+        if args.get('mode') == 'put' and any(n == args['name'] for n, _, _ in d) and not args.get('overwrite'):
+            return {'error': 'already exists'}
+        return {'url': '/cgi-bin/files?t=' + t}
+    return {'error': 'unknown'}
+
+
 def call(obj, method, args):
     if obj == 'session' and method == 'login':
         user, pw = args.get('username'), args.get('password')
@@ -165,6 +223,12 @@ def call(obj, method, args):
         u = STATE['sessions'].get(SID, 'root')
         if method == 'passwd':
             return {'ok': True}
+        if method == 'ui_set':
+            ui = STATE['users'][u].setdefault('ui', {'theme': None, 'accent': None})
+            for k in ('theme', 'accent'):
+                if k in args:
+                    ui[k] = args[k] or None
+            return ui
         if method in ('paperless', 'paperless_set'):
             ib = 'u_' + u
             if method == 'paperless_set':
@@ -189,6 +253,8 @@ def call(obj, method, args):
                 return {'started': True}
             return {'allowed': True, 'installed': c['installed'], 'remotes': mine, 'jobs': cloud_jobs(u), 'shares': ['fotos'], 'ok': True}
         return me(u)
+    if obj == 'shareos.files':
+        return files_call(STATE['sessions'].get(SID, 'root'), method, args)
     if obj == 'shareos.widget':
         if method == 'set':
             if args.get('enabled') is not None:
@@ -380,7 +446,47 @@ class H(SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def files_cgi(self):
+        t = self.path.split('t=')[-1]
+        tk = TICKETS.pop(t, None)
+        if not tk:
+            return self.reply(403, {'error': 'invalid ticket'})
+        root, path, name, mode = tk
+        if mode == 'get' and self.command == 'GET':
+            data = (f'ShareOS mock file {name}\n').encode()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/octet-stream')
+            self.send_header('Content-Disposition', f'attachment; filename="{name}"')
+            self.send_header('Content-Length', str(len(data)))
+            self.end_headers()
+            return self.wfile.write(data)
+        if mode == 'put' and self.command == 'POST':
+            n = int(self.headers.get('Content-Length') or 0)
+            left = n
+            while left:
+                chunk = self.rfile.read(min(left, 65536)); left -= len(chunk)
+                time.sleep(0.02)
+            d = FS[root][path]
+            FS[root][path] = [x for x in d if x[0] != name] + [(name, 'file', n)]
+            return self.reply(200, {'ok': True})
+        return self.reply(405, {'error': 'method not allowed'})
+
+    def reply(self, code, obj):
+        data = json.dumps(obj).encode()
+        self.send_response(code)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Content-Length', str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_GET(self):
+        if self.path.startswith('/cgi-bin/files'):
+            return self.files_cgi()
+        return super().do_GET()
+
     def do_POST(self):
+        if self.path.startswith('/cgi-bin/files'):
+            return self.files_cgi()
         req = json.loads(self.rfile.read(int(self.headers['Content-Length'])) or b'{}')
         params = req.get('params', [])
         if req.get('method') == 'call':

@@ -2,7 +2,9 @@
 #
 # shareos-cert – HTTPS certificate of the web interface
 #
-#   shareos-cert ensure              create a self-signed certificate if there is none
+#   shareos-cert ensure              create a self-signed certificate if there is none,
+#                                    renew our own self-signed one when the hostname
+#                                    or the IP address changed (prints "renewed")
 #   shareos-cert selfsigned          create a new self-signed certificate
 #   shareos-cert install <crt> <key> use your own certificate (PEM; the chain may
 #                                    follow the certificate); tested before use
@@ -47,6 +49,22 @@ selfsigned() {
 	echo "self-signed certificate for $host ($san) created"
 }
 
+# our own self-signed certificate that no longer names this box
+outdated() {
+	i=$(info)
+	echo "$i" | grep -q '^issuer=.*O=ShareOS' && echo "$i" | grep -q '^subject=.*O=ShareOS' || return 1
+	host=$(cat /proc/sys/kernel/hostname); ip=$(ip4)
+	echo "$i" | grep -qx "san=dNSName:$host" || return 0
+	[ -z "$ip" ] || echo "$i" | grep -qx "san=iPAddress:$ip" || return 0
+	return 1
+}
+
+ensure() {
+	if ! [ -s "$CRT" ] || ! [ -s "$KEY" ]; then selfsigned
+	elif outdated; then selfsigned >/dev/null && echo renewed
+	fi
+}
+
 # start a throw-away uhttpd with the pair and do a TLS handshake against it
 test_pair() {
 	d=$(mktemp -d)
@@ -85,9 +103,9 @@ info() {
 }
 
 case "$1" in
-	ensure) [ -s "$CRT" ] && [ -s "$KEY" ] || selfsigned ;;
+	ensure) ensure ;;
 	selfsigned) selfsigned ;;
 	install) install_pair "$2" "$3" ;;
 	info) info ;;
-	*) sed -n '3,14s/^# \{0,1\}//p' "$0"; exit 2 ;;
+	*) sed -n '3,16s/^# \{0,1\}//p' "$0"; exit 2 ;;
 esac
