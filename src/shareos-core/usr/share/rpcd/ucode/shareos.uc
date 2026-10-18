@@ -1698,6 +1698,21 @@ return {
 			}
 		},
 
+		// a mirror with a missing disk: erase a disk and add it
+		repair: {
+			args: { name: '', disk: '', confirm: false },
+			call: function(req) {
+				let a = req.args;
+				if (a.confirm !== true) return { error: 'confirm must be true' };
+				if (!valid_name(a.name)) return { error: 'invalid name' };
+				if (cursor().get('storage', a.name, 'layout') != 'mirror') return { error: 'not a mirror' };
+				if (!valid_disk(a.disk)) return { error: 'invalid disk' };
+				if (is_usb(a.disk)) return { error: 'USB drives cannot be part of a mirror' };
+				if (storage_job()?.state == 'running') return { error: 'a storage job is already running' };
+				return spawn_storage([ 'repair', a.name, a.disk, '--yes' ]);
+			}
+		},
+
 		volume: {
 			args: { name: '', action: '' },
 			call: function(req) {

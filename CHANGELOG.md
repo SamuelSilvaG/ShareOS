@@ -13,6 +13,7 @@ pre-releases for test devices only.
 - **App platform:** apps declare `window` (size) and `opens` (file types, view/edit) in `app.json`; the apps web server serves `/_shareos/theme.css` (look of ShareOS, light/dark, accent colour, title/menu/status bars like Notepad++, scroll bars) and `/_shareos/app.js` (menu bar, opened file, messages between apps). Apps get the user's look and follow changes.
 - New permission **`embed`**: apps that only have settings are shown inside the ShareOS interface instead of their own window.
 - **Storage:** the wizard also offers **RAID 0** (both disks as one fast volume) and **JBOD** (both disks one after the other, full space, also for different sizes) besides the mirror; both without redundancy, the wizard says so. File systems **ext3**, **ext2** and **FAT32** for the disks too.
+- **Repair a mirror:** when one disk of a mirror is missing or failed, put a new disk into the free bay and click *Repair mirror* – the disk is added and the data copied in the background (progress in the volume card).
 - Fix: after installing a certificate the apps web server (port 8081/8444) did not come back until the next restart.
 
 ## 0.1.0-beta.8

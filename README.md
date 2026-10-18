@@ -38,7 +38,7 @@ Version in brackets = first release with the feature.
 **Storage**
 - Setup wizard: one disk, two separate disks, a mirror (RAID 1), RAID 0 or JBOD (mdadm; RAID 0/JBOD from beta.9), optional swap partition per disk
 - File system per volume: **ext4** (recommended: owners, storage limit per user, personal folders, apps), **Btrfs**, **exFAT**, **NTFS** (beta.7), **ext3**, **ext2**, **FAT32** (beta.9)
-- SMART values and health, disk standby, RAID status with sync progress, mount/unmount/remove volumes
+- SMART values and health, disk standby, RAID status with sync progress, repair a mirror with a new disk (beta.9), mount/unmount/remove volumes
 - **USB sticks and disks:** mounted at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), **Safely remove**, **Format** with exFAT, FAT32, NTFS or ext4 (beta.7)
 
 **Shares, users, files**
@@ -115,7 +115,7 @@ sample data via `tests/mock-ubus.py`.
 - Notifications (ubus): disks, updates, cloud jobs – in the interface, by e-mail or push
 - Native apps in the same store (MiniDLNA, Transmission, Syncthing …)
 - More of the app platform: "open with" defaults per file type, a two-pane file manager (ShareCommander)
-- Storage: **LVM2**; replacing a disk of a mirror from the interface; RAID 5 only makes sense with three or more disks (the DNS-320L has two bays)
+- Storage: **LVM2**; RAID 5 only makes sense with three or more disks (the DNS-320L has two bays)
 - More devices (DNS-320/325/327L)
 
 ## Layout

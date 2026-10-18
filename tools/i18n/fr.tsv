@@ -1112,3 +1112,10 @@ E882	Sans journal – longue vérification après une coupure de courant. Seulem
 E883	Pour les très anciens appareils. Fichiers de 4 Go maximum, pas de droits par utilisateur, pas de limite de stockage, pas de dossiers personnels, pas d'apps.
 P190	Les deux disques forment un volume, les données sont réparties : plus rapide, espace $1. Si un disque tombe en panne, tout est perdu.
 P191	Les deux disques forment un volume l'un après l'autre avec $1 (même de tailles différentes). Si un disque tombe en panne, tout est perdu.
+E884	Réparer le miroir
+E885	Insérez un nouveau disque dans la baie libre, puis « Réparer le miroir ».
+E886	Effacer et réparer
+E887	Réparation lancée.
+P192	Réparer le miroir « $1 » ?
+P193	$1 ($2 · $3) est entièrement effacé et ajouté au miroir comme second disque. Les données sont ensuite copiées en arrière-plan (plusieurs heures pour les grands disques) ; le volume reste utilisable.
+P194	un disque manque ($1)

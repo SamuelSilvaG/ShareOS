@@ -14,6 +14,10 @@
 #                                              default 1024, 0 = none; FS: ext4
 #                                              (default), ext3, ext2, btrfs, exfat,
 #                                              ntfs, vfat)
+#   shareos-storage repair <name> <disk> [--swap=MiB] --yes
+#                                              a mirror with a missing disk: erase <disk>,
+#                                              add it to the mirror; the rebuild runs in
+#                                              the background (see the RAID status)
 #   shareos-storage mount <name> | umount <name>
 #   shareos-storage forget <name>              unmount and remove from the config
 #   shareos-storage spindown <minutes>         0 = never
@@ -365,6 +369,42 @@ cmd_setup() {
 	log "setup finished"
 }
 
+cmd_repair() {
+	name=$1 disk=$2; shift 2
+	yes=0
+	for a; do
+		case "$a" in --yes) yes=1 ;; --swap=*) SWAP_MB=${a#--swap=} ;; esac
+	done
+	echo "$SWAP_MB" | grep -qE '^[0-9]+$' && [ "$SWAP_MB" -le 8192 ] || { echo "invalid --swap" >&2; exit 2; }
+	[ $yes = 1 ] || { echo "repair erases $disk – add --yes" >&2; exit 2; }
+	job_start "repair $name $disk"
+	[ "$(uci -q get storage.$name.layout)" = mirror ] || die "$name is not a mirror"
+	md=$(volume_dev $name)
+	case "$md" in /dev/md*) ;; *) die "mirror $name not found" ;; esac
+	b=${md#/dev/}
+	[ "$(cat /sys/block/$b/md/degraded 2>/dev/null || echo 0)" -ge 1 ] || die "mirror $name is complete – nothing to repair"
+	valid_disk "$disk" || die "invalid disk '$disk'"
+	need=0
+	for sl in $(ls /sys/block/$b/slaves 2>/dev/null); do
+		of_disk $sl $disk && die "$disk already belongs to $name"
+		need=$(cat /sys/class/block/$sl/size)
+	done
+	# room for the data partition: disk minus swap and the partition table (sectors)
+	have=$(( $(cat /sys/block/$disk/size) - SWAP_MB * 2048 - 4096 ))
+	[ "$have" -ge "$need" ] || die "$disk is too small for $name"
+	step "preparing $disk"
+	release_disk $disk
+	step "partitioning $disk"; partition $disk R; p=$DATA
+	mdadm --manage $md --remove failed >/dev/null 2>&1
+	mdadm --manage $md --remove detached >/dev/null 2>&1
+	step "adding $disk to $name"
+	mdadm --manage $md --add $p || die "mdadm --add failed"
+	write_mdconf
+	swap_on
+	job_set state done step "rebuilding $name"
+	log "repair of $name with $disk started"
+}
+
 cmd_boot() {
 	if [ -s $MDCONF ]; then
 		mdadm --assemble --scan --config=$MDCONF >/dev/null 2>&1
@@ -392,6 +432,7 @@ cmd_shutdown() {
 
 case "$1" in
 	boot) cmd_boot ;;
+	repair) shift; cmd_repair "$@" ;;
 	shutdown) cmd_shutdown ;;
 	setup) shift; cmd_setup "$@" ;;
 	mount)

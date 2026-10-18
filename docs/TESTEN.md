@@ -229,6 +229,7 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
 - **Zwei Platten:** Neben „Spiegel (RAID 1)“ und „zwei getrennte Laufwerke“ bietet der Assistent **RAID 0** und **JBOD** an; die Zusammenfassung zeigt die Größe (RAID 0: doppelte kleinere Platte, JBOD: beide zusammen). `cat /proc/mdstat` zeigt `raid0` bzw. `linear`.
 - Dateisysteme **ext3**, **ext2** und **FAT32** sind auch für Platten wählbar (FAT32: Dateien höchstens 4 GB).
+- **Spiegel reparieren:** Fehlt eine Platte des Spiegels (Karte: „eine Platte fehlt (U_)“) und steckt eine Platte im freien Schacht, löscht *Spiegel reparieren* diese Platte und nimmt sie auf; die Karte zeigt danach „Wiederherstellung … %“.
 
 ## 14. Zeit und Sprachen
 

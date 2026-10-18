@@ -886,7 +886,11 @@
 		"NAME DES LAUFWERKS": "वॉल्यूम का नाम",
 		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "पुराना Linux फ़ाइल सिस्टम (जैसे Alt-F से परिचित): प्रति उपयोगकर्ता अधिकार, निजी फ़ोल्डर, ऐप्स; कोई स्टोरेज सीमा नहीं।",
 		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "जर्नल के बिना – बिजली जाने के बाद लंबी जाँच। केवल तभी जब किसी पुराने डिवाइस को इसकी ज़रूरत हो।",
-		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "बहुत पुराने डिवाइसों के लिए। फ़ाइलें अधिकतम 4 GB, प्रति उपयोगकर्ता अधिकार नहीं, स्टोरेज सीमा नहीं, निजी फ़ोल्डर नहीं, ऐप्स नहीं।"
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "बहुत पुराने डिवाइसों के लिए। फ़ाइलें अधिकतम 4 GB, प्रति उपयोगकर्ता अधिकार नहीं, स्टोरेज सीमा नहीं, निजी फ़ोल्डर नहीं, ऐप्स नहीं।",
+		"Spiegel reparieren": "मिरर ठीक करें",
+		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "खाली बे में नई डिस्क लगाएँ, फिर “मिरर ठीक करें”।",
+		"Löschen & reparieren": "मिटाएँ और ठीक करें",
+		"Reparatur gestartet.": "मरम्मत शुरू हुई।"
 	},
 	"patterns": [
 		[
@@ -1656,6 +1660,18 @@
 		[
 			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
 			"दोनों डिस्क एक के बाद एक मिलकर $1 का वॉल्यूम बनती हैं (अलग आकार की डिस्क के साथ भी)। एक डिस्क खराब होने पर सब कुछ खो जाता है।"
+		],
+		[
+			"^Spiegel „(.+)“ reparieren\\?$",
+			"मिरर “$1” ठीक करें?"
+		],
+		[
+			"^(\\S+) \\((.*) · (.+)\\) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen\\. Die Daten werden danach im Hintergrund kopiert \\(bei großen Platten mehrere Stunden\\); das Laufwerk bleibt nutzbar\\.$",
+			"$1 ($2 · $3) पूरी तरह मिटाई जाएगी और दूसरी डिस्क के रूप में मिरर में जोड़ी जाएगी। फिर डेटा पृष्ठभूमि में कॉपी होता है (बड़ी डिस्क पर कई घंटे); वॉल्यूम उपयोग योग्य रहता है।"
+		],
+		[
+			"^eine Platte fehlt \\((.+)\\)$",
+			"एक डिस्क गायब है ($1)"
 		]
 	],
 	"words": [

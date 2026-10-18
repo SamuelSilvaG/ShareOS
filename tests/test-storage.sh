@@ -112,6 +112,10 @@ E=$(run ubus call shareos.storage setup "'{\"layout\":\"stripe\",\"name\":\"x\",
 check "rpc: RAID 0 with one disk rejected" "echo '$E' | grep -q 'two different disks'"
 E=$(run ubus call shareos.storage setup "'{\"layout\":\"raid5\",\"name\":\"x\",\"disks\":[\"sda\",\"sdb\"],\"confirm\":true}'")
 check "rpc: unknown layout rejected" "echo '$E' | grep -q 'unknown layout'"
+E=$(run ubus call shareos.storage repair "'{\"name\":\"daten\",\"disk\":\"sda\",\"confirm\":true}'")
+check "rpc: repair of a volume that is no mirror rejected" "echo '$E' | grep -q 'not a mirror'"
+E=$(run ubus call shareos.storage repair "'{\"name\":\"daten\",\"disk\":\"sda\"}'")
+check "rpc: repair needs confirm" "echo '$E' | grep -q confirm"
 E=$(run ubus call shareos.storage setup "'{\"layout\":\"single\",\"volumes\":[{\"name\":\"x\",\"disk\":\"sda\"}]}'")
 check "rpc: setup needs confirm" "echo '$E' | grep -q confirm"
 E=$(run ubus call shareos.storage volume "'{\"name\":\"../etc\",\"action\":\"mount\"}'")
@@ -148,6 +152,9 @@ check "FAT32 volume label in upper case, 11 characters" "[ \"\$(run blkid -s LAB
 check "exFAT/NTFS volumes get the Windows partition type" "ptype $B ${B}p1 | grep -qi EBD0A0A2"
 run shareos-storage setup single "bad=$B:fat" --yes >/dev/null
 check "unknown file system rejected" "run shareos-storage job | grep -q 'invalid file system'"
+o=$(run shareos-storage repair nur $A 2>&1); check "repair needs --yes" "echo '$o' | grep -q 'add --yes'"
+run shareos-storage repair nur $A --yes >/dev/null
+check "repair of a volume that is no mirror refused" "run shareos-storage job | grep -q 'is not a mirror'"
 run shareos-storage setup single "nur=$B:exfat" --swap=0 --yes >/dev/null
 check "no app area on exFAT" "! run uci -q get storage.global.apps | grep -qx nur"
 

@@ -226,6 +226,7 @@ their permissions.
 
 - **Two disks:** besides "Mirror (RAID 1)" and "two separate volumes" the wizard offers **RAID 0** and **JBOD**; the summary shows the size (RAID 0: twice the smaller disk, JBOD: both together). `cat /proc/mdstat` shows `raid0` or `linear`.
 - File systems **ext3**, **ext2** and **FAT32** can be chosen for disks too (FAT32: files up to 4 GB).
+- **Repair a mirror:** with a disk of a mirror missing (card: "one disk missing (U_)") and a disk in the free bay, *Repair mirror* erases that disk and adds it; the card then shows "Recovery … %".
 
 ## 14. Time and languages
 

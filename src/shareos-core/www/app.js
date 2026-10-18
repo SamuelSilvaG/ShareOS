@@ -1492,8 +1492,16 @@ function storageView() {
 	</section>`;
 }
 
+// internal disks that could replace the missing disk of a mirror (not part of it, not USB)
+function repairCandidates(st, md) {
+	return (st.disks || []).filter((d) => !d.usb && !d.rm && d.tran !== 'usb'
+		&& !(md.members || []).some((m) => m === d.name || m.startsWith(d.name)));
+}
+
 function volActions(v, running) {
-	return html`${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
+	const st = S.storage, md = arrayOf(st, v.device);
+	const repair = v.layout === 'mirror' && md?.health?.includes('_') && !md.sync && repairCandidates(st, md).length;
+	return html`${repair ? html`<button class="btn sm primary" type="button" data-act="vol-repair" data-name="${v.name}" ${running ? 'disabled' : ''}>Spiegel reparieren</button>` : ''}${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
 			: html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="mount" ${running || !v.device ? 'disabled' : ''}>Einhängen</button>`}
 		<button class="btn sm ghost" type="button" data-act="vol" data-name="${v.name}" data-op="forget" ${running ? 'disabled' : ''}>Entfernen</button>`;
 }
@@ -1533,6 +1541,7 @@ function volumeCard(st, v, running) {
 			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''} · ${FS_NAME[v.fstype] || v.fstype || 'ext4'}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
 			${v.mounted ? html`<div class="bar" style="margin-top:10px"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}
 			${md ? html`<div class="desc" style="margin-top:8px">${md.name}: ${degraded ? html`<span style="color:var(--amber)">eine Platte fehlt (${md.health})</span>` : html`beide Platten aktiv (${md.health || '?'})`}</div>` : ''}
+			${degraded && !md.sync && v.layout === 'mirror' && !repairCandidates(st, md).length ? html`<div class="desc" style="margin-top:6px">Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.</div>` : ''}
 			${md?.sync ? html`<div class="desc" style="margin-top:6px">${md.sync.action === 'resync' ? 'Erst-Synchronisierung' : md.sync.action === 'recovery' ? 'Wiederherstellung' : 'Prüfung'}: ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %' + (md.sync.finish ? ' · noch ' + fmtMin(md.sync.finish) : '')}</div>
 				<div class="bar" style="margin-top:6px"><i class="warn" style="width:${md.sync.percent}%"></i></div>` : ''}
 			<div class="ip">${v.mountpoint}${v.device ? ' · ' + v.device : ' · Dateisystem nicht gefunden'}</div>
@@ -2974,6 +2983,17 @@ const ACTIONS = {
 		try { await rpc('shareos.storage', 'smart', { disk: el.dataset.disk }); } catch (e) { toast('SMART: ' + e.message, true); }
 		loadStorage();
 	},
+	async 'vol-repair'(el) {
+		const name = el.dataset.name, st = S.storage, v = (st.volumes || []).find((x) => x.name === name);
+		const md = arrayOf(st, v?.device), cand = md ? repairCandidates(st, md) : [];
+		if (!cand.length) return;
+		const d = cand[0];
+		if (!await confirmDlg(`Spiegel „${name}“ reparieren?`, `${d.name} (${d.model || ''} · ${fmtBytes(d.size)}) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen. Die Daten werden danach im Hintergrund kopiert (bei großen Platten mehrere Stunden); das Laufwerk bleibt nutzbar.`, 'Löschen & reparieren', true)) return;
+		try { await rpc('shareos.storage', 'repair', { name, disk: d.name, confirm: true }); toast('Reparatur gestartet.'); }
+		catch (e) { toast(`${name}: ${e.message}`, true); }
+		loadStorage();
+	},
+
 	async vol(el) {
 		const { name, op } = el.dataset;
 		if (op === 'forget' && !await confirmDlg(`„${name}“ entfernen?`, 'Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.', 'Entfernen')) return;

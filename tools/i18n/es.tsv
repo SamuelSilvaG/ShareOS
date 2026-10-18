@@ -1112,3 +1112,10 @@ E882	Sin journal – larga comprobación tras un corte de luz. Solo si un dispos
 E883	Para dispositivos muy antiguos. Archivos de hasta 4 GB, sin permisos por usuario, sin límite de almacenamiento, sin carpetas personales, sin apps.
 P190	Ambos discos forman un volumen, los datos se reparten entre ellos: más rápido, espacio $1. Si falla un disco, se pierde todo.
 P191	Ambos discos forman un volumen uno tras otro con $1 (también con discos de distinto tamaño). Si falla un disco, se pierde todo.
+E884	Reparar espejo
+E885	Coloque un disco nuevo en la bahía libre y luego «Reparar espejo».
+E886	Borrar y reparar
+E887	Reparación iniciada.
+P192	¿Reparar el espejo «$1»?
+P193	$1 ($2 · $3) se borra por completo y se añade al espejo como segundo disco. Después los datos se copian en segundo plano (varias horas en discos grandes); el volumen sigue utilizable.
+P194	falta un disco ($1)

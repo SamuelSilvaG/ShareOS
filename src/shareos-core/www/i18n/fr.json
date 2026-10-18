@@ -886,7 +886,11 @@
 		"NAME DES LAUFWERKS": "NOM DU VOLUME",
 		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Ancien système de fichiers Linux (p. ex. connu d'Alt-F) : droits par utilisateur, dossiers personnels, apps ; pas de limite de stockage.",
 		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "Sans journal – longue vérification après une coupure de courant. Seulement si un ancien appareil l'exige.",
-		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Pour les très anciens appareils. Fichiers de 4 Go maximum, pas de droits par utilisateur, pas de limite de stockage, pas de dossiers personnels, pas d'apps."
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Pour les très anciens appareils. Fichiers de 4 Go maximum, pas de droits par utilisateur, pas de limite de stockage, pas de dossiers personnels, pas d'apps.",
+		"Spiegel reparieren": "Réparer le miroir",
+		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "Insérez un nouveau disque dans la baie libre, puis « Réparer le miroir ».",
+		"Löschen & reparieren": "Effacer et réparer",
+		"Reparatur gestartet.": "Réparation lancée."
 	},
 	"patterns": [
 		[
@@ -1656,6 +1660,18 @@
 		[
 			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
 			"Les deux disques forment un volume l'un après l'autre avec $1 (même de tailles différentes). Si un disque tombe en panne, tout est perdu."
+		],
+		[
+			"^Spiegel „(.+)“ reparieren\\?$",
+			"Réparer le miroir « $1 » ?"
+		],
+		[
+			"^(\\S+) \\((.*) · (.+)\\) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen\\. Die Daten werden danach im Hintergrund kopiert \\(bei großen Platten mehrere Stunden\\); das Laufwerk bleibt nutzbar\\.$",
+			"$1 ($2 · $3) est entièrement effacé et ajouté au miroir comme second disque. Les données sont ensuite copiées en arrière-plan (plusieurs heures pour les grands disques) ; le volume reste utilisable."
+		],
+		[
+			"^eine Platte fehlt \\((.+)\\)$",
+			"un disque manque ($1)"
 		]
 	],
 	"words": [

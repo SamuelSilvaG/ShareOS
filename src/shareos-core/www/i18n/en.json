@@ -886,7 +886,11 @@
 		"NAME DES LAUFWERKS": "NAME OF THE VOLUME",
 		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Older Linux file system (e.g. known from Alt-F): permissions per user, personal folders, apps; no storage limit.",
 		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "No journal – long check after a power cut. Only if an old device needs it.",
-		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "For very old devices. Files up to 4 GB, no permissions per user, no storage limit, no personal folders, no apps."
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "For very old devices. Files up to 4 GB, no permissions per user, no storage limit, no personal folders, no apps.",
+		"Spiegel reparieren": "Repair mirror",
+		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "Put a new disk into the free bay, then “Repair mirror”.",
+		"Löschen & reparieren": "Erase & repair",
+		"Reparatur gestartet.": "Repair started."
 	},
 	"patterns": [
 		[
@@ -1656,6 +1660,18 @@
 		[
 			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
 			"Both disks become one volume one after the other with $1 (also with disks of different sizes). If one disk fails, everything is lost."
+		],
+		[
+			"^Spiegel „(.+)“ reparieren\\?$",
+			"Repair mirror “$1”?"
+		],
+		[
+			"^(\\S+) \\((.*) · (.+)\\) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen\\. Die Daten werden danach im Hintergrund kopiert \\(bei großen Platten mehrere Stunden\\); das Laufwerk bleibt nutzbar\\.$",
+			"$1 ($2 · $3) is erased completely and added to the mirror as the second disk. The data is then copied in the background (several hours for large disks); the volume stays usable."
+		],
+		[
+			"^eine Platte fehlt \\((.+)\\)$",
+			"one disk missing ($1)"
 		]
 	],
 	"words": [
