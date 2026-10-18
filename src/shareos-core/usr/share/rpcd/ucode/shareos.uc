@@ -194,6 +194,20 @@ const SMART_MAX_AGE = 1800;     // s; SMART reads keep disks awake, so cache the
 
 function valid_name(n) { return type(n) == 'string' && match(n, /^[a-z0-9][a-z0-9_-]{0,15}$/); }
 function valid_disk(d) { return type(d) == 'string' && match(d, /^sd[a-z]$/) && stat('/sys/block/' + d); }
+const USB = '/usr/sbin/shareos-usb';
+const FS_DISK = { ext4: 1, btrfs: 1, exfat: 1, ntfs: 1 };
+const FS_USB = { exfat: 1, vfat: 1, ntfs: 1, ext4: 1 };
+// USB sticks/disks hang below a USB host in sysfs; the bays are SATA
+function is_usb(d) { return valid_disk(d) && index(realpath('/sys/block/' + d) ?? '', '/usb') >= 0; }
+// mounted USB partitions: { dev, path, fs }
+function usb_mounts() {
+	let l = [];
+	for (let line in split(sh(USB + ' list').out, '\n')) {
+		let f = split(trim(line), ' ');
+		if (length(f) == 3) push(l, { dev: f[0], path: f[1], fs: f[2] });
+	}
+	return l;
+}
 
 function ubiblock_major() {
 	let m = match(readfile('/proc/devices') ?? '', /\n *([0-9]+) ubiblock\n/);
@@ -938,6 +952,7 @@ function files_roots(u) {
 			let mp = '/mnt/' + x['.name'];
 			if (index(mounts, ' ' + mp + ' ') >= 0) push(roots, { name: x['.name'], path: mp, home: false });
 		});
+		for (let m in usb_mounts()) push(roots, { name: substr(m.path, 5), path: m.path, home: false, usb: true });
 	} else {
 		let v = c.get('accounts', u, 'home'), p = '/mnt/' + v + '/home/' + u;
 		if (index(mounts, ' /mnt/' + v + ' ') >= 0 && stat(p)?.type == 'directory') push(roots, { name: 'home', path: p, home: true });
@@ -1511,7 +1526,8 @@ return {
 				let disks = [];
 				for (let d in lsblk()) {
 					if (d.type != 'disk' || !match(d.name, /^sd[a-z]$/)) continue;
-					d.smart = smart_read(d.name, false);
+					d.usb = is_usb(d.name);
+					d.smart = d.usb ? null : smart_read(d.name, false);
 					push(disks, d);
 				}
 				let c = cursor();
@@ -1527,6 +1543,7 @@ return {
 					arrays: mdstat(),
 					volumes: volumes(),
 					spindown: +(c.get('storage', 'global', 'spindown') ?? 0),
+					usb: usb_mounts(),
 					job: storage_job()
 				};
 			}
@@ -1543,7 +1560,8 @@ return {
 
 		setup: {
 			// layout mirror: name + disks[2]; layout single: volumes [{name, disk}]
-			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, confirm: false },
+			// fs: ext4 (default), btrfs, exfat, ntfs – for the mirror; volumes may carry their own
+			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, fs: '', confirm: false },
 			call: function(req) {
 				let a = req.args;
 				if (a.confirm !== true)
@@ -1552,6 +1570,8 @@ return {
 				if (!(swap >= 0 && swap <= 8192))
 					return { error: 'invalid swap size' };
 				let sw = '--swap=' + int(swap);
+				let fs = a.fs || 'ext4';
+				if (!FS_DISK[fs]) return { error: 'invalid file system' };
 				let j = storage_job();
 				if (j?.state == 'running')
 					return { error: 'a storage job is already running' };
@@ -1560,7 +1580,9 @@ return {
 					if (type(a.disks) != 'array' || length(a.disks) != 2 || a.disks[0] == a.disks[1] ||
 					    !valid_disk(a.disks[0]) || !valid_disk(a.disks[1]))
 						return { error: 'a mirror needs two different disks' };
-					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], sw, '--yes' ]);
+					if (is_usb(a.disks[0]) || is_usb(a.disks[1]))
+						return { error: 'USB drives are formatted with usb_format' };
+					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], sw, '--fs=' + fs, '--yes' ]);
 				}
 				if (a.layout == 'single') {
 					if (type(a.volumes) != 'array' || !length(a.volumes))
@@ -1569,8 +1591,10 @@ return {
 					for (let v in a.volumes) {
 						if (!valid_name(v?.name) || !valid_disk(v?.disk) || seen[v.name] || seen[v.disk])
 							return { error: 'invalid name or disk' };
+						if (v.fs && !FS_DISK[v.fs]) return { error: 'invalid file system' };
+						if (is_usb(v.disk)) return { error: 'USB drives are formatted with usb_format' };
 						seen[v.name] = seen[v.disk] = true;
-						push(args, v.name + '=' + v.disk);
+						push(args, v.name + '=' + v.disk + ':' + (v.fs || fs));
 					}
 					push(args, sw, '--yes');
 					return spawn_storage(args);
@@ -1588,6 +1612,33 @@ return {
 				let r = sh(STORAGE + ' ' + act + ' ' + shq(n));
 				if (r.rc == 0) system(USERS + ' sync >/dev/null 2>&1');
 				return r.rc == 0 ? { ok: true } : { error: trim(r.out) || act + ' failed' };
+			}
+		},
+
+		// USB stick/disk: unmount and power down, then it can be pulled
+		usb_eject: {
+			args: { disk: '' },
+			call: function(req) {
+				if (!is_usb(req.args.disk)) return { error: 'not a USB drive' };
+				let r = sh(USB + ' eject ' + req.args.disk);
+				if (r.rc != 0) return { error: replace(trim(r.out), /^error: /, '') || 'eject failed' };
+				return { ok: true };
+			}
+		},
+
+		// erase a USB stick/disk: one partition, fs: exfat (default), vfat, ntfs, ext4
+		usb_format: {
+			args: { disk: '', fs: '', name: '', confirm: false },
+			call: function(req) {
+				let a = req.args;
+				if (a.confirm !== true) return { error: 'confirm must be true' };
+				if (!is_usb(a.disk)) return { error: 'not a USB drive' };
+				let fs = a.fs || 'exfat';
+				if (!FS_USB[fs]) return { error: 'invalid file system' };
+				if (type(a.name) != 'string' || !match(a.name, /^[A-Za-z0-9 _-]{1,16}$/)) return { error: 'invalid name' };
+				if (storage_job()?.state == 'running') return { error: 'a storage job is already running' };
+				system(sprintf('start-stop-daemon -S -b -x %s -- format %s %s %s --yes', USB, a.disk, fs, shq(a.name)));
+				return { started: true };
 			}
 		},
 

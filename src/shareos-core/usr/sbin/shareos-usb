@@ -1,0 +1,221 @@
+#!/bin/sh
+#
+# shareos-usb – USB sticks and USB disks
+#
+#   shareos-usb mount-all                  mount every USB partition (boot)
+#   shareos-usb umount-all                 unmount them (shutdown)
+#   shareos-usb hotplug                    called by mdev (ACTION, MDEV)
+#   shareos-usb eject <disk>               write everything, unmount, power down
+#   shareos-usb format <disk> <fs> <name> --yes
+#                                          erase and create one partition;
+#                                          fs: exfat (default), vfat, ntfs, ext4
+#   shareos-usb list                       mounted USB partitions:
+#                                          <dev> <mount point> <fs>
+#
+# USB partitions are mounted at /mnt/usb-<label> (or /mnt/usb-<dev> without a
+# label). FAT, exFAT and NTFS have no owners: everybody may write. The
+# internal SATA disks are never touched here – they are shareos-storage's.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+JOBDIR=/tmp/shareos-storage
+JOB=$JOBDIR/job
+ST=/tmp/shareos-usb          # one file per mount point: the device
+SYS=${SHAREOS_USB_SYS:-/sys}
+
+log() { logger -t shareos-usb "$*"; echo "$*"; }
+die() { log "ERROR: $*"; job_set state error error "$*"; exit 1; }
+
+job_set() {
+	[ -n "$IN_JOB" ] || return 0
+	while [ $# -ge 2 ]; do
+		grep -v "^$1=" $JOB > $JOB.tmp 2>/dev/null
+		echo "$1=$2" >> $JOB.tmp
+		mv $JOB.tmp $JOB
+		shift 2
+	done
+}
+job_start() {
+	mkdir -p $JOBDIR
+	mkdir $JOBDIR/lock 2>/dev/null || { echo "another storage job is running" >&2; exit 1; }
+	trap 'rmdir $JOBDIR/lock 2>/dev/null' EXIT
+	IN_JOB=1
+	printf 'state=running\nstarted=%s\naction=%s\n' "$(date +%s)" "$*" > $JOB
+}
+step() { log "$*"; job_set step "$*"; }
+
+# SHAREOS_USB_DISKS: other disk names for tests (e.g. 'loop[0-9]+'); those count as USB
+disk_of() { echo "$1" | sed -E 's/^(loop[0-9]+)p[0-9]+$/\1/; t; s/^(sd[a-z]+)[0-9]*$/\1/'; }
+is_usb() {   # disk -> true for USB sticks/disks
+	[ -n "${SHAREOS_USB_DISKS:-}" ] && echo "$1" | grep -qE "^($SHAREOS_USB_DISKS)\$" && return 0
+	echo "$1" | grep -qE '^sd[a-z]+$' && [ -e "$SYS/block/$1" ] && readlink -f "$SYS/block/$1" | grep -q '/usb'
+}
+partn() { case "$1" in *[0-9]) echo /dev/${1}p$2 ;; *) echo /dev/${1}$2 ;; esac; }
+mounts_of() {   # disk -> "dev mountpoint" lines
+	awk -v d="$1" '{ n = $1; sub("^/dev/", "", n) } n == d || index(n, d) == 1 && substr(n, length(d) + 1) ~ /^p?[0-9]+$/ { print $1, $2 }' /proc/mounts
+}
+
+mp_name() {   # label or device -> free mount point
+	b=$(printf '%s' "$1" | tr 'A-Z ' 'a-z_' | tr -cd 'a-z0-9_-' | cut -c1-24)
+	[ -n "$b" ] || b=$2
+	mp=/mnt/usb-$b; i=2
+	while grep -q " $mp " /proc/mounts || { [ -e "$mp" ] && ! rmdir "$mp" 2>/dev/null; }; do
+		mp=/mnt/usb-$b-$i; i=$((i + 1))
+	done
+	echo "$mp"
+}
+
+mount_args() {   # fs -> mount arguments (same as shareos-storage)
+	case "$1" in
+		ntfs) echo "-t ntfs3 -o noatime,umask=000" ;;
+		exfat) echo "-t exfat -o noatime,umask=000" ;;
+		vfat) echo "-t vfat -o noatime,umask=000,utf8=1,shortname=mixed" ;;
+		ext4|ext3|ext2|btrfs) echo "-t $1 -o noatime" ;;
+		*) return 1 ;;
+	esac
+}
+
+mount_one() {   # dev name (sdc1, sdc)
+	dev=/dev/$1
+	[ -b "$dev" ] || return 1
+	grep -q "^$dev " /proc/mounts && return 0
+	fs=$(blkid -s TYPE -o value "$dev" 2>/dev/null)
+	args=$(mount_args "$fs") || return 1
+	label=$(blkid -s LABEL -o value "$dev" 2>/dev/null)
+	mp=$(mp_name "$label" "$1")
+	mkdir -p "$mp" $ST
+	if mount $args "$dev" "$mp" 2>/dev/null; then
+		echo "$dev" > $ST/${mp##*/}
+		log "$dev ($fs) mounted at $mp"
+	else
+		rmdir "$mp"; log "$dev: mount failed ($fs)"; return 1
+	fi
+}
+
+mount_disk() {   # disk: all its partitions, or the whole disk without partition table
+	d=$1; any=0
+	for p in $(ls -d $SYS/block/$d/$d* 2>/dev/null); do
+		mount_one "${p##*/}" && any=1
+	done
+	[ $any = 1 ] || mount_one "$d"
+}
+
+cmd_mount_all() {
+	for b in $SYS/block/*; do
+		d=${b##*/}
+		is_usb "$d" && mount_disk "$d"
+	done
+	return 0
+}
+
+# pulled without "eject": drop the mount points of devices that are gone
+cleanup_gone() {
+	for f in $ST/*; do
+		[ -f "$f" ] || continue
+		dev=$(cat "$f"); mp=/mnt/${f##*/}
+		[ -b "$dev" ] && continue
+		umount -l "$mp" 2>/dev/null; rmdir "$mp" 2>/dev/null; rm -f "$f"
+		log "$dev removed – $mp unmounted"
+	done
+}
+
+cmd_hotplug() {
+	n=${MDEV:-}; [ -n "$n" ] || exit 0
+	d=$(disk_of "$n")
+	case "$ACTION" in
+		add)
+			is_usb "$d" || exit 0
+			# mounting can take a while (fsck, big disks) – do not block mdev
+			( sleep 2; if [ "$n" = "$d" ]; then [ -n "$(ls -d $SYS/block/$d/$d* 2>/dev/null)" ] || mount_one "$d"; else mount_one "$n"; fi ) </dev/null >/dev/null 2>&1 &
+			;;
+		remove) cleanup_gone ;;
+	esac
+	exit 0
+}
+
+release() {   # disk: unmount everything on it
+	sync
+	mounts_of "$1" | while read dev mp; do
+		umount "$mp" 2>/dev/null || { echo "busy:$mp"; continue; }
+		rmdir "$mp" 2>/dev/null; rm -f "$ST/${mp##*/}"
+		log "$dev unmounted"
+	done
+}
+
+cmd_eject() {
+	d=$1
+	is_usb "$d" || { echo "error: $d is not a USB drive" >&2; exit 1; }
+	busy=$(release "$d" | sed -n 's/^busy://p')
+	[ -z "$busy" ] || { echo "error: still in use: $busy" >&2; exit 1; }
+	# power down: the drive disappears and can be pulled
+	if [ -w "$SYS/block/$d/device/delete" ]; then
+		echo 1 > "$SYS/block/$d/device/delete"
+	fi
+	log "$d ejected"
+	echo "ok"
+}
+
+cmd_format() {
+	d=$1 fs=${2:-exfat} name=$3
+	[ "$4" = --yes ] || { echo "format erases $d – add --yes" >&2; exit 2; }
+	is_usb "$d" || { echo "error: $d is not a USB drive" >&2; exit 1; }
+	case "$fs" in exfat) t=7 ;; ntfs) t=7 ;; vfat) t=c ;; ext4) t=83 ;; *) echo "error: unknown file system $fs" >&2; exit 2 ;; esac
+	printf '%s' "$name" | grep -qE '^[A-Za-z0-9 _-]{1,16}$' || { echo "error: invalid name" >&2; exit 2; }
+	job_start "usb format $d $fs"
+	step "unmounting $d"
+	busy=$(release "$d" | sed -n 's/^busy://p')
+	[ -z "$busy" ] || die "$d is still in use ($busy)"
+	step "partitioning $d"
+	out=$(wipefs -q -a -f /dev/$d 2>&1) || die "erasing $d failed: $(echo "$out" | tail -1)"
+	# MBR with one partition: readable by every computer, camera and TV
+	printf 'label: dos\n,,%s\n' $t | sfdisk -q --wipe always --wipe-partitions always /dev/$d >/dev/null \
+		|| die "partitioning $d failed"
+	p=$(partn $d 1); i=0
+	while [ ! -b $p ] && [ $i -lt 20 ]; do
+		[ $i = 4 ] && blockdev --rereadpt /dev/$d 2>/dev/null
+		sleep 0.5; i=$((i + 1))
+	done
+	[ -b $p ] || die "partition $p did not appear"
+	step "creating file system ($fs) on $p"
+	case "$fs" in
+		exfat) mkfs.exfat -L "$(printf %.15s "$name")" $p >/dev/null ;;
+		vfat) mkfs.fat -F 32 -n "$(printf %.11s "$name" | tr a-z A-Z)" $p >/dev/null ;;
+		ntfs) mkntfs -Q -F -q -L "$name" $p >/dev/null ;;
+		ext4) mkfs.ext4 -F -q -m 0 -L "$name" $p ;;
+	esac || die "creating the file system failed"
+	mount_one "${p#/dev/}" || die "mounting $p failed"
+	# ext4: let every user write, like on the other file systems
+	[ "$fs" = ext4 ] && chmod 1777 "$(awk -v p=$p '$1 == p {print $2}' /proc/mounts)"
+	job_set state done step "finished"
+	log "$d formatted ($fs)"
+}
+
+cmd_umount_all() {
+	sync
+	for f in $ST/*; do
+		[ -f "$f" ] || continue
+		mp=/mnt/${f##*/}
+		umount "$mp" 2>/dev/null || umount -l "$mp" 2>/dev/null
+		rmdir "$mp" 2>/dev/null; rm -f "$f"
+	done
+	return 0
+}
+
+cmd_list() {
+	for f in $ST/*; do
+		[ -f "$f" ] || continue
+		dev=$(cat "$f"); mp=/mnt/${f##*/}
+		fs=$(awk -v m="$mp" '$2 == m {print $3}' /proc/mounts)
+		[ -n "$fs" ] && echo "$dev $mp $fs"
+	done
+	return 0
+}
+
+case "$1" in
+	mount-all) cmd_mount_all ;;
+	umount-all) cmd_umount_all ;;
+	hotplug) cmd_hotplug ;;
+	eject) cmd_eject "$2" ;;
+	format) cmd_format "$2" "$3" "$4" "$5" ;;
+	list) cmd_list ;;
+	*) sed -n '3,18s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

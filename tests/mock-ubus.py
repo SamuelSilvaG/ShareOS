@@ -68,7 +68,10 @@ def info():
 def storage():
     pct = min(99.9, 12.4 + (time.time() - T0) / 60)
     return {
-        'disks': [DISK('sda', 'WDC WD40EFPX-68C6CN0', 'WD-WX12A3456789'), DISK('sdb', 'WDC WD40EFPX-68C6CN0', 'WD-WX98B7654321')],
+        'disks': [DISK('sda', 'WDC WD40EFPX-68C6CN0', 'WD-WX12A3456789'), DISK('sdb', 'WDC WD40EFPX-68C6CN0', 'WD-WX98B7654321')]
+        + ([] if STATE.get('usb_gone') else [{'name': 'sdc', 'type': 'disk', 'size': 32 * 10**9, 'model': 'SanDisk Ultra', 'tran': 'usb', 'rm': True, 'usb': True,
+              'children': [{'name': 'sdc1', 'type': 'part', 'fstype': 'exfat', 'label': 'STICK', 'mountpoint': '/mnt/usb-stick'}]}]),
+        'usb': [] if STATE.get('usb_gone') else [{'dev': '/dev/sdc1', 'path': '/mnt/usb-stick', 'fs': 'exfat'}],
         'swaps': [{'device': '/dev/sda1', 'size': 1 << 30, 'used': 12 << 20}, {'device': '/dev/sdb1', 'size': 1 << 30, 'used': 11 << 20}],
         'apps': 'daten',
         'arrays': {'md0': {'name': 'md0', 'state': 'active', 'level': 'raid1', 'members': ['sdb2', 'sda2'], 'disks': 2, 'active': 2,
@@ -492,6 +495,8 @@ def call(obj, method, args):
     if obj == 'shareos.storage':
         if method == 'status':
             return storage()
+        if method == 'usb_eject':
+            STATE['usb_gone'] = True
         return {'ok': True}
     if obj == 'shareos.update':
         if method == 'apply':

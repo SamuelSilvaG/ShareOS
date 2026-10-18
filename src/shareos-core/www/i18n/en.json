@@ -820,9 +820,31 @@
 		"Firmware wird geschrieben": "Writing firmware",
 		"Kernel und Startsystem – bitte warten, nicht ausschalten": "Kernel and boot system – please wait, do not switch off",
 		"Geschrieben": "Written",
-		"Größe": "Size"
+		"Größe": "Size",
+		"ext4 – empfohlen": "ext4 – recommended",
+		"exFAT – empfohlen": "exFAT – recommended",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "Everything: permissions per user, storage limit, personal folders, apps.",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "Permissions per user, personal folders, apps; no storage limit per user. Needs more memory.",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Also readable on Windows and macOS. No permissions per user (whoever may write to a share may change everything in it), no storage limit, no personal folders, no apps.",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Also readable on Windows. No permissions per user, no storage limit, no personal folders, no apps.",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, TVs; files over 4 GB.",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "For older devices (car radio, camera); files up to 4 GB.",
+		"Für Windows-Rechner.": "For Windows computers.",
+		"Für Linux und Sicherungen mit Rechten.": "For Linux and backups with permissions.",
+		"DATEISYSTEM": "FILE SYSTEM",
+		"Sicher entfernen": "Safely remove",
+		"Formatieren": "Format",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Name of the new volume (a–z, 0–9, - and _, at most 16 characters) and file system:"
 	},
 	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"No swap, no app area (packages and app data need ext4 or Btrfs)."
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"$1 swap per disk, no app area (packages and app data need ext4 or Btrfs)."
+		],
 		[
 			"^Wiederherstellen: (.*)$",
 			"Restore: $1"
@@ -1482,6 +1504,34 @@
 		[
 			"^Firmware-Datei: (.*)$",
 			"Firmware file: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 can be unplugged now."
+		],
+		[
+			"^(.+) formatieren$",
+			"Format $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"Erase $1?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – name (letters, digits, spaces, - and _) and file system:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"Everything on $1 is erased. Afterwards it is a $2 drive “$3”."
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) is erased completely and set up again as volume “$4” ($5)."
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"App area on “$1” (unless there is one already)."
 		]
 	],
 	"words": [

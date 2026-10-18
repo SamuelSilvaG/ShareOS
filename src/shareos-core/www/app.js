@@ -839,7 +839,7 @@ function userEditor(e) {
 			<label class="f"><span>BENUTZERNAME</span><input name="name" value="${u.name}" maxlength="32" pattern="[a-z][a-z0-9_]{0,31}" required autocomplete="off"${isNew ? '' : raw(' readonly')}></label>
 			<label class="f"><span>VOLLER NAME</span><input name="fullname" value="${u.fullname}" maxlength="64"></label>
 			<label class="f"><span>ROLLE</span><select name="role">${Object.entries(ROLE_TXT).map(([k, t]) => html`<option value="${k}"${u.role === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
-			<label class="f"><span>PERSÖNLICHER ORDNER</span><select name="home"><option value="">keiner</option>${S.vols.map((v) => html`<option value="${v.name}"${u.home === v.name ? raw(' selected') : ''}>auf ${v.name}</option>`)}</select></label>
+			<label class="f"><span>PERSÖNLICHER ORDNER</span><select name="home"><option value="">keiner</option>${S.vols.filter(linuxFs).map((v) => html`<option value="${v.name}"${u.home === v.name ? raw(' selected') : ''}>auf ${v.name}</option>`)}</select></label>
 			<label class="f"><span>SPEICHERLIMIT (GB)</span><input name="quota" type="number" min="0" step="1" value="${Math.round((u.quota || 0) / 1000)}"></label>
 			${isNew ? html`<label class="f"><span>PASSWORT</span><input name="p1" type="password" minlength="6" autocomplete="new-password" required></label>
 				<label class="f"><span>WIEDERHOLEN</span><input name="p2" type="password" minlength="6" autocomplete="new-password" required></label>` : ''}
@@ -1345,6 +1345,42 @@ function renderUserHome() {
 /* ---------- storage (Speicher) ---------------------------------------------- */
 
 const LAYOUT_TXT = { mirror: 'Spiegel (RAID 1)', single: 'Einzelnes Laufwerk' };
+// file systems: label and what the choice means
+const FS_DISK = [['ext4', 'ext4 – empfohlen', 'Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.'],
+	['btrfs', 'Btrfs', 'Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.'],
+	['exfat', 'exFAT', 'Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.'],
+	['ntfs', 'NTFS', 'Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.']];
+const FS_USB = [['exfat', 'exFAT – empfohlen', 'Windows, macOS, Linux, Fernseher; Dateien über 4 GB.'],
+	['vfat', 'FAT32', 'Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.'],
+	['ntfs', 'NTFS', 'Für Windows-Rechner.'],
+	['ext4', 'ext4', 'Für Linux und Sicherungen mit Rechten.']];
+const FS_NAME = { ext4: 'ext4', btrfs: 'Btrfs', exfat: 'exFAT', ntfs: 'NTFS', ntfs3: 'NTFS', vfat: 'FAT32' };
+const linuxFs = (v) => !v.fstype || v.fstype === 'ext4' || v.fstype === 'btrfs';
+const fsSelect = (list, val, cls = '') => html`<select class="${cls}">${list.map(([v, t]) => html`<option value="${v}"${val === v ? raw(' selected') : ''}>${t}</option>`)}</select>`;
+const fsNote = (list, val) => html`<p class="note fs-note" style="margin:6px 0 0">${(list.find((x) => x[0] === val) || list[0])[2]}</p>`;
+
+// form dialog: name + file system; resolves { name, fs } or null
+function fsDlg(title, text, name, list, fs, okLabel, max = 16) {
+	return new Promise((resolve) => {
+		const d = document.createElement('dialog');
+		d.className = 'dlg';
+		d.innerHTML = html`<form method="dialog"><h3>${title}</h3><p>${text}</p>
+			<div class="fields" style="grid-template-columns:1fr;margin-bottom:6px">
+				<label class="f"><span>NAME</span><input name="v" value="${name}" maxlength="${max}" required></label>
+				<label class="f"><span>DATEISYSTEM</span>${fsSelect(list, fs, 'fs-sel')}</label></div>
+			${fsNote(list, fs)}
+			<div class="acts" style="margin-top:16px"><button class="btn ghost" type="button" value="no">Abbrechen</button>
+			<button class="btn primary" type="submit" value="yes">${okLabel}</button></div></form>`.s;
+		$('#app').append(d);
+		let result = null;
+		$('.fs-sel', d).addEventListener('change', (e) => { $('.fs-note', d).textContent = list.find((x) => x[0] === e.target.value)[2]; });
+		$('button[value=no]', d).addEventListener('click', () => d.close());
+		$('form', d).addEventListener('submit', () => { result = { name: $('input', d).value.trim(), fs: $('.fs-sel', d).value }; });
+		d.addEventListener('close', () => { d.remove(); resolve(result); });
+		d.showModal();
+		$('input', d).select();
+	});
+}
 const SPINDOWN = [[0, 'nie'], [10, '10 Minuten'], [20, '20 Minuten'], [30, '30 Minuten'], [60, '1 Stunde'], [120, '2 Stunden']];
 
 function arrayOf(st, dev) {
@@ -1446,7 +1482,7 @@ function volumeTable(st, running) {
 			const md = arrayOf(st, v.device), degraded = md && md.health && md.health.includes('_'), p = pct(v.used, v.size);
 			return html`<tr>
 				<td><b>${v.name}</b>${S.storage?.apps === v.name ? html` <span class="tag">APPS</span>` : ''}<div class="mut" style="font-size:12px">${v.mountpoint}</div></td>
-				<td>${LAYOUT_TXT[v.layout] || v.layout || ''}${md ? html`<div class="mut" style="font-size:12px">${md.name} · ${md.health || '?'}</div>` : ''}</td>
+				<td>${LAYOUT_TXT[v.layout] || v.layout || ''} · ${FS_NAME[v.fstype] || v.fstype || 'ext4'}${md ? html`<div class="mut" style="font-size:12px">${md.name} · ${md.health || '?'}</div>` : ''}</td>
 				<td>${v.mounted ? html`${fmtBytes(v.used)} / ${fmtBytes(v.size)}` : '–'}</td>
 				<td>${v.mounted ? html`<div class="bar"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}</td>
 				<td>${!v.mounted ? html`<span class="tag err">nicht eingehängt</span>` : degraded ? html`<span class="tag warn">eine Platte fehlt</span>`
@@ -1458,11 +1494,10 @@ function volumeTable(st, running) {
 function diskTable(st, running) {
 	return html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>LAUFWERK</th><th>MODELL</th><th>GRÖSSE</th><th>SMART</th><th>INHALT</th><th></th></tr></thead>
 		<tbody>${st.disks.map((d) => html`<tr>
-			<td><b>${d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</b></td>
+			<td><b>${d.usb || d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</b></td>
 			<td>${d.model || 'unbekanntes Modell'}${d.serial ? html`<div class="mut" style="font-size:12px">${d.serial}</div>` : ''}</td>
 			<td>${fmtBytes(d.size)}</td><td>${smartLine(d.smart)}</td><td class="mut" style="font-size:12px">${diskUse(st, d).txt}</td>
-			<td><div class="acts"><button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
-				<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button></div></td></tr>`)}</tbody></table></div>`;
+			<td><div class="acts">${diskActions(d, running)}</div></td></tr>`)}</tbody></table></div>`;
 }
 
 function volumeCard(st, v, running) {
@@ -1473,7 +1508,7 @@ function volumeCard(st, v, running) {
 		<div class="icon">${svg(I.disk)}<span class="dot ${!v.mounted ? 'down' : degraded ? 'warn' : 'up'}"></span></div>
 		<div class="info">
 			<div class="name">${v.name}${S.storage?.apps === v.name ? html` <span class="tag" title="Pakete und App-Daten liegen in .shareos">APPS</span>` : ''}</div>
-			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
+			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''} · ${FS_NAME[v.fstype] || v.fstype || 'ext4'}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
 			${v.mounted ? html`<div class="bar" style="margin-top:10px"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}
 			${md ? html`<div class="desc" style="margin-top:8px">${md.name}: ${degraded ? html`<span style="color:var(--amber)">eine Platte fehlt (${md.health})</span>` : html`beide Platten aktiv (${md.health || '?'})`}</div>` : ''}
 			${md?.sync ? html`<div class="desc" style="margin-top:6px">${md.sync.action === 'resync' ? 'Erst-Synchronisierung' : md.sync.action === 'recovery' ? 'Wiederherstellung' : 'Prüfung'}: ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %' + (md.sync.finish ? ' · noch ' + fmtMin(md.sync.finish) : '')}</div>
@@ -1489,20 +1524,31 @@ function fmtMin(s) {
 	return m >= 90 ? `${(m / 60).toLocaleString(LOC, { maximumFractionDigits: 1 })} h` : `${Math.round(m)} min`;
 }
 
+function diskActions(d, running) {
+	if (d.usb) return html`<button class="btn sm" type="button" data-act="usb-eject" data-disk="${d.name}" ${running ? 'disabled' : ''}>Sicher entfernen</button>
+		<button class="btn sm danger" type="button" data-act="usb-format" data-disk="${d.name}" ${running ? 'disabled' : ''}>Formatieren</button>`;
+	return html`<button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
+		<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button>`;
+}
+
+// mounted partitions of a USB drive
+function usbLines(st, d) {
+	const m = (st.usb || []).filter((x) => x.dev.replace('/dev/', '').replace(/p?\d+$/, '') === d.name);
+	return m.length ? html`<div class="desc" style="margin-top:8px">${m.map((x) => html`<div>${FS_NAME[x.fs] || x.fs} · <code>${x.path}</code></div>`)}</div>`
+		: html`<div class="desc" style="margin-top:8px;color:var(--muted)">nicht eingehängt</div>`;
+}
+
 function diskCard(st, d, running) {
 	const use = diskUse(st, d);
 	const sm = d.smart;
 	return html`<div class="card">
 		<div class="icon">${svg(d.rm || d.tran === 'usb' ? I.usb : I.disk)}<span class="dot ${sm && !sm.standby && !sm.error && (sm.passed === false || sm.reallocated || sm.pending) ? 'warn' : 'up'}"></span></div>
 		<div class="info">
-			<div class="name">${d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</div>
+			<div class="name">${d.usb || d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</div>
 			<div class="desc">${d.model || 'unbekanntes Modell'} · ${fmtBytes(d.size)}${d.serial ? ' · ' + d.serial : ''}</div>
-			<div class="desc" style="margin-top:8px">${smartLine(sm)}</div>
+			${d.usb ? usbLines(st, d) : html`<div class="desc" style="margin-top:8px">${smartLine(sm)}</div>`}
 			<div class="ip">${use.txt}</div>
-			<div class="acts" style="margin-top:12px">
-				<button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
-				<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button>
-			</div>
+			<div class="acts" style="margin-top:12px">${diskActions(d, running)}</div>
 		</div></div>`;
 }
 
@@ -1510,7 +1556,7 @@ function diskCard(st, d, running) {
 
 function wizardView(st) {
 	const w = S.wiz;
-	const disks = st.disks.filter((d) => !d.rm && d.tran !== 'usb');
+	const disks = st.disks.filter((d) => !d.usb && !d.rm && d.tran !== 'usb');
 	const chosen = st.disks.filter((d) => w.disks.includes(d.name));
 	const steps = ['Platten', 'Aufbau', 'Name', 'Bestätigen'];
 	const smallest = Math.min(...chosen.map((d) => d.size));
@@ -1537,14 +1583,17 @@ function wizardView(st) {
 			<p class="note">Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.</p>`;
 	} else if (w.step === 2) {
 		const fields = w.layout === 'mirror' ? [['__mirror', 'NAME DES SPIEGELS']] : chosen.map((d) => [d.name, `NAME FÜR ${d.name.toUpperCase()} (${fmtBytes(d.size)})`]);
-		body = html`<div class="fields">${fields.map(([k, l]) => html`<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>`)}</div>
+		body = html`<div style="display:grid;gap:14px">${fields.map(([k, l]) => html`<div class="fields">
+				<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>
+				<label class="f"><span>DATEISYSTEM</span><select class="wiz-fs" data-k="${k}">${FS_DISK.map(([v, t]) => html`<option value="${v}"${(w.fs[k] || 'ext4') === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+				<div style="grid-column:1/-1">${fsNote(FS_DISK, w.fs[k] || 'ext4')}</div></div>`)}</div>
 			<p class="note">Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als <code>/mnt/&lt;name&gt;</code>; Freigaben legst du später darauf an.</p>`;
 	} else {
-		const vols = w.layout === 'mirror' ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(smallest)]]
-			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size)]);
-		body = html`<div class="tw"><table class="t" style="min-width:420px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th></tr></thead>
-			<tbody>${vols.map(([n, ds, sz]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td></tr>`)}</tbody></table></div>
-			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}Apps-Bereich auf „${w.layout === 'mirror' ? w.names.__mirror : w.names[w.disks[0]]}“ (falls noch keiner besteht).</p>
+		const vols = w.layout === 'mirror' ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(smallest), w.fs.__mirror || 'ext4']]
+			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size), w.fs[d.name] || 'ext4']);
+		body = html`<div class="tw"><table class="t" style="min-width:480px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th><th>DATEISYSTEM</th></tr></thead>
+			<tbody>${vols.map(([n, ds, sz, f]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td><td>${FS_NAME[f]}</td></tr>`)}</tbody></table></div>
+			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}${(() => { const k = (w.layout === 'mirror' ? ['__mirror'] : w.disks).find((x) => ['ext4', 'btrfs'].includes(w.fs[x] || 'ext4')); return k ? `Apps-Bereich auf „${w.names[k]}“ (falls noch keiner besteht).` : 'kein Apps-Bereich (Pakete und App-Daten brauchen ext4 oder Btrfs).'; })()}</p>
 			<p class="note" style="color:var(--amber)">Beim Klick auf „Einrichten“ werden ${chosen.map((d) => d.name).join(' und ')} vollständig gelöscht.${w.layout === 'mirror' ? ' Die Erst-Synchronisierung läuft danach im Hintergrund (bei großen Platten mehrere Stunden); das Laufwerk ist sofort nutzbar.' : ''}</p>`;
 	}
 	return html`<section class="sec"><div class="panel" style="border-color:var(--dim);box-shadow:var(--glow)">
@@ -1566,7 +1615,10 @@ function wizardCollect() {
 		w.layout = $('input[name=wiz-layout]:checked')?.value || w.layout;
 		if ($('#wiz-swap')) w.swap = +$('#wiz-swap').value;
 	}
-	if (w.step === 2) document.querySelectorAll('.wiz-name').forEach((x) => { w.names[x.dataset.k] = x.value.trim().toLowerCase(); });
+	if (w.step === 2) {
+		document.querySelectorAll('.wiz-name').forEach((x) => { w.names[x.dataset.k] = x.value.trim().toLowerCase(); });
+		document.querySelectorAll('.wiz-fs').forEach((x) => { w.fs[x.dataset.k] = x.value; });
+	}
 }
 
 const NAME_RE = /^[a-z0-9][a-z0-9_-]{0,15}$/;
@@ -2656,7 +2708,7 @@ const ACTIONS = {
 		try { S.shares = await rpc('shareos.shares', 'del', { name: n }); toast(`Freigabe „${n}“ entfernt.`); renderMain(); } catch (e) { toast(e.message, true); }
 	},
 	'u-new'() {
-		S.uEdit = { mode: 'new', data: { name: '', fullname: '', role: 'share', home: S.vols[0]?.name || '', quota: 0, web: true, groups: [] } };
+		S.uEdit = { mode: 'new', data: { name: '', fullname: '', role: 'share', home: S.vols.filter(linuxFs)[0]?.name || '', quota: 0, web: true, groups: [] } };
 		renderMain(); window.scrollTo(0, 0);
 	},
 	'u-edit'(el) { S.uEdit = { mode: 'edit', data: structuredClone(S.acc.users.find((x) => x.name === el.dataset.name)) }; renderMain(); window.scrollTo(0, 0); },
@@ -2727,8 +2779,8 @@ const ACTIONS = {
 	},
 
 	'wiz-start'() {
-		const disks = (S.storage?.disks || []).filter((d) => !d.rm && d.tran !== 'usb').map((d) => d.name);
-		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', swap: 1024, names: { __mirror: 'daten' } };
+		const disks = (S.storage?.disks || []).filter((d) => !d.usb && !d.rm && d.tran !== 'usb').map((d) => d.name);
+		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', swap: 1024, names: { __mirror: 'daten' }, fs: { __mirror: 'ext4' } };
 		renderMain();
 		window.scrollTo(0, 0);
 	},
@@ -2747,19 +2799,37 @@ const ACTIONS = {
 		const w = S.wiz;
 		if (!await confirmDlg('Platten löschen und einrichten?', `${w.disks.join(' und ')} werden vollständig gelöscht. Das lässt sich nicht rückgängig machen.`, 'Löschen & einrichten', true)) return;
 		const args = w.layout === 'mirror'
-			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, swap: w.swap, confirm: true }
-			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d })), swap: w.swap, confirm: true };
+			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, swap: w.swap, fs: w.fs.__mirror || 'ext4', confirm: true }
+			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d, fs: w.fs[d] || 'ext4' })), swap: w.swap, confirm: true };
 		try { await rpc('shareos.storage', 'setup', args); S.wiz = null; toast('Einrichtung gestartet.'); setTimeout(loadStorage, 1000); }
 		catch (e) { toast('Einrichten: ' + e.message, true); }
 	},
 	async format(el) {
 		const disk = el.dataset.disk;
 		const d = S.storage.disks.find((x) => x.name === disk);
-		const name = ((await promptDlg(`${disk} formatieren`, 'Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):', 'daten', 'Weiter')) || '').toLowerCase();
-		if (!name) return;
+		const r = await fsDlg(`${disk} formatieren`, 'Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:', 'daten', FS_DISK, 'ext4', 'Weiter');
+		if (!r) return;
+		const name = r.name.toLowerCase();
 		if (!NAME_RE.test(name)) { toast('Ungültiger Name.', true); return; }
-		if (!await confirmDlg(`${disk} löschen?`, `${disk} (${d?.model || ''}, ${fmtBytes(d?.size)}) wird vollständig gelöscht und als Laufwerk „${name}“ neu eingerichtet.`, 'Löschen & formatieren', true)) return;
-		try { await rpc('shareos.storage', 'setup', { layout: 'single', volumes: [{ name, disk }], confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
+		if (!await confirmDlg(`${disk} löschen?`, `${disk} (${d?.model || ''}, ${fmtBytes(d?.size)}) wird vollständig gelöscht und als Laufwerk „${name}“ (${FS_NAME[r.fs]}) neu eingerichtet.`, 'Löschen & formatieren', true)) return;
+		try { await rpc('shareos.storage', 'setup', { layout: 'single', volumes: [{ name, disk, fs: r.fs }], confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
+		catch (e) { toast('Formatieren: ' + e.message, true); }
+	},
+	async 'usb-eject'(el) {
+		el.disabled = true;
+		try {
+			await rpc('shareos.storage', 'usb_eject', { disk: el.dataset.disk });
+			toast(`${el.dataset.disk} kann jetzt abgezogen werden.`);
+		} catch (e) { toast('Entfernen: ' + e.message, true); el.disabled = false; }
+		setTimeout(loadStorage, 800);
+	},
+	async 'usb-format'(el) {
+		const disk = el.dataset.disk, d = S.storage.disks.find((x) => x.name === disk);
+		const r = await fsDlg(`${disk} formatieren`, `${d?.model || 'USB-Laufwerk'}, ${fmtBytes(d?.size)} – Name (Buchstaben, Ziffern, Leerzeichen, - und _) und Dateisystem:`, 'USB', FS_USB, 'exfat', 'Weiter');
+		if (!r) return;
+		if (!/^[A-Za-z0-9 _-]{1,16}$/.test(r.name)) { toast('Ungültiger Name.', true); return; }
+		if (!await confirmDlg(`${disk} löschen?`, `Alles auf ${disk} wird gelöscht. Danach ist es ein ${FS_NAME[r.fs]}-Laufwerk „${r.name}“.`, 'Löschen & formatieren', true)) return;
+		try { await rpc('shareos.storage', 'usb_format', { disk, fs: r.fs, name: r.name, confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
 		catch (e) { toast('Formatieren: ' + e.message, true); }
 	},
 	async smart(el) {
@@ -2863,6 +2933,7 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('change', (e) => {
 	if (e.target.name === 'wiz-layout' && S.wiz) { wizardCollect(); renderMain(); }
+	if (e.target.classList.contains('wiz-fs') && S.wiz) { wizardCollect(); renderMain(); }
 });
 
 window.addEventListener('hashchange', () => {

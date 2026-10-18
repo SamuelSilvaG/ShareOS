@@ -1,13 +1,15 @@
 #!/bin/sh
 # Assembles RAID arrays, mounts the volumes from /etc/config/storage and
-# sets the disk spindown time.
+# sets the disk spindown time; mounts USB sticks and disks.
 case "$1" in
 	start)
 		printf "Starting storage: "
 		/usr/sbin/shareos-storage boot && echo "OK" || echo "FAIL"
+		/usr/sbin/shareos-usb mount-all >/dev/null 2>&1
 		;;
 	stop)
 		printf "Stopping storage: "
+		/usr/sbin/shareos-usb umount-all >/dev/null 2>&1
 		/usr/sbin/shareos-storage shutdown && echo "OK" || echo "FAIL"
 		;;
 	restart) "$0" stop; "$0" start ;;

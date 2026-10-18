@@ -211,6 +211,14 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Eigene App:** unter Store → *Paket installieren* eine `.sapp`-Datei hochladen (gebaut mit `tools/build.py` aus dem App-Repo). Sie wird als „eigene / ungeprüft“ markiert.
 - **Weitere Quellen** (eigene Kataloge) unter APPS → Quellen.
 
+## 13. Dateisysteme und USB-Laufwerke
+
+- **Speicher → Assistent**: Im Schritt „Name“ gibt es je Laufwerk die Auswahl **ext4** (empfohlen, alle Funktionen), **Btrfs** (ohne Speicherlimit je Benutzer), **exFAT** und **NTFS** (auch an Windows/macOS lesbar; keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps). Die Zusammenfassung zeigt das gewählte Dateisystem. Das gleiche Feld hat „Löschen & formatieren“ an einer Platte.
+- **USB-Stick einstecken**: Er erscheint unter Speicher → Laufwerke als „USB · sdX“ und ist nach wenigen Sekunden unter `/mnt/usb-<name>` eingehängt (FAT32, exFAT, NTFS, ext4, Btrfs). Admins sehen ihn im Dateibrowser.
+- **Sicher entfernen**: schreibt alles weg, hängt aus und schaltet den Stick ab. Danach kommt „sdX kann jetzt abgezogen werden“. Wird ein Stick ohne diesen Knopf abgezogen, räumt ShareOS den Einhängepunkt auf.
+- **Formatieren** (am USB-Laufwerk): Name und Dateisystem wählen – **exFAT** (empfohlen), **FAT32**, **NTFS** oder **ext4**. Der Stick bekommt eine Partition (MBR), damit ihn jeder Rechner, jede Kamera und jeder Fernseher liest.
+- Die Platten in den Schächten werden nie automatisch eingehängt; die USB-Funktionen fassen sie nicht an.
+
 ## Zurück zu Alt-F
 
 1. Die Alt-F-`.bin` für den DNS-320L bereitlegen (z. B. `Alt-F-1.0-DNS-320L-rev-A.bin`).

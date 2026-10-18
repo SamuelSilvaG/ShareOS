@@ -43,7 +43,8 @@ Alt-F easy to use: the stock U-Boot and the stock flash layout.
 
 What is in it:
 
-- **Storage:** setup assistant, ext4, RAID 1, SMART, disk standby, swap
+- **Storage:** setup assistant with a choice of ext4, Btrfs, exFAT or NTFS, RAID 1, SMART, disk standby, swap
+- **USB drives:** mounted when plugged in, *safely remove*, formatting with exFAT, FAT32, NTFS or ext4
 - **Shares and users:** SMB/NFS shares with permissions per user and group, storage limit per user, one account for shares, web interface and apps, import of Alt-F users with their passwords
 - **"My ShareOS":** users with web access get their own area (storage, shares, password, look, file browser, Paperless, cloud)
 - **File browser:** admins for all drives, users for their personal folder (per user)

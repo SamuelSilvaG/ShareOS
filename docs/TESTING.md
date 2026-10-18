@@ -208,6 +208,14 @@ their permissions.
 - **Own app:** upload a `.sapp` file under Store → *Install package* (built with `tools/build.py` from the app repository). It is marked "own / not verified".
 - **More sources** (own catalogs) under APPS → Sources.
 
+## 13. File systems and USB drives
+
+- **Storage → Wizard**: in the "Name" step every volume gets a choice of **ext4** (recommended, everything), **Btrfs** (no storage limit per user), **exFAT** and **NTFS** (also readable on Windows/macOS; no permissions per user, no storage limit, no personal folders, no apps). The summary shows the chosen file system. "Erase & format" on a disk has the same field.
+- **Plug in a USB stick**: it shows up under Storage → Disks as "USB · sdX" and is mounted at `/mnt/usb-<name>` after a few seconds (FAT32, exFAT, NTFS, ext4, Btrfs). Admins see it in the file browser.
+- **Safely remove** writes everything, unmounts and powers the stick down, then shows "sdX can be unplugged now". If a stick is pulled without it, ShareOS cleans up the mount point.
+- **Format** (on a USB drive): choose a name and a file system – **exFAT** (recommended), **FAT32**, **NTFS** or **ext4**. The stick gets one partition (MBR) so every computer, camera and TV can read it.
+- The disks in the bays are never mounted automatically; the USB functions do not touch them.
+
 ## Back to Alt-F
 
 1. Have the Alt-F `.bin` for the DNS-320L ready (e.g. `Alt-F-1.0-DNS-320L-rev-A.bin`).
