@@ -1,0 +1,65 @@
+#!/bin/sh
+# ShareOS app platform: the file an app was opened with
+#   GET  /_shareos/cgi/file?t=<ticket>         file content
+#   GET  /_shareos/cgi/file?t=<ticket>&info=1  {"name","size","mode","app"}
+#   PUT  /_shareos/cgi/file?t=<ticket>         save (only with mode "edit")
+# Tickets come from the rpcd method shareos.files.app_ticket (logged-in
+# session in the admin interface). A ticket names one file, one app and the
+# account whose rights apply; it can be used repeatedly until it expires
+# (8 hours), so an editor can save more than once.
+DIR=/tmp/shareos-appfiles
+MAX=$((64 * 1048576))
+
+reply() {   # status json
+	printf 'Status: %s\r\nContent-Type: application/json\r\nCache-Control: no-store\r\n\r\n%s\n' "$1" "$2"
+	exit 0
+}
+
+t=; info=
+IFS='&'
+for kv in $QUERY_STRING; do
+	case "$kv" in t=*) t=${kv#t=} ;; info=1) info=1 ;; esac
+done
+unset IFS
+case "$t" in *[!0-9a-f]*|'') reply '403 Forbidden' '{"error":"invalid ticket"}' ;; esac
+[ ${#t} -eq 32 ] && [ -f "$DIR/$t" ] || reply '403 Forbidden' '{"error":"invalid ticket"}'
+{ read -r mode; read -r user; read -r path; read -r exp; read -r app; read -r enc; } < "$DIR/$t"
+[ "$(date +%s)" -le "${exp:-0}" ] || { rm -f "$DIR/$t"; reply '403 Forbidden' '{"error":"ticket expired"}'; }
+
+q() { printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"; }
+as_user() {   # shell command (with the account's rights)
+	if [ "$user" = root ]; then sh -c "$1"
+	else su -s /bin/sh "$user" -c "$1"; fi
+}
+P=$(q "$path")
+
+case "$REQUEST_METHOD" in
+	GET)
+		size=$(as_user "stat -c %s -- $P" 2>/dev/null) || reply '404 Not Found' '{"error":"not found"}'
+		if [ -n "$info" ]; then
+			reply '200 OK' "{\"name\":\"$enc\",\"size\":$size,\"mode\":\"$mode\",\"app\":\"$app\"}"
+		fi
+		printf 'Status: 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %s\r\n' "$size"
+		printf 'Cache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n'
+		as_user "cat -- $P"
+		;;
+	PUT|POST)
+		[ "$mode" = edit ] || reply '403 Forbidden' '{"error":"opened read-only"}'
+		len=${CONTENT_LENGTH:-0}
+		case "$len" in *[!0-9]*|'') reply '411 Length Required' '{"error":"length required"}' ;; esac
+		[ "$len" -le $MAX ] || reply '413 Payload Too Large' '{"error":"file too large"}'
+		part=$(q "${path%/*}/.${path##*/}.part")
+		# write next to the file first, then copy over it: owner and rights stay
+		if head -c "$len" | as_user "umask 077; cat > $part"; then
+			got=$(as_user "stat -c %s -- $part" 2>/dev/null)
+			if [ "$got" = "$len" ] && as_user "cat -- $part > $P && rm -f -- $part"; then
+				reply '200 OK' "{\"ok\":true,\"size\":$len}"
+			fi
+		fi
+		as_user "rm -f -- $part"
+		reply '500 Internal Server Error' '{"error":"saving failed (storage limit or drive full?)"}'
+		;;
+	*)
+		reply '405 Method Not Allowed' '{"error":"method not allowed"}'
+		;;
+esac

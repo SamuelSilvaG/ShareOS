@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "চেকসাম (.SHA256, ঐচ্ছিক)",
 		"Hochgeladen – das Paket wird geprüft.": "আপলোড হয়েছে – প্যাকেজ যাচাই করা হচ্ছে।",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "আপলোড করা ফাইল – যাচাই হয়েছে: .sha256 ফাইল অনুযায়ী SHA-256, সব অংশের চেকসাম, এই ডিভাইসের উপযোগী। সেটিংস ও প্যাকেজ থেকে যায়।",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "আপলোড করা ফাইল – যাচাই হয়েছে: সব অংশের চেকসাম, এই ডিভাইসের উপযোগী (.sha256 ফাইল ছাড়া)। সেটিংস ও প্যাকেজ থেকে যায়।"
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "আপলোড করা ফাইল – যাচাই হয়েছে: সব অংশের চেকসাম, এই ডিভাইসের উপযোগী (.sha256 ফাইল ছাড়া)। সেটিংস ও প্যাকেজ থেকে যায়।",
+		"Öffnen": "খুলুন",
+		"In eigenem Fenster ↗": "নিজস্ব উইন্ডোতে ↗",
+		"In ShareOS anzeigen": "ShareOS-এ দেখানো হয়",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "ShareOS ইন্টারফেসের ভেতরে একটি পেজ হিসেবে দেখানো যেতে পারে (নিজস্ব উইন্ডোর বদলে)।"
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1: অনুমতি"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"$1 দিয়ে খুলুন"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"খুলুন: $1"
 		]
 	],
 	"words": [

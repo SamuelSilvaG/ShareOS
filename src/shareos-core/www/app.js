@@ -193,6 +193,7 @@ function applyTheme() {
 	document.body.style.background = bg;
 	$('meta[name=theme-color]')?.setAttribute('content', bg || '#1b2433');
 	tintFavicon();
+	if (typeof themeToApps === 'function') themeToApps();
 }
 
 // favicon = the logo symbol in the accent colour
@@ -352,7 +353,7 @@ async function logout() {
 	S.sid = null;
 	store.del('sid');
 	stopPolling();
-	S.me = null; S.fb = null;
+	S.me = null; S.fb = null; S.fbApps = null; closeEmbed();
 	applyOwnLook();
 	renderLogin();
 }
@@ -1330,7 +1331,7 @@ function renderUserHome() {
 	</section>
 	${(m.apps || []).length ? html`<section class="sec">
 		<h2 class="gh">MEINE APPS <span>${m.apps.length}</span></h2>
-		<div class="grid">${m.apps.map((a) => html`<a class="card applink" href="${appUrl(a, m.apps_server)}" target="_blank" rel="noopener">
+		<div class="grid">${m.apps.map((a) => html`<a class="card applink" href="${appLaunchUrl(a, m.apps_server)}" target="_blank" rel="noopener" data-act="app-launch" data-id="${a.id}">
 			<div class="icon">${appIcon(a, m.apps_server)}</div>
 			<div class="info"><div class="name">${a.name} ↗</div><div class="desc">${txtOf(a.description)}</div></div></a>`)}</div>
 	</section>` : ''}
@@ -3104,6 +3105,7 @@ setInterval(() => {
 
 function fbInit() {
 	if (!S.fb) S.fb = { roots: null, root: '', path: '', data: null, sel: new Set(), hidden: false, uploads: [], err: null };
+	if (!S.fbApps) { S.fbApps = { apps: [] }; loadOpeners(); }
 	return S.fb;
 }
 
@@ -3177,11 +3179,13 @@ function fbInner() {
 				return html`<tr class="${f.sel.has(e.name) ? 'sel' : ''}">
 					<td><input type="checkbox" class="fb-sel" data-name="${e.name}" aria-label="${e.name} auswählen"${f.sel.has(e.name) ? raw(' checked') : ''}></td>
 					<td class="nm">${dir ? html`<button type="button" class="lnk" data-act="fb-open" data-name="${e.name}">${svg(I.folder)}<span>${e.name}</span></button>`
-						: e.type === 'file' ? html`<button type="button" class="lnk" data-act="fb-dl" data-name="${e.name}" title="Herunterladen">${svg(I.doc)}<span>${e.name}</span></button>`
+						: e.type === 'file' ? (fbOpeners(e.name)[0]
+							? html`<button type="button" class="lnk" data-act="fb-app" data-name="${e.name}" data-app="${fbOpeners(e.name)[0].id}" title="Öffnen mit ${fbOpeners(e.name)[0].name}">${svg(I.doc)}<span>${e.name}</span></button>`
+							: html`<button type="button" class="lnk" data-act="fb-dl" data-name="${e.name}" title="Herunterladen">${svg(I.doc)}<span>${e.name}</span></button>`)
 						: html`<span class="lnk mut">${svg(I.doc)}<span>${e.name}</span></span>`}</td>
 					<td class="r mut">${dir ? '' : fmtBytes(e.size)}</td>
 					<td class="mut">${fmtTime(e.mtime)}</td>
-					<td class="r">${e.type === 'file' ? html`<button class="btn sm ghost" type="button" data-act="fb-dl" data-name="${e.name}" title="Herunterladen" aria-label="${e.name} herunterladen">${svg(I.dl)}</button>` : ''}</td></tr>`;
+					<td class="r">${e.type === 'file' ? html`${fbOpeners(e.name).map((a) => html`<button class="btn sm ghost" type="button" data-act="fb-app" data-name="${e.name}" data-app="${a.id}" title="Öffnen mit ${a.name}">${a.name} ↗</button> `)}<button class="btn sm ghost" type="button" data-act="fb-dl" data-name="${e.name}" title="Herunterladen" aria-label="${e.name} herunterladen">${svg(I.dl)}</button>` : ''}</td></tr>`;
 			})}</tbody></table></div>`
 			: html`<div class="empty">${svg(I.folder)}<span>Dieser Ordner ist leer.</span></div>`}
 		${d.truncated ? html`<p class="note">Es werden nur die ersten 2000 Einträge gezeigt.</p>` : ''}
@@ -3197,6 +3201,31 @@ async function fbDownload(name) {
 		a.href = r.url; a.download = name;
 		document.body.append(a); a.click(); a.remove();
 	} catch (e) { toast('Herunterladen: ' + e.message, true); }
+}
+
+// apps that open this file (edit before view), from shareos.files openers
+function fbOpeners(name) {
+	const m = /(\.[a-z0-9]{1,10})$/.exec(name.toLowerCase());
+	if (!m || !S.fbApps?.apps) return [];
+	const hit = (a, mode) => (a.opens || []).some((o) => o.ext.includes(m[1]) && (!mode || o.mode === mode));
+	return [...S.fbApps.apps.filter((a) => hit(a, 'edit')), ...S.fbApps.apps.filter((a) => !hit(a, 'edit') && hit(a))];
+}
+async function loadOpeners() {
+	try { S.fbApps = await rpc('shareos.files', 'openers'); } catch (e) { S.fbApps = { apps: [] }; }
+	if (S.fb?.data) fbRender();
+}
+
+// open a file in an app: the window must be opened right away (popup blockers),
+// the address follows when the ticket is there
+async function fbOpenIn(appId, name) {
+	const a = (S.fbApps?.apps || []).find((x) => x.id === appId);
+	if (!a) return;
+	const w = window.open('about:blank', a.window ? 'sosfile-' + Date.now() : '_blank', winFeatures(a));
+	try {
+		const r = await rpc('shareos.files', 'app_ticket', { root: S.fb.root, path: S.fb.path, name, app: appId });
+		const url = `${appBase(r)}/${r.app}/${r.entry || 'index.html'}?${appParams({ file: r.ticket, name })}`;
+		if (w) { w.location.href = url; appWins.add(w); } else location.href = url;
+	} catch (e) { w?.close(); toast('Öffnen: ' + e.message, true); }
 }
 
 function fbSend(url, file, onpct) {
@@ -3260,6 +3289,9 @@ Object.assign(ACTIONS, {
 	'fb-crumb'(el) { fbLoad(el.dataset.p); },
 	'fb-up'() { const p = S.fb.path.split('/'); p.pop(); fbLoad(p.join('/')); },
 	'fb-dl'(el) { fbDownload(el.dataset.name); },
+	'fb-app'(el) { fbOpenIn(el.dataset.app, el.dataset.name); },
+	'app-launch'(el) { const a = findApp(el.dataset.id); if (a) launchApp(a); },
+	'embed-close'() { closeEmbed(); },
 	async 'fb-mkdir'() {
 		const name = await promptDlg('Neuer Ordner', 'Name des neuen Ordners:', '', 'Anlegen', 'text', 255);
 		if (!name) return;
@@ -3318,6 +3350,52 @@ function appIcon(a, srv) {
 	const src = a.icon_url || (a.icon ? `${appBase(srv)}/${a.id}/${a.icon}` : '');
 	return src ? html`<img class="appicon" src="${src}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'appicon ph'}))">` : html`<span class="appicon ph"></span>`;
 }
+
+// apps get the look and the address of this interface (for messages) in the URL
+function appParams(extra = {}) {
+	return new URLSearchParams({ theme: effTheme(), accent: S.accent, origin: location.origin, ...extra }).toString();
+}
+const appLaunchUrl = (a, srv, extra) => `${appUrl(a, srv)}?${appParams(extra)}`;
+const appWins = new Set();
+const winFeatures = (a) => (a.window ? `popup,width=${a.window.width || 900},height=${a.window.height || 640}` : '');
+const findApp = (id) => (S.apps?.installed?.apps || []).find((x) => x.id === id) || (S.me?.apps || []).find((x) => x.id === id)
+	|| (S.fbApps?.apps || []).find((x) => x.id === id);
+const appSrv = () => S.apps?.installed || S.me?.apps_server || S.fbApps;
+
+// apps with the permission "embed" are shown inside ShareOS, the others get their own window
+function launchApp(a) {
+	if ((a.permissions || []).includes('embed')) { embedApp(a); return; }
+	const w = window.open(appLaunchUrl(a, appSrv()), a.window ? 'sosapp-' + a.id : '_blank', winFeatures(a));
+	if (w) appWins.add(w);
+}
+
+function embedApp(a) {
+	closeEmbed();
+	const url = appLaunchUrl(a, appSrv());
+	const box = document.createElement('div');
+	box.className = 'embedwrap';
+	box.innerHTML = html`<div class="embedbox panel" role="dialog" aria-label="${a.name}"><div class="ph"><span class="pt">${a.name}</span>
+		<span class="ml"></span><a class="btn sm ghost" href="${url}" target="_blank" rel="noopener">In eigenem Fenster ↗</a>
+		<button class="btn sm ghost" type="button" data-act="embed-close" aria-label="Schließen">✕</button></div>
+		<iframe src="${url}" title="${a.name}" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-downloads allow-modals"></iframe></div>`.s;
+	$('#app').append(box);
+	S.embed = box;
+}
+function closeEmbed() { S.embed?.remove(); S.embed = null; }
+
+// tell open app windows and embedded apps about a new look
+function themeToApps() {
+	const msg = { sos: 'theme', theme: effTheme(), accent: S.accent }, origin = appBase(appSrv());
+	for (const w of appWins) { if (w.closed) appWins.delete(w); else try { w.postMessage(msg, origin); } catch (e) { } }
+	try { $('.embedwrap iframe')?.contentWindow?.postMessage(msg, origin); } catch (e) { }
+}
+
+// messages from apps: a file was saved -> refresh the file list
+window.addEventListener('message', (ev) => {
+	if (!appSrv() || ev.origin !== appBase(appSrv())) return;
+	const m = ev.data || {};
+	if (m.sos === 'file-saved' && S.fb?.data) fbLoad();
+});
 
 async function loadApps(what = ['installed', 'catalog', 'store']) {
 	S.apps = S.apps || {};
@@ -3403,7 +3481,7 @@ function appInstalled() {
 
 function appActions(a, upd) {
 	const busy = !!(S.apps.job && JOB_TXT[S.apps.job.state]);
-	return html`<a class="btn sm" href="${appUrl(a)}" target="_blank" rel="noopener">Öffnen ↗</a>
+	return html`<button class="btn sm" type="button" data-act="app-launch" data-id="${a.id}">${(a.permissions || []).includes('embed') ? 'Öffnen' : 'Öffnen ↗'}</button>
 		${upd ? html`<button class="btn sm primary" type="button" data-act="app-install" data-id="${a.id}" data-v="${upd.latest}" ${busy ? 'disabled' : ''}>${svg(I.dl)}Aktualisieren</button>` : ''}
 		${(a.jobs || []).length ? html`<button class="btn sm ghost" type="button" data-act="app-jobs" data-id="${a.id}">${svg(I.clock)}Aufgaben</button>` : ''}
 		<button class="btn sm ghost" type="button" data-act="app-users" data-id="${a.id}">${svg(I.users)}Benutzer</button>
@@ -3411,8 +3489,9 @@ function appActions(a, upd) {
 }
 
 // permissions an app can ask for (app.json "permissions")
-const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben' };
-const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.' };
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen' };
+const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.',
+	embed: 'Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).' };
 
 function appJobsEditor(id) {
 	const a = (S.apps.installed.apps || []).find((x) => x.id === id);

@@ -1,0 +1,114 @@
+/*
+ * ShareOS app theme – the look of the ShareOS interface for web apps.
+ *   <link rel="stylesheet" href="/_shareos/theme.css">
+ *   <script src="/_shareos/app.js"></script>   (sets data-theme / data-accent)
+ *
+ * Colours: --sos-bg, --sos-panel, --sos-bar, --sos-line, --sos-accent,
+ * --sos-soft, --sos-dim, --sos-text, --sos-muted, --sos-ok, --sos-warn,
+ * --sos-err, --sos-rgb (accent as r,g,b). Light/dark: <html data-theme>,
+ * accent: <html data-accent="blue|green|red|white">.
+ * Building blocks: .sos-app, .sos-titlebar, .sos-menubar (+ .sos-menu),
+ * .sos-toolbar, .sos-statusbar, .sos-btn, .sos-input, .sos-dialog.
+ */
+:root,
+:root[data-accent="blue"] {
+	--sos-bg: #06090d; --sos-panel: #0b111a; --sos-bar: #0e1726; --sos-line: #15253b;
+	--sos-accent: #3da5ff; --sos-soft: #2b8ad9; --sos-dim: #1d4f80; --sos-rgb: 61, 165, 255;
+	--sos-text: #c6dff5; --sos-muted: #6f90ad;
+}
+:root[data-accent="green"] {
+	--sos-bg: #070b08; --sos-panel: #0c140f; --sos-bar: #0f1d14; --sos-line: #163323;
+	--sos-accent: #3dff8a; --sos-soft: #2bcf6c; --sos-dim: #1d6e3e; --sos-rgb: 61, 255, 138;
+	--sos-text: #b8f5cf; --sos-muted: #6aa883;
+}
+:root[data-accent="red"] {
+	--sos-bg: #0b0707; --sos-panel: #140c0d; --sos-bar: #1d0f11; --sos-line: #351719;
+	--sos-accent: #ff4d5e; --sos-soft: #e03a4b; --sos-dim: #7a2029; --sos-rgb: 255, 77, 94;
+	--sos-text: #f5c8cc; --sos-muted: #a87074;
+}
+:root[data-accent="white"] {
+	--sos-bg: #08090a; --sos-panel: #101214; --sos-bar: #16191c; --sos-line: #262a2e;
+	--sos-accent: #f2f4f5; --sos-soft: #c9cdd1; --sos-dim: #5a6066; --sos-rgb: 242, 244, 245;
+	--sos-text: #e3e6e8; --sos-muted: #8d9399;
+}
+:root { --sos-ok: #3dff8a; --sos-warn: #e6c25a; --sos-err: #ff5f5f; color-scheme: dark; }
+
+:root[data-theme="light"],
+:root[data-theme="light"][data-accent="blue"] {
+	--sos-bg: #f3f6f9; --sos-panel: #fff; --sos-bar: #eef4fb; --sos-line: #d6e1ee;
+	--sos-accent: #1f6fd1; --sos-soft: #1a5bab; --sos-dim: #a9c7ee; --sos-rgb: 31, 111, 209;
+	--sos-text: #111d2b; --sos-muted: #53637a;
+}
+:root[data-theme="light"][data-accent="green"] {
+	--sos-bg: #f3f7f4; --sos-panel: #fff; --sos-bar: #eef8f2; --sos-line: #d3e6da;
+	--sos-accent: #0b7f3b; --sos-soft: #13803f; --sos-dim: #8fcfaa; --sos-rgb: 15, 157, 74;
+	--sos-text: #12261a; --sos-muted: #4f6a5a;
+}
+:root[data-theme="light"][data-accent="red"] {
+	--sos-bg: #f8f4f4; --sos-panel: #fff; --sos-bar: #fbefef; --sos-line: #ecd6d8;
+	--sos-accent: #c22a3a; --sos-soft: #b02434; --sos-dim: #eba7ae; --sos-rgb: 211, 47, 63;
+	--sos-text: #2a1215; --sos-muted: #74565a;
+}
+:root[data-theme="light"][data-accent="white"] {
+	--sos-bg: #f5f6f7; --sos-panel: #fff; --sos-bar: #f0f1f2; --sos-line: #dde0e3;
+	--sos-accent: #1d2125; --sos-soft: #3a4046; --sos-dim: #b9bec3; --sos-rgb: 29, 33, 37;
+	--sos-text: #15181b; --sos-muted: #61676d;
+}
+:root[data-theme="light"] { --sos-ok: #0f8a42; --sos-warn: #8a6200; --sos-err: #c93030; color-scheme: light; }
+
+:root {
+	--sos-font: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+	--sos-radius: 8px;
+	--sos-bar-h: 34px;
+}
+
+/* the page */
+.sos-app { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background: var(--sos-bg); color: var(--sos-text); font: 14px/1.45 var(--sos-font); }
+.sos-app *, .sos-app *::before, .sos-app *::after { box-sizing: border-box; }
+.sos-app a { color: var(--sos-soft); }
+.sos-app a:hover { color: var(--sos-accent); }
+.sos-main { flex: 1; min-height: 0; overflow: auto; }
+
+/* title bar */
+.sos-titlebar { display: flex; align-items: center; gap: 10px; min-height: var(--sos-bar-h); padding: 0 12px; background: var(--sos-bar); border-bottom: 1px solid var(--sos-line); color: var(--sos-accent); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.sos-titlebar img, .sos-titlebar svg { width: 18px; height: 18px; }
+.sos-titlebar .sos-title-file { color: var(--sos-muted); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.sos-titlebar .sos-dirty::after { content: " ●"; color: var(--sos-warn); }
+
+/* classic menu bar: File | Edit | View … */
+.sos-menubar { display: flex; align-items: stretch; gap: 2px; min-height: 30px; padding: 0 6px; background: var(--sos-panel); border-bottom: 1px solid var(--sos-line); font-size: 13px; user-select: none; position: relative; z-index: 20; }
+.sos-menubar > .sos-menuitem { position: relative; }
+.sos-menubar > .sos-menuitem > button { height: 100%; padding: 0 10px; border: 0; background: none; color: var(--sos-text); font: inherit; cursor: pointer; border-radius: 4px; }
+.sos-menubar > .sos-menuitem > button:hover, .sos-menubar > .sos-menuitem.open > button, .sos-menubar > .sos-menuitem > button:focus-visible { background: rgba(var(--sos-rgb), .12); color: var(--sos-accent); outline: none; }
+.sos-menu { position: absolute; top: 100%; left: 0; min-width: 220px; margin: 2px 0 0; padding: 4px; list-style: none; background: var(--sos-panel); border: 1px solid var(--sos-line); border-radius: var(--sos-radius); box-shadow: 0 8px 24px rgba(0, 0, 0, .35); display: none; }
+.sos-menuitem.open > .sos-menu { display: block; }
+.sos-menu button { display: flex; width: 100%; justify-content: space-between; gap: 24px; padding: 6px 10px; border: 0; background: none; color: var(--sos-text); font: inherit; text-align: left; border-radius: 4px; cursor: pointer; }
+.sos-menu button:hover, .sos-menu button:focus-visible { background: rgba(var(--sos-rgb), .12); color: var(--sos-accent); outline: none; }
+.sos-menu button:disabled { color: var(--sos-muted); opacity: .6; cursor: default; background: none; }
+.sos-menu kbd { font: inherit; font-size: 11px; color: var(--sos-muted); }
+.sos-menu hr { border: 0; border-top: 1px solid var(--sos-line); margin: 4px 2px; }
+.sos-menu .sos-check::before { content: "✓ "; color: var(--sos-accent); }
+
+/* tool bar and status bar */
+.sos-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 8px; background: var(--sos-panel); border-bottom: 1px solid var(--sos-line); }
+.sos-statusbar { display: flex; gap: 16px; align-items: center; min-height: 26px; padding: 0 12px; background: var(--sos-bar); border-top: 1px solid var(--sos-line); color: var(--sos-muted); font-size: 12px; }
+.sos-statusbar > :last-child { margin-left: auto; }
+
+/* controls */
+.sos-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border: 1px solid var(--sos-line); border-radius: var(--sos-radius); background: var(--sos-panel); color: var(--sos-text); font: 600 12px var(--sos-font); letter-spacing: .04em; cursor: pointer; }
+.sos-btn:hover { border-color: var(--sos-dim); color: var(--sos-accent); }
+.sos-btn.primary { background: var(--sos-accent); border-color: var(--sos-accent); color: var(--sos-bg); }
+.sos-input { min-height: 32px; padding: 0 10px; border: 1px solid var(--sos-line); border-radius: var(--sos-radius); background: var(--sos-bg); color: var(--sos-text); font: 13px var(--sos-font); }
+.sos-input:focus { outline: none; border-color: var(--sos-accent); }
+.sos-dialog { border: 1px solid var(--sos-line); border-radius: 12px; background: var(--sos-panel); color: var(--sos-text); padding: 18px 20px; box-shadow: 0 16px 48px rgba(0, 0, 0, .45); }
+.sos-dialog::backdrop { background: rgba(0, 0, 0, .5); }
+
+/* scroll bars */
+.sos-app { scrollbar-color: var(--sos-dim) var(--sos-bg); }
+.sos-app ::-webkit-scrollbar { width: 12px; height: 12px; }
+.sos-app ::-webkit-scrollbar-track { background: var(--sos-bg); }
+.sos-app ::-webkit-scrollbar-thumb { background: var(--sos-dim); border: 3px solid var(--sos-bg); border-radius: 8px; }
+.sos-app ::-webkit-scrollbar-thumb:hover { background: var(--sos-soft); }
+
+/* shown inside the ShareOS interface (permission "embed") */
+:root[data-embedded] .sos-titlebar { display: none; }

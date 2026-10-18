@@ -1098,3 +1098,9 @@ E870	SUMA DE COMPROBACIÓN (.SHA256, OPCIONAL)
 E871	Subido – se está comprobando el paquete.
 E872	Archivo subido – comprobado: SHA-256 del archivo .sha256, sumas de todas las partes, apto para este dispositivo. Los ajustes y paquetes se conservan.
 E873	Archivo subido – comprobado: sumas de todas las partes, apto para este dispositivo (sin archivo .sha256). Los ajustes y paquetes se conservan.
+E874	Abrir
+E875	En su propia ventana ↗
+E876	Se muestra en ShareOS
+E877	Puede mostrarse como página dentro de la interfaz de ShareOS (en lugar de en su propia ventana).
+P188	Abrir con $1
+P189	Abrir: $1

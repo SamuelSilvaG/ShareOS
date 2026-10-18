@@ -229,6 +229,13 @@ their permissions.
 - **System → Time:** the box's clock runs live in its time zone. Change the time zone, switch NTP off and on, enter own time servers (e.g. `fritz.box`), *Sync now*. With NTP off the clock can be set by hand or taken from the browser. Logs then show the local time.
 - **System → Appearance → Language:** 10 languages (English, German, Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian). Arabic switches the page to right to left. Translations other than German/English are machine-made – please report mistakes.
 
+## 14a. Open files in apps
+
+- Install **Webpad 1.1** (store). In the file browser a `.txt` file shows **Webpad ↗**; click it (or the file name): Webpad opens in its own window with the file.
+- Change something, **Ctrl+S**: the message says "saved"; the file browser shows the new size and time. Owner and rights of the file stay.
+- Look: switch light/dark or the accent colour in ShareOS – an open app follows.
+- Users with a personal folder can do the same with their files.
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:

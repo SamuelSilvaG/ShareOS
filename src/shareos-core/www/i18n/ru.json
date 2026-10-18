@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "КОНТРОЛЬНАЯ СУММА (.SHA256, НЕОБЯЗАТЕЛЬНО)",
 		"Hochgeladen – das Paket wird geprüft.": "Загружено – пакет проверяется.",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Загруженный файл – проверено: SHA-256 по файлу .sha256, контрольные суммы всех частей, подходит для этого устройства. Настройки и пакеты сохраняются.",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Загруженный файл – проверено: контрольные суммы всех частей, подходит для этого устройства (без файла .sha256). Настройки и пакеты сохраняются."
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Загруженный файл – проверено: контрольные суммы всех частей, подходит для этого устройства (без файла .sha256). Настройки и пакеты сохраняются.",
+		"Öffnen": "Открыть",
+		"In eigenem Fenster ↗": "В отдельном окне ↗",
+		"In ShareOS anzeigen": "Показывается в ShareOS",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Может отображаться как страница в интерфейсе ShareOS (вместо отдельного окна)."
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1: разрешения"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"Открыть в $1"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"Открыть: $1"
 		]
 	],
 	"words": [

@@ -1,6 +1,8 @@
 #!/bin/sh
 # Web server for ShareOS web apps: /www-apps on its own port (apps.store.port),
 # another origin than the admin interface on port 80/443.
+# /_shareos/ (from the firmware): theme.css and app.js for the apps, and
+# /_shareos/cgi/file – the file an app was opened with (ticket).
 PID=/var/run/uhttpd-apps.pid
 DIR=/www-apps
 
@@ -18,7 +20,7 @@ X
 		[ -s "$crt" ] && [ -s "$key" ] && tls="-s $(uci -q get apps.store.https_port || echo 8444) -C $crt -K $key"
 	fi
 	start-stop-daemon -S -q -b -m -p $PID -x /usr/bin/uhttpd -- \
-		-f -h $DIR -r ShareOS-Apps -p "$port" $tls -S -D -t 30 -T 30 -k 20 -n 3 -N 50
+		-f -h $DIR -r ShareOS-Apps -p "$port" $tls -x /_shareos/cgi -S -D -t 300 -T 30 -k 20 -n 3 -N 50
 }
 
 stop() {

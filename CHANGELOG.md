@@ -9,6 +9,10 @@ pre-releases for test devices only.
 - **Update without internet:** System → Firmware → *Install firmware file* also takes the `.sysupgrade.tar` of a release (best with its `.sha256`). It is checked like an update from GitHub (checksums of all parts, made for this box, sizes) and then installed with the usual button – for boxes without internet or with GitHub blocked. Older and newer versions can be installed this way.
 - **Reset button** (back): held 5–10 s = access reset (network back to DHCP with fallback 192.168.0.32, root password `shareos`, web interface over http with a new self-signed certificate; everything else stays), 15 s or longer = factory reset (settings and packages; the data on the disks stays), 10–15 s = cancel. The orange USB LED shows the zone while holding. Before, the button did nothing.
 - **USB button** (front): safely removes all USB drives.
+- **Open files in apps:** the file browser shows "<App> ↗" next to files an installed app can open (e.g. Webpad for text files); a click on the name opens the file there, in a window of the app's size. The app gets a ticket for exactly this file and the user's rights, saving writes back (owner and rights of the file stay).
+- **App platform:** apps declare `window` (size) and `opens` (file types, view/edit) in `app.json`; the apps web server serves `/_shareos/theme.css` (look of ShareOS, light/dark, accent colour, title/menu/status bars like Notepad++, scroll bars) and `/_shareos/app.js` (menu bar, opened file, messages between apps). Apps get the user's look and follow changes.
+- New permission **`embed`**: apps that only have settings are shown inside the ShareOS interface instead of their own window.
+- Fix: after installing a certificate the apps web server (port 8081/8444) did not come back until the next restart.
 
 ## 0.1.0-beta.8
 

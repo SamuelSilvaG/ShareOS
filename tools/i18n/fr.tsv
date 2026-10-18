@@ -1098,3 +1098,9 @@ E870	SOMME DE CONTRÔLE (.SHA256, FACULTATIF)
 E871	Téléversé – le paquet est en cours de vérification.
 E872	Fichier téléversé – vérifié : SHA-256 du fichier .sha256, sommes de toutes les parties, adapté à cet appareil. Les réglages et paquets sont conservés.
 E873	Fichier téléversé – vérifié : sommes de toutes les parties, adapté à cet appareil (sans fichier .sha256). Les réglages et paquets sont conservés.
+E874	Ouvrir
+E875	Dans sa propre fenêtre ↗
+E876	Affichée dans ShareOS
+E877	Peut être affichée comme une page dans l'interface ShareOS (au lieu de sa propre fenêtre).
+P188	Ouvrir avec $1
+P189	Ouvrir : $1
