@@ -806,7 +806,9 @@
 		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "No user with web access – set one up under Shares → Users.",
 		"braucht neuere ShareOS": "needs a newer ShareOS",
 		"noch nicht geladen": "not loaded yet",
-		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Web apps run on their own port (8081 / 8444 for HTTPS) – apart from this interface, so an app cannot use your login. Anyone who knows the address can open a web app on the network; “visible to” decides who sees it in “My ShareOS”."
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Web apps run on their own port (8081 / 8444 for HTTPS) – apart from this interface, so an app cannot use your login. Anyone who knows the address can open a web app on the network; “visible to” decides who sees it in “My ShareOS”.",
+		"Installation abgeschlossen": "Installation finished",
+		"(100 %) – jetzt neu starten.": "(100 %) – restart now."
 	},
 	"patterns": [
 		[

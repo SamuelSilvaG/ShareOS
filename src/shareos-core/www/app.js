@@ -1627,7 +1627,7 @@ const SYS = {
 		const prog = u.state === 'downloading' && u.progress?.total ? pct(u.progress.bytes, u.progress.total) : null;
 		const bootOk = i.boot === 'flash';
 		return html`
-		${u.pending_reboot || u.state === 'flashed' ? html`<div class="banner">${svg(I.reboot)}<span style="flex:1;min-width:240px"><b>Neustart nötig</b> – das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).</span><button class="btn primary" type="button" data-act="reboot">Jetzt neu starten</button></div>` : ''}
+		${(u.pending_reboot || u.state === 'flashed') && !busy ? html`<div class="banner">${svg(I.reboot)}<span style="flex:1;min-width:240px"><b>Neustart nötig</b> – das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).</span><button class="btn primary" type="button" data-act="reboot">Jetzt neu starten</button></div>` : ''}
 		${u.last_upgrade ? html`<div class="banner" style="${u.last_upgrade.startsWith('ok') ? 'border-color:var(--dim)' : ''}">${svg(u.last_upgrade.startsWith('ok') ? I.ok : I.warn)}<span>Letztes Update: <b>${u.last_upgrade.startsWith('ok') ? 'erfolgreich installiert (' + u.last_upgrade.slice(3) + ')' : u.last_upgrade}</b></span></div>` : ''}
 		${!bootOk && i.boot ? html`<div class="banner">${svg(I.warn)}<span>Die Box läuft gerade nicht aus dem Flash (<b>${i.boot}</b>). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.</span></div>` : ''}
 		<div class="split">
@@ -1648,6 +1648,7 @@ const SYS = {
 						${prog != null ? html`<div class="bar big busy" style="margin-top:12px"><i style="width:${prog.toFixed(0)}%"></i></div><p class="note">${fmtBytes(u.progress.bytes)} von ${fmtBytes(u.progress.total)}</p>` : ''}
 						${u.state === 'verifying' ? html`<div class="bar big busy" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Paket wird geprüft …</b> SHA-256 und Inhalt, dauert etwa eine halbe Minute.</p>` : ''}
 						${u.state === 'flashing' ? (() => { const [fp, fl] = FLASH_STEPS[u.step] || [2, 'Wird gestartet']; return html`<div class="bar big busy" style="margin-top:12px"><i style="width:${fp}%"></i></div><p class="note"><b>${fl} …</b> (${fp} %) – Box <b>nicht ausschalten</b>, das dauert etwa 1–2 Minuten.</p>`; })() : ''}
+						${u.state === 'flashed' ? html`<div class="bar big" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Installation abgeschlossen</b> (100 %) – jetzt neu starten.</p>` : ''}
 						${u.state === 'ready' ? html`<div class="acts" style="margin-top:14px"><button class="btn primary" type="button" data-act="apply" data-tag="${u.release.tag}" ${bootOk ? '' : 'disabled'}>${svg(I.dl)}${u.release.version} installieren</button><button class="btn ghost" type="button" data-act="cancel">Verwerfen</button></div>
 							<p class="note">Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.</p>` : ''}`
 					: ''}
