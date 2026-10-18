@@ -95,6 +95,24 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 15:10 | Jan: USB-Sticks sicher entfernen, und beim Formatieren soll das **Dateisystem** wählbar sein – für Sticks und Platten. Für die Platten wählt er ext4, Btrfs, exFAT und NTFS, für USB exFAT, FAT32, NTFS und ext4. USB-Laufwerke werden beim Einstecken eingehängt und haben „Sicher entfernen“ und „Formatieren“. |
 | 16:20 | Jan testet `beta.6`: Der APPS-Bereich wirft Admins raus – die Funktionen fehlten in den Zugriffsregeln; ein neuer CI-Check prüft jetzt, dass jede Funktion abgedeckt ist. Das Protokoll stand in UTC (musl schreibt UTC-Zeitstempel), jetzt in Ortszeit. |
 | 16:30 | Jan wünscht **Zeiteinstellungen unter System** und die **10 häufigsten Sprachen**. Neue Seite System → Zeit (Zeitzone, NTP mit eigenen Servern, Uhr von Hand) und acht neue Sprachen von Claude übersetzt, Arabisch mit Rechts-nach-links-Layout. |
+| 17:10 | Paperless komplett auf der Box? Claudes Einschätzung: mit 256 MB RAM und ARMv5 nicht machbar – Jan streicht die Idee. |
+| 18:38 | Jan: Web-Apps brauchen **Berechtigungen**, als erste zeitgesteuerte Aufgaben. Jan wählt Skripte aus dem App-Paket, festgelegt im `app.json` und in der Oberfläche änderbar. Berechtigung `cron`: Aufgaben laufen als eigener eingeschränkter Benutzer der App mit Zeitlimit. |
+| 18:55 | Jans Idee einer **gemeinsamen App-Architektur**: ein Manifest (Fenstergröße, Dateitypen), gemeinsame Design-Tokens mit klassischer Menüleiste wie Notepad++ und Apps, die miteinander reden. Claude schreibt ein Konzept; Jan entscheidet: Apps öffnen in eigenen Fenstern, nur Einstellungs-Apps werden in ShareOS angezeigt – als Berechtigung (`embed`). |
+| 19:57 | Der Tag `v0.1.0-beta.7` stand auf `main`, bevor die beta.7-Änderungen gemergt waren; Claude bemerkt es, bevor den Boxen die falsche Version angeboten wird. Jan stoppt den Build und löscht Release und Tag; beta.7 kommt dann von `main` – samt den beta.8-Funktionen, das Changelog verschiebt sie. |
+| 20:46 | Jans Wildcard-Zertifikat für `*.skynet.lan` wird abgelehnt. Über den echten Weg der Weboberfläche nachgestellt: Jedes eigene Zertifikat wurde abgelehnt, weil die Testseite der Zertifikatsprüfung unter der strengen umask von rpcd nicht lesbar war (uhttpd antwortete 403). Behoben und mit einem Test abgesichert. |
+| 21:36 | Jan: Die Schrift der Menü-Knöpfe sitzt nicht ganz mittig. Großbuchstaben lassen Platz für Unterlängen frei; jetzt auf die Höhe der Großbuchstaben zugeschnitten. |
+| 22:47 | Jan aktualisiert auf beta.7: Webpad meldet „needs a newer ShareOS“ – `0.1.0-beta.7` zählt als älter als `0.1.0`. Beim Beheben zeigt sich ein zweiter, noch nicht aufgetretener Fehler: `beta.10` wäre älter als `beta.9` gewesen, eine Box mit beta.9 hätte beta.10 nie angeboten bekommen. |
+| 23:12 | Jan: Firmware-Updates auch **ohne Internet** – die `.sysupgrade.tar` lässt sich jetzt in der Oberfläche hochladen, mit denselben Prüfungen wie von GitHub. |
+| 23:26 | Jan fragt, was die **Reset-Taste** macht: bisher nichts. Claude schlägt vor: 5–10 s = Zugangs-Reset (Netzwerk, root-Passwort, Zertifikat), 15 s = Werkseinstellungen, Rückmeldung per LED; Jan: „Super Vorschlag. Übernehmen. Bitte weiter an der Roadmap arbeiten. Bis morgen.“ |
+
+### Nacht auf Montag, 19.10.2026 – Claude allein an der Roadmap
+
+| Zeit | Was passiert ist |
+|---|---|
+| 23:45 | Reset- und USB-Taste gebaut, getestet mit aufgezeichneten Tastenereignissen und auf dem ARM-System. |
+| 00:10 | **App-Plattform**: `window`/`opens` im Manifest, `/_shareos/theme.css` und das App-SDK, Datei-Tickets – Webpad 1.1 öffnet eine Textdatei aus dem Dateibrowser und speichert sie zurück, Ende zu Ende in Chromium getestet. |
+| 00:50 | **Speicher**: RAID 0 und JBOD neben dem Spiegel, ext3/ext2/FAT32, Spiegel mit neuer Platte reparieren. |
+| 01:20 | **Meldungen**: Prüfung alle 10 Minuten (RAID, Laufwerke, Temperatur, SMART, Updates), fehlgeschlagene Aufträge melden sich sofort; E-Mail und Push (ntfy, Gotify, Webhook). |
 
 ## Bemerkenswerte Problemlösungen
 
