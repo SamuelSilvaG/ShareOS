@@ -50,13 +50,16 @@ What is in it:
 - **Apps:** store with one-click install from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) (web apps such as Webpad; own apps and catalogs possible), visibility per user
 - **Cloud sync** with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive and more) for the device and per user
 - **Paperless-ngx:** inbox folders per user or shared (e.g. for a scanner)
+- **Firmware:** online updates from GitHub, first installation from the Alt-F/D-Link web interface (system from USB stick or GitHub), back to Alt-F by uploading its `.bin`
 - **System:** first-run assistant, network with automatic rollback, HTTPS (own certificate possible), services and autostart, fan/LEDs, logs, settings backup (JSON, optionally AES-256), status address for widget apps
 - English and German interface (more languages: [docs/TRANSLATING.md](docs/TRANSLATING.md))
 
-The **first installation** still needs the serial console (TFTP boot, then
-writing the system to flash) – see [docs/TESTING.md](docs/TESTING.md) and
-[docs/HARDWARE-DNS320L.md](docs/HARDWARE-DNS320L.md). Installing from the
-Alt-F or D-Link web interface is not released yet. The backend can be run on
+**Installing:** flash the ShareOS `.bin` from the Alt-F or D-Link firmware
+page; ShareOS then installs its system from a USB stick or from GitHub by
+itself (new in 0.1.0-beta.7, hardware test pending). The tested way over the
+serial console (TFTP boot) stays available. **Back to Alt-F** works from the
+ShareOS firmware page. Details: [docs/TESTING.md](docs/TESTING.md),
+[docs/HARDWARE-DNS320L.md](docs/HARDWARE-DNS320L.md). The backend can be run on
 a build host with qemu (`tests/run-stack-qemu.sh`), the web interface with
 sample data via `tests/mock-ubus.py`.
 

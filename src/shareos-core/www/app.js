@@ -1684,6 +1684,13 @@ const SYS = {
 					</ol>
 					<p class="note">Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.</p>
 				</div>
+				<form class="panel" id="f-bin" style="margin-top:16px">
+					<div class="ph"><span class="pt">FIRMWARE-DATEI EINSPIELEN</span><span class="tag ml">.bin</span></div>
+					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. um <b>zurück zu Alt-F</b> zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
+					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>DATEI</span><input type="file" name="file" accept=".bin" required></label></div>
+					<div id="bin-info"></div>
+					<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Hochladen & prüfen</button></div>
+				</form>
 			</aside>
 		</div>`;
 	},
@@ -1984,6 +1991,39 @@ const VIEWS_AFTER = {
 			});
 		}
 
+		if (sub === 'firmware') {
+			$('#f-bin')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, file = f.file.files[0], box = $('#bin-info'), btn = $('button[type=submit]', f);
+				if (!file) return;
+				btn.disabled = true;
+				try {
+					const t = await rpc('shareos.update', 'bin_ticket');
+					await fbSend(t.url, file, () => {});
+					const i = await rpc('shareos.update', 'bin_info');
+					const kind = { shareos: 'ShareOS', altf: 'Alt-F', other: 'andere Firmware' }[i.kind] || i.kind;
+					box.innerHTML = html`<dl class="kv" style="margin-top:10px"><dt>Art</dt><dd><b>${kind}</b></dd><dt>Kernel</dt><dd>${i.kernel}</dd>
+						<dt>Größe</dt><dd>${fmtBytes(+i.kernel_size)} + ${fmtBytes(+i.initramfs_size)}</dd></dl>
+						${i.kind === 'altf' || i.kind === 'other' ? html`<p class="note" style="color:var(--amber)">Danach startet ${kind}. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen. Zurück zu ShareOS: die ShareOS-.bin in Alt-F flashen, System und Einstellungen sind noch da.</p>` : ''}
+						<div class="acts" style="margin-top:10px"><button class="btn danger" type="button" id="bin-write">Einspielen</button></div>`.s;
+					$('#bin-write').addEventListener('click', async () => {
+						if (!await confirmDlg(`${kind} einspielen?`, 'Kernel und Startsystem werden ersetzt und geprüft. Box während des Schreibens nicht ausschalten.', 'Einspielen', true)) return;
+						cover('Firmware wird geschrieben', 'Kernel und Startsystem – bitte warten, nicht ausschalten');
+						try {
+							await rpc('shareos.update', 'bin_write', { confirm: true });
+							uncover();
+							if (await confirmDlg('Geschrieben', `${kind} ist im Flash. Jetzt neu starten?`, 'Neu starten')) {
+								try { await rpc('shareos.system', 'reboot'); } catch (err) { }
+								stopPolling();
+								if (i.kind === 'shareos') waitForBox('Neustart läuft', `${kind} startet`);
+								else cover('Neustart läuft', `${kind} startet – dessen Oberfläche ist gleich unter ${location.hostname} erreichbar (Port 80).`);
+							}
+						} catch (err) { uncover(); toast('Einspielen: ' + err.message, true); }
+					});
+				} catch (err) { box.innerHTML = ''; toast('Firmware-Datei: ' + err.message, true); }
+				btn.disabled = false;
+			});
+		}
 		if (sub === 'allgemein') {
 			if (!S.widget) loadWidget();
 			$('#app-install')?.addEventListener('click', async () => {
@@ -2498,7 +2538,8 @@ async function refreshUpdateStatus() {
 		if ((S.check?.update_available ? S.check.latest : null) !== had) renderHeader();
 		// no result yet (fresh start) or an old one: ask now (GitHub allows 60 anonymous API calls per hour)
 		if (!S.checking && !S.autoChecked && (!S.upd.check || Date.now() / 1000 - S.upd.check.time > 6 * 3600)) { S.autoChecked = true; checkUpdates(true); }
-		if (S.route.tab === 'system' && S.route.sub === 'firmware' && !document.activeElement?.matches('select')) renderMain();
+		// keep the page while a .bin is being checked/written below
+		if (S.route.tab === 'system' && S.route.sub === 'firmware' && !document.activeElement?.matches('select') && !$('#bin-info:not(:empty)') && !$('#f-bin input')?.files?.length) renderMain();
 		if (prev && prev !== S.upd.state && S.upd.state === 'ready') toast('Update geladen und geprüft.');
 		if (prev && prev !== S.upd.state && S.upd.state === 'flashed') toast('Update geschrieben – bitte neu starten.');
 		const busy = ['downloading', 'verifying', 'flashing'].includes(S.upd.state);

@@ -88,6 +88,8 @@ the box for why the web server was not running.
 | 11:53 | Jan publishes `v0.1.0-beta.5` and brings roadmap ideas: an app store with Docker/Compose and a notification system. Claude writes a feasibility study: Docker does not fit the DNS-320L (ARMv5, 256 MB, no images); instead "apps light" with native packages, notifications over ubus. Jan: "Containers are out." |
 | 12:12 | Jan sends his Webpad: there should be **ShareOS web apps** as installable packages with an app JSON (version, publisher), offered like the firmware versions, from their own repository. Jan creates `ShareOS-Apps`. |
 | 12:45 | App repository with the `.sapp` package format, build, one release per version and the catalog `index.json` via GitHub Actions; Webpad 1.0.0 as the first app with its libraries packaged (works offline). In the firmware: APPS area with store, install with SHA-256 check, own web server port for apps, visibility per user, upload of own packages. |
+| 13:15 | Jan sends photos of the board and the serial console for the docs (EXIF removed) and asks for README and docs to be updated with every release – `docs/RELEASE.md` now lists that. The "Restart now" button only appears once the progress bar is at 100 %. |
+| 13:34 | Question: can ShareOS be flashed from an old D-Link or Alt-F firmware? Jan: "Yes please, a compatible bin from the web interface, the system installed from a USB stick." The ShareOS `.bin` installs the system by itself on the first start – from a USB stick or from GitHub – and System → Firmware can write an Alt-F `.bin` to go back. Tested in the emulator with a simulated flash and damaged and foreign bundles. |
 
 ## Notable problems solved
 

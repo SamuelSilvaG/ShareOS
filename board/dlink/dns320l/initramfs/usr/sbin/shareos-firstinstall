@@ -1,0 +1,168 @@
+#!/bin/sh
+#
+# shareos-firstinstall – install the ShareOS system after the ShareOS .bin was
+# flashed from the Alt-F or D-Link web interface (that only writes kernel and
+# initramfs; the system lives in the UBI 'image' partition).
+#
+#   shareos-firstinstall
+#
+# Where the system comes from, in this order:
+#   1. a USB stick or a disk with ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar
+#      (top folder or folder "shareos"; FAT, exFAT or ext4)
+#   2. GitHub: the release of this version (or the newest one for development
+#      builds), downloaded over HTTPS and checked against its .sha256
+# The package is checked (SHA256SUMS, device, U-Boot headers, squashfs).
+# Kernel and initramfs are written again when the package has other ones, so
+# kernel and system always match. Exit 0 = installed, the caller reboots.
+#
+# The orange USB LED blinks fast while this runs. Messages: console and
+# /tmp/firstinstall.log; on failure the reason is in /tmp/firstinstall.err.
+#
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin
+REPO=${SHAREOS_REPO:-UniqueDroid/ShareOS}
+API=${FI_API:-https://api.github.com/repos/$REPO/releases}
+# test hooks: FI_SRC_DIR = folder to search instead of USB sticks/disks,
+# FI_API = release list (file:// works), FI_NO_NET = skip the network checks
+CA=/etc/ssl/certs/ca-certificates.crt
+W=/tmp/firstinstall
+SRC=/mnt/src
+UBOOT_MAX=3145728
+
+. /etc/shareos-release
+FWNAME=$SHAREOS_FWNAME
+VERSION=$SHAREOS_VERSION
+
+# messages go to stderr (the console): stdout of some functions is a result
+log() { echo "firstinstall: $*" >&2; echo "$(date '+%H:%M:%S') $*" >> /tmp/firstinstall.log; }
+fail() { log "FAILED: $*"; echo "$*" > /tmp/firstinstall.err; cleanup; exit 1; }
+led() { [ -e "/sys/class/leds/$1/trigger" ] && echo "$2" > "/sys/class/leds/$1/trigger"; }
+cleanup() { umount $SRC 2>/dev/null; }
+mtd_by_name() { sed -n "s/^\(mtd[0-9]*\):.*\"$1\"\$/\1/p" /proc/mtd; }
+
+led_busy() {
+	L=/sys/class/leds/dns320l:orange:usb
+	led dns320l:orange:usb timer
+	[ -e $L/delay_on ] && echo 120 > $L/delay_on && echo 120 > $L/delay_off
+}
+
+# --- 1. USB stick or disk -----------------------------------------------------
+load_storage() {
+	[ -n "${FI_SRC_DIR:-}" ] && return 0
+	for m in usb-common usbcore ehci-hcd ehci-orion usb-storage fat vfat exfat mbcache jbd2 ext4 nls_cp437 nls_iso8859-1; do
+		modprobe "$m" 2>/dev/null
+	done
+	# USB sticks need a few seconds to show up
+	i=0; while [ $i -lt 20 ]; do ls /sys/bus/usb/drivers/usb-storage/*:* >/dev/null 2>&1 && break; sleep 0.5; i=$((i+1)); done
+	sleep 3
+}
+
+find_local() {
+	if [ -n "${FI_SRC_DIR:-}" ]; then
+		f=$(ls "$FI_SRC_DIR"/ShareOS-*-"$FWNAME".sysupgrade.tar "$FI_SRC_DIR"/shareos/ShareOS-*-"$FWNAME".sysupgrade.tar 2>/dev/null | sort | tail -1)
+		[ -n "$f" ] && { log "package in $FI_SRC_DIR: ${f##*/}"; echo "$f"; return 0; }
+		return 1
+	fi
+	mkdir -p $SRC
+	for dev in $(ls /dev/sd[a-z][0-9]* /dev/sd[a-z] 2>/dev/null); do
+		for t in vfat exfat ext4; do
+			mount -t $t -o ro "$dev" $SRC 2>/dev/null || continue
+			f=$(ls $SRC/ShareOS-*-"$FWNAME".sysupgrade.tar $SRC/shareos/ShareOS-*-"$FWNAME".sysupgrade.tar 2>/dev/null | sort | tail -1)
+			if [ -n "$f" ]; then
+				log "package on $dev: ${f##*/}"
+				echo "$f"
+				return 0
+			fi
+			umount $SRC
+			break
+		done
+	done
+	return 1
+}
+
+# --- 2. GitHub ----------------------------------------------------------------
+net_ok() { ip -4 addr show eth0 2>/dev/null | grep -q 'inet '; }
+
+set_clock() {
+	# TLS needs a plausible date; the MCU clock is not read in the initramfs
+	[ "$(date +%Y)" -ge 2026 ] && return 0
+	ntpd -q -n -p pool.ntp.org -p time.cloudflare.com >/dev/null 2>&1 && return 0
+	# fall back to the date in an HTTP answer (no certificate check needed for that)
+	d=$(curl -sI --max-time 10 http://github.com 2>/dev/null | sed -n 's/^[Dd]ate: //p' | tr -d '\r')
+	[ -n "$d" ] && date -s "$(echo "$d" | awk '{m=index("JanFebMarAprMayJunJulAugSepOctNovDec",$3); printf "%04d-%02d-%02d %s", $4, (m+2)/3, $2, $5}')" >/dev/null 2>&1
+	[ "$(date +%Y)" -ge 2026 ]
+}
+
+fetch() { curl -fsSL --cacert $CA --retry 3 --connect-timeout 15 "$@"; }
+
+download() {
+	if [ -z "${FI_NO_NET:-}" ]; then
+		net_ok || fail "no network (DHCP) – plug in the network cable, or put the package on a USB stick"
+		set_clock || fail "cannot set the clock (NTP) – needed for HTTPS"
+	fi
+	log "looking for the system on GitHub ($REPO)"
+	fetch --max-time 30 -H 'Accept: application/vnd.github+json' "$API?per_page=30" > $W/releases.json \
+		|| fail "GitHub not reachable"
+	want="ShareOS-$VERSION-$FWNAME.sysupgrade.tar"
+	url=$(grep -o "\"browser_download_url\": *\"[^\"]*/$want\"" $W/releases.json | head -1 | sed 's/.*": *"\([^"]*\)"$/\1/')
+	if [ -z "$url" ]; then
+		# development build or a version without release: take the newest package for this box
+		url=$(grep -o "\"browser_download_url\": *\"[^\"]*-$FWNAME\.sysupgrade\.tar\"" $W/releases.json | head -1 | sed 's/.*": *"\([^"]*\)"$/\1/')
+	fi
+	[ -n "$url" ] || fail "no ShareOS package for $FWNAME on GitHub"
+	log "download ${url##*/}"
+	fetch --max-time 1800 -o $W/pkg.tar "$url" || fail "download failed"
+	sum=$(fetch --max-time 30 "$url.sha256" | cut -c1-64)
+	[ -n "$sum" ] || fail "checksum file missing on GitHub"
+	[ "$(sha256sum $W/pkg.tar | cut -c1-64)" = "$sum" ] || fail "checksum of the download is wrong"
+	echo $W/pkg.tar
+}
+
+# --- check and install ----------------------------------------------------------
+uimage_ok() {   # file: U-Boot magic, ShareOS name, <= 3 MB
+	[ "$(dd if="$1" bs=4 count=1 2>/dev/null)" = "$(printf '\047\005\031\126')" ] || return 1
+	dd if="$1" bs=1 skip=32 count=8 2>/dev/null | grep -q '^ShareOS-' || return 1
+	[ "$(stat -c %s "$1")" -le $UBOOT_MAX ]
+}
+
+flash_part() {   # name file
+	m=$(mtd_by_name "$1"); [ -n "$m" ] || fail "partition $1 not found"
+	size=$(stat -c %s "$2")
+	if nanddump -q -l "$size" /dev/$m 2>/dev/null | cmp -s - "$2"; then
+		log "$1: already up to date"
+		return 0
+	fi
+	log "$1: writing ${2##*/} ($size bytes)"
+	flash_erase -q /dev/$m 0 0 || fail "erasing $1 failed"
+	nandwrite -q -p /dev/$m "$2" || fail "writing $1 failed"
+	nanddump -q -l "$size" /dev/$m 2>/dev/null | cmp -s - "$2" || fail "$1 does not read back correctly"
+}
+
+main() {
+	rm -rf $W /tmp/firstinstall.err; mkdir -p $W
+	led_busy
+	log "ShareOS $VERSION ($FWNAME): no system in flash yet – installing"
+	load_storage
+	PKG=$(find_local) || PKG=$(download) || exit 1
+	log "checking the package"
+	tar -xf "$PKG" -C $W 2>/dev/null || fail "package cannot be unpacked"
+	cleanup
+	cd $W || fail "work folder missing"
+	for p in uImage urootfs rootfs.squashfs shareos-release SHA256SUMS; do [ -f $p ] || fail "package incomplete ($p missing)"; done
+	sha256sum -c SHA256SUMS >/dev/null 2>&1 || fail "package damaged (SHA256SUMS)"
+	grep -q "^SHAREOS_FWNAME=\"\?$FWNAME\"\?\$" shareos-release || fail "package is for another device"
+	uimage_ok uImage && uimage_ok urootfs || fail "kernel or initramfs in the package are not valid ShareOS images"
+	[ "$(head -c 4 rootfs.squashfs)" = hsqs ] || fail "system image is not a squashfs"
+	newver=$(sed -n 's/^SHAREOS_VERSION="\?\([^"]*\)"\?$/\1/p' shareos-release)
+	log "package: ShareOS $newver"
+	# kernel and system must fit together
+	flash_part uImage uImage
+	flash_part ramdisk urootfs
+	log "writing the system into flash"
+	shareos-install-ubi rootfs.squashfs --yes || fail "installing the system failed"
+	sync
+	log "ShareOS $newver installed – restarting"
+	led dns320l:orange:usb none
+	return 0
+}
+
+main

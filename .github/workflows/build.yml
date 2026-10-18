@@ -70,6 +70,9 @@ jobs:
       - name: Build ${{ matrix.board }}
         run: make ${{ matrix.board }}
 
+      - name: Test writing .bin files (rollback to Alt-F)
+        run: tests/test-flash-bin.sh output/${{ matrix.board }}/host/bin
+
       - name: Collect images
         run: |
           mkdir -p artifacts

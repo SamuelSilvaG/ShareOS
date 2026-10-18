@@ -37,6 +37,7 @@ libubox (buildroot 2026.02), see the `.mk` files.
 | `/usr/share/rpcd/acl.d/shareos.json` | ACL group `shareos-admin` |
 | `/usr/share/rpcd/acl.d/unauthenticated.json` | anonymous clients may only call `session.login` |
 | `/usr/sbin/shareos-update` | updater (ucode CLI, also usable from SSH) |
+| `/usr/sbin/shareos-flash-bin` | writes another D-Link `.bin` (e.g. back to Alt-F) |
 | `/etc/init.d/S12ubus`, `S13rpcd`, `S50uhttpd` | services |
 | `/www/index.html` | backend test page (the real UI follows) |
 
@@ -56,6 +57,9 @@ Log in with `session.login {username, password}` using the null session
 | `shareos.update.download` | `tag` | starts download + verification in the background |
 | `shareos.update.apply` | `tag`, `confirm: true` | flashes the verified download in the background |
 | `shareos.update.cancel` | – | forgets a download |
+| `shareos.update.bin_ticket` | – | upload address for a D-Link `.bin` (one-time ticket, 5 min) |
+| `shareos.update.bin_info` | – | what the uploaded `.bin` contains: `kind` (`shareos`/`altf`/`other`), kernel name, sizes – or `error` |
+| `shareos.update.bin_write` | `confirm: true` | writes kernel + initramfs of the uploaded `.bin`, then removes it |
 | `uci.*` | rpcd standard | read/write `/etc/config/shareos` |
 
 ## Updater

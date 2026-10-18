@@ -2393,6 +2393,39 @@ return {
 			call: function() {
 				return run_updater([ 'cancel' ]);
 			}
+		},
+
+		// another firmware file in D-Link format (.bin), e.g. back to Alt-F
+		bin_ticket: {
+			call: function() {
+				system('mkdir -p ' + FILES_TICKETS + ' /tmp/shareos-fw && chmod 700 ' + FILES_TICKETS + ' /tmp/shareos-fw; rm -f /tmp/shareos-fw/upload.bin');
+				let t = new_token();
+				writefile(FILES_TICKETS + '/' + t, sprintf('put\nroot\n/tmp/shareos-fw/upload.bin\n%d\nupload.bin\n', time() + 300));
+				return { url: '/cgi-bin/files?t=' + t };
+			}
+		},
+
+		bin_info: {
+			call: function() {
+				if (!stat('/tmp/shareos-fw/upload.bin')) return { error: 'no uploaded file' };
+				let r = sh('/usr/sbin/shareos-flash-bin info /tmp/shareos-fw/upload.bin'), o = {};
+				if (r.rc != 0) { unlink('/tmp/shareos-fw/upload.bin'); return { error: replace(trim(r.out), /^error: /, '') }; }
+				for (let l in split(r.out, '\n')) { let m = match(l, /^([a-z_]+)=(.*)$/); if (m) o[m[1]] = m[2]; }
+				return o;
+			}
+		},
+
+		bin_write: {
+			args: { confirm: false },
+			call: function(req) {
+				if (req.args.confirm !== true) return { error: 'confirm must be true' };
+				if (!stat('/tmp/shareos-fw/upload.bin')) return { error: 'no uploaded file' };
+				let r = sh('/usr/sbin/shareos-flash-bin write /tmp/shareos-fw/upload.bin --yes');
+				unlink('/tmp/shareos-fw/upload.bin');
+				if (r.rc != 0) return { error: replace(trim(r.out), /^error: /, '') };
+				let m = match(r.out, /kind=([a-z]+)/);
+				return { ok: true, kind: m ? m[1] : 'other' };
+			}
 		}
 	}
 };

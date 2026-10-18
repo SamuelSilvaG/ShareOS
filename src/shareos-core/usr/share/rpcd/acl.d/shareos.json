@@ -26,7 +26,8 @@
 				],
 				"shareos.update": [
 					"check",
-					"status"
+					"status",
+					"bin_info"
 				],
 				"shareos.ui": [
 					"get"
@@ -111,7 +112,9 @@
 				"shareos.update": [
 					"download",
 					"apply",
-					"cancel"
+					"cancel",
+					"bin_ticket",
+					"bin_write"
 				],
 				"shareos.ui": [
 					"set"

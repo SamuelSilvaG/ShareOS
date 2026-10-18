@@ -2,16 +2,47 @@
 
 *Deutsche Version: [TESTEN.md](TESTEN.md)*
 
-As of 2026-10-17, ShareOS is in its **test phase**. Installing it on a box that
-runs Alt-F currently needs the **serial console** (header JP1, no soldering, see
-[HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)). Once ShareOS is installed, updates
-go through the web interface.
+As of 2026-10-18, ShareOS is in its **test phase**. There are two ways to
+install it:
 
-Every step can be undone: ShareOS first runs from RAM only, then the system
-goes into flash, and the kernel is written last. The Alt-F partitions are
-backed up before anything is overwritten.
+- **Way A – from the Alt-F or D-Link firmware page** (no serial console, from
+  0.1.0-beta.7 on). Not yet tried on real hardware: for the first time, best
+  keep the serial console connected as a safety net.
+- **Way B – over the serial console** (header JP1, no soldering, see
+  [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): tested, steps 1–3 below.
 
-## What you need
+Once ShareOS is installed, updates go through the web interface. Going back to
+Alt-F works from the web interface too (see [Back to Alt-F](#back-to-alt-f)).
+
+## Way A: from the Alt-F or D-Link firmware page
+
+From the GitHub release you need:
+
+- `ShareOS-<version>-DNS-320L-rev-Ax.bin` (kernel and boot system, about 3.3 MB)
+- recommended: `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` on a USB
+  stick (FAT32, exFAT or ext4; top folder or folder `shareos`). Without a
+  stick the box downloads the bundle from GitHub itself – the network cable
+  must be plugged in and the router must hand out an address (DHCP).
+
+1. Plug the USB stick with the bundle into the box (if you have one).
+2. In the Alt-F (or D-Link) web interface, select the ShareOS `.bin` on the
+   firmware page and flash it. Alt-F only writes the kernel and boot system.
+3. The box restarts. ShareOS notices that there is no system in flash yet and
+   installs it: from the USB stick, otherwise from GitHub (the checksum is
+   verified). The **orange USB LED blinks fast**; this takes a few minutes.
+   Alt-F's extra packages in flash are replaced.
+4. The box then restarts on its own – now with ShareOS. Continue with
+   [4. Web interface](#4-web-interface).
+
+If the installation fails (no stick, no network, damaged bundle), the box
+stays in **rescue mode** (orange USB LED blinks slowly). The reason is on the
+serial console and, over SSH (`ssh root@<ip>`, password `shareos`), in
+`/tmp/firstinstall.err`; the log is `/tmp/firstinstall.log`. Fix: copy the
+bundle to a USB stick, plug it in, switch the box off and on again.
+
+## Way B: over the serial console
+
+### What you need
 
 - the update bundle `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` from a
   GitHub release
@@ -66,11 +97,6 @@ Never type `saveenv`. Log in as `root` / `shareos`. Run `shareos-check` to
 check the hardware.
 
 ## 3. Write the system to flash
-
-> The `.bin` of a release only contains the kernel and the boot system. Flashed
-> from the Alt-F or D-Link firmware page, the box then starts in rescue mode
-> until the system (step below) is installed. An install page for this is
-> planned.
 
 On the box, still in the network boot from step 2:
 ```sh
@@ -182,6 +208,22 @@ their permissions.
 - **Own app:** upload a `.sapp` file under Store → *Install package* (built with `tools/build.py` from the app repository). It is marked "own / not verified".
 - **More sources** (own catalogs) under APPS → Sources.
 
+## Back to Alt-F
+
+1. Have the Alt-F `.bin` for the DNS-320L ready (e.g. `Alt-F-1.0-DNS-320L-rev-A.bin`).
+2. In ShareOS, upload it under **System → Firmware → Install firmware file**.
+   ShareOS checks it (D-Link format, checksums, device, size) and shows what
+   is inside.
+3. **Install** – kernel and boot system are written and read back. Then
+   **Reboot**: Alt-F starts.
+4. Alt-F then runs without its extra packages. Flash the same `.bin` once
+   more from Alt-F's firmware page to get them back.
+
+Back to ShareOS: flash the ShareOS `.bin` from Alt-F. As long as Alt-F has not
+overwritten the `image` partition (step 4 skipped), the ShareOS system and
+settings are still there; otherwise ShareOS installs itself again as in way A.
+The D-Link firmware is best installed from Alt-F.
+
 ## If something goes wrong
 
 | Sign | Meaning / fix |
@@ -189,6 +231,6 @@ their permissions.
 | The orange USB LED blinks | Rescue mode: the reason and the SSH address are on the console. `shareos-install-ubi` is available there. |
 | U-Boot reports a bad image header | U-Boot boots the D-Link rescue system on its own. Flash Alt-F from its web page. |
 | The kernel hangs | Boot over TFTP as in step 2 and write the backup back: `flash_erase /dev/mtd1 0 0; nandwrite -p /dev/mtd1 uImage.bin` (mtd2 with `ramdisk.bin`) |
-| Back to Alt-F completely | Write the backup back (row above), then re-flash Alt-F's extra packages from Alt-F |
+| Back to Alt-F completely | Easiest from the web interface (see [Back to Alt-F](#back-to-alt-f)). Without it: write the backup back (row above), then re-flash Alt-F's extra packages from Alt-F |
 
 ShareOS never touches U-Boot, the MAC address or the D-Link rescue system.

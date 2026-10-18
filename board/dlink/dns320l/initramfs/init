@@ -91,6 +91,8 @@ apply_upgrade() {
 rescue() {
 	log "RESCUE MODE: $*"
 	led dns320l:orange:usb timer
+	# slow blink (the first installation blinks fast)
+	for d in delay_on delay_off; do echo 500 > /sys/class/leds/dns320l:orange:usb/$d 2>/dev/null; done
 	net_up || udhcpc -i eth0 -b -s /usr/share/udhcpc/default.script -x hostname:shareos
 	mkdir -p /etc/dropbear
 	dropbear -R 2>/dev/null
@@ -110,6 +112,22 @@ rescue() {
 	done
 }
 
+# ShareOS .bin flashed from the Alt-F/D-Link web interface: fetch and install
+# the system (USB stick/disk or GitHub), then restart into it
+first_install() {
+	log "$1 – starting the first installation"
+	net_up >/dev/null 2>&1 || log "no DHCP lease (only a USB stick can be used)"
+	if shareos-firstinstall; then
+		sync
+		log "first installation done – restarting"
+		sleep 2
+		reboot -f
+	fi
+	rescue "first installation failed: $(cat /tmp/firstinstall.err 2>/dev/null)
+	  Put ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar on a USB stick (FAT/exFAT/ext4)
+	  and restart the box, or check the network cable. Log: /tmp/firstinstall.log"
+}
+
 has shareos.rescue && rescue "requested on the kernel command line"
 
 NETROOT=$(arg shareos.netroot)
@@ -125,14 +143,25 @@ else
 	MTD=$(mtd_by_name image)
 	[ -n "$MTD" ] || rescue "flash partition 'image' not found"
 	# only touch the partition if it really carries UBI (never attach foreign data)
-	if [ "$(nanddump -q -l 2048 /dev/$MTD 2>/dev/null | head -c 4)" != "UBI#" ]; then
-		rescue "no ShareOS system in flash yet"
+	# a read error must never look like "no system" (that would format the flash)
+	nanddump -q -l 2048 -f /tmp/mtd-head /dev/$MTD 2>/dev/null || rescue "cannot read flash partition 'image'"
+	[ "$(stat -c %s /tmp/mtd-head 2>/dev/null)" = 2048 ] || rescue "cannot read flash partition 'image'"
+	if [ "$(head -c 4 /tmp/mtd-head)" != "UBI#" ]; then
+		first_install "no ShareOS system in flash yet"
 	fi
 	ubiattach -m "${MTD#mtd}" >/dev/null || rescue "ubiattach failed"
-	ROOTVOL=""
+	ROOTVOL=""; DATAVOL=""
 	for v in /sys/class/ubi/ubi0_*; do
-		[ "$(cat "$v/name" 2>/dev/null)" = rootfs ] && ROOTVOL=$(basename "$v")
+		case "$(cat "$v/name" 2>/dev/null)" in
+			rootfs) ROOTVOL=$(basename "$v") ;;
+			rootfs_data) DATAVOL=$(basename "$v") ;;
+		esac
 	done
+	if [ -z "$ROOTVOL" ] && [ -z "$DATAVOL" ]; then
+		# UBI of another firmware (Alt-F keeps its extra packages there)
+		ubidetach -m "${MTD#mtd}" 2>/dev/null
+		first_install "flash holds another firmware's data, no ShareOS system"
+	fi
 	[ -n "$ROOTVOL" ] || rescue "UBI volume 'rootfs' missing"
 	if mount -t ubifs ubi0:rootfs_data /mnt/rw 2>/dev/null; then
 		factory_reset

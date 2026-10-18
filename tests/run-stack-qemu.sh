@@ -108,6 +108,15 @@ if [ "$CHECK" = "--check" ]; then
 	t "network: broadcast address rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.255","netmask":"255.255.255.0","confirm":true}')" "'broadcast' in d['result'][1]['error']"
 	t "network: bad DNS rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.5","netmask":"255.255.255.0","dns":["1.2.3"],"confirm":true}')" "'DNS' in d['result'][1]['error']"
 	t "network: confirm without change is harmless" "$(rpc $SID shareos.net confirm)" "d['result'][1]['ok']"
+	# firmware file in D-Link format (.bin): upload over HTTP, info, write refused off the box
+	BIN=$(ls -t "$OUT"/images/ShareOS-*.bin | head -1)
+	t "bin: info without upload" "$(rpc $SID shareos.update bin_info)" "'no uploaded' in d['result'][1]['error']"
+	U=$(rpc $SID shareos.update bin_ticket | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][1]['url'])")
+	t "bin: upload through the ticket" "$(curl -s -o /dev/null -w '{"c":%{http_code}}' --data-binary @"$BIN" -H 'Content-Type: application/octet-stream' "http://127.0.0.1:$PORT$U")" "d['c']==200"
+	t "bin: ShareOS .bin recognised" "$(rpc $SID shareos.update bin_info)" "d['result'][1]['kind']=='shareos' and d['result'][1]['kernel'].startswith('ShareOS-')"
+	t "bin: write needs confirm" "$(rpc $SID shareos.update bin_write)" "'confirm' in d['result'][1]['error']"
+	t "bin: write refused outside a DNS-320L" "$(rpc $SID shareos.update bin_write '{"confirm":true}')" "'not a DNS-320L' in d['result'][1]['error']"
+	t "bin: upload removed after the attempt" "$(rpc $SID shareos.update bin_info)" "'no uploaded' in d['result'][1]['error']"
 	st() { curl -s -w '\n%{http_code}' "http://127.0.0.1:$PORT/cgi-bin/status$1" | python3 -c "import json,sys; b,c=sys.stdin.read().rsplit('\n',1); print(json.dumps({'c':int(c),'b':json.loads(b) if b.strip() else None}))"; }
 	t "widget status off by default" "$(st '?token=0123456789abcdef0123456789abcdef')" "d['c']==404"
 	W=$(rpc $SID shareos.widget set '{"enabled":true}')
