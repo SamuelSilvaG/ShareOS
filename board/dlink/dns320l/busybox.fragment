@@ -3,3 +3,10 @@ CONFIG_NTPD=y
 # CONFIG_FEATURE_NTPD_SERVER is not set
 CONFIG_FEATURE_NTPD_CONF=y
 CONFIG_CHPASSWD=y
+# cloud jobs: time limits and stopping a running rclone
+CONFIG_TIMEOUT=y
+CONFIG_PGREP=y
+CONFIG_PKILL=y
+# file age/size for Paperless inboxes and logs
+CONFIG_STAT=y
+CONFIG_FEATURE_STAT_FORMAT=y

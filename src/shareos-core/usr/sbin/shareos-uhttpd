@@ -19,7 +19,7 @@ while :; do
 		fi
 	fi
 	/usr/bin/uhttpd -f -h /www -r ShareOS -p $PORT $tls \
-		-u /ubus -U /var/run/ubus/ubus.sock \
+		-u /ubus -U /var/run/ubus/ubus.sock -x /cgi-bin \
 		-t 60 -T 30 -k 20 -A 1 -n 3 -N 100 -R -S -D &
 	child=$!
 	wait $child

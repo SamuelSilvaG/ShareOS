@@ -49,3 +49,9 @@ config setup 'setup'
 config autostart 'autostart'
 	# services that are not started at boot (names as in /etc/init.d/S??<name>)
 	#list disabled 'crond'
+
+config widget 'widget'
+	# 1 = /cgi-bin/status?token=… answers with a short JSON status (for widget
+	# apps); a new token is created when it is switched on in the web interface
+	option enabled '0'
+	option token ''

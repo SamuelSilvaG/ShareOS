@@ -20,12 +20,21 @@ SID = 'c0ffee00c0ffee00c0ffee00c0ffee00'
 T0 = time.time()
 STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full_temp': 50, 'half_temp': 45}, 'led': {'status': 'heartbeat', 'power': 'on', 'disks': 'off'}, 'logo': True, 'lang': 'en', 'channel': 'beta', 'job': None, 'https': True, 'redirect': False, 'theme': 'dark', 'accent': 'blue', 'autostart_off': ['crond'],
          'users': {'jan': {'role': 'admin', 'fullname': 'Jan', 'groups': ['familie'], 'home': 'daten', 'quota': 0, 'web': True, 'pw': 'shareos'},
-                   'anna': {'role': 'user', 'fullname': 'Anna', 'groups': ['familie'], 'home': 'daten', 'quota': 200000, 'web': True, 'pw': 'anna123'},
+                   'anna': {'role': 'user', 'fullname': 'Anna', 'groups': ['familie'], 'home': 'daten', 'quota': 200000, 'web': True, 'cloud': True, 'pw': 'anna123'},
                    'tv': {'role': 'share', 'fullname': 'Fernseher', 'groups': ['medien'], 'home': '', 'quota': 0, 'web': True, 'pw': 'tv1234'}},
          'groups': {'familie': 'Familie', 'medien': 'Mediengeräte'},
          'shares': {'fotos': {'volume': 'daten', 'path': 'Fotos', 'comment': 'Familienfotos', 'smb': True, 'nfs': False, 'guest': False, 'rw': ['jan'], 'ro': ['@familie'], 'nfs_rw': False, 'nfs_hosts': []},
                     'medien': {'volume': 'daten', 'path': 'Medien', 'comment': 'Filme und Musik', 'smb': True, 'nfs': True, 'guest': True, 'rw': ['jan'], 'ro': ['@medien'], 'nfs_rw': False, 'nfs_hosts': ['10.241.1.0/24']}},
          'sessions': {},
+         'widget': {'enabled': False, 'token': ''},
+         'pl': {'url': 'http://10.241.1.20:8000', 'enabled': True, 'interval': 2, 'after': 'delete',
+                'inboxes': {'u_jan': {'owner': 'jan', 'share': '', 'tags': [3], 'enabled': True},
+                            'scanner': {'owner': '', 'share': 'fotos', 'tags': [], 'enabled': True}}},
+         'cloud': {'installed': True, 'remotes': {'-': [{'name': 'nextcloud', 'type': 'webdav'}, {'name': 'b2backup', 'type': 'b2'}],
+                                                  'anna': [{'name': 'gdrive', 'type': 'drive'}]},
+                   'jobs': {'fotos_b2': {'owner': '', 'remote': 'b2backup', 'remote_path': 'nas/fotos', 'local': 'share:fotos', 'mode': 'upload', 'schedule': '0 3 * * *', 'bwlimit': '2M', 'enabled': True, 'state': 'ok', 'summary': '1.2 GiB / 1.2 GiB, 100%, 312 files'},
+                            'nc_dokumente': {'owner': '', 'remote': 'nextcloud', 'remote_path': 'Dokumente', 'local': 'share:fotos/Scans', 'mode': 'mirror', 'schedule': '30 * * * *', 'bwlimit': '', 'enabled': True, 'state': 'running', 'summary': '45 MiB / 120 MiB, 37%'},
+                            'anna_handy': {'owner': 'anna', 'remote': 'gdrive', 'remote_path': 'Handy', 'local': 'home', 'mode': 'download', 'schedule': '0 */6 * * *', 'bwlimit': '', 'enabled': True, 'state': 'error', 'error': 'token expired – log in again', 'summary': ''}}},
          'net': {'proto': 'dhcp', 'ipaddr': '', 'netmask': '255.255.255.0', 'gateway': '', 'dns': []}, 'net_pending': None}
 
 DISK = lambda n, model, serial: {
@@ -107,7 +116,38 @@ def me(user):
             mine.append({'name': n, 'access': acc, 'comment': sh['comment']})
     return {'name': user, 'role': x['role'], 'fullname': x['fullname'], 'groups': x['groups'], 'quota': x['quota'],
             'home': {'volume': x['home'], 'path': f"/mnt/{x['home']}/home/{user}", 'smb': user} if x['home'] else None,
-            'usage': [{'volume': 'daten', 'used': 61_500_000_000, 'limit': x['quota'] * 1000000}], 'shares': mine, 'host': 'skynet-nas'}
+            'usage': [{'volume': 'daten', 'used': 61_500_000_000, 'limit': x['quota'] * 1000000}], 'shares': mine, 'host': 'skynet-nas',
+            'cloud': x.get('cloud', False), 'paperless': bool(x['home'])}
+
+
+PL_LOG = [
+    {'file': 'Rechnung-Stadtwerke.pdf', 'task': 'a1b2', 'state': 'SUCCESS', 'message': 'Success. New document id 412 created'},
+    {'file': 'Kontoauszug-09.pdf', 'task': 'c3d4', 'state': 'PENDING', 'message': 'uploaded'},
+    {'file': 'scan_0042.tif', 'task': '', 'state': 'FAILURE', 'message': 'Not consuming scan_0042.tif: It is a duplicate of Steuer 2025 (#388)'}]
+
+
+def pl_inbox(name):
+    x = STATE['pl']['inboxes'][name]
+    path = f"/mnt/daten/home/{x['owner']}/Paperless" if x['owner'] else '/mnt/daten/Fotos'
+    now = int(time.time())
+    return {'name': name, 'owner': x['owner'], 'share': x['share'], 'path': path, 'token_set': True, 'token_hint': '…9f2c',
+            'tags': x['tags'], 'enabled': x['enabled'], 'waiting': 1 if x['owner'] else 0,
+            'recent': [dict(e, time=now - 300 * (i + 1)) for i, e in enumerate(PL_LOG)]}
+
+
+def pl_global():
+    g = STATE['pl']
+    return {'url': g['url'], 'enabled': g['enabled'], 'interval': g['interval'], 'after': g['after'], 'last': int(time.time()) - 70}
+
+
+def cloud_jobs(owner):
+    now = int(time.time())
+    out = []
+    for n, j in sorted(STATE['cloud']['jobs'].items()):
+        if owner is not None and j['owner'] != owner:
+            continue
+        out.append(dict({'name': n, 'started': now - 4000, 'ended': 0 if j['state'] == 'running' else now - 3500, 'error': ''}, **j))
+    return out
 
 
 def call(obj, method, args):
@@ -125,7 +165,78 @@ def call(obj, method, args):
         u = STATE['sessions'].get(SID, 'root')
         if method == 'passwd':
             return {'ok': True}
+        if method in ('paperless', 'paperless_set'):
+            ib = 'u_' + u
+            if method == 'paperless_set':
+                if args.get('test'):
+                    return {'ok': True, 'documents': '96'}
+                STATE['pl']['inboxes'][ib] = {'owner': u, 'share': '', 'tags': args.get('tags', []), 'enabled': args.get('enabled', True)}
+            return {'url': STATE['pl']['url'], 'available': True, 'inbox': pl_inbox(ib) if ib in STATE['pl']['inboxes'] else None,
+                    'folder': f'\\\\skynet-nas\\{u}\\Paperless', 'ok': True}
+        if method.startswith('cloud'):
+            c = STATE['cloud']
+            mine = c['remotes'].setdefault(u, [])
+            if method == 'cloud_remote_add':
+                mine.append({'name': args['name'], 'type': args['type'] or 'raw'})
+            if method == 'cloud_remote_del':
+                c['remotes'][u] = mine = [r for r in mine if r['name'] != args['name']]
+            if method == 'cloud_job_set':
+                old = c['jobs'].get(args['name'], {'state': None, 'summary': ''})
+                c['jobs'][args['name']] = dict(old, owner=u, **{k: v for k, v in args.items() if k != 'name'})
+            if method == 'cloud_job_del':
+                c['jobs'].pop(args['name'], None)
+            if method == 'cloud_job_run':
+                return {'started': True}
+            return {'allowed': True, 'installed': c['installed'], 'remotes': mine, 'jobs': cloud_jobs(u), 'shares': ['fotos'], 'ok': True}
         return me(u)
+    if obj == 'shareos.widget':
+        if method == 'set':
+            if args.get('enabled') is not None:
+                STATE['widget']['enabled'] = args['enabled']
+            if args.get('renew') or not STATE['widget']['token']:
+                STATE['widget']['token'] = os.urandom(16).hex()
+        return STATE['widget']
+    if obj == 'shareos.paperless':
+        if method == 'get':
+            return dict(pl_global(), inboxes=[pl_inbox(n) for n in STATE['pl']['inboxes']])
+        if method == 'set_global':
+            STATE['pl'].update({k: v for k, v in args.items() if v is not None and v != ''})
+            return pl_global()
+        if method == 'test':
+            return {'ok': True, 'documents': '1287'}
+        if method == 'inbox_set':
+            STATE['pl']['inboxes'][args['name']] = {'owner': args.get('owner', ''), 'share': args.get('share', ''), 'tags': args.get('tags', []), 'enabled': args.get('enabled', True)}
+            return {'ok': True, 'inbox': pl_inbox(args['name'])}
+        if method == 'inbox_del':
+            STATE['pl']['inboxes'].pop(args['name'], None)
+            return {'ok': True}
+        if method == 'tags':
+            return {'tags': [{'id': 1, 'name': 'Rechnung'}, {'id': 2, 'name': 'Steuer'}, {'id': 3, 'name': 'Posteingang'}, {'id': 4, 'name': 'Versicherung'}]}
+        if method == 'log':
+            return {'entries': pl_inbox(args['inbox'])['recent']}
+        return {'started': True}
+    if obj == 'shareos.cloud':
+        c = STATE['cloud']
+        if method == 'status':
+            return {'installed': c['installed'], 'version': 'v1.75.2' if c['installed'] else None, 'apps': 'daten', 'installing': False, 'install_error': None}
+        if method in ('remotes', 'remote_add', 'remote_del'):
+            if method == 'remote_add':
+                c['remotes']['-'].append({'name': args['name'], 'type': args['type'] or 'raw'})
+            if method == 'remote_del':
+                c['remotes']['-'] = [r for r in c['remotes']['-'] if r['name'] != args['name']]
+            return {'ok': True, 'remotes': c['remotes']['-']}
+        if method == 'remote_test':
+            return {'ok': True, 'folders': 14}
+        if method in ('jobs', 'job_set', 'job_del'):
+            if method == 'job_set':
+                old = c['jobs'].get(args['name'], {'owner': '', 'state': None, 'summary': ''})
+                c['jobs'][args['name']] = dict(old, **{k: v for k, v in args.items() if k != 'name'})
+            if method == 'job_del':
+                c['jobs'].pop(args['name'], None)
+            return {'ok': True, 'jobs': cloud_jobs(None)}
+        if method == 'job_log':
+            return {'lines': ['2026/10/18 03:00:01 INFO  : Starting upload to b2backup:nas/fotos', '2026/10/18 03:01:01 INFO  : 312 / 312 files, 1.2 GiB, 100%', '2026/10/18 03:01:05 INFO  : done']}
+        return {'started': True}
     if obj == 'shareos.accounts':
         if method == 'add':
             STATE['users'][args['name']] = {'role': args['role'], 'fullname': args.get('fullname', ''), 'groups': args.get('groups', []),

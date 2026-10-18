@@ -50,6 +50,11 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S70shares $(TARGET_DIR)/etc/init.d/S70shares
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/accounts $(TARGET_DIR)/etc/config/accounts
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/shares $(TARGET_DIR)/etc/config/shares
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-paperless $(TARGET_DIR)/usr/sbin/shareos-paperless
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cloud $(TARGET_DIR)/usr/sbin/shareos-cloud
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cron $(TARGET_DIR)/usr/sbin/shareos-cron
+	$(INSTALL) -D -m 0644 $(@D)/etc/config/paperless $(TARGET_DIR)/etc/config/paperless
+	$(INSTALL) -D -m 0644 $(@D)/etc/config/cloud $(TARGET_DIR)/etc/config/cloud
 	rm -rf $(TARGET_DIR)/www
 	cp -a $(@D)/www $(TARGET_DIR)/www
 endef

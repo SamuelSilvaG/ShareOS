@@ -71,6 +71,16 @@ the box for why the web server was not running.
 | 23:05 | Jan's log shows ECC errors: `blkid`/`lsblk` read the raw flash partitions on every storage query, including D-Link's unreadable "my-dlink". Claude switches the flash block devices off. |
 | 23:30 | **Shares (SMB/NFS), users, groups, storage limits, "My ShareOS", backup/restore** (JSON, optionally AES-256). Alt-F users are imported including their passwords. 52 checks in the ARM emulator. |
 
+### Sunday, 18 Oct 2026 – Paperless, cloud and app
+
+| Time | What happened |
+|---|---|
+| 00:37 | Jan publishes `v0.1.0-beta.3` and goes to bed: "Carry on with the roadmap – cloud, Paperless. I'll test in the morning." |
+| 01:00 | **Paperless-ngx**: inbox folders per user (in the personal folder) or shared on a share, e.g. for a scanner. ShareOS uploads new files through the Paperless API, polls the result and shows it. Users enter their own token under "My ShareOS". |
+| 01:00 | **Cloud sync with rclone**: rclone is downloaded from GitHub on demand (checksum verified) and lives in the apps area. Accounts (WebDAV/Nextcloud, S3, SFTP or a section from `rclone.conf`) and jobs (upload, download, mirror) with schedule and bandwidth limit – for the device and, if allowed, for each user with their own credentials. 29 checks against a fake Paperless and a local WebDAV server. |
+| 01:20 | **Installable as an app** (icon, shortcuts) and a **status address for widget apps** such as KWGT – Chrome offers no home-screen widgets for web apps. |
+| 01:40 | Re-running all tests shows that since the cloud work, plain users could not log in: a function was used before the line that defines it (ucode has no hoisting). Fixed before it reached a box; a new CI check now finds such cases automatically. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.
@@ -119,6 +129,14 @@ the right of its heading. The interface is available in German and English.
 | Backup & restore | |
 |---|---|
 | ![Backup](images/gui-sichern.png) | |
+
+| Paperless | Cloud sync |
+|---|---|
+| ![Paperless](images/gui-paperless.png) | ![Cloud](images/gui-en-cloud.png) |
+
+| "My ShareOS": Paperless and cloud | App & widgets |
+|---|---|
+| ![My ShareOS with Paperless and cloud](images/gui-mein-paperless-cloud.png) | ![App and widgets](images/gui-app-widgets.png) |
 
 | Update with progress | Phone |
 |---|---|

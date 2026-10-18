@@ -34,6 +34,10 @@ jobs:
         run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-update.sh "$HOME/hostroot/bin/ucode"
       - name: Network tests
         run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-net.sh "$HOME/hostroot/bin/uci"
+      - name: rpcd plugin compiles, no forward references
+        run: |
+          tests/check-ucode-order.py src/shareos-core/usr/share/rpcd/ucode/shareos.uc
+          LD_LIBRARY_PATH="$HOME/hostroot/lib" "$HOME/hostroot/bin/ucode" -c -o /tmp/shareos.ucc src/shareos-core/usr/share/rpcd/ucode/shareos.uc
 
   firmware:
     runs-on: ubuntu-24.04

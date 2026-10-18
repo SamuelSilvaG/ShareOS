@@ -1,0 +1,23 @@
+{
+	"name": "ShareOS",
+	"short_name": "ShareOS",
+	"description": "ShareOS – NAS-Firmware für den D-Link DNS-320L",
+	"id": "./",
+	"start_url": "./#/uebersicht",
+	"scope": "./",
+	"display": "standalone",
+	"background_color": "#1b2433",
+	"theme_color": "#1b2433",
+	"lang": "de",
+	"icons": [
+		{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+		{ "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+		{ "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+	],
+	"shortcuts": [
+		{ "name": "Übersicht", "url": "./#/uebersicht", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+		{ "name": "Speicher", "url": "./#/speicher", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+		{ "name": "Freigaben", "url": "./#/freigaben", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+		{ "name": "Firmware", "url": "./#/system/firmware", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+	]
+}

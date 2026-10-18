@@ -4,6 +4,11 @@ case "$1" in
 	start)
 		printf "Starting shares: "
 		/usr/sbin/shareos-users sync >/dev/null 2>&1
+		/usr/sbin/shareos-paperless folders >/dev/null 2>&1
+		/usr/sbin/shareos-cron sync >/dev/null 2>&1
+		# rclone lives on the disk: relink it after a system update
+		a=$(uci -q get storage.global.apps)
+		[ -n "$a" ] && [ -x "/mnt/$a/.shareos/bin/rclone" ] && ln -sf "/mnt/$a/.shareos/bin/rclone" /usr/bin/rclone
 		echo "OK"
 		;;
 	stop)
