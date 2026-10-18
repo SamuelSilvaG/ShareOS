@@ -490,7 +490,7 @@ function renderHeader(offline = false) {
 
 function renderTabs() {
 	$('#tabs').innerHTML = TABS.map(([id, label, isNew]) =>
-		html`<a class="tab${S.route.tab === id ? ' on' : ''}" href="#/${id}"${S.route.tab === id ? raw(' aria-current="page"') : ''}>${label}${isNew ? html` <span class="nb">NEU</span>` : ''}</a>`.s).join('');
+		html`<a class="tab${S.route.tab === id ? ' on' : ''}" href="#/${id}"${S.route.tab === id ? raw(' aria-current="page"') : ''}><span class="tl">${label}</span>${isNew ? html` <span class="nb">NEU</span>` : ''}</a>`.s).join('');
 }
 
 function parseRoute() {
@@ -1197,7 +1197,7 @@ function parseUserRoute() {
 
 function renderUserTabs() {
 	$('#tabs').innerHTML = userTabs().map(([id, label]) =>
-		html`<a class="tab${S.utab === id ? ' on' : ''}" href="#/${id}"${S.utab === id ? raw(' aria-current="page"') : ''}>${label}</a>`.s).join('');
+		html`<a class="tab${S.utab === id ? ' on' : ''}" href="#/${id}"${S.utab === id ? raw(' aria-current="page"') : ''}><span class="tl">${label}</span></a>`.s).join('');
 }
 
 function renderUserShell() {

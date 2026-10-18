@@ -42,7 +42,10 @@
 .sos a.tab:hover{color:var(--soft);border-color:var(--dim)}
 .sos a.tab.on{color:var(--bg);background:var(--accent);border-color:var(--accent);box-shadow:var(--glow)}
 .tab svg{width:15px;height:15px}
-.nb{font-size:9px;letter-spacing:.08em;padding:1px 5px;border-radius:4px;border:1px solid var(--amber);color:var(--amber)}
+/* centre capitals optically: without trimming the empty descender space pushes the label up */
+.tab .tl,.nb{text-box:trim-both cap alphabetic}
+.tab .tl{display:block}
+.nb{font-size:9px;letter-spacing:.08em;padding:4px 5px;line-height:1;border-radius:4px;border:1px solid var(--amber);color:var(--amber)}
 .tab.on .nb{border-color:var(--bg);color:var(--bg)}
 .subtabs{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 22px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--panel);width:fit-content;max-width:100%}
 .sos a.st,.st{min-height:36px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted);border-radius:7px;text-decoration:none}
