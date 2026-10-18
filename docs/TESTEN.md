@@ -19,6 +19,25 @@ werden vorher gesichert.
   Box; Pin 2 (3,3 V) bleibt frei. Einstellung 115200 8N1
 - einen PC mit TFTP-Server, zum Beispiel `dnsmasq`
 
+### Serielle Konsole anschließen (ohne Löten)
+
+JP1 sitzt neben dem USB-Anschluss und ist nicht bestückt. Es reicht, die
+Drähte des Adapters (Dupont-Kabel) durch die Lötaugen zu stecken und mit etwas
+Heißkleber zu sichern. Pin 1 ist das eckige Lötauge (Pfeil auf der Platine),
+zwischen Pin 1 und Pin 2 ist eine Lücke.
+
+| Belegung von JP1 | So sieht es angeschlossen aus |
+|---|---|
+| ![JP1-Belegung](images/hw-jp1.jpg) | ![JP1 mit Kabeln](images/hw-jp1-kabel.jpg) |
+
+| Aufbau mit USB-Seriell-Adapter | Platine im Überblick |
+|---|---|
+| ![Aufbau](images/hw-seriell-aufbau.jpg) | ![Platine](images/hw-platine.jpg) |
+
+Am PC: `screen /dev/ttyUSB0 115200` (oder PuTTY/minicom). Der Adapter muss
+auf **3,3 V** stehen – 5 V kann die Box beschädigen. TX und RX werden über
+Kreuz verbunden: TXD des Adapters an Pin 1 (RX der Box), RXD an Pin 4.
+
 ## 1. PC vorbereiten
 
 ```sh

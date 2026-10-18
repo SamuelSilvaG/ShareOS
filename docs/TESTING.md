@@ -19,6 +19,25 @@ backed up before anything is overwritten.
   pin 2 (3.3 V) unconnected. Settings: 115200 8N1
 - a PC with a TFTP server, for example `dnsmasq`
 
+### Connecting the serial console (no soldering)
+
+JP1 sits next to the USB port and is not populated. It is enough to push the
+adapter's wires (Dupont cables) through the holes and secure them with a little
+hot glue. Pin 1 is the square pad (arrow on the board); there is a gap between
+pin 1 and pin 2.
+
+| JP1 pinout | What it looks like connected |
+|---|---|
+| ![JP1 pinout](images/hw-jp1.jpg) | ![JP1 with wires](images/hw-jp1-kabel.jpg) |
+
+| Setup with a USB-serial adapter | Board overview |
+|---|---|
+| ![Setup](images/hw-seriell-aufbau.jpg) | ![Board](images/hw-platine.jpg) |
+
+On the PC: `screen /dev/ttyUSB0 115200` (or PuTTY/minicom). The adapter must be
+set to **3.3 V** – 5 V can damage the box. TX and RX are crossed: the adapter's
+TXD goes to pin 1 (box RX), RXD to pin 4.
+
 ## 1. Prepare the PC
 
 ```sh
