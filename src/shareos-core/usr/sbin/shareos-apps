@@ -83,7 +83,16 @@ function vcmp(a, b) {
 	if (x.pre == y.pre) return 0;
 	if (!x.pre) return 1;
 	if (!y.pre) return -1;
-	return x.pre < y.pre ? -1 : 1;
+	// pre-release parts compare numerically where both are numbers (beta.10 > beta.9)
+	let p = split(x.pre, '.'), q = split(y.pre, '.');
+	for (let i = 0; i < length(p) && i < length(q); i++) {
+		if (p[i] == q[i]) continue;
+		let np = match(p[i], /^[0-9]+$/), nq = match(q[i], /^[0-9]+$/);
+		if (np && nq) return +p[i] < +q[i] ? -1 : 1;
+		if (np || nq) return np ? -1 : 1;
+		return p[i] < q[i] ? -1 : 1;
+	}
+	return length(p) == length(q) ? 0 : (length(p) < length(q) ? -1 : 1);
 }
 
 function shareos_version() {
@@ -91,10 +100,16 @@ function shareos_version() {
 	return m ? m[1] : '0';
 }
 
-// development builds (0.0-<date>-<commit>) take every app
+// development builds (0.0-<date>-<commit>) take every app. A minimum without
+// pre-release ("0.1.0") is met by the betas of that version too (0.1.0-beta.7);
+// an app that needs a certain beta names it ("0.1.0-beta.7").
 function too_old(min) {
 	let v = shareos_version();
-	return !!min && !match(v, /^0\.0-/) && !!vparse(v) && vcmp(v, min) < 0;
+	if (!min || match(v, /^0\.0-/) || !vparse(v)) return false;
+	let m = vparse(min);
+	if (m && !m.pre)
+		v = join('.', vparse(v).n);
+	return vcmp(v, min) < 0;
 }
 
 function conf() {

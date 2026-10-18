@@ -37,9 +37,9 @@ Version in brackets = first release with the feature.
 
 **Storage**
 - Setup wizard: one disk, two separate disks or a mirror (RAID 1, mdadm), optional swap partition per disk
-- File system per volume: **ext4** (recommended: owners, storage limit per user, personal folders, apps), **Btrfs**, **exFAT**, **NTFS** (beta.8)
+- File system per volume: **ext4** (recommended: owners, storage limit per user, personal folders, apps), **Btrfs**, **exFAT**, **NTFS** (beta.7)
 - SMART values and health, disk standby, RAID status with sync progress, mount/unmount/remove volumes
-- **USB sticks and disks:** mounted at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), **Safely remove**, **Format** with exFAT, FAT32, NTFS or ext4 (beta.8)
+- **USB sticks and disks:** mounted at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), **Safely remove**, **Format** with exFAT, FAT32, NTFS or ext4 (beta.7)
 
 **Shares, users, files**
 - SMB 2/3 (ksmbd) and NFS v4 shares with read/write permissions per user and group, guest access optional
@@ -49,7 +49,7 @@ Version in brackets = first release with the feature.
 
 **Apps and integrations**
 - APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps): one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
-- App permissions: scheduled tasks (`cron`) as a restricted app user, schedule editable in the interface (beta.8)
+- App permissions: scheduled tasks (`cron`) as a restricted app user, schedule editable in the interface (beta.7)
 - Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)
@@ -62,8 +62,8 @@ Version in brackets = first release with the feature.
 - HTTPS with a self-signed certificate that follows name and IP, own certificate possible
 - Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256), messages that can be closed
 - Look: light/dark/system, accent colours, tiles or tables, per user
-- 10 languages: English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese, Russian (beta.8; more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
-- Time: time zone, NTP on/off with own servers (e.g. the router), sync now, set the clock by hand; the battery clock follows (beta.8)
+- 10 languages: English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese, Russian (beta.7; more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
+- Time: time zone, NTP on/off with own servers (e.g. the router), sync now, set the clock by hand; the battery clock follows (beta.7)
 - SSH/SFTP (Dropbear), rescue system in the initramfs (SSH, flash tools)
 
 ## D-Link firmware, Alt-F and ShareOS compared (DNS-320L)

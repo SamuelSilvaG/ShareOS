@@ -173,5 +173,18 @@ check "update keeps the own schedule, removed jobs disappear" "run 'shareos-apps
 run 'shareos-apps remove ticker' >/dev/null
 check "remove: user, data, jobs and cron entries gone" "! grep -q '^app-ticker:' $R/etc/passwd && ! grep -q '^app-ticker:' $R/etc/group && [ ! -e $R/var/lib/shareos-apps/ticker ] && ! run 'uci show apps' | grep -q appjob && ! grep -q 'run-job ticker' $R/etc/crontabs/root"
 
+# --- minimum ShareOS version on a beta of the box ---------------------------------
+cp $R/etc/shareos-release $T/release.bak
+sed -i 's/^SHAREOS_VERSION=.*/SHAREOS_VERSION="0.1.0-beta.10"/' $R/etc/shareos-release
+for m in 0.1.0:ok 0.1.0-beta.9:ok 0.1.0-beta.10:ok 0.1.0-beta.11:old 0.1.1:old 0.2.0:old; do
+	mkapp $T/mv mver 1.0.0 && python3 -c "import json; f='$T/mv/app.json'; d=json.load(open(f)); d['min_shareos']='${m%%:*}'; json.dump(d,open(f,'w'))" && pack $T/mv $P/mver.sapp
+	o=$(run 'shareos-apps install-file /tmp/pkg/mver.sapp')
+	if [ "${m##*:}" = ok ]; then check "beta.10 box: app needing ${m%%:*} installs" "echo '$o' | js \"d.get('ok')\""
+	else check "beta.10 box: app needing ${m%%:*} refused" "echo '$o' | grep -q 'or newer'"; fi
+	run 'shareos-apps remove mver' >/dev/null
+	rm -rf $T/mv
+done
+cp $T/release.bak $R/etc/shareos-release
+
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]
