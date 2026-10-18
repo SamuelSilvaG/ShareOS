@@ -38,6 +38,7 @@ jobs:
         run: |
           tests/check-ucode-order.py src/shareos-core/usr/share/rpcd/ucode/shareos.uc
           tests/check-ucode-order.py src/shareos-core/usr/sbin/shareos-apps
+          tests/check-acl.py
           LD_LIBRARY_PATH="$HOME/hostroot/lib" "$HOME/hostroot/bin/ucode" -c -o /tmp/apps.ucc src/shareos-core/usr/sbin/shareos-apps
           LD_LIBRARY_PATH="$HOME/hostroot/lib" "$HOME/hostroot/bin/ucode" -c -o /tmp/shareos.ucc src/shareos-core/usr/share/rpcd/ucode/shareos.uc
 

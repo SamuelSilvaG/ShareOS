@@ -79,6 +79,12 @@
 				"shareos.files": [
 					"roots",
 					"list"
+				],
+				"shareos.apps": [
+					"installed",
+					"catalog",
+					"status",
+					"store_get"
 				]
 			},
 			"uci": [
@@ -203,6 +209,14 @@
 					"move",
 					"delete",
 					"ticket"
+				],
+				"shareos.apps": [
+					"install",
+					"upload_ticket",
+					"install_upload",
+					"remove",
+					"set",
+					"store_set"
 				]
 			},
 			"uci": [

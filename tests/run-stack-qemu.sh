@@ -108,6 +108,9 @@ if [ "$CHECK" = "--check" ]; then
 	t "network: broadcast address rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.255","netmask":"255.255.255.0","confirm":true}')" "'broadcast' in d['result'][1]['error']"
 	t "network: bad DNS rejected" "$(rpc $SID shareos.net set '{"proto":"static","ipaddr":"10.0.0.5","netmask":"255.255.255.0","dns":["1.2.3"],"confirm":true}')" "'DNS' in d['result'][1]['error']"
 	t "network: confirm without change is harmless" "$(rpc $SID shareos.net confirm)" "d['result'][1]['ok']"
+	# every page of the web interface works with a web session (ACL)
+	t "apps: installed list with a web session" "$(rpc $SID shareos.apps installed)" "'result' in d and d['result'][0]==0"
+	t "apps: store settings with a web session" "$(rpc $SID shareos.apps store_get)" "'result' in d and d['result'][0]==0"
 	# messages that can be closed for good
 	chroot "$R" /bin/sh -c 'mkdir -p /overlay /tmp/shareos-storage /tmp/shareos-net; echo "ok 0.1.0" > /overlay/upgrade-result; printf "state=error\nerror=test\n" > /tmp/shareos-storage/job; echo rolledback > /tmp/shareos-net/result'
 	t "last update shown" "$(rpc $SID shareos.update status)" "d['result'][1]['last_upgrade']=='ok 0.1.0'"
