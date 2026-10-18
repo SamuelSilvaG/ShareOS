@@ -229,6 +229,16 @@ their permissions.
 - **System → Time:** the box's clock runs live in its time zone. Change the time zone, switch NTP off and on, enter own time servers (e.g. `fritz.box`), *Sync now*. With NTP off the clock can be set by hand or taken from the browser. Logs then show the local time.
 - **System → Appearance → Language:** 10 languages (English, German, Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian). Arabic switches the page to right to left. Translations other than German/English are machine-made – please report mistakes.
 
+## 15. Buttons
+
+- **Reset button** (pin hole at the back), hold and let go:
+  - shorter than 5 s: nothing;
+  - **5–10 s** (orange USB LED blinks slowly): **access reset** – network back to DHCP (fallback `192.168.0.32`), root password `shareos`, web interface over http again with a new self-signed certificate; users, shares, apps and data stay; the box restarts;
+  - 10–15 s (LED off): cancelled;
+  - **15 s or longer** (LED blinks fast): **factory reset** – all settings and installed packages are removed, the data on the disks stays.
+- **USB button** (front): safely removes all USB drives.
+- What happened is in the system log (`shareos-buttons`).
+
 ## Back to Alt-F
 
 1. Have the Alt-F `.bin` for the DNS-320L ready (e.g. `Alt-F-1.0-DNS-320L-rev-A.bin`).

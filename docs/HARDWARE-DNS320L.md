@@ -151,7 +151,7 @@ TFTP-booted from RAM (`uImage` + `urootfs`, commit d43dcb5), rev A3 box:
 | NAND | 7 partitions as in Alt-F, same bad blocks |
 | Ethernet | 1000 Mb/s full duplex, DHCP lease, real MAC from mtd4 |
 | MCU (dns320l-daemon) | running, temperature read (36–38 °C), fan runs |
-| LEDs / buttons | all 4 LEDs, gpio-keys; blue USB LED heartbeat |
+| LEDs / buttons | all 4 LEDs, gpio-keys; blue USB LED heartbeat; reset button: access reset (5–10 s) / factory reset (≥ 15 s), USB button: remove USB drives (`shareos-buttons`) |
 | Power button / poweroff | MCU switches the box off |
 | ubusd / rpcd / uhttpd | web test page works (system info, login) |
 | SSH | works |

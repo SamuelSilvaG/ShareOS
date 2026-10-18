@@ -232,6 +232,16 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **System → Zeit:** Die Uhr der Box läuft live in ihrer Zeitzone. Zeitzone ändern, NTP aus- und einschalten, eigene Zeitserver eintragen (z. B. `fritz.box`), *Jetzt abgleichen*. Mit NTP aus lässt sich die Uhr von Hand stellen oder die Zeit des Browsers übernehmen. Protokolle zeigen danach die Ortszeit.
 - **System → Darstellung → Sprache:** 10 Sprachen (Englisch, Deutsch, Chinesisch, Hindi, Spanisch, Französisch, Arabisch, Bengalisch, Portugiesisch, Russisch). Arabisch stellt die Seite auf rechts-nach-links um. Die Übersetzungen außer Deutsch/Englisch sind maschinell – Fehler bitte melden.
 
+## 15. Tasten
+
+- **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:
+  - kürzer als 5 s: nichts;
+  - **5–10 s** (orange USB-LED blinkt langsam): **Zugangs-Reset** – Netzwerk zurück auf DHCP (Ersatzadresse `192.168.0.32`), root-Passwort `shareos`, Weboberfläche wieder über http mit neuem selbstsigniertem Zertifikat; Benutzer, Freigaben, Apps und Daten bleiben; die Box startet neu;
+  - 10–15 s (LED aus): abgebrochen;
+  - **15 s oder länger** (LED blinkt schnell): **Werkseinstellungen** – alle Einstellungen und installierten Pakete werden entfernt, die Daten auf den Festplatten bleiben.
+- **USB-Taste** (vorne): wirft alle USB-Laufwerke sicher aus.
+- Was passiert ist, steht im Systemprotokoll (`shareos-buttons`).
+
 ## Zurück zu Alt-F
 
 1. Die Alt-F-`.bin` für den DNS-320L bereitlegen (z. B. `Alt-F-1.0-DNS-320L-rev-A.bin`).
