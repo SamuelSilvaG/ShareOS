@@ -3,11 +3,12 @@
 # shareos-storage – disks, RAID and volumes for ShareOS
 #
 #   shareos-storage boot | shutdown            (S20storage)
-#   shareos-storage setup mirror <name> <disk> <disk> [--swap=MiB] --yes
-#   shareos-storage setup single <name>=<disk> [<name>=<disk>] [--swap=MiB] --yes
+#   shareos-storage setup mirror <name> <disk> <disk> [--swap=MiB] [--fs=FS] --yes
+#   shareos-storage setup single <name>=<disk>[:FS] [<name>=<disk>[:FS]] [--swap=MiB] [--fs=FS] --yes
 #                                              erase the disks and create volumes
 #                                              (--swap: swap partition per disk,
-#                                              default 1024, 0 = none)
+#                                              default 1024, 0 = none; FS: ext4
+#                                              (default), btrfs, exfat, ntfs)
 #   shareos-storage mount <name> | umount <name>
 #   shareos-storage forget <name>              unmount and remove from the config
 #   shareos-storage spindown <minutes>         0 = never
@@ -15,8 +16,11 @@
 #
 # Disks are given as sda, sdb, ... (whole disks). Each disk gets an optional
 # swap partition (label shareos-swap, used with equal priority on all disks)
-# and a data partition. Volumes are ext4, mounted at /mnt/<name> and stored
-# in /etc/config/storage (UCI). The first volume also gets the app area
+# and a data partition. Volumes are mounted at /mnt/<name> and stored in
+# /etc/config/storage (UCI). ext4 has everything (owners, storage limit per
+# user); btrfs has owners but no storage limit; exfat and ntfs have neither
+# (every user of a share may write) and cannot hold personal folders or the
+# app area. The first ext4/btrfs volume also gets the app area
 # /mnt/<name>/.shareos (storage.global.apps) for packages and app data. Names: a-z, 0-9,
 # - and _, at most 16 characters (ext4 label limit).
 #
@@ -58,6 +62,18 @@ partn() { case "$1" in *[0-9]) echo /dev/${1}p$2 ;; *) echo /dev/${1}$2 ;; esac;
 # is the device name $1 the disk $2 or one of its partitions? (loop1 is not part of loop10)
 of_disk() { case "$2" in *[0-9]) case "$1" in "$2"|"$2"p[0-9]*) return 0 ;; esac ;; *) case "$1" in "$2"|"$2"[0-9]*) return 0 ;; esac ;; esac; return 1; }
 SWAP_MB=1024
+FS=ext4
+valid_fs() { case "$1" in ext4|btrfs|exfat|ntfs) return 0 ;; esac; return 1; }
+linux_fs() { case "$1" in ext4|btrfs) return 0 ;; esac; return 1; }
+# file systems without owners: everybody may write, access is decided by the share
+mount_args() {   # fs -> "-t <type> -o <options>"
+	case "$1" in
+		ntfs) echo "-t ntfs3 -o noatime,umask=000" ;;
+		exfat) echo "-t exfat -o noatime,umask=000" ;;
+		vfat) echo "-t vfat -o noatime,umask=000,utf8=1,shortname=mixed" ;;
+		*) echo "-t $1 -o noatime" ;;
+	esac
+}
 
 # ext4 user quota needs CONFIG_QUOTA and the v2 quota format in the kernel;
 # a volume with the quota feature cannot be mounted at all without them
@@ -102,7 +118,9 @@ mount_volume() {
 		fi
 	fi
 	mkdir -p /mnt/$n
-	if ! mount -t "$fs" -o $opts "$dev" /mnt/$n 2>/dev/null; then
+	if [ "$fs" != ext4 ]; then
+		mount $(mount_args "$fs") "$dev" /mnt/$n || { log "volume $n: mount failed"; return 1; }
+	elif ! mount -t "$fs" -o $opts "$dev" /mnt/$n 2>/dev/null; then
 		# without quota support in the kernel the volume still has to come up
 		[ "$opts" != noatime ] && mount -t "$fs" -o noatime "$dev" /mnt/$n && log "volume $n: mounted without user quota" \
 			|| { log "volume $n: mount failed"; return 1; }
@@ -224,7 +242,8 @@ swap_on() {
 	done
 }
 
-apps_area() {   # first volume becomes the app area unless one is set
+apps_area() {   # first ext4/btrfs volume becomes the app area unless one is set
+	linux_fs "$(uci -q get storage.$1.fstype)" || return 0
 	a=$(uci -q get storage.global.apps)
 	[ -n "$a" ] && [ "$(uci -q get storage.$a)" = volume ] && return 0
 	uci set storage.global.apps="$1"
@@ -232,19 +251,28 @@ apps_area() {   # first volume becomes the app area unless one is set
 	mkdir -p /mnt/$1/.shareos
 }
 
-make_fs() {   # dev name
-	step "creating file system on $1"
-	mkfs.ext4 -F -q -L "$2" -m 1 $(quota_supported && echo -O quota) -E lazy_itable_init=1,lazy_journal_init=1 "$1" || die "mkfs on $1 failed"
+make_fs() {   # dev name fs
+	step "creating file system ($3) on $1"
+	case "$3" in
+		ext4) mkfs.ext4 -F -q -L "$2" -m 1 $(quota_supported && echo -O quota) -E lazy_itable_init=1,lazy_journal_init=1 "$1" ;;
+		btrfs) mkfs.btrfs -f -q -L "$2" "$1" >/dev/null ;;
+		exfat) mkfs.exfat -L "$(printf %.15s "$2")" "$1" >/dev/null ;;   # exFAT labels: 15 characters
+		ntfs) mkntfs -Q -F -q -L "$2" "$1" >/dev/null ;;
+	esac || die "mkfs ($3) on $1 failed"
 }
 
-add_volume() {   # name dev layout
+# GPT partition type: Linux, RAID or "Microsoft basic data" (exFAT/NTFS, so
+# Windows and macOS show the disk when it is connected to a computer)
+part_type() { case "$1" in R) echo R ;; exfat|ntfs) echo EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 ;; *) echo L ;; esac; }
+
+add_volume() {   # name dev layout fs
 	local uuid
 	uuid=$(blkid -s UUID -o value "$2")
 	[ -n "$uuid" ] || die "no UUID on $2"
 	uci -q delete storage.$1
 	uci set storage.$1=volume
 	uci set storage.$1.uuid="$uuid"
-	uci set storage.$1.fstype=ext4
+	uci set storage.$1.fstype="${4:-ext4}"
 	uci set storage.$1.layout="$3"
 	uci set storage.$1.enabled=1
 	uci commit storage
@@ -265,10 +293,12 @@ cmd_setup() {
 		case "$a" in
 			--yes) yes=1 ;;
 			--swap=*) SWAP_MB=${a#--swap=} ;;
+			--fs=*) FS=${a#--fs=} ;;
 			*) args="$args $a" ;;
 		esac
 	done
 	echo "$SWAP_MB" | grep -qE '^[0-9]+$' && [ "$SWAP_MB" -le 8192 ] || { echo "invalid --swap" >&2; exit 2; }
+	valid_fs "$FS" || { echo "invalid --fs (ext4, btrfs, exfat, ntfs)" >&2; exit 2; }
 	[ $yes = 1 ] || { echo "setup erases the disks – add --yes" >&2; exit 2; }
 	set -- $args
 	job_start "setup $layout $*"
@@ -289,24 +319,27 @@ cmd_setup() {
 		mdadm --create $md --run --quiet --level=1 --raid-devices=2 --metadata=1.2 \
 			--name="$name" --bitmap=internal $p1 $p2 || die "mdadm --create failed"
 		write_mdconf
-		make_fs $md "$name"
-		add_volume "$name" $md mirror
+		make_fs $md "$name" $FS
+		add_volume "$name" $md mirror $FS
 		apps_area "$name"
 		;;
 	single)
 		[ $# -ge 1 ] || die "no disks given"
 		for v; do
-			n=${v%%=*} d=${v#*=}
+			n=${v%%=*} d=${v#*=}; f=$FS
+			case "$d" in *:*) f=${d#*:}; d=${d%%:*} ;; esac
 			valid_name "$n" || die "invalid name '$n'"
 			valid_disk "$d" || die "invalid disk '$d'"
+			valid_fs "$f" || die "invalid file system '$f'"
 		done
 		for v; do
-			n=${v%%=*} d=${v#*=}
+			n=${v%%=*} d=${v#*=}; f=$FS
+			case "$d" in *:*) f=${d#*:}; d=${d%%:*} ;; esac
 			step "preparing $d"
 			release_disk $d
-			step "partitioning $d"; partition $d L
-			make_fs $DATA "$n"
-			add_volume "$n" $DATA single
+			step "partitioning $d"; partition $d $(part_type $f)
+			make_fs $DATA "$n" $f
+			add_volume "$n" $DATA single $f
 			apps_area "$n"
 		done
 		write_mdconf

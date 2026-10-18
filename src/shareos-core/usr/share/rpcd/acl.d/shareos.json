@@ -84,7 +84,11 @@
 					"installed",
 					"catalog",
 					"status",
-					"store_get"
+					"store_get",
+					"job_log"
+				],
+				"shareos.time": [
+					"get"
 				]
 			},
 			"uci": [
@@ -113,6 +117,8 @@
 				"shareos.storage": [
 					"setup",
 					"volume",
+					"usb_eject",
+					"usb_format",
 					"job_clear",
 					"spindown"
 				],
@@ -216,7 +222,14 @@
 					"install_upload",
 					"remove",
 					"set",
-					"store_set"
+					"store_set",
+					"job_set",
+					"job_run"
+				],
+				"shareos.time": [
+					"set",
+					"sync",
+					"set_clock"
 				]
 			},
 			"uci": [

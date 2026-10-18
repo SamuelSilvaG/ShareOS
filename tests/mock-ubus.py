@@ -68,7 +68,10 @@ def info():
 def storage():
     pct = min(99.9, 12.4 + (time.time() - T0) / 60)
     return {
-        'disks': [DISK('sda', 'WDC WD40EFPX-68C6CN0', 'WD-WX12A3456789'), DISK('sdb', 'WDC WD40EFPX-68C6CN0', 'WD-WX98B7654321')],
+        'disks': [DISK('sda', 'WDC WD40EFPX-68C6CN0', 'WD-WX12A3456789'), DISK('sdb', 'WDC WD40EFPX-68C6CN0', 'WD-WX98B7654321')]
+        + ([] if STATE.get('usb_gone') else [{'name': 'sdc', 'type': 'disk', 'size': 32 * 10**9, 'model': 'SanDisk Ultra', 'tran': 'usb', 'rm': True, 'usb': True,
+              'children': [{'name': 'sdc1', 'type': 'part', 'fstype': 'exfat', 'label': 'STICK', 'mountpoint': '/mnt/usb-stick'}]}]),
+        'usb': [] if STATE.get('usb_gone') else [{'dev': '/dev/sdc1', 'path': '/mnt/usb-stick', 'fs': 'exfat'}],
         'swaps': [{'device': '/dev/sda1', 'size': 1 << 30, 'used': 12 << 20}, {'device': '/dev/sdb1', 'size': 1 << 30, 'used': 11 << 20}],
         'apps': 'daten',
         'arrays': {'md0': {'name': 'md0', 'state': 'active', 'level': 'raid1', 'members': ['sdb2', 'sda2'], 'disks': 2, 'active': 2,
@@ -211,7 +214,14 @@ def files_call(user, method, args):
     return {'error': 'unknown'}
 
 
-APPS = {'installed': {}, 'job': None, 'channel': 'stable',
+APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Backup', 'version': '0.3.0', 'publisher': 'Jan', 'description': {'de': 'Sichert Notizen jede Nacht', 'en': 'backs up notes every night'},
+                       'type': 'webapp', 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': ['cron'], 'verified': False, 'source': 'upload',
+                       'installed': 0, 'users': ['*'],
+                       'jobs': [{'id': 'nightly', 'name': 'Nightly backup', 'command': 'jobs/backup.sh', 'timeout': 300, 'schedule': '30 3 * * *', 'default_schedule': '30 3 * * *',
+                                 'enabled': True, 'running': False, 'last': {'time': 1792290600, 'duration': 4, 'rc': 0, 'timeout': False}},
+                                {'id': 'cleanup', 'name': 'Clean up old backups', 'command': 'jobs/cleanup.sh', 'timeout': 120, 'schedule': '0 5 * * 0', 'default_schedule': '0 4 * * 0',
+                                 'enabled': False, 'running': False, 'last': None}]}},
+        'job': None, 'channel': 'stable',
         'sources': ['https://github.com/UniqueDroid/ShareOS-Apps/releases/download/catalog/index.json'], 'refreshed': 0}
 CATALOG = [
     {'id': 'webpad', 'name': 'Webpad', 'publisher': 'UniqueDroid', 'category': 'tools', 'type': 'webapp',
@@ -281,6 +291,21 @@ def apps_call(method, args):
     if method == 'set':
         APPS['installed'][args['id']]['users'] = args['users']
         return {'ok': True}
+    if method == 'job_set':
+        for j in APPS['installed'][args['id']]['jobs']:
+            if j['id'] == args['job']:
+                if args.get('schedule'):
+                    j['schedule'] = args['schedule']
+                if args.get('enabled') is not None:
+                    j['enabled'] = args['enabled']
+        return {'ok': True}
+    if method == 'job_run':
+        for j in APPS['installed'][args['id']]['jobs']:
+            if j['id'] == args['job']:
+                j['last'] = {'time': int(time.time()), 'duration': 3, 'rc': 0, 'timeout': False}
+        return {'started': True}
+    if method == 'job_log':
+        return {'log': 'backup of 12 notes written to backups/2026-10-18.zip\n', 'last': None}
     if method == 'upload_ticket':
         return {'url': '/cgi-bin/files?t=upload'}
     if method == 'install_upload':
@@ -446,6 +471,18 @@ def call(obj, method, args):
         p = STATE['net_pending']
         return {**STATE['net'], 'timeout': 120, 'result': None,
                 'pending': {'until': int(p), 'left': max(0, int(p - time.time()))} if p else None}
+    if obj == 'shareos.time':
+        t = STATE.setdefault('time', {'timezone': 'Europe/Berlin', 'ntp': True, 'servers': ['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org'],
+                                      'last_sync': int(time.time()) - 1800, 'offset': 0})
+        if method == 'set':
+            for k in ('timezone', 'ntp', 'servers'):
+                if args.get(k) is not None: t[k] = args[k]
+        if method == 'sync':
+            t['last_sync'] = int(time.time())
+        if method == 'set_clock':
+            t['offset'] = int(args['time']) - int(time.time())
+        return {'now': int(time.time()) + t['offset'], 'timezone': t['timezone'], 'ntp': t['ntp'], 'servers': t['servers'],
+                'last_sync': t['last_sync'], 'ntp_running': t['ntp'], 'rtc': True}
     if obj == 'shareos.setup':
         if method == 'status':
             return {'done': STATE['setup_done'], 'hostname': 'shareos', 'timezone': 'Europe/Berlin', 'lang': STATE['lang'], 'channel': 'stable'}
@@ -492,6 +529,8 @@ def call(obj, method, args):
     if obj == 'shareos.storage':
         if method == 'status':
             return storage()
+        if method == 'usb_eject':
+            STATE['usb_gone'] = True
         return {'ok': True}
     if obj == 'shareos.update':
         if method == 'apply':

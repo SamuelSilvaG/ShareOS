@@ -1,0 +1,1826 @@
+{
+	"language": "zh",
+	"name": "中文",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "概览",
+		"SPEICHER": "存储",
+		"FREIGABEN": "共享",
+		"DIENSTE": "服务",
+		"APPS": "应用",
+		"CLOUD": "云",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "系统",
+		"NEU": "新",
+		"ONLINE": "在线",
+		"OFFLINE": "离线",
+		"Abmelden": "退出登录",
+		"Hell/Dunkel umschalten": "切换浅色/深色",
+		"Hauptmenü": "主菜单",
+		"System": "系统",
+		"verfügbar": "可用",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "ShareOS 界面需要 JavaScript。",
+		"Verwaltung – bitte anmelden.": "管理 – 请登录。",
+		"BENUTZER": "用户",
+		"PASSWORT": "密码",
+		"Angemeldet bleiben (7 Tage)": "保持登录（7 天）",
+		"Anmelden": "登录",
+		"Benutzer oder Passwort falsch.": "用户名或密码错误。",
+		"Box nicht erreichbar.": "无法连接设备。",
+		"Sitzung abgelaufen – bitte neu anmelden.": "会话已过期 – 请重新登录。",
+		"live · alle 5 s": "实时 · 每 5 秒",
+		"AUSLASTUNG": "负载",
+		"Gerätesteuerung aktiv": "主板控制已启用",
+		"keine MCU-Daten": "无 MCU 数据",
+		"LÜFTER": "风扇",
+		"TEMP": "温度",
+		"aus": "关",
+		"halb": "半速",
+		"voll": "全速",
+		"kein Link": "无连接",
+		"letzte 10 min": "最近 10 分钟",
+		"Gateway · DNS": "网关 · DNS",
+		"sammle Messwerte …": "正在采集数据 …",
+		"Firmware": "固件",
+		"Start aus": "启动来源",
+		"Flash (UBI)": "闪存 (UBI)",
+		"Netzwerk (RAM)": "网络 (内存)",
+		"Einstellungen bleiben erhalten": "设置会保留",
+		"Änderungen gehen beim Neustart verloren": "重启后更改会丢失",
+		"Laufzeit": "运行时间",
+		"seit dem letzten Start": "自上次启动",
+		"Dienste": "服务",
+		"laufen": "运行中",
+		"Flash frei": "闪存可用",
+		"für Einstellungen & Pakete": "用于设置和软件包",
+		"Laufwerke": "驱动器",
+		"erkannt": "已检测到",
+		"keine eingesteckt": "未连接",
+		"alle verwalten": "全部管理",
+		"Update verfügbar": "有可用更新",
+		"Lade Systemdaten …": "正在加载系统数据 …",
+		"Lade Dienste …": "正在加载服务 …",
+		"Lade Laufwerke …": "正在加载驱动器 …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "未检测到硬盘或 USB 存储。ShareOS 完全在内部闪存中运行 – 驱动器连接后会立即显示在这里。",
+		"unbekanntes Modell": "未知型号",
+		"Start, Stopp, Neustart": "启动、停止、重启",
+		"Neustart": "重启",
+		"Stopp": "停止",
+		"Starten": "启动",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "网页界面",
+		"Zeit (NTP)": "时间 (NTP)",
+		"Zeitplaner": "计划任务",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "系统总线 (ubus)",
+		"Systemprotokoll": "系统日志",
+		"Gerätesteuerung": "主板控制",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "校准时钟，并同步 MCU 时钟",
+		"Schnittstelle für diese Oberfläche": "本网页界面的接口",
+		"Nachrichten zwischen den Diensten": "服务之间的消息",
+		"syslogd, im RAM": "syslogd，在内存中",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "风扇、温度、按键、MCU 时钟",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "此区域尚未完成。计划内容：",
+		"FREIGABEN, BENUTZER & GRUPPEN": "共享、用户和组",
+		"APPS & PAKETE": "应用和软件包",
+		"CLOUD-SPEICHER": "云存储",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "按文件夹共享，可开关 SMB、NFS、FTP 和 DLNA",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "用户和组，按共享设置权限",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "挂载网络驱动器 (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "备份任务 (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "GitHub 上的软件包源 (opkg feed)",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "分类目录，通过队列安装/卸载",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "软件包安装到设置和软件包区 (闪存) 或硬盘",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "通过 rclone 连接账户：Nextcloud/WebDAV、Google Drive、OneDrive、Dropbox、S3、SFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "同步任务：复制、镜像、双向",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "加密 (crypt)、带宽和计划",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "NAS 上的收件文件夹 → 通过 Paperless REST API 上传 (令牌)",
+		"Status der Übertragungen über /api/tasks/": "通过 /api/tasks/ 查看传输状态",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "按文件夹设置标签和通信方，导出备份到 NAS",
+		"VOLUMES": "卷",
+		"LAUFWERKE": "驱动器",
+		"EINSTELLUNGEN": "设置",
+		"RUHEZUSTAND": "休眠",
+		"NEU EINRICHTEN": "重新设置",
+		"PLATTEN ABSCHALTEN NACH": "硬盘休眠时间",
+		"nie": "从不",
+		"10 Minuten": "10 分钟",
+		"20 Minuten": "20 分钟",
+		"30 Minuten": "30 分钟",
+		"1 Stunde": "1 小时",
+		"2 Stunden": "2 小时",
+		"Swap": "交换分区",
+		"Apps-Bereich": "应用区",
+		"noch keiner": "暂无",
+		"keiner aktiv": "无启用项",
+		"noch keine": "暂无",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "节省电力并减少磨损。下次访问时硬盘会重新启动（几秒钟）。",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "向导会清除所选硬盘并重新设置。单块硬盘也可以直接在“驱动器”下格式化。",
+		"Assistent starten": "启动向导",
+		"Speicher einrichten": "设置存储",
+		"INTERNER FLASH": "内部闪存",
+		"128 MB NAND · UBI": "128 MB NAND · UBI",
+		"BEREICH": "区域",
+		"EINGEHÄNGT": "挂载点",
+		"BELEGT": "已用",
+		"Einstellungen & Pakete": "设置和软件包",
+		"System (nur lesbar)": "系统 (只读)",
+		"Arbeitsspeicher (tmp)": "内存 (tmp)",
+		"Aushängen": "卸载",
+		"Einhängen": "挂载",
+		"Entfernen": "移除",
+		"SMART lesen": "读取 SMART",
+		"Löschen & formatieren": "清除并格式化",
+		"Spiegel (RAID 1)": "镜像 (RAID 1)",
+		"Einzelnes Laufwerk": "单个驱动器",
+		"SMART noch nicht gelesen": "尚未读取 SMART",
+		"schläft (SMART beim nächsten Aufwachen)": "休眠中 (唤醒时读取 SMART)",
+		"no SMART data": "无 SMART 数据",
+		"SMART OK": "SMART 正常",
+		"SMART WARNUNG": "SMART 警告",
+		"SMART FEHLER": "SMART 失败",
+		"leer": "空",
+		"ohne Dateisystem": "无文件系统",
+		"nicht eingehängt": "未挂载",
+		"Dateisystem nicht gefunden": "未找到文件系统",
+		"wartet": "等待中",
+		"Pakete und App-Daten liegen in .shareos": "软件包和应用数据位于 .shareos",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "尚未设置存储。向导会用几步完成硬盘设置 – 作为镜像（两块硬盘保存相同数据）或独立驱动器。",
+		"SPEICHER EINRICHTEN · ASSISTENT": "设置存储 · 向导",
+		"Abbrechen": "取消",
+		"Platten": "硬盘",
+		"Aufbau": "结构",
+		"Name": "名称",
+		"Bestätigen": "确认",
+		"Zurück": "返回",
+		"Weiter": "下一步",
+		"Einrichten": "设置",
+		"Welche Platten sollen eingerichtet werden?": "要设置哪些硬盘？",
+		"Alles auf diesen Platten wird gelöscht.": "这些硬盘上的所有内容都会被清除。",
+		"Spiegel (RAID 1) – empfohlen": "镜像 (RAID 1) – 推荐",
+		"Zwei getrennte Laufwerke": "两个独立驱动器",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "每块硬盘的交换分区",
+		"1 GB – empfohlen": "1 GB – 推荐",
+		"keiner": "无",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "本设备只有 256 MB 内存。硬盘上的交换分区可以缓解负载高峰（共享、云同步、安装软件包）。它是每块硬盘开头的一个小分区，其余部分成为驱动器。",
+		"NAME DES SPIEGELS": "镜像名称",
+		"LAUFWERK": "驱动器",
+		"PLATTEN": "硬盘",
+		"GRÖSSE": "大小",
+		"AUFBAU": "结构",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "小写字母、数字、- 和 _（最多 16 个字符）。驱动器显示为",
+		"; Freigaben legst du später darauf an.": "；之后再在上面创建共享。",
+		"Platten löschen und einrichten?": "清除并设置这些硬盘？",
+		"Löschen & einrichten": "清除并设置",
+		"Einrichtung gestartet.": "设置已开始。",
+		"Formatieren gestartet.": "格式化已开始。",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "新驱动器名称（a–z、0–9、- 和 _，最多 16 个字符）：",
+		"Bitte mindestens eine Platte auswählen.": "请至少选择一块硬盘。",
+		"Höchstens zwei Platten.": "最多两块硬盘。",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "名称无效：只能使用 a–z、0–9、- 和 _，最多 16 个字符。",
+		"Die Namen müssen verschieden sein.": "名称不能相同。",
+		"Ungültiger Name.": "名称无效。",
+		"Ruhezustand gespeichert.": "休眠设置已保存。",
+		"FIRMWARE": "固件",
+		"ALLGEMEIN": "常规",
+		"ENERGIE & RESET": "电源与重置",
+		"PROTOKOLLE": "日志",
+		"DARSTELLUNG": "外观",
+		"ÜBER": "关于",
+		"FIRMWARE-UPDATE": "固件更新",
+		"Installiert": "已安装",
+		"Kernel, Startsystem und System": "内核、initramfs 和系统",
+		"noch nicht geprüft": "尚未检查",
+		"aktuell": "已是最新",
+		"noch kein Release für dieses Gerät": "尚无适用于此设备的版本",
+		"keine": "无",
+		"UPDATE-KANAL": "更新渠道",
+		"Stabil (Releases)": "稳定版 (正式版本)",
+		"Beta (auch Pre-Releases)": "测试版 (包括预发布版本)",
+		"Jetzt prüfen": "立即检查",
+		"Prüfe …": "正在检查 …",
+		"VERSIONEN": "版本",
+		"von GitHub": "来自 GitHub",
+		"VERSION": "版本",
+		"DATUM": "日期",
+		"KANAL": "渠道",
+		"STABIL": "稳定版",
+		"BETA": "测试版",
+		"installiert": "已安装",
+		"Laden": "下载",
+		"Notes ↗": "说明 ↗",
+		"SO LÄUFT EIN UPDATE": "更新流程",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "从 GitHub 下载更新包并校验 (SHA-256、设备、大小)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "将内核和 initramfs 写入闪存并回读校验",
+		"Neues System bereitlegen": "准备新系统",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "重启：initramfs 安装系统，然后 ShareOS 重新启动",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "设置和已安装的软件包会保留。如果中断，下次启动时会重新安装。",
+		"Herunterladen": "下载",
+		"Prüfen": "校验",
+		"Bereit": "就绪",
+		"Schreiben": "写入",
+		"Verwerfen": "放弃",
+		"Fehler:": "错误：",
+		"Letztes Update:": "上次更新：",
+		"Neustart nötig": "需要重启",
+		"Jetzt neu starten": "立即重启",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "已校验：SHA-256、所有部分的校验和、适用于此设备。设置和软件包会保留。",
+		"ShareOS ist aktuell.": "ShareOS 已是最新版本。",
+		"Update geladen und geprüft.": "更新已下载并校验。",
+		"Update geschrieben – bitte neu starten.": "更新已写入 – 请重启。",
+		"Update installieren?": "安装更新？",
+		"Installieren": "安装",
+		"GERÄTENAME": "设备名称",
+		"HOSTNAME": "主机名",
+		"Speichern": "保存",
+		"NEUES PASSWORT": "新密码",
+		"WIEDERHOLEN": "重复",
+		"Passwort ändern": "修改密码",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "字母、数字和连字符。立即生效；DHCP 服务器会在下次续租时看到。",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "适用于网页界面和 SSH。至少 6 个字符。",
+		"Hostname gespeichert.": "主机名已保存。",
+		"Passwort geändert.": "密码已修改。",
+		"Die Passwörter stimmen nicht überein.": "两次输入的密码不一致。",
+		"ENERGIE": "电源",
+		"Ausschalten": "关机",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "关机时 ShareOS 会停止，主板控制会切断电源。按电源键开机。",
+		"WERKSEINSTELLUNGEN": "恢复出厂设置",
+		"löscht Einstellungen": "清除设置",
+		"Auf Werkseinstellungen zurücksetzen": "恢复出厂设置",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "从闪存中删除所有设置和已安装的软件包并重启。系统和固件版本保持不变。之后密码恢复为",
+		"Neu starten?": "重启？",
+		"Neu starten": "重启",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "设备正在重启。此页面会自动重新连接（约 1–2 分钟）。",
+		"Ausschalten?": "关机？",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "ShareOS 停止，设备关机。请在设备上重新开机。",
+		"Werkseinstellungen?": "恢复出厂设置？",
+		"Zurücksetzen": "重置",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "所有设置和已安装的软件包都会被清除，然后设备重启。之后密码恢复为“shareos”。",
+		"Neustart läuft": "正在重启",
+		"ShareOS startet neu": "ShareOS 正在重启",
+		"Box wird ausgeschaltet": "设备正在关机",
+		"Du kannst dieses Fenster schließen.": "可以关闭此窗口。",
+		"Dienst wird neu gestartet": "服务正在重启",
+		"warte auf die Box": "正在等待设备",
+		"Werkseinstellungen": "出厂设置",
+		"PROTOKOLL": "日志",
+		"Quelle": "来源",
+		"System (syslog)": "系统 (syslog)",
+		"Kernel (dmesg)": "内核 (dmesg)",
+		"Aktualisieren": "刷新",
+		"lade …": "加载中 …",
+		"(leer)": "(空)",
+		"nur in diesem Browser": "仅此浏览器",
+		"Helles Design": "浅色主题",
+		"Scanlines": "扫描线",
+		"LOGO": "标志",
+		"gilt für alle": "对所有人生效",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "显示 ShareOS 标志 (关闭：仅文字)",
+		"SPRACHE": "语言",
+		"Akzentfarbe Grün": "强调色 绿色",
+		"Akzentfarbe Rot": "强调色 红色",
+		"Akzentfarbe Blau": "强调色 蓝色",
+		"Akzentfarbe Weiß": "强调色 白色",
+		"Version": "版本",
+		"Stufe": "阶段",
+		"Gerät": "设备",
+		"Firmware-Name": "固件名称",
+		"PROJEKT": "项目",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS 是用于 D-Link NAS 设备的自由固件，源自 Alt-F。基于 buildroot、Linux 和 BusyBox；运行方式参照 OpenWrt (UCI、ubus、rpcd、ucode)。许可证 GPLv2。",
+		"Einrichtung läuft": "正在设置",
+		"Box nicht ausschalten.": "请勿关闭设备。",
+		"Einrichtung fehlgeschlagen:": "设置失败：",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "连接",
+		"diese Seite: HTTPS": "本页：HTTPS",
+		"diese Seite: HTTP": "本页：HTTP",
+		"HTTPS auf Port 443": "在 443 端口启用 HTTPS",
+		"HTTP-Aufrufe auf HTTPS umleiten": "将 HTTP 请求重定向到 HTTPS",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "更改后网页服务器会重启；页面会短暂无法访问。",
+		"ZERTIFIKAT": "证书",
+		"selbstsigniert": "自签名",
+		"eigenes Zertifikat": "自有证书",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "尚无证书 – 启用 HTTPS 时会自动创建。",
+		"Ausgestellt für": "颁发给",
+		"Aussteller": "颁发者",
+		"Gültig ab": "生效日期",
+		"Gültig bis": "到期日期",
+		"Namen": "名称",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "浏览器会对自签名证书提示一次。连接仍然是加密的；如需无提示的页面，请上传自己的证书（例如来自内网 CA 或 Let's Encrypt）。",
+		"Neues selbstsigniertes Zertifikat": "新建自签名证书",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "上传自有证书",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "证书 (PEM，可包含中间证书)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "私钥 (PEM，无密码)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "使用前，设备会检查证书和私钥是否匹配。私钥不会离开设备。",
+		"Zertifikat übernehmen": "使用证书",
+		"Zertifikat übernommen.": "证书已安装。",
+		"Zertifikat erstellt.": "证书已创建。",
+		"Neues selbstsigniertes Zertifikat?": "新建自签名证书？",
+		"Erstellen": "创建",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "将为当前名称和 IP 创建新证书并替换旧证书。浏览器会再提示一次。",
+		"Gespeichert – der Webserver startet neu.": "已保存 – 网页服务器正在重启。",
+		"Lade …": "加载中 …",
+		"SPRACHE DER OBERFLÄCHE": "界面语言",
+		"Weitere Sprachen: eine Datei in": "更多语言：在以下位置添加一个文件",
+		"– siehe docs/TRANSLATING.md.": "– 参见 docs/TRANSLATING.md。",
+		"AUS UNTER (°C, 0 = NIE)": "低于此温度关闭 (°C，0 = 从不)",
+		"VOLL AB (°C)": "从此温度起全速 (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "低于此温度恢复半速 (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "所有内容都可以稍后在“系统”中设置。在你修改之前，密码仍为“shareos”。",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "从 Alt-F 导入",
+		"Auch Testversionen, mit neuen Funktionen früher.": "也包括测试版本，可更早获得新功能。",
+		"Auf dieser Box wurden Einstellungen von": "此设备有来自以下位置的设置",
+		"gefunden": "",
+		"Ausgewogen": "均衡",
+		"Benutzer": "用户",
+		"Freigaben": "共享",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "用户和共享会保留，并在“共享”区域中提供。闪存中的 Alt-F 数据保持不变。",
+		"Beta": "测试版",
+		"Stabil": "稳定版",
+		"Danach kannst du gleich die Festplatten einrichten.": "接下来可以立即设置硬盘。",
+		"Das Standardpasswort": "默认密码人人皆知",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– 请现在设置自己的密码。它适用于网页界面和 SSH。",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "设备根据主板温度分三档控制风扇（关、半速、全速）。更改几秒内生效。",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "橙色 USB 指示灯在启动时显示救援模式和更新，无法调整。",
+		"ERSTEINRICHTUNG": "首次设置",
+		"Eigene Werte": "自定义值",
+		"Ersteinrichtung abgeschlossen.": "首次设置已完成。",
+		"Ersteinrichtung erneut starten": "重新运行首次设置",
+		"Ersteinrichtung überspringen?": "跳过首次设置？",
+		"Fertig": "完成",
+		"Fertig & Speicher einrichten": "完成并设置存储",
+		"Gerätename": "设备名称",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "导入名称、时区和风扇设置",
+		"Herzschlag (ShareOS läuft)": "心跳 (ShareOS 运行中)",
+		"Kühl": "凉爽",
+		"Leise": "安静",
+		"LEDS": "指示灯",
+		"LÜFTER & LEDS": "风扇和指示灯",
+		"Lüfter": "风扇",
+		"Leer lassen, um das Passwort später zu ändern.": "留空则稍后再修改密码。",
+		"Lüfter läuft immer, voll ab 45 °C": "风扇常开，45 °C 起全速",
+		"Lüfter läuft immer, voll ab 50 °C": "风扇常开，50 °C 起全速",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "40 °C 以下风扇停转，55 °C 起全速",
+		"Name & Zeit": "名称和时间",
+		"Nur fertige Versionen – empfohlen.": "仅正式版本 – 推荐。",
+		"PLATTEN-LEDS (ROT)": "硬盘指示灯 (红色)",
+		"POWER-LED": "电源指示灯",
+		"STATUS-LED (BLAU)": "状态指示灯 (蓝色)",
+		"Passwort": "密码",
+		"Plattenzugriffe anzeigen": "显示硬盘访问",
+		"Sprache": "语言",
+		"Temperaturen selbst festlegen": "自行设置温度",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "设备在网络中显示为此名称。时钟会通过 NTP 自动校准。",
+		"Update-Kanal": "更新渠道",
+		"Updates": "更新",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "更新来自 GitHub，在“系统 → 固件”中安装。",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "欢迎使用 ShareOS。设备只需几步即可设置完成；所有内容稍后都可以在以下位置更改：",
+		"ändern.": "。",
+		"ZEITZONE": "时区",
+		"Zeitzone": "时区",
+		"blinkt": "闪烁",
+		"an": "开",
+		"sofort aktiv": "立即生效",
+		"wird geändert": "将被更改",
+		"bleibt (später ändern)": "保持不变 (稍后更改)",
+		"ja": "是",
+		"nein": "否",
+		"Überspringen": "跳过",
+		"Lüfter gespeichert.": "风扇设置已保存。",
+		"LED gespeichert.": "指示灯设置已保存。",
+		"Ungültiger Gerätename.": "设备名称无效。",
+		"Das Passwort braucht mindestens 6 Zeichen.": "密码至少需要 6 个字符。",
+		"Paket wird erneut geprüft …": "正在再次校验更新包 …",
+		"System wird für den Neustart bereitgelegt …": "正在为重启准备系统 …",
+		"Startsystem: Flash wird gelöscht …": "启动系统：正在擦除闪存 …",
+		"Startsystem wird geschrieben …": "正在写入启动系统 …",
+		"Startsystem wird geprüft …": "正在校验启动系统 …",
+		"Kernel: Flash wird gelöscht …": "内核：正在擦除闪存 …",
+		"Kernel wird geschrieben …": "正在写入内核 …",
+		"Kernel wird geprüft …": "正在校验内核 …",
+		"Wird gestartet …": "正在启动 …",
+		"nicht ausschalten": "请勿关机",
+		", das dauert etwa 1–2 Minuten.": "，大约需要 1–2 分钟。",
+		"Paket wird geprüft …": "正在校验更新包 …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 和内容，大约需要半分钟。",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– 新系统将在下次启动时安装（约 1 分钟，请勿关闭设备）。",
+		"NETZWERK": "网络",
+		"ADRESSE": "地址",
+		"AKTUELL": "当前",
+		"AKZENTFARBE": "强调色",
+		"BEIM START": "开机时",
+		"BESCHREIBUNG": "说明",
+		"DIENST": "服务",
+		"HELL ODER DUNKEL": "浅色或深色",
+		"HTTPS & ZERTIFIKAT": "HTTPS 和证书",
+		"JETZT": "当前",
+		"KENNZAHL": "指标",
+		"WERT": "值",
+		"HINWEIS": "备注",
+		"ART": "类型",
+		"MODELL": "型号",
+		"ZUSTAND": "健康状态",
+		"INHALT": "内容",
+		"IP-ADRESSE": "IP 地址",
+		"SUBNETZMASKE": "子网掩码",
+		"DNS-SERVER (KOMMA-GETRENNT)": "DNS 服务器 (以逗号分隔)",
+		"Automatisch (DHCP) – vom Router": "自动 (DHCP) – 来自路由器",
+		"Feste Adresse": "静态地址",
+		"statisch": "静态",
+		"Dunkel": "深色",
+		"Hell": "浅色",
+		"Wie das Betriebssystem (automatisch)": "跟随操作系统 (自动)",
+		"Grün": "绿色",
+		"Rot": "红色",
+		"Blau": "蓝色",
+		"Weiß": "白色",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "标志和浏览器图标会使用强调色。此设置对所有人生效，包括登录页面。",
+		"Scanlines (nur in diesem Browser)": "扫描线 (仅此浏览器)",
+		"Übernehmen": "应用",
+		"verbunden": "已连接",
+		"keine Adresse": "无地址",
+		"ändern": "修改",
+		"Verbindung": "连接",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "从下次启动起生效。运行中的服务在“状态”中启动和停止。设备控制、系统总线、API 和网页界面始终启动，否则设备将无法操作。",
+		"welche Dienste beim Einschalten starten": "设备开机时启动哪些服务",
+		"starten": "启动",
+		"immer": "始终",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "没有此服务，设备将无法操作",
+		"Kachelansicht": "卡片视图",
+		"Tabellenansicht": "表格视图",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "新的网络设置正在等待确认",
+		"Behalten": "保留",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "上次更改未被确认；之前的网络设置已重新生效。",
+		"Neue Netzwerkeinstellungen bestätigt.": "新的网络设置已确认。",
+		"Netzwerk ändern?": "更改网络？",
+		"Netzwerk wird umgestellt": "正在切换网络",
+		"Netzwerk wird neu gestartet": "正在重启网络",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "无连接 – 设备应已恢复旧设置。请刷新页面。",
+		"eine Platte fehlt": "缺少一块硬盘",
+		"in Ordnung": "确定",
+		"Sync wartet": "同步等待中",
+		"STATUS": "状态",
+		"AUTOSTART": "自动启动",
+		"GRUPPEN": "组",
+		"Administrator": "管理员",
+		"Nur Freigaben": "仅共享",
+		"lesen & schreiben": "读写",
+		"nur lesen": "只读",
+		"kein Zugriff": "无权限",
+		"unbegrenzt": "无限制",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "共享需要一个驱动器 – 请先在以下位置设置：",
+		"einrichten.": "。",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "尚无共享。共享可以让驱动器上的文件夹在网络中被访问 – 支持 Windows、macOS 和 Linux。",
+		"Freigabe anlegen": "创建共享",
+		"Neue Freigabe": "新建共享",
+		"FREIGABE": "共享",
+		"ORDNER": "文件夹",
+		"ZUGRIFF": "访问",
+		"Laufwerk fehlt": "驱动器缺失",
+		"noch niemand": "暂无",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS、MACOS、LINUX)",
+		"SMB-Freigaben anbieten": "提供 SMB 共享",
+		"ARBEITSGRUPPE": "工作组",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "只要存在共享，SMB 服务就会自动启动。个人文件夹显示为",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX、PROXMOX)",
+		"NFS-Freigaben anbieten": "提供 NFS 共享",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "NFS 没有用户账户：列出的计算机或网络可以访问。文件保存为",
+		"gespeichert. Einbinden z. B. mit": "。挂载示例：",
+		"kein Protokoll": "无协议",
+		"GAST": "访客",
+		"Bearbeiten": "编辑",
+		"Löschen": "删除",
+		"Anlegen": "创建",
+		"NEUE FREIGABE": "新建共享",
+		"NAME": "名称",
+		"ORDNER AUF DEM LAUFWERK": "驱动器上的文件夹",
+		"wie der Name": "与名称相同",
+		"ZUGRIFF ÜBER SMB": "通过 SMB 访问",
+		"Über SMB freigeben (Windows, macOS, Linux)": "通过 SMB 共享 (Windows、macOS、Linux)",
+		"Gäste dürfen ohne Passwort lesen": "访客无需密码即可读取",
+		"BENUTZER / GRUPPE": "用户 / 组",
+		"RECHT": "权限",
+		"Noch keine Benutzer – unter": "尚无用户 – 请在以下位置创建：",
+		"anlegen, oder Gastzugang erlauben.": "，或允许访客访问。",
+		"ZUGRIFF ÜBER NFS": "通过 NFS 访问",
+		"Über NFS freigeben": "通过 NFS 共享",
+		"NFS-Clients dürfen schreiben": "NFS 客户端可写入",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "NFS 客户端 (IP 或网络，以逗号分隔)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "文件夹不存在时会自动创建。移除共享会保留文件夹及其文件。",
+		"kein Limit": "无限制",
+		"von": "/",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "尚无用户。一个账户通用于所有地方：共享、网页界面，以及之后的应用和云同步。",
+		"Benutzer anlegen": "创建用户",
+		"Von Alt-F übernehmen": "从 Alt-F 导入",
+		"Neuer Benutzer": "新建用户",
+		"ROLLE": "角色",
+		"PERSÖNLICHER ORDNER": "个人文件夹",
+		"kein persönlicher Ordner": "无个人文件夹",
+		"Rollen:": "角色：",
+		"– alles, auch SSH.": "– 全部权限，包括 SSH。",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– 网页界面中的个人区域“我的 ShareOS”。",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– 访问共享，不能登录网页。账户",
+		"bleibt immer Administrator.": "始终是管理员。",
+		"· ohne Web": "· 无网页",
+		"NEUER BENUTZER": "新建用户",
+		"BENUTZERNAME": "用户名",
+		"VOLLER NAME": "全名",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "每个驱动器的存储限额 (GB，0 = 无限制)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "可以登录网页界面 (“我的 ShareOS”)",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "用户名：小写字母、数字和 _，以字母开头。密码用于共享，并根据角色用于网页界面。",
+		"GRUPPE": "组",
+		"MITGLIEDER": "成员",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "组用于汇集用户，例如“家庭”或“媒体”。然后可以把共享权限授予整个组。",
+		"Neue Gruppe": "新建组",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "成员在用户处设置 (用户 → 编辑)。",
+		"MEIN SHAREOS": "我的 SHAREOS",
+		"Noch nichts gespeichert.": "尚未保存任何内容。",
+		"Persönlicher Ordner": "个人文件夹",
+		"Kein persönlicher Ordner eingerichtet.": "未设置个人文件夹。",
+		"PASSWORT ÄNDERN": "修改密码",
+		"AKTUELLES PASSWORT": "当前密码",
+		"Gilt für die Freigaben und diese Oberfläche.": "用于共享和本界面。",
+		"MEINE FREIGABEN": "我的共享",
+		"Dir wurde noch keine Freigabe zugewiesen.": "尚未给你分配任何共享。",
+		"APPS & CLOUD": "应用和云",
+		"geplant": "计划中",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "为你开放的应用和你自己的云同步任务稍后会显示在这里。",
+		"Mein ShareOS": "我的 ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "请至少为 NFS 输入一个客户端 (IP 或网络)。",
+		"Gespeichert.": "已保存。",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "共享会从网络中消失。文件夹及其中所有文件仍保留在驱动器上。",
+		"Benutzer von Alt-F übernehmen?": "从 Alt-F 导入用户？",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "将根据保留的 Alt-F 设置创建用户和组 (角色“仅共享”)。如果 Alt-F 保存了密码，会一并导入。",
+		"Keine neuen Benutzer gefunden.": "未找到新用户。",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "组名 (a–z、0–9 和 _，以字母开头)：",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "成员会保留，但会失去通过此组获得的权限。",
+		"Setzen": "设置",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "新密码 (至少 6 个字符)。用于共享，并根据角色用于网页界面。",
+		"Bitte neu anmelden.": "请重新登录。",
+		"Der persönliche Ordner bleibt erhalten.": "个人文件夹会保留。",
+		"Benutzerkonten": "用户账户",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "备份和恢复设置",
+		"SICHERN": "备份",
+		"JSON-Datei": "JSON 文件",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "加密密码 (可选)",
+		"leer = unverschlüsselt": "留空 = 不加密",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "包含所有设置、用户及其密码 (哈希)、共享、网络以及 HTTPS 证书和私钥。没有密码时文件可直接读取 – 请妥善保管。设置密码时使用 AES-256，恢复时需要该密码。",
+		"Sicherung herunterladen": "下载备份",
+		"WIEDERHERSTELLEN": "恢复",
+		"SICHERUNGSDATEI": "备份文件",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "密码 (如已加密)",
+		"Erstellt": "创建于",
+		"Zertifikat": "证书",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "恢复会替换当前的设置、用户和共享。之后需要重启。驱动器上的数据不受影响。",
+		"Wiederherstellen": "恢复",
+		"Einstellungen wiederherstellen?": "恢复设置？",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "当前的设置、用户和共享将被备份替换。",
+		"Wiederhergestellt": "已恢复",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "设置已恢复。现在重启以使所有设置生效？",
+		"Verschlüsselte Sicherung heruntergeladen.": "加密备份已下载。",
+		"Sicherung heruntergeladen.": "备份已下载。",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "备份已加密 – 请输入密码。",
+		"ADRESSE VON PAPERLESS": "PAPERLESS 地址",
+		"PRÜFEN ALLE": "检查间隔",
+		"NACH DEM HOCHLADEN": "上传后",
+		"Datei löschen": "删除文件",
+		"aufheben (.paperless/done)": "保留 (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "自动发送收件文件夹",
+		"Jetzt übertragen": "立即发送",
+		"SO FUNKTIONIERT ES": "工作方式",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "在 Paperless 中为每个收件箱创建 API 令牌 (个人资料 → API 令牌)。文档随后归属于该 Paperless 用户。",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "将文件 (PDF、图片、Office) 放入收件文件夹 – 从电脑或直接从扫描仪。",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS 通过 Paperless API 上传它们，并显示 Paperless 是否已接收。",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "个人收件箱位于个人文件夹中 (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": ")；用户也可以在“我的 ShareOS”中自行输入令牌。共享收件箱使用一个共享，例如供扫描仪使用。",
+		"EINGÄNGE": "收件箱",
+		"übernommen": "已接收",
+		"wird verarbeitet": "处理中",
+		"Fehler": "错误",
+		"Protokoll": "日志",
+		"nichts wartend": "无待处理",
+		"Neuer Eingang": "新建收件箱",
+		"NEUER EINGANG": "新建收件箱",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "个人 (个人文件夹中的“Paperless”文件夹)",
+		"gemeinsam (Ordner einer Freigabe)": "共享 (某个共享中的文件夹)",
+		"API-TOKEN": "API 令牌",
+		"aktiv": "已启用",
+		"Verbindung prüfen": "测试连接",
+		"aus Paperless: Profil → API-Token": "来自 Paperless：个人资料 → API 令牌",
+		"API-TOKEN (LEER = BEHALTEN)": "API 令牌 (留空 = 保持不变)",
+		"TAGS FÜR NEUE DOKUMENTE": "新文档的标签",
+		"Schließen": "关闭",
+		"ZEIT": "时间",
+		"DATEI": "文件",
+		"MELDUNG": "消息",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "将不再发送任何内容。文件夹及其中的文件会保留。",
+		"EINGANG": "收件箱",
+		"WARTEND": "等待中",
+		"ZULETZT": "最近",
+		"gemeinsam": "共享",
+		"Paperless → Profil → API-Token": "Paperless → 个人资料 → API 令牌",
+		"Paperless-Eingang gespeichert.": "Paperless 收件箱已保存。",
+		"Übertragung gestartet.": "传输已开始。",
+		"MEIN EINGANG": "我的收件箱",
+		"MEIN API-TOKEN AUS PAPERLESS": "我的 PAPERLESS API 令牌",
+		"Dateien aus meinem Eingang übertragen": "发送我的收件箱中的文件",
+		"Eingangsordner": "收件文件夹",
+		"ZULETZT ÜBERTRAGEN": "最近发送",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "尚未发送任何内容。将文件放入收件文件夹 – 几分钟内就会到达 Paperless。",
+		"KONTEN": "账户",
+		"Testen": "测试",
+		"Konto hinzufügen": "添加账户",
+		"HINWEISE": "说明",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "凭据加密保存在设备上。对于 Google Drive、OneDrive 或 Dropbox，请在电脑上运行",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "并将生成的配置段粘贴到这里。任务占用内存很少 (同时 2 个传输)；设置带宽限制，例如",
+		"hält das Netz frei.": "，可以保持网络畅通。",
+		"AUFTRÄGE": "任务",
+		"Jetzt starten": "立即开始",
+		"Neuer Auftrag": "新建任务",
+		"NEUES CLOUD-KONTO": "新建云账户",
+		"SFTP (SSH-Server)": "SFTP (SSH 服务器)",
+		"andere – rclone-Konfiguration einfügen": "其他 – 粘贴 rclone 配置",
+		"ADRESSE (WEBDAV-URL)": "地址 (WEBDAV URL)",
+		"ANBIETER": "服务商",
+		"PASSWORT / APP-PASSWORT": "密码 / 应用密码",
+		"Hinzufügen": "添加",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (AWS 留空)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "RCLONE.CONF 中的配置段 (以 [名称] 开头)",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "凭据将被删除。使用此账户的任务将停止工作。云端不会删除任何内容。",
+		"NEUER AUFTRAG": "新建任务",
+		"ORDNER AUF DEM NAS": "NAS 上的文件夹",
+		"CLOUD-KONTO": "云账户",
+		"ORDNER IN DER CLOUD": "云端文件夹",
+		"RICHTUNG": "方向",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "上传 – 复制到云端，不删除任何内容",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "下载 – 复制到 NAS，不删除任何内容",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "镜像到云端 – 删除云端中本地没有的内容",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "从云端镜像 – 删除本地中云端没有的内容",
+		"ZEITPLAN": "计划",
+		"nur von Hand": "仅手动",
+		"stündlich": "每小时",
+		"täglich um 2:30": "每天 2:30",
+		"sonntags um 3:00": "每周日 3:00",
+		"eigene Zeit (cron)": "自定义时间 (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "CRON 时间 (分 时 日 月 星期)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "带宽 (留空 = 无限制)",
+		"Zeitplan aktiv": "计划已启用",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "镜像会在目标端删除源端没有的内容 – 普通备份请选择“上传”。",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "任务将不再运行。NAS 和云端的文件保持不变。",
+		"AUFTRAG": "任务",
+		"VON → NACH": "从 → 到",
+		"Spiegeln?": "镜像？",
+		"Verstanden": "明白了",
+		"Gestoppt.": "已停止。",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "从云端镜像会删除 NAS 上云端没有的文件。",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "镜像到云端会删除云端上 NAS 没有的文件。",
+		"MEINE CLOUD": "我的云",
+		"eigene Konten und Aufträge": "自己的账户和任务",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "凭据加密保存在设备上你的个人文件夹中。对于 Google Drive、OneDrive 或 Dropbox，请运行",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": "，可以保持网络畅通。下载的内容计入你的存储限额。",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "可以创建自己的云同步任务 (需要个人文件夹)",
+		"APP & WIDGETS": "应用和小部件",
+		"ALS APP INSTALLIEREN": "作为应用安装",
+		"über das Browsermenü": "通过浏览器菜单",
+		"läuft als App": "以应用方式运行",
+		"bereit": "就绪",
+		"nur über HTTPS": "仅限 HTTPS",
+		"Diese Oberfläche läuft gerade als installierte App.": "此界面正以已安装应用的方式运行。",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "浏览器可以把 ShareOS 安装为带有独立图标的应用。",
+		"Im Browsermenü": "在浏览器菜单中选择",
+		"„App installieren“": "“安装应用”",
+		"bzw.": "或",
+		"„Zum Startbildschirm hinzufügen“": "“添加到主屏幕”",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": "。使用自签名证书时，浏览器不会提供真正的安装。",
+		"Browser installieren Web-Apps nur über": "浏览器只会通过以下方式安装网页应用：",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "使用受信任证书的 HTTPS",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(例如 Let's Encrypt，在“系统 → 网络”中安装)。通过 http:// 时 Chrome 菜单只提供",
+		"– das legt ein Lesezeichen-Symbol an.": "– 这只会创建一个书签图标。",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "在 Android 上：长按应用图标打开快捷方式",
+		"Übersicht, Speicher, Freigaben, Firmware": "概览、存储、共享、固件",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": "。Chrome 不为网页应用提供真正的主屏幕小部件 – 请改用右侧供小部件应用使用的状态地址。",
+		"Als App installieren": "作为应用安装",
+		"STATUS FÜR WIDGETS": "小部件状态",
+		"Status-Adresse einschalten": "启用状态地址",
+		"ADRESSE (GEHEIM HALTEN)": "地址 (请保密)",
+		"Kopieren": "复制",
+		"Neuer Schlüssel": "新密钥",
+		"Öffnen ↗": "打开 ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "无需登录即可返回简短的 JSON：名称、版本、运行时间、负载、温度、驱动器使用率、RAID 状态和警告 (",
+		"). Gedacht für Widget-Apps wie": ")。适用于小部件应用，例如",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android)、Home Assistant 或你自己的脚本。知道地址的人可以看到这些值 – 但无法通过它修改任何内容。",
+		"Status-Adresse eingeschaltet.": "状态地址已启用。",
+		"Status-Adresse ausgeschaltet.": "状态地址已停用。",
+		"Neuen Schlüssel erzeugen?": "创建新密钥？",
+		"Erzeugen": "创建",
+		"Neuer Schlüssel erzeugt.": "新密钥已创建。",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "旧地址将失效 – 小部件需要使用新地址。",
+		"Kopiert.": "已复制。",
+		"Bitte die Adresse selbst markieren und kopieren.": "请自行选择并复制地址。",
+		"ShareOS ist als App installiert.": "ShareOS 已作为应用安装。",
+		"· Mein ShareOS": "· 我的 ShareOS",
+		"DATEIEN": "文件",
+		"Neuer Ordner": "新建文件夹",
+		"Hochladen": "上传",
+		"Umbenennen": "重命名",
+		"Verschieben": "移动",
+		"Versteckte": "隐藏文件",
+		"GEÄNDERT": "修改时间",
+		"Dateien lassen sich auch einfach hierher ziehen.": "也可以直接把文件拖到这里。",
+		"Pfad": "路径",
+		"Ordner nach oben": "上一级文件夹",
+		"Alle auswählen": "全选",
+		"Verschieben nach": "移动到",
+		"Kopieren nach": "复制到",
+		"Name des neuen Ordners:": "新文件夹名称：",
+		"Dieser Ordner ist leer.": "此文件夹为空。",
+		"SPEICHERLIMIT (GB)": "存储限额 (GB)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "在网页界面中浏览个人文件夹的文件管理器",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "用户名：小写字母、数字和 _，以字母开头。存储限额按驱动器计算，0 = 无限制。密码用于共享，并根据角色用于网页界面。",
+		"nur für dich": "仅限你自己",
+		"Wie für alle": "与所有人相同",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "仅对你的登录生效，适用于所有设备。标志和浏览器图标会使用强调色。",
+		"Datei ersetzen?": "替换文件？",
+		"Ersetzen": "替换",
+		"übersprungen": "已跳过",
+		"fertig": "完成",
+		"Verbindung unterbrochen": "连接中断",
+		"Gelöscht.": "已删除。",
+		"Verschoben.": "已移动。",
+		"Darstellung wie für alle.": "外观已恢复为所有人的设置。",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "未挂载任何驱动器 – 请先在“存储”中设置。",
+		"Kein persönlicher Ordner vorhanden.": "没有个人文件夹。",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "仅显示前 2000 项。",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "主机名已保存。HTTPS 证书已为新名称重新签发 – 浏览器会再询问一次。",
+		"INSTALLIERT": "已安装",
+		"STORE": "商店",
+		"QUELLEN": "来源",
+		"INSTALLIERTE APPS": "已安装的应用",
+		"Noch keine App installiert. Im": "尚未安装任何应用。",
+		"Store": "商店",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "中有可安装的应用 – 也可以上传你自己的软件包 (.sapp)。",
+		"Apps": "应用",
+		"APP-STORE": "应用商店",
+		"Beta (auch Vorabversionen)": "测试版 (包括预发布版本)",
+		"Jetzt aktualisieren": "立即刷新",
+		"PAKET INSTALLIEREN": "安装软件包",
+		"PAKETDATEI": "软件包文件",
+		"Für eigene Apps (gebaut mit": "用于你自己的应用 (使用应用仓库中的",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "构建)。上传的软件包视为“自有 / 未验证”。",
+		"Hochladen & installieren": "上传并安装",
+		"VERFÜGBARE APPS": "可用应用",
+		"APP": "应用",
+		"HERAUSGEBER": "发布者",
+		"Werkzeuge": "工具",
+		"Medien": "媒体",
+		"Büro": "办公",
+		"Netzwerk": "网络",
+		"Download": "下载",
+		"Sync": "同步",
+		"wird geladen …": "下载中 …",
+		"aus dem Store": "来自商店",
+		"eigene / ungeprüft": "自有 / 未验证",
+		"eigene": "自有",
+		"SICHTBAR FÜR": "可见范围",
+		"alle Benutzer": "所有用户",
+		"nur Administratoren": "仅管理员",
+		"Alle Benutzer mit Web-Zugang": "所有拥有网页访问权限的用户",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "管理员可以看到所有应用。此选择决定谁能在“我的 ShareOS”中看到该应用。",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "应用将被删除。它保存在浏览器中的数据会保留在那里。",
+		"APP-QUELLEN": "应用来源",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "其他来源 (目录地址)",
+		"Eine Quelle ist ein App-Katalog (": "来源是一个应用目录 (",
+		") im Format des Repos": ")，格式与以下仓库相同：",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": "。自有应用：以该仓库为模板，其 GitHub Action 会构建软件包和目录。只添加你信任的来源。",
+		"Quelle entfernen?": "移除来源？",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "此来源的应用将不再显示在商店中。已安装的应用会保留。",
+		"MEINE APPS": "我的应用",
+		"Store aktualisiert.": "商店已刷新。",
+		"Entfernt.": "已移除。",
+		"Lade den Katalog …": "正在加载目录 …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "未找到应用 – 请检查网络连接和来源。",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "没有拥有网页访问权限的用户 – 请在“共享 → 用户”中创建。",
+		"braucht neuere ShareOS": "需要更新版本的 ShareOS",
+		"noch nicht geladen": "尚未加载",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "网页应用在自己的端口上运行 (8081 / HTTPS 为 8444) – 与本界面分开，因此应用无法使用你的登录。知道地址的人都可以在网络中打开网页应用；“可见范围”决定谁能在“我的 ShareOS”中看到它。",
+		"Installation abgeschlossen": "安装完成",
+		"(100 %) – jetzt neu starten.": "(100 %) – 立即重启。",
+		"FIRMWARE-DATEI EINSPIELEN": "安装固件文件",
+		"Hochladen & prüfen": "上传并检查",
+		"Art": "类型",
+		"andere Firmware": "其他固件",
+		"Einspielen": "安装",
+		"Firmware wird geschrieben": "正在写入固件",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "内核和启动系统 – 请稍候，请勿关机",
+		"Geschrieben": "已写入",
+		"Größe": "大小",
+		"ext4 – empfohlen": "ext4 – 推荐",
+		"exFAT – empfohlen": "exFAT – 推荐",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "全部功能：按用户设置权限、存储限额、个人文件夹、应用。",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "按用户设置权限、个人文件夹、应用；不支持按用户的存储限额。需要更多内存。",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "在 Windows 和 macOS 上也可读取。不支持按用户设置权限 (能写入共享的人可以修改其中所有内容)、存储限额、个人文件夹和应用。",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "在 Windows 上也可读取。不支持按用户设置权限、存储限额、个人文件夹和应用。",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows、macOS、Linux、电视；支持大于 4 GB 的文件。",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "适用于旧设备 (车载音响、相机)；文件最大 4 GB。",
+		"Für Windows-Rechner.": "适用于 Windows 电脑。",
+		"Für Linux und Sicherungen mit Rechten.": "适用于 Linux 和带权限的备份。",
+		"DATEISYSTEM": "文件系统",
+		"Sicher entfernen": "安全移除",
+		"Formatieren": "格式化",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "新卷名称 (a–z、0–9、- 和 _，最多 16 个字符) 和文件系统：",
+		"UHRZEIT DER BOX": "设备时间",
+		"Zeitabgleich": "时间同步",
+		"aus dem Internet (NTP)": "来自互联网 (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP 已启用但未运行",
+		"von Hand": "手动",
+		"Zuletzt abgeglichen": "上次同步",
+		"noch nicht": "尚未同步",
+		"Batterie-Uhr": "电池时钟",
+		"wird nach jedem Abgleich gestellt": "每次同步后都会校准",
+		"Jetzt abgleichen": "立即同步",
+		"ZEITZONE & ZEITSERVER": "时区和时间服务器",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "自动从互联网获取时间 (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "时间服务器 (每行一个，最多 5 个)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "在家庭网络中，路由器也可以作为时间服务器，例如",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": "。时区适用于日志、计划任务和显示。",
+		"UHRZEIT VON HAND STELLEN": "手动设置时钟",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "只要启用了 NTP，设备会在下次同步时按互联网时间重新校准时钟。没有互联网的设备请在上方关闭 NTP。",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "时钟会从此继续运行；设备的电池时钟也会一并设置。",
+		"Uhrzeit dieses Geräts übernehmen": "使用本设备的时间",
+		"Uhrzeit setzen": "设置时间",
+		"Uhrzeit gesetzt.": "时间已设置。",
+		"Uhrzeit abgeglichen.": "时间已同步。",
+		"Ungültige Uhrzeit.": "时间无效。",
+		"Eine Firmware im D-Link-Format, z. B. für den": "D-Link 格式的固件，例如用于",
+		"Wechsel zurück zu Alt-F": "切换回 Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "。写入内核和启动系统；ShareOS 的系统和设置保留在闪存中。",
+		"Aufgaben": "任务",
+		"Zeitgesteuerte Aufgaben": "计划任务",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "可以在设备上运行计划任务 – 以其专用的受限用户身份，仅在其数据文件夹中运行，并有时间限制。",
+		"AUFGABE": "任务",
+		"ZEITPLAN (CRON)": "计划 (CRON)",
+		"AKTIV": "启用",
+		"noch nie": "从未",
+		"Zeitlimit": "时间限制",
+		"Jetzt ausführen": "立即运行",
+		"Aufgabe gestartet.": "任务已开始。",
+		"Erlauben & installieren": "允许并安装",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "应用将被删除，包括其任务和设备上的数据。",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Cron 格式的计划 (分 时 日 月 星期)，最多每 5 分钟一次，例如",
+		"= täglich 3:30 Uhr.": "= 每天 3:30。"
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"无交换分区，无应用区 (软件包和应用数据需要 ext4 或 Btrfs)。"
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"每块硬盘 $1 交换分区，无应用区 (软件包和应用数据需要 ext4 或 Btrfs)。"
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"恢复：$1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"备份：$1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"备份：$1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"已创建 $1"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"共享 $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"用户 $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"组 $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"$1 的权限"
+		],
+		[
+			"^auf (\\S+)$",
+			"位于 $1"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"每个驱动器限额 $1"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"访客 (读)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"共享“$1”已保存。"
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"移除共享“$1”？"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"共享“$1”已移除。"
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"用户“$1”已创建。"
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"用户“$1”已保存。"
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"删除用户“$1”？"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"用户“$1”已删除。"
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"账户将被删除；其共享权限也会失效。$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"组“$1”已创建。"
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"删除组“$1”？"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"组“$1”已删除。"
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"$1 的密码"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"$1 的密码已修改。"
+		],
+		[
+			"^Übernommen: (.+)$",
+			"已导入：$1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"已跳过：$1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"共享：$1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"共享：$1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"用户：$1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"密码：$1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F：$1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"更改立即生效。之后设备会等待 $1 秒，等待来自新地址的确认 – 如果没有确认，会恢复之前的设置。这样你不会把自己锁在外面。"
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– 未确认时，设备将在 $1 秒后恢复旧设置。"
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"设备会从路由器获取地址。之后它可能使用不同的地址 (请在路由器中查找)。如果 $1 秒内未在设备上确认更改，之前的设置会重新生效。"
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"设备将切换到 $1。此页面随后会打开新地址并确认更改。如果失败，$2 秒后之前的设置会重新生效。"
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"网络设置由此页面应用并确认。如果失败，$1 秒后之前的设置会重新生效。"
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"新地址 $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"正在等待设备 ($1 秒) – 无法访问？请在路由器中查找新地址并在那里登录。"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"正在等待设备 ($1 秒)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1：开机时启动"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1：开机时不再启动"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"网络：$1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"外观：$1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"渠道 $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"有可用更新 $1"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"有可用更新 $1。"
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"更新 $1"
+		],
+		[
+			"^seit (.+)$",
+			"已 $1"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"已设置 $1 个"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"已检测到 $1 个"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"计划中 · 第 $1 阶段"
+		],
+		[
+			"^Neueste · Beta$",
+			"最新 · 测试版"
+		],
+		[
+			"^Neueste · Stabil$",
+			"最新 · 稳定版"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"$1 中的变更"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"访问 · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"$1 的名称 ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"进度 · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"来源：GitHub 版本 · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"安装成功 ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"格式化 $1"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 将被完全清除。此操作无法撤销。"
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"点击“设置”会完全清除 $1。初始同步随后在后台进行 (大硬盘需要几个小时)；驱动器可以立即使用。"
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"点击“设置”会完全清除 $1。"
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"每块硬盘 $1 交换分区，应用区位于“$2” (如尚未存在)。"
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"无交换分区，应用区位于“$1” (如尚未存在)。"
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"两块硬盘保存相同的数据。其中一块损坏也不会丢失数据。可用空间：$1。"
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"双倍空间 ($1)，但没有冗余 – 每块硬盘都是一个独立驱动器。"
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"这块硬盘将成为 $1 的驱动器。如需冗余，以后可添加第二块硬盘作为镜像。"
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1：两块硬盘均在运行 ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1：缺少一块硬盘 ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"移除“$1”？"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"清除 $1？"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"$1 将被完全清除，并设置为驱动器“$2”。"
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"ShareOS $1 将被写入闪存。之后需要重启，重启时会安装新系统。写入期间请勿关闭设备。"
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$1 / $2"
+		],
+		[
+			"^(.+) installieren$",
+			"安装 $1"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"负载 $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"网络 · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1：已挂载"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1：已卸载"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1：已移除"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1：已启动"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1：已停止"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1：已重启"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)。"
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"$1 °C 起全速"
+		],
+		[
+			"^jetzt: (.+)$",
+			"当前：$1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"最近 $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"$1 个文件等待中"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"$1 的个人收件箱 · 令牌 $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"共享收件箱 · 令牌 $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"个人：$1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"收件箱 $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"日志 · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"连接正常 – Paperless 中有 $1 个文档。"
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"移除收件箱“$1”？"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1：连接正常 ($2 个文件夹)。"
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"移除账户“$1”？"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"移除任务“$1”？"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"共享 $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"共享 $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → 个人文件夹"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron：$1 · 由 $2"
+		],
+		[
+			"^von (\\S+)$",
+			"由 $1"
+		],
+		[
+			"^Fehler · (.+)$",
+			"错误 · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"自 $1 起运行"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"任务：$1"
+		],
+		[
+			"^Konto: (.*)$",
+			"账户：$1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"收件箱：$1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"风扇：$1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"服务：$1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"设置：$1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"格式化：$1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"安装：$1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"休眠：$1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"存储：$1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"语言：$1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"渠道：$1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"证书：$1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"检查失败：$1"
+		],
+		[
+			"^(.+) frei$",
+			"可用 $1"
+		],
+		[
+			"^(.+) auswählen$",
+			"选择 $1"
+		],
+		[
+			"^(.+) herunterladen$",
+			"下载 $1"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"已选择 $1 项。"
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"“$1”的新名称："
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"$1 项。目标文件夹以“$2”中的路径表示，例如 Photos/2026 (留空 = 顶层)。"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"删除 $1 项？"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – 文件夹连同其内容。此操作无法撤销。"
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"此文件夹中已存在“$1”。"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"已上传 $1 个文件。"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"$1 个文件未上传。"
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"与所有人相同 ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"下载：$1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"文件夹：$1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"重命名：$1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"删除：$1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"移动：$1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"复制：$1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"文件：$1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"网页应用在自己的端口上运行 ($1) – 与本界面分开，因此应用无法使用你的登录。知道地址的人都可以在网络中打开网页应用；“可见范围”决定谁能在“我的 ShareOS”中看到它。"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"网页应用在自己的端口上运行 ($1 / HTTPS 为 $2) – 与本界面分开，因此应用无法使用你的登录。知道地址的人都可以在网络中打开网页应用；“可见范围”决定谁能在“我的 ShareOS”中看到它。"
+		],
+		[
+			"^Stand (.+)$",
+			"截至 $1"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · 可见范围：$2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · 可见范围"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"移除 $1？"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 已安装。"
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 已安装 (自有应用)。"
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 下载中 …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 校验中 …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 安装中 …"
+		],
+		[
+			"^Update (.+)$",
+			"更新 $1"
+		],
+		[
+			"^Store: (.*)$",
+			"商店：$1"
+		],
+		[
+			"^Apps: (.*)$",
+			"应用：$1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"移除：$1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"来源：$1"
+		],
+		[
+			"^Paket: (.*)$",
+			"软件包：$1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"之后将启动 $1。届时 Alt-F 的附加软件包会缺失 – 请在 Alt-F 的固件页面中再刷写一次同一文件。返回 ShareOS：在 Alt-F 中刷写 ShareOS 的 .bin，系统和设置仍然保留。"
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"安装 $1？"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"内核和启动系统将被替换并校验。写入期间请勿关闭设备。"
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 已写入闪存。立即重启？"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 正在启动 – 其界面稍后可通过 $2 访问 (端口 80)。"
+		],
+		[
+			"^(.+) startet$",
+			"$1 正在启动"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"安装：$1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"固件文件：$1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 现在可以拔出了。"
+		],
+		[
+			"^(.+) formatieren$",
+			"格式化 $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"清除 $1？"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – 名称 (字母、数字、空格、- 和 _) 和文件系统："
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"$1 上的所有内容都会被清除。之后它将是一个 $2 驱动器“$3”。"
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) 将被完全清除，并重新设置为卷“$4” ($5)。"
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"应用区位于“$1” (如尚未存在)。"
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"日期和时间 ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"时间：$1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"同步：$1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"时间：$1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (镜像 (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (单个驱动器)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"错误 $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"默认：$1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · 最长 $2 秒"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · 任务"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"任务：$1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"任务：$1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"日志：$1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1：权限"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"运行中",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"已停止",
+			"g"
+		],
+		[
+			" frei von ",
+			" 可用，共",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" /",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" 已用",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"天运行时间",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"包含：",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"RAID 成员，属于",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"RAID 成员",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"硬盘 ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"硬盘位 ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"初始同步",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"恢复",
+			"g"
+		],
+		[
+			"Prüfung",
+			"检查",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · 剩余 $1",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"镜像 (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"单个驱动器",
+			""
+		],
+		[
+			" umgelagert, ",
+			" 个已重新分配，",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" 个待处理",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"运行中",
+			"g"
+		],
+		[
+			" und ",
+			" 和",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"天 $1 小时",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – 请勿关机。",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"检查失败：",
+			""
+		],
+		[
+			"^Kanal: ",
+			"渠道：",
+			""
+		],
+		[
+			"^Dienste: ",
+			"服务：",
+			""
+		],
+		[
+			"^Speicher: ",
+			"存储：",
+			""
+		],
+		[
+			"^Download: ",
+			"下载：",
+			""
+		],
+		[
+			"^Installieren: ",
+			"安装：",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"设置：",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"格式化：",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"证书：",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS：",
+			""
+		],
+		[
+			"^Sprache: ",
+			"语言：",
+			""
+		],
+		[
+			"^Logo: ",
+			"标志：",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"半速",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"风扇：",
+			""
+		],
+		[
+			"^Hardware: ",
+			"硬件：",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"组",
+			"g"
+		]
+	]
+}

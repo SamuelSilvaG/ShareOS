@@ -2,7 +2,7 @@
 # ShareOS status for widget apps (KWGT, Home Assistant, scripts, …)
 #   http://<nas>/cgi-bin/status?token=<token>
 # or the header "Authorization: Bearer <token>". Switch it on and get the
-# token under SYSTEM → ALLGEMEIN → Status für Widgets.
+# token under System → General → Status for widgets.
 tok=
 IFS='&'
 for kv in $QUERY_STRING; do

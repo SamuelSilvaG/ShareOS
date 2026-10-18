@@ -1,0 +1,1826 @@
+{
+	"language": "es",
+	"name": "Español",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "RESUMEN",
+		"SPEICHER": "ALMACENAMIENTO",
+		"FREIGABEN": "CARPETAS COMPARTIDAS",
+		"DIENSTE": "SERVICIOS",
+		"APPS": "APPS",
+		"CLOUD": "NUBE",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "SISTEMA",
+		"NEU": "NUEVO",
+		"ONLINE": "EN LÍNEA",
+		"OFFLINE": "SIN CONEXIÓN",
+		"Abmelden": "Cerrar sesión",
+		"Hell/Dunkel umschalten": "Cambiar claro/oscuro",
+		"Hauptmenü": "Menú principal",
+		"System": "Sistema",
+		"verfügbar": "disponible",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "La interfaz de ShareOS necesita JavaScript.",
+		"Verwaltung – bitte anmelden.": "Administración – inicia sesión.",
+		"BENUTZER": "USUARIO",
+		"PASSWORT": "CONTRASEÑA",
+		"Angemeldet bleiben (7 Tage)": "Mantener la sesión (7 días)",
+		"Anmelden": "Iniciar sesión",
+		"Benutzer oder Passwort falsch.": "Usuario o contraseña incorrectos.",
+		"Box nicht erreichbar.": "No se puede acceder a la caja.",
+		"Sitzung abgelaufen – bitte neu anmelden.": "La sesión ha caducado – vuelve a iniciar sesión.",
+		"live · alle 5 s": "en vivo · cada 5 s",
+		"AUSLASTUNG": "CARGA",
+		"Gerätesteuerung aktiv": "control de placa activo",
+		"keine MCU-Daten": "sin datos de la MCU",
+		"LÜFTER": "VENTILADOR",
+		"TEMP": "TEMP",
+		"aus": "apagado",
+		"halb": "medio",
+		"voll": "máximo",
+		"kein Link": "sin enlace",
+		"letzte 10 min": "últimos 10 min",
+		"Gateway · DNS": "Puerta de enlace · DNS",
+		"sammle Messwerte …": "recogiendo muestras …",
+		"Firmware": "Firmware",
+		"Start aus": "Arrancado desde",
+		"Flash (UBI)": "Flash (UBI)",
+		"Netzwerk (RAM)": "Red (RAM)",
+		"Einstellungen bleiben erhalten": "Los ajustes se conservan",
+		"Änderungen gehen beim Neustart verloren": "Los cambios se pierden al reiniciar",
+		"Laufzeit": "Tiempo en marcha",
+		"seit dem letzten Start": "desde el último arranque",
+		"Dienste": "Servicios",
+		"laufen": "en marcha",
+		"Flash frei": "Flash libre",
+		"für Einstellungen & Pakete": "para ajustes y paquetes",
+		"Laufwerke": "Unidades",
+		"erkannt": "detectadas",
+		"keine eingesteckt": "ninguna conectada",
+		"alle verwalten": "gestionar todas",
+		"Update verfügbar": "Actualización disponible",
+		"Lade Systemdaten …": "Cargando datos del sistema …",
+		"Lade Dienste …": "Cargando servicios …",
+		"Lade Laufwerke …": "Cargando unidades …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "No se ha detectado ningún disco duro ni almacenamiento USB. ShareOS funciona por completo desde la flash interna – las unidades aparecen aquí en cuanto se conectan.",
+		"unbekanntes Modell": "modelo desconocido",
+		"Start, Stopp, Neustart": "iniciar, detener, reiniciar",
+		"Neustart": "Reiniciar",
+		"Stopp": "Detener",
+		"Starten": "Iniciar",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "Interfaz web",
+		"Zeit (NTP)": "Hora (NTP)",
+		"Zeitplaner": "Planificador",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "Bus del sistema (ubus)",
+		"Systemprotokoll": "Registro del sistema",
+		"Gerätesteuerung": "Control de placa",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "pone en hora el reloj y mantiene sincronizado el reloj de la MCU",
+		"Schnittstelle für diese Oberfläche": "interfaz para esta web",
+		"Nachrichten zwischen den Diensten": "mensajes entre los servicios",
+		"syslogd, im RAM": "syslogd, en RAM",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "ventilador, temperatura, botones, reloj de la MCU",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "Esta área aún no está construida. Previsto:",
+		"FREIGABEN, BENUTZER & GRUPPEN": "CARPETAS COMPARTIDAS, USUARIOS Y GRUPOS",
+		"APPS & PAKETE": "APPS Y PAQUETES",
+		"CLOUD-SPEICHER": "ALMACENAMIENTO EN LA NUBE",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "Carpetas compartidas con interruptores para SMB, NFS, FTP y DLNA",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "Usuarios y grupos con permisos por carpeta compartida",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "Montar unidades de red (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "Tareas de copia de seguridad (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "Fuente de paquetes (feed opkg) en GitHub",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "Catálogo con categorías, instalar/quitar con una cola",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "Los paquetes van a ajustes y paquetes (flash) o al disco",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "Cuentas vía rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "Tareas de sincronización: copiar, reflejar, bidireccional",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "Cifrado (crypt), ancho de banda y horario",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "Carpeta de entrada en el NAS → subida mediante la API REST de Paperless (token)",
+		"Status der Übertragungen über /api/tasks/": "Estado de la transferencia vía /api/tasks/",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "Etiquetas y remitente por carpeta, exportar copia al NAS",
+		"VOLUMES": "VOLÚMENES",
+		"LAUFWERKE": "UNIDADES",
+		"EINSTELLUNGEN": "AJUSTES",
+		"RUHEZUSTAND": "REPOSO",
+		"NEU EINRICHTEN": "VOLVER A CONFIGURAR",
+		"PLATTEN ABSCHALTEN NACH": "PARAR LOS DISCOS TRAS",
+		"nie": "nunca",
+		"10 Minuten": "10 minutos",
+		"20 Minuten": "20 minutos",
+		"30 Minuten": "30 minutos",
+		"1 Stunde": "1 hora",
+		"2 Stunden": "2 horas",
+		"Swap": "Swap",
+		"Apps-Bereich": "Área de apps",
+		"noch keiner": "todavía ninguno",
+		"keiner aktiv": "ninguno activo",
+		"noch keine": "todavía ninguna",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "Ahorra energía y desgaste. Los discos vuelven a girar con el siguiente acceso (unos segundos).",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "El asistente borra los discos seleccionados y los vuelve a configurar. Los discos sueltos también se pueden formatear directamente en «Unidades».",
+		"Assistent starten": "Iniciar asistente",
+		"Speicher einrichten": "Configurar almacenamiento",
+		"INTERNER FLASH": "FLASH INTERNA",
+		"128 MB NAND · UBI": "128 MB NAND · UBI",
+		"BEREICH": "ZONA",
+		"EINGEHÄNGT": "MONTADO",
+		"BELEGT": "USADO",
+		"Einstellungen & Pakete": "Ajustes y paquetes",
+		"System (nur lesbar)": "Sistema (solo lectura)",
+		"Arbeitsspeicher (tmp)": "RAM (tmp)",
+		"Aushängen": "Desmontar",
+		"Einhängen": "Montar",
+		"Entfernen": "Quitar",
+		"SMART lesen": "Leer SMART",
+		"Löschen & formatieren": "Borrar y formatear",
+		"Spiegel (RAID 1)": "Espejo (RAID 1)",
+		"Einzelnes Laufwerk": "Unidad individual",
+		"SMART noch nicht gelesen": "SMART aún no leído",
+		"schläft (SMART beim nächsten Aufwachen)": "en reposo (SMART al despertar)",
+		"no SMART data": "sin datos SMART",
+		"SMART OK": "SMART OK",
+		"SMART WARNUNG": "AVISO SMART",
+		"SMART FEHLER": "SMART FALLIDO",
+		"leer": "vacío",
+		"ohne Dateisystem": "sin sistema de archivos",
+		"nicht eingehängt": "no montado",
+		"Dateisystem nicht gefunden": "sistema de archivos no encontrado",
+		"wartet": "esperando",
+		"Pakete und App-Daten liegen in .shareos": "Los paquetes y datos de apps están en .shareos",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "Aún no hay almacenamiento configurado. El asistente configura los discos en pocos pasos – como espejo (ambos discos guardan los mismos datos) o como unidades separadas.",
+		"SPEICHER EINRICHTEN · ASSISTENT": "CONFIGURAR ALMACENAMIENTO · ASISTENTE",
+		"Abbrechen": "Cancelar",
+		"Platten": "Discos",
+		"Aufbau": "Estructura",
+		"Name": "Nombre",
+		"Bestätigen": "Confirmar",
+		"Zurück": "Atrás",
+		"Weiter": "Siguiente",
+		"Einrichten": "Configurar",
+		"Welche Platten sollen eingerichtet werden?": "¿Qué discos se deben configurar?",
+		"Alles auf diesen Platten wird gelöscht.": "Todo lo que hay en estos discos se borrará.",
+		"Spiegel (RAID 1) – empfohlen": "Espejo (RAID 1) – recomendado",
+		"Zwei getrennte Laufwerke": "Dos unidades separadas",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "SWAP POR DISCO",
+		"1 GB – empfohlen": "1 GB – recomendado",
+		"keiner": "ninguno",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "La caja solo tiene 256 MB de RAM. El swap en los discos absorbe los picos de carga (carpetas compartidas, sincronización con la nube, instalación de paquetes). Es una pequeña partición al principio de cada disco; el resto se convierte en la unidad.",
+		"NAME DES SPIEGELS": "NOMBRE DEL ESPEJO",
+		"LAUFWERK": "UNIDAD",
+		"PLATTEN": "DISCOS",
+		"GRÖSSE": "TAMAÑO",
+		"AUFBAU": "ESTRUCTURA",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "Minúsculas, cifras, - y _ (máx. 16 caracteres). La unidad aparece como",
+		"; Freigaben legst du später darauf an.": "; las carpetas compartidas se crean después.",
+		"Platten löschen und einrichten?": "¿Borrar y configurar los discos?",
+		"Löschen & einrichten": "Borrar y configurar",
+		"Einrichtung gestartet.": "Configuración iniciada.",
+		"Formatieren gestartet.": "Formateo iniciado.",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "Nombre de la nueva unidad (a–z, 0–9, - y _, máx. 16 caracteres):",
+		"Bitte mindestens eine Platte auswählen.": "Selecciona al menos un disco.",
+		"Höchstens zwei Platten.": "Dos discos como máximo.",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "Nombre no válido: solo a–z, 0–9, - y _, máx. 16 caracteres.",
+		"Die Namen müssen verschieden sein.": "Los nombres deben ser distintos.",
+		"Ungültiger Name.": "Nombre no válido.",
+		"Ruhezustand gespeichert.": "Reposo guardado.",
+		"FIRMWARE": "FIRMWARE",
+		"ALLGEMEIN": "GENERAL",
+		"ENERGIE & RESET": "ENERGÍA Y RESTABLECER",
+		"PROTOKOLLE": "REGISTROS",
+		"DARSTELLUNG": "APARIENCIA",
+		"ÜBER": "ACERCA DE",
+		"FIRMWARE-UPDATE": "ACTUALIZACIÓN DE FIRMWARE",
+		"Installiert": "Instalado",
+		"Kernel, Startsystem und System": "Kernel, initramfs y sistema",
+		"noch nicht geprüft": "aún no comprobado",
+		"aktuell": "actualizado",
+		"noch kein Release für dieses Gerät": "aún no hay versión para este dispositivo",
+		"keine": "ninguna",
+		"UPDATE-KANAL": "CANAL DE ACTUALIZACIÓN",
+		"Stabil (Releases)": "Estable (versiones)",
+		"Beta (auch Pre-Releases)": "Beta (también versiones previas)",
+		"Jetzt prüfen": "Comprobar ahora",
+		"Prüfe …": "Comprobando …",
+		"VERSIONEN": "VERSIONES",
+		"von GitHub": "desde GitHub",
+		"VERSION": "VERSIÓN",
+		"DATUM": "FECHA",
+		"KANAL": "CANAL",
+		"STABIL": "ESTABLE",
+		"BETA": "BETA",
+		"installiert": "instalada",
+		"Laden": "Descargar",
+		"Notes ↗": "Notas ↗",
+		"SO LÄUFT EIN UPDATE": "CÓMO FUNCIONA UNA ACTUALIZACIÓN",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "Descargar el paquete de GitHub y comprobarlo (SHA-256, dispositivo, tamaños)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "Escribir kernel e initramfs en la flash y volver a leerlos",
+		"Neues System bereitlegen": "Preparar el nuevo sistema",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "Reiniciar: el initramfs instala el sistema y ShareOS vuelve a arrancar",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "Los ajustes y paquetes instalados se conservan. Si se interrumpe, la instalación se repite en el siguiente arranque.",
+		"Herunterladen": "Descarga",
+		"Prüfen": "Comprobación",
+		"Bereit": "Listo",
+		"Schreiben": "Escritura",
+		"Verwerfen": "Descartar",
+		"Fehler:": "Error:",
+		"Letztes Update:": "Última actualización:",
+		"Neustart nötig": "Hace falta reiniciar",
+		"Jetzt neu starten": "Reiniciar ahora",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Comprobado: SHA-256, sumas de todas las partes, hecho para este dispositivo. Los ajustes y paquetes se conservan.",
+		"ShareOS ist aktuell.": "ShareOS está actualizado.",
+		"Update geladen und geprüft.": "Actualización descargada y comprobada.",
+		"Update geschrieben – bitte neu starten.": "Actualización escrita – reinicia.",
+		"Update installieren?": "¿Instalar la actualización?",
+		"Installieren": "Instalar",
+		"GERÄTENAME": "NOMBRE DEL DISPOSITIVO",
+		"HOSTNAME": "NOMBRE DE HOST",
+		"Speichern": "Guardar",
+		"NEUES PASSWORT": "NUEVA CONTRASEÑA",
+		"WIEDERHOLEN": "REPETIR",
+		"Passwort ändern": "Cambiar contraseña",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "Letras, cifras y guiones. Se aplica al momento; el servidor DHCP lo ve en la próxima renovación.",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "Vale para la interfaz web y SSH. Al menos 6 caracteres.",
+		"Hostname gespeichert.": "Nombre de host guardado.",
+		"Passwort geändert.": "Contraseña cambiada.",
+		"Die Passwörter stimmen nicht überein.": "Las contraseñas no coinciden.",
+		"ENERGIE": "ENERGÍA",
+		"Ausschalten": "Apagar",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "Al apagar, ShareOS se detiene y el control de placa corta la corriente. Se enciende con el botón de encendido.",
+		"WERKSEINSTELLUNGEN": "RESTABLECER VALORES DE FÁBRICA",
+		"löscht Einstellungen": "borra los ajustes",
+		"Auf Werkseinstellungen zurücksetzen": "Restablecer valores de fábrica",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "Elimina todos los ajustes y paquetes instalados de la flash y reinicia. El sistema y la versión de firmware se mantienen. Después, la contraseña vuelve a ser",
+		"Neu starten?": "¿Reiniciar?",
+		"Neu starten": "Reiniciar",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "La caja se reinicia. Esta página se vuelve a conectar sola (unos 1–2 minutos).",
+		"Ausschalten?": "¿Apagar?",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "ShareOS se detiene y la caja se apaga. Se vuelve a encender en el aparato.",
+		"Werkseinstellungen?": "¿Restablecer valores de fábrica?",
+		"Zurücksetzen": "Restablecer",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "Se borran todos los ajustes y paquetes instalados y la caja se reinicia. Después, la contraseña vuelve a ser «shareos».",
+		"Neustart läuft": "Reiniciando",
+		"ShareOS startet neu": "ShareOS se está reiniciando",
+		"Box wird ausgeschaltet": "La caja se está apagando",
+		"Du kannst dieses Fenster schließen.": "Puedes cerrar esta ventana.",
+		"Dienst wird neu gestartet": "El servicio se está reiniciando",
+		"warte auf die Box": "esperando a la caja",
+		"Werkseinstellungen": "Valores de fábrica",
+		"PROTOKOLL": "REGISTRO",
+		"Quelle": "Fuente",
+		"System (syslog)": "Sistema (syslog)",
+		"Kernel (dmesg)": "Kernel (dmesg)",
+		"Aktualisieren": "Actualizar",
+		"lade …": "cargando …",
+		"(leer)": "(vacío)",
+		"nur in diesem Browser": "solo este navegador",
+		"Helles Design": "Tema claro",
+		"Scanlines": "Líneas de barrido",
+		"LOGO": "LOGOTIPO",
+		"gilt für alle": "vale para todos",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "Mostrar el logotipo de ShareOS (desactivado: solo texto)",
+		"SPRACHE": "IDIOMA",
+		"Akzentfarbe Grün": "Color de acento verde",
+		"Akzentfarbe Rot": "Color de acento rojo",
+		"Akzentfarbe Blau": "Color de acento azul",
+		"Akzentfarbe Weiß": "Color de acento blanco",
+		"Version": "Versión",
+		"Stufe": "Etapa",
+		"Gerät": "Dispositivo",
+		"Firmware-Name": "Nombre del firmware",
+		"PROJEKT": "PROYECTO",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS es un firmware libre para cajas NAS de D-Link, derivado de Alt-F. Basado en buildroot, Linux y BusyBox; manejo al estilo de OpenWrt (UCI, ubus, rpcd, ucode). Licencia GPLv2.",
+		"Einrichtung läuft": "Configuración en curso",
+		"Box nicht ausschalten.": "No apagues la caja.",
+		"Einrichtung fehlgeschlagen:": "La configuración ha fallado:",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "CONEXIÓN",
+		"diese Seite: HTTPS": "esta página: HTTPS",
+		"diese Seite: HTTP": "esta página: HTTP",
+		"HTTPS auf Port 443": "HTTPS en el puerto 443",
+		"HTTP-Aufrufe auf HTTPS umleiten": "Redirigir las peticiones HTTP a HTTPS",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "Tras un cambio, el servidor web se reinicia; la página no está accesible durante un momento.",
+		"ZERTIFIKAT": "CERTIFICADO",
+		"selbstsigniert": "autofirmado",
+		"eigenes Zertifikat": "certificado propio",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "Aún no hay certificado – se crea automáticamente al activar HTTPS.",
+		"Ausgestellt für": "Emitido para",
+		"Aussteller": "Emisor",
+		"Gültig ab": "Válido desde",
+		"Gültig bis": "Válido hasta",
+		"Namen": "Nombres",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "Los navegadores avisan una vez de los certificados autofirmados. La conexión está cifrada igualmente; para una página sin aviso, sube tu propio certificado (p. ej. de tu CA de intranet o de Let's Encrypt).",
+		"Neues selbstsigniertes Zertifikat": "Nuevo certificado autofirmado",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "SUBIR CERTIFICADO PROPIO",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "CERTIFICADO (PEM, CON INTERMEDIOS SI LOS HAY)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "CLAVE PRIVADA (PEM, SIN CONTRASEÑA)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "Antes de usarlos, la caja comprueba que certificado y clave van juntos. La clave nunca sale de la caja.",
+		"Zertifikat übernehmen": "Usar certificado",
+		"Zertifikat übernommen.": "Certificado instalado.",
+		"Zertifikat erstellt.": "Certificado creado.",
+		"Neues selbstsigniertes Zertifikat?": "¿Nuevo certificado autofirmado?",
+		"Erstellen": "Crear",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "Se crea un certificado nuevo para el nombre y la IP actuales, que sustituye al anterior. Los navegadores volverán a mostrar un aviso una vez.",
+		"Gespeichert – der Webserver startet neu.": "Guardado – el servidor web se está reiniciando.",
+		"Lade …": "Cargando …",
+		"SPRACHE DER OBERFLÄCHE": "IDIOMA DE LA INTERFAZ",
+		"Weitere Sprachen: eine Datei in": "Más idiomas: un archivo en",
+		"– siehe docs/TRANSLATING.md.": "– ver docs/TRANSLATING.md.",
+		"AUS UNTER (°C, 0 = NIE)": "APAGADO POR DEBAJO DE (°C, 0 = NUNCA)",
+		"VOLL AB (°C)": "MÁXIMO DESDE (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "VOLVER A MEDIO POR DEBAJO DE (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "Todo se puede ajustar más tarde en Sistema. La contraseña sigue siendo «shareos» hasta que la cambies.",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "Adoptar de Alt-F",
+		"Auch Testversionen, mit neuen Funktionen früher.": "También versiones de prueba, con novedades antes.",
+		"Auf dieser Box wurden Einstellungen von": "Esta caja tiene ajustes de",
+		"gefunden": "",
+		"Ausgewogen": "Equilibrado",
+		"Benutzer": "Usuario",
+		"Freigaben": "Carpetas compartidas",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "Los usuarios y carpetas compartidas se conservan y se ofrecen en el área «Carpetas compartidas». Los datos de Alt-F en la flash no se tocan.",
+		"Beta": "Beta",
+		"Stabil": "Estable",
+		"Danach kannst du gleich die Festplatten einrichten.": "A continuación puedes configurar los discos duros.",
+		"Das Standardpasswort": "Todo el mundo conoce la contraseña por defecto",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– pon ahora una propia. Vale para la interfaz web y SSH.",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "La caja regula el ventilador en tres niveles (apagado, medio, máximo) según la temperatura de la placa. Los cambios se aplican en segundos.",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "El LED USB naranja indica el modo de rescate y las actualizaciones al arrancar y no se puede cambiar.",
+		"ERSTEINRICHTUNG": "PRIMERA CONFIGURACIÓN",
+		"Eigene Werte": "Valores propios",
+		"Ersteinrichtung abgeschlossen.": "Primera configuración terminada.",
+		"Ersteinrichtung erneut starten": "Repetir la primera configuración",
+		"Ersteinrichtung überspringen?": "¿Omitir la primera configuración?",
+		"Fertig": "Listo",
+		"Fertig & Speicher einrichten": "Listo y configurar almacenamiento",
+		"Gerätename": "Nombre del dispositivo",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "Adoptar nombre, zona horaria y ventilador",
+		"Herzschlag (ShareOS läuft)": "Latido (ShareOS en marcha)",
+		"Kühl": "Fresco",
+		"Leise": "Silencioso",
+		"LEDS": "LEDS",
+		"LÜFTER & LEDS": "VENTILADOR Y LEDS",
+		"Lüfter": "Ventilador",
+		"Leer lassen, um das Passwort später zu ändern.": "Déjalo vacío para cambiar la contraseña más tarde.",
+		"Lüfter läuft immer, voll ab 45 °C": "Ventilador siempre encendido, máximo desde 45 °C",
+		"Lüfter läuft immer, voll ab 50 °C": "Ventilador siempre encendido, máximo desde 50 °C",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "El ventilador se para por debajo de 40 °C, máximo desde 55 °C",
+		"Name & Zeit": "Nombre y hora",
+		"Nur fertige Versionen – empfohlen.": "Solo versiones terminadas – recomendado.",
+		"PLATTEN-LEDS (ROT)": "LEDS DE DISCO (ROJOS)",
+		"POWER-LED": "LED DE ENCENDIDO",
+		"STATUS-LED (BLAU)": "LED DE ESTADO (AZUL)",
+		"Passwort": "Contraseña",
+		"Plattenzugriffe anzeigen": "Mostrar accesos a disco",
+		"Sprache": "Idioma",
+		"Temperaturen selbst festlegen": "Fijar las temperaturas tú mismo",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "La caja aparece en la red con este nombre. El reloj se pone en hora solo por NTP.",
+		"Update-Kanal": "Canal de actualización",
+		"Updates": "Actualizaciones",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "Las actualizaciones vienen de GitHub y se instalan en Sistema → Firmware.",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "Bienvenido a ShareOS. La caja se configura en pocos pasos; todo se puede cambiar más tarde en",
+		"ändern.": ".",
+		"ZEITZONE": "ZONA HORARIA",
+		"Zeitzone": "Zona horaria",
+		"blinkt": "parpadea",
+		"an": "encendido",
+		"sofort aktiv": "se aplica al momento",
+		"wird geändert": "se cambiará",
+		"bleibt (später ändern)": "se mantiene (cambiar después)",
+		"ja": "sí",
+		"nein": "no",
+		"Überspringen": "Omitir",
+		"Lüfter gespeichert.": "Ventilador guardado.",
+		"LED gespeichert.": "LED guardado.",
+		"Ungültiger Gerätename.": "Nombre de dispositivo no válido.",
+		"Das Passwort braucht mindestens 6 Zeichen.": "La contraseña necesita al menos 6 caracteres.",
+		"Paket wird erneut geprüft …": "Comprobando de nuevo el paquete …",
+		"System wird für den Neustart bereitgelegt …": "Preparando el sistema para el reinicio …",
+		"Startsystem: Flash wird gelöscht …": "Sistema de arranque: borrando la flash …",
+		"Startsystem wird geschrieben …": "Escribiendo el sistema de arranque …",
+		"Startsystem wird geprüft …": "Verificando el sistema de arranque …",
+		"Kernel: Flash wird gelöscht …": "Kernel: borrando la flash …",
+		"Kernel wird geschrieben …": "Escribiendo el kernel …",
+		"Kernel wird geprüft …": "Verificando el kernel …",
+		"Wird gestartet …": "Iniciando …",
+		"nicht ausschalten": "no apagar",
+		", das dauert etwa 1–2 Minuten.": ", tarda unos 1–2 minutos.",
+		"Paket wird geprüft …": "Comprobando el paquete …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 y contenido, tarda medio minuto.",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– el nuevo sistema se instala en el próximo arranque (aprox. 1 minuto, no apagues la caja).",
+		"NETZWERK": "RED",
+		"ADRESSE": "DIRECCIÓN",
+		"AKTUELL": "ACTUAL",
+		"AKZENTFARBE": "COLOR DE ACENTO",
+		"BEIM START": "AL ARRANCAR",
+		"BESCHREIBUNG": "DESCRIPCIÓN",
+		"DIENST": "SERVICIO",
+		"HELL ODER DUNKEL": "CLARO U OSCURO",
+		"HTTPS & ZERTIFIKAT": "HTTPS Y CERTIFICADO",
+		"JETZT": "AHORA",
+		"KENNZAHL": "VALOR MEDIDO",
+		"WERT": "VALOR",
+		"HINWEIS": "NOTA",
+		"ART": "TIPO",
+		"MODELL": "MODELO",
+		"ZUSTAND": "SALUD",
+		"INHALT": "CONTENIDO",
+		"IP-ADRESSE": "DIRECCIÓN IP",
+		"SUBNETZMASKE": "MÁSCARA DE SUBRED",
+		"DNS-SERVER (KOMMA-GETRENNT)": "SERVIDORES DNS (SEPARADOS POR COMAS)",
+		"Automatisch (DHCP) – vom Router": "Automático (DHCP) – desde el router",
+		"Feste Adresse": "Dirección estática",
+		"statisch": "estática",
+		"Dunkel": "Oscuro",
+		"Hell": "Claro",
+		"Wie das Betriebssystem (automatisch)": "Igual que el sistema operativo (automático)",
+		"Grün": "Verde",
+		"Rot": "Rojo",
+		"Blau": "Azul",
+		"Weiß": "Blanco",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "El logotipo y el icono del navegador adoptan el color de acento. El ajuste vale para todos, incluida la página de inicio de sesión.",
+		"Scanlines (nur in diesem Browser)": "Líneas de barrido (solo este navegador)",
+		"Übernehmen": "Aplicar",
+		"verbunden": "conectado",
+		"keine Adresse": "sin dirección",
+		"ändern": "cambiar",
+		"Verbindung": "Conexión",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "Se aplica desde el próximo arranque. Los servicios en marcha se inician y detienen en «Estado». El control del dispositivo, el bus del sistema, la API y la interfaz web siempre arrancan; si no, la caja ya no se podría manejar.",
+		"welche Dienste beim Einschalten starten": "qué servicios arrancan al encender la caja",
+		"starten": "arrancar",
+		"immer": "siempre",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "Sin este servicio la caja no se puede manejar",
+		"Kachelansicht": "Vista de mosaicos",
+		"Tabellenansicht": "Vista de tabla",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "Los nuevos ajustes de red esperan confirmación",
+		"Behalten": "Mantener",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "El último cambio no se confirmó; los ajustes de red anteriores vuelven a estar activos.",
+		"Neue Netzwerkeinstellungen bestätigt.": "Nuevos ajustes de red confirmados.",
+		"Netzwerk ändern?": "¿Cambiar la red?",
+		"Netzwerk wird umgestellt": "Cambiando la red",
+		"Netzwerk wird neu gestartet": "Reiniciando la red",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "Sin conexión – la caja debería haber restaurado los ajustes anteriores. Recarga la página.",
+		"eine Platte fehlt": "falta un disco",
+		"in Ordnung": "OK",
+		"Sync wartet": "Sincronización en espera",
+		"STATUS": "ESTADO",
+		"AUTOSTART": "ARRANQUE AUTOMÁTICO",
+		"GRUPPEN": "GRUPOS",
+		"Administrator": "Administrador",
+		"Nur Freigaben": "Solo carpetas compartidas",
+		"lesen & schreiben": "lectura y escritura",
+		"nur lesen": "solo lectura",
+		"kein Zugriff": "sin acceso",
+		"unbegrenzt": "ilimitado",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "Las carpetas compartidas necesitan una unidad – configúrala primero en",
+		"einrichten.": ".",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "Aún no hay carpetas compartidas. Una carpeta compartida hace accesible en la red una carpeta de una unidad – desde Windows, macOS y Linux.",
+		"Freigabe anlegen": "Crear carpeta compartida",
+		"Neue Freigabe": "Nueva carpeta compartida",
+		"FREIGABE": "CARPETA COMPARTIDA",
+		"ORDNER": "CARPETA",
+		"ZUGRIFF": "ACCESO",
+		"Laufwerk fehlt": "falta la unidad",
+		"noch niemand": "nadie todavía",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS, MACOS, LINUX)",
+		"SMB-Freigaben anbieten": "Ofrecer carpetas SMB",
+		"ARBEITSGRUPPE": "GRUPO DE TRABAJO",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "El servicio SMB arranca automáticamente en cuanto existe una carpeta compartida. Las carpetas personales aparecen como",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX, PROXMOX)",
+		"NFS-Freigaben anbieten": "Ofrecer carpetas NFS",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "NFS no tiene cuentas de usuario: los equipos o redes indicados obtienen acceso. Los archivos se guardan como",
+		"gespeichert. Einbinden z. B. mit": ". Montar p. ej. con",
+		"kein Protokoll": "sin protocolo",
+		"GAST": "INVITADO",
+		"Bearbeiten": "Editar",
+		"Löschen": "Eliminar",
+		"Anlegen": "Crear",
+		"NEUE FREIGABE": "NUEVA CARPETA COMPARTIDA",
+		"NAME": "NOMBRE",
+		"ORDNER AUF DEM LAUFWERK": "CARPETA EN LA UNIDAD",
+		"wie der Name": "igual que el nombre",
+		"ZUGRIFF ÜBER SMB": "ACCESO POR SMB",
+		"Über SMB freigeben (Windows, macOS, Linux)": "Compartir por SMB (Windows, macOS, Linux)",
+		"Gäste dürfen ohne Passwort lesen": "Los invitados pueden leer sin contraseña",
+		"BENUTZER / GRUPPE": "USUARIO / GRUPO",
+		"RECHT": "PERMISO",
+		"Noch keine Benutzer – unter": "Aún no hay usuarios – créalos en",
+		"anlegen, oder Gastzugang erlauben.": "o permite el acceso de invitados.",
+		"ZUGRIFF ÜBER NFS": "ACCESO POR NFS",
+		"Über NFS freigeben": "Compartir por NFS",
+		"NFS-Clients dürfen schreiben": "Los clientes NFS pueden escribir",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "CLIENTES NFS (IP O RED, SEPARADOS POR COMAS)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "La carpeta se crea si no existe. Al quitar una carpeta compartida se conservan la carpeta y sus archivos.",
+		"kein Limit": "sin límite",
+		"von": "de",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "Aún no hay usuarios. Una sola cuenta sirve para todo: carpetas compartidas, la interfaz web y más tarde apps y sincronización con la nube.",
+		"Benutzer anlegen": "Crear usuario",
+		"Von Alt-F übernehmen": "Importar de Alt-F",
+		"Neuer Benutzer": "Nuevo usuario",
+		"ROLLE": "ROL",
+		"PERSÖNLICHER ORDNER": "CARPETA PERSONAL",
+		"kein persönlicher Ordner": "sin carpeta personal",
+		"Rollen:": "Roles:",
+		"– alles, auch SSH.": "– todo, incluido SSH.",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– área propia «Mi ShareOS» en la interfaz web.",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– acceso a carpetas compartidas, sin acceso web. La cuenta",
+		"bleibt immer Administrator.": "es siempre administrador.",
+		"· ohne Web": "· sin web",
+		"NEUER BENUTZER": "NUEVO USUARIO",
+		"BENUTZERNAME": "NOMBRE DE USUARIO",
+		"VOLLER NAME": "NOMBRE COMPLETO",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "LÍMITE DE ALMACENAMIENTO POR UNIDAD (GB, 0 = ILIMITADO)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "Puede iniciar sesión en la interfaz web («Mi ShareOS»)",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Nombre de usuario: minúsculas, cifras y _, empezando por una letra. La contraseña sirve para las carpetas compartidas y – según el rol – para la interfaz web.",
+		"GRUPPE": "GRUPO",
+		"MITGLIEDER": "MIEMBROS",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "Los grupos reúnen usuarios, p. ej. «familia» o «multimedia». Así se pueden dar permisos a todo el grupo.",
+		"Neue Gruppe": "Nuevo grupo",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "Los miembros se fijan en el usuario (Usuarios → Editar).",
+		"MEIN SHAREOS": "MI SHAREOS",
+		"Noch nichts gespeichert.": "Aún no hay nada guardado.",
+		"Persönlicher Ordner": "Carpeta personal",
+		"Kein persönlicher Ordner eingerichtet.": "No hay carpeta personal configurada.",
+		"PASSWORT ÄNDERN": "CAMBIAR CONTRASEÑA",
+		"AKTUELLES PASSWORT": "CONTRASEÑA ACTUAL",
+		"Gilt für die Freigaben und diese Oberfläche.": "Sirve para las carpetas compartidas y esta interfaz.",
+		"MEINE FREIGABEN": "MIS CARPETAS COMPARTIDAS",
+		"Dir wurde noch keine Freigabe zugewiesen.": "Aún no se te ha asignado ninguna carpeta compartida.",
+		"APPS & CLOUD": "APPS Y NUBE",
+		"geplant": "previsto",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "Aquí aparecerán más adelante las apps habilitadas para ti y tus propias tareas de sincronización con la nube.",
+		"Mein ShareOS": "Mi ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "Indica al menos un cliente (IP o red) para NFS.",
+		"Gespeichert.": "Guardado.",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "La carpeta compartida desaparece de la red. La carpeta y todos sus archivos se quedan en la unidad.",
+		"Benutzer von Alt-F übernehmen?": "¿Importar usuarios de Alt-F?",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "Se crean los usuarios y grupos de los ajustes conservados de Alt-F (rol «Solo carpetas compartidas»). Las contraseñas se adoptan cuando Alt-F las guardó.",
+		"Keine neuen Benutzer gefunden.": "No se han encontrado usuarios nuevos.",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "Nombre del grupo (a–z, 0–9 y _, empezando por una letra):",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "Los miembros se mantienen, pero pierden los permisos dados a través de este grupo.",
+		"Setzen": "Fijar",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Nueva contraseña (al menos 6 caracteres). Sirve para las carpetas compartidas y – según el rol – para la interfaz web.",
+		"Bitte neu anmelden.": "Vuelve a iniciar sesión.",
+		"Der persönliche Ordner bleibt erhalten.": "La carpeta personal se conserva.",
+		"Benutzerkonten": "Cuentas de usuario",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "GUARDAR Y RESTAURAR AJUSTES",
+		"SICHERN": "GUARDAR",
+		"JSON-Datei": "Archivo JSON",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "CONTRASEÑA PARA CIFRAR (OPCIONAL)",
+		"leer = unverschlüsselt": "vacío = sin cifrar",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Contiene todos los ajustes, los usuarios con sus contraseñas (como hash), carpetas compartidas, red y el certificado HTTPS con su clave. Sin contraseña el archivo es legible – guárdalo en un lugar seguro. Con contraseña: AES-256; la contraseña hace falta para restaurar.",
+		"Sicherung herunterladen": "Descargar copia",
+		"WIEDERHERSTELLEN": "RESTAURAR",
+		"SICHERUNGSDATEI": "ARCHIVO DE COPIA",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "CONTRASEÑA (SI ESTÁ CIFRADO)",
+		"Erstellt": "Creada",
+		"Zertifikat": "Certificado",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "Restaurar sustituye los ajustes, usuarios y carpetas compartidas actuales. Después hace falta reiniciar. Los datos de las unidades no se tocan.",
+		"Wiederherstellen": "Restaurar",
+		"Einstellungen wiederherstellen?": "¿Restaurar ajustes?",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "Los ajustes, usuarios y carpetas compartidas actuales se sustituyen por la copia.",
+		"Wiederhergestellt": "Restaurado",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "Los ajustes se han restaurado. ¿Reiniciar ahora para que todo se aplique?",
+		"Verschlüsselte Sicherung heruntergeladen.": "Copia cifrada descargada.",
+		"Sicherung heruntergeladen.": "Copia descargada.",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "La copia está cifrada – introduce la contraseña.",
+		"ADRESSE VON PAPERLESS": "DIRECCIÓN DE PAPERLESS",
+		"PRÜFEN ALLE": "COMPROBAR CADA",
+		"NACH DEM HOCHLADEN": "TRAS LA SUBIDA",
+		"Datei löschen": "Borrar archivo",
+		"aufheben (.paperless/done)": "conservar (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "Enviar las carpetas de entrada automáticamente",
+		"Jetzt übertragen": "Enviar ahora",
+		"SO FUNKTIONIERT ES": "CÓMO FUNCIONA",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "Crea en Paperless un token de API para cada bandeja de entrada (Perfil → Token de API). Los documentos pertenecen entonces a ese usuario de Paperless.",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "Coloca archivos (PDF, imágenes, Office) en la carpeta de entrada – desde un PC o directamente desde el escáner.",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS los sube a través de la API de Paperless y muestra si Paperless los aceptó.",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "Las bandejas personales están en la carpeta personal (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": "); los usuarios también pueden introducir su token en «Mi ShareOS». Las bandejas compartidas usan una carpeta compartida, p. ej. para un escáner.",
+		"EINGÄNGE": "BANDEJAS DE ENTRADA",
+		"übernommen": "aceptado",
+		"wird verarbeitet": "en proceso",
+		"Fehler": "Error",
+		"Protokoll": "Registro",
+		"nichts wartend": "nada en espera",
+		"Neuer Eingang": "Nueva bandeja de entrada",
+		"NEUER EINGANG": "NUEVA BANDEJA DE ENTRADA",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "personal (carpeta «Paperless» en la carpeta personal)",
+		"gemeinsam (Ordner einer Freigabe)": "compartida (carpeta de una carpeta compartida)",
+		"API-TOKEN": "TOKEN DE API",
+		"aktiv": "activa",
+		"Verbindung prüfen": "Probar conexión",
+		"aus Paperless: Profil → API-Token": "de Paperless: Perfil → Token de API",
+		"API-TOKEN (LEER = BEHALTEN)": "TOKEN DE API (VACÍO = MANTENER)",
+		"TAGS FÜR NEUE DOKUMENTE": "ETIQUETAS PARA DOCUMENTOS NUEVOS",
+		"Schließen": "Cerrar",
+		"ZEIT": "HORA",
+		"DATEI": "ARCHIVO",
+		"MELDUNG": "MENSAJE",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "Ya no se enviará nada. La carpeta y sus archivos se conservan.",
+		"EINGANG": "BANDEJA",
+		"WARTEND": "EN ESPERA",
+		"ZULETZT": "ÚLTIMO",
+		"gemeinsam": "compartida",
+		"Paperless → Profil → API-Token": "Paperless → Perfil → Token de API",
+		"Paperless-Eingang gespeichert.": "Bandeja de Paperless guardada.",
+		"Übertragung gestartet.": "Transferencia iniciada.",
+		"MEIN EINGANG": "MI BANDEJA DE ENTRADA",
+		"MEIN API-TOKEN AUS PAPERLESS": "MI TOKEN DE API DE PAPERLESS",
+		"Dateien aus meinem Eingang übertragen": "Enviar archivos de mi bandeja",
+		"Eingangsordner": "Carpeta de entrada",
+		"ZULETZT ÜBERTRAGEN": "ENVIADOS RECIENTEMENTE",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "Aún no se ha enviado nada. Coloca archivos en la carpeta de entrada – llegan a Paperless en pocos minutos.",
+		"KONTEN": "CUENTAS",
+		"Testen": "Probar",
+		"Konto hinzufügen": "Añadir cuenta",
+		"HINWEISE": "NOTAS",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Las credenciales se guardan cifradas en la caja. Para Google Drive, OneDrive o Dropbox ejecuta",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "en un PC y pega aquí la sección resultante. Las tareas usan poca memoria (2 transferencias a la vez); un límite de ancho de banda como",
+		"hält das Netz frei.": "mantiene libre la red.",
+		"AUFTRÄGE": "TAREAS",
+		"Jetzt starten": "Iniciar ahora",
+		"Neuer Auftrag": "Nueva tarea",
+		"NEUES CLOUD-KONTO": "NUEVA CUENTA EN LA NUBE",
+		"SFTP (SSH-Server)": "SFTP (servidor SSH)",
+		"andere – rclone-Konfiguration einfügen": "otra – pegar configuración de rclone",
+		"ADRESSE (WEBDAV-URL)": "DIRECCIÓN (URL WEBDAV)",
+		"ANBIETER": "PROVEEDOR",
+		"PASSWORT / APP-PASSWORT": "CONTRASEÑA / CONTRASEÑA DE APP",
+		"Hinzufügen": "Añadir",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (VACÍO PARA AWS)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "SECCIÓN DE RCLONE.CONF (EMPIEZA POR [NOMBRE])",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "Se borran las credenciales. Las tareas que usan esta cuenta dejan de funcionar. En la nube no se borra nada.",
+		"NEUER AUFTRAG": "NUEVA TAREA",
+		"ORDNER AUF DEM NAS": "CARPETA EN EL NAS",
+		"CLOUD-KONTO": "CUENTA EN LA NUBE",
+		"ORDNER IN DER CLOUD": "CARPETA EN LA NUBE",
+		"RICHTUNG": "DIRECCIÓN",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "Subir – copiar a la nube, no se borra nada",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "Bajar – copiar al NAS, no se borra nada",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "Reflejar en la nube – borra en la nube lo que falta aquí",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "Reflejar desde la nube – borra aquí lo que falta en la nube",
+		"ZEITPLAN": "HORARIO",
+		"nur von Hand": "solo manual",
+		"stündlich": "cada hora",
+		"täglich um 2:30": "cada día a las 2:30",
+		"sonntags um 3:00": "los domingos a las 3:00",
+		"eigene Zeit (cron)": "hora propia (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "HORA CRON (MIN HORA DÍA MES DÍA_SEMANA)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "ANCHO DE BANDA (VACÍO = ILIMITADO)",
+		"Zeitplan aktiv": "Horario activo",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "Reflejar borra en el destino lo que falta en el origen – para copias de seguridad normales elige «Subir».",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "La tarea ya no se ejecutará. Los archivos del NAS y de la nube se quedan como están.",
+		"AUFTRAG": "TAREA",
+		"VON → NACH": "DE → A",
+		"Spiegeln?": "¿Reflejar?",
+		"Verstanden": "Entendido",
+		"Gestoppt.": "Detenida.",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "Reflejar desde la nube borra archivos del NAS que faltan en la nube.",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "Reflejar en la nube borra archivos de la nube que faltan en el NAS.",
+		"MEINE CLOUD": "MI NUBE",
+		"eigene Konten und Aufträge": "cuentas y tareas propias",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Las credenciales se guardan cifradas en la caja, en tu carpeta personal. Para Google Drive, OneDrive o Dropbox ejecuta",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": "mantiene libre la red. Lo que descargas cuenta para tu límite de almacenamiento.",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "Puede crear tareas propias de sincronización con la nube (necesita carpeta personal)",
+		"APP & WIDGETS": "APP Y WIDGETS",
+		"ALS APP INSTALLIEREN": "INSTALAR COMO APP",
+		"über das Browsermenü": "desde el menú del navegador",
+		"läuft als App": "funcionando como app",
+		"bereit": "lista",
+		"nur über HTTPS": "solo HTTPS",
+		"Diese Oberfläche läuft gerade als installierte App.": "Esta interfaz funciona como app instalada.",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "El navegador puede instalar ShareOS como app con su propio icono.",
+		"Im Browsermenü": "En el menú del navegador elige",
+		"„App installieren“": "«Instalar app»",
+		"bzw.": "o",
+		"„Zum Startbildschirm hinzufügen“": "«Añadir a la pantalla de inicio»",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": ". Con un certificado autofirmado los navegadores no ofrecen la instalación real.",
+		"Browser installieren Web-Apps nur über": "Los navegadores solo instalan apps web por",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "HTTPS con un certificado de confianza",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(p. ej. Let's Encrypt, se instala en SISTEMA → RED). Por http:// el menú de Chrome solo ofrece",
+		"– das legt ein Lesezeichen-Symbol an.": "– eso crea un icono de marcador.",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "En Android: mantén pulsado el icono de la app para abrir los accesos directos",
+		"Übersicht, Speicher, Freigaben, Firmware": "Resumen, Almacenamiento, Carpetas compartidas, Firmware",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": ". Chrome no ofrece widgets reales de pantalla de inicio para apps web – usa en su lugar el estado para apps de widgets de la derecha.",
+		"Als App installieren": "Instalar como app",
+		"STATUS FÜR WIDGETS": "ESTADO PARA WIDGETS",
+		"Status-Adresse einschalten": "Activar la dirección de estado",
+		"ADRESSE (GEHEIM HALTEN)": "DIRECCIÓN (MANTENLA EN SECRETO)",
+		"Kopieren": "Copiar",
+		"Neuer Schlüssel": "Nueva clave",
+		"Öffnen ↗": "Abrir ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "Devuelve una breve respuesta JSON sin inicio de sesión: nombre, versión, tiempo en marcha, carga, temperatura, uso de las unidades, estado del RAID y avisos (",
+		"). Gedacht für Widget-Apps wie": "). Pensado para apps de widgets como",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android), Home Assistant o tus propios scripts. Quien conozca la dirección ve estos valores – nadie puede cambiar nada con ella.",
+		"Status-Adresse eingeschaltet.": "Dirección de estado activada.",
+		"Status-Adresse ausgeschaltet.": "Dirección de estado desactivada.",
+		"Neuen Schlüssel erzeugen?": "¿Crear una clave nueva?",
+		"Erzeugen": "Crear",
+		"Neuer Schlüssel erzeugt.": "Nueva clave creada.",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "La dirección anterior deja de funcionar – los widgets necesitan la nueva.",
+		"Kopiert.": "Copiado.",
+		"Bitte die Adresse selbst markieren und kopieren.": "Selecciona y copia tú la dirección.",
+		"ShareOS ist als App installiert.": "ShareOS está instalado como app.",
+		"· Mein ShareOS": "· Mi ShareOS",
+		"DATEIEN": "ARCHIVOS",
+		"Neuer Ordner": "Nueva carpeta",
+		"Hochladen": "Subir",
+		"Umbenennen": "Cambiar nombre",
+		"Verschieben": "Mover",
+		"Versteckte": "Ocultos",
+		"GEÄNDERT": "MODIFICADO",
+		"Dateien lassen sich auch einfach hierher ziehen.": "También puedes arrastrar archivos aquí.",
+		"Pfad": "Ruta",
+		"Ordner nach oben": "Carpeta superior",
+		"Alle auswählen": "Seleccionar todo",
+		"Verschieben nach": "Mover a",
+		"Kopieren nach": "Copiar a",
+		"Name des neuen Ordners:": "Nombre de la nueva carpeta:",
+		"Dieser Ordner ist leer.": "Esta carpeta está vacía.",
+		"SPEICHERLIMIT (GB)": "LÍMITE DE ALMACENAMIENTO (GB)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "Explorador de archivos para la carpeta personal en la interfaz web",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Nombre de usuario: minúsculas, cifras y _, empezando por una letra. El límite de almacenamiento vale por unidad, 0 = ilimitado. La contraseña sirve para las carpetas compartidas y – según el rol – para la interfaz web.",
+		"nur für dich": "solo para ti",
+		"Wie für alle": "Igual que para todos",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "Solo vale para tu inicio de sesión, en todos los dispositivos. El logotipo y el icono del navegador adoptan el color de acento.",
+		"Datei ersetzen?": "¿Sustituir el archivo?",
+		"Ersetzen": "Sustituir",
+		"übersprungen": "omitido",
+		"fertig": "hecho",
+		"Verbindung unterbrochen": "Conexión perdida",
+		"Gelöscht.": "Eliminado.",
+		"Verschoben.": "Movido.",
+		"Darstellung wie für alle.": "Apariencia restablecida a la de todos.",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "No hay ninguna unidad montada – configura una primero en ALMACENAMIENTO.",
+		"Kein persönlicher Ordner vorhanden.": "No hay carpeta personal.",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "Solo se muestran las primeras 2000 entradas.",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "Nombre de host guardado. El certificado HTTPS se ha vuelto a emitir para el nuevo nombre – el navegador preguntará una vez más.",
+		"INSTALLIERT": "INSTALADAS",
+		"STORE": "TIENDA",
+		"QUELLEN": "FUENTES",
+		"INSTALLIERTE APPS": "APPS INSTALADAS",
+		"Noch keine App installiert. Im": "Aún no hay ninguna app instalada. La",
+		"Store": "tienda",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "tiene apps para instalar – o sube tu propio paquete (.sapp).",
+		"Apps": "Apps",
+		"APP-STORE": "TIENDA DE APPS",
+		"Beta (auch Vorabversionen)": "Beta (también versiones previas)",
+		"Jetzt aktualisieren": "Actualizar ahora",
+		"PAKET INSTALLIEREN": "INSTALAR PAQUETE",
+		"PAKETDATEI": "ARCHIVO DE PAQUETE",
+		"Für eigene Apps (gebaut mit": "Para tus propias apps (creadas con",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "del repositorio de apps). Los paquetes subidos cuentan como «propios / sin verificar».",
+		"Hochladen & installieren": "Subir e instalar",
+		"VERFÜGBARE APPS": "APPS DISPONIBLES",
+		"APP": "APP",
+		"HERAUSGEBER": "EDITOR",
+		"Werkzeuge": "Herramientas",
+		"Medien": "Multimedia",
+		"Büro": "Oficina",
+		"Netzwerk": "Red",
+		"Download": "Descargas",
+		"Sync": "Sincronización",
+		"wird geladen …": "descargando …",
+		"aus dem Store": "de la tienda",
+		"eigene / ungeprüft": "propia / sin verificar",
+		"eigene": "propia",
+		"SICHTBAR FÜR": "VISIBLE PARA",
+		"alle Benutzer": "todos los usuarios",
+		"nur Administratoren": "solo administradores",
+		"Alle Benutzer mit Web-Zugang": "Todos los usuarios con acceso web",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "Los administradores ven todas las apps. La selección decide quién ve la app en «Mi ShareOS».",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "La app se borra. Los datos que guardó en el navegador se quedan allí.",
+		"APP-QUELLEN": "FUENTES DE APPS",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "OTRA FUENTE (DIRECCIÓN DEL CATÁLOGO)",
+		"Eine Quelle ist ein App-Katalog (": "Una fuente es un catálogo de apps (",
+		") im Format des Repos": ") con el formato del repositorio",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": ". Apps propias: usa el repositorio como plantilla; su GitHub Action crea los paquetes y el catálogo. Añade solo fuentes de confianza.",
+		"Quelle entfernen?": "¿Quitar la fuente?",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "Las apps de esta fuente ya no aparecen en la tienda. Las apps instaladas se quedan.",
+		"MEINE APPS": "MIS APPS",
+		"Store aktualisiert.": "Tienda actualizada.",
+		"Entfernt.": "Quitado.",
+		"Lade den Katalog …": "Cargando el catálogo …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "No se encontraron apps – revisa la conexión a internet y las fuentes.",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "No hay usuarios con acceso web – crea uno en Carpetas compartidas → Usuarios.",
+		"braucht neuere ShareOS": "necesita un ShareOS más nuevo",
+		"noch nicht geladen": "aún no cargado",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Las apps web funcionan en su propio puerto (8081 / 8444 para HTTPS) – separadas de esta interfaz, así una app no puede usar tu inicio de sesión. Quien conozca la dirección puede abrir una app web en la red; «visible para» decide quién la ve en «Mi ShareOS».",
+		"Installation abgeschlossen": "Instalación terminada",
+		"(100 %) – jetzt neu starten.": "(100 %) – reinicia ahora.",
+		"FIRMWARE-DATEI EINSPIELEN": "INSTALAR ARCHIVO DE FIRMWARE",
+		"Hochladen & prüfen": "Subir y comprobar",
+		"Art": "Tipo",
+		"andere Firmware": "otro firmware",
+		"Einspielen": "Instalar",
+		"Firmware wird geschrieben": "Escribiendo el firmware",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "Kernel y sistema de arranque – espera, no apagues",
+		"Geschrieben": "Escrito",
+		"Größe": "Tamaño",
+		"ext4 – empfohlen": "ext4 – recomendado",
+		"exFAT – empfohlen": "exFAT – recomendado",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "Todo: permisos por usuario, límite de almacenamiento, carpetas personales, apps.",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "Permisos por usuario, carpetas personales, apps; sin límite de almacenamiento por usuario. Necesita más memoria.",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "También legible en Windows y macOS. Sin permisos por usuario (quien puede escribir en una carpeta compartida puede cambiarlo todo en ella), sin límite de almacenamiento, sin carpetas personales, sin apps.",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "También legible en Windows. Sin permisos por usuario, sin límite de almacenamiento, sin carpetas personales, sin apps.",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, televisores; archivos de más de 4 GB.",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "Para aparatos antiguos (autorradio, cámara); archivos de hasta 4 GB.",
+		"Für Windows-Rechner.": "Para ordenadores con Windows.",
+		"Für Linux und Sicherungen mit Rechten.": "Para Linux y copias de seguridad con permisos.",
+		"DATEISYSTEM": "SISTEMA DE ARCHIVOS",
+		"Sicher entfernen": "Extraer con seguridad",
+		"Formatieren": "Formatear",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Nombre del nuevo volumen (a–z, 0–9, - y _, como máximo 16 caracteres) y sistema de archivos:",
+		"UHRZEIT DER BOX": "HORA DE LA CAJA",
+		"Zeitabgleich": "Sincronización de hora",
+		"aus dem Internet (NTP)": "desde internet (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP activado pero no está en marcha",
+		"von Hand": "a mano",
+		"Zuletzt abgeglichen": "Última sincronización",
+		"noch nicht": "todavía no",
+		"Batterie-Uhr": "Reloj de batería",
+		"wird nach jedem Abgleich gestellt": "se pone en hora tras cada sincronización",
+		"Jetzt abgleichen": "Sincronizar ahora",
+		"ZEITZONE & ZEITSERVER": "ZONA HORARIA Y SERVIDORES DE HORA",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "Obtener la hora de internet automáticamente (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "SERVIDORES DE HORA (UNO POR LÍNEA, COMO MÁXIMO 5)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "En una red doméstica el router también puede ser servidor de hora, p. ej.",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": ". La zona horaria vale para registros, horarios y la visualización.",
+		"UHRZEIT VON HAND STELLEN": "PONER EL RELOJ A MANO",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "Mientras NTP esté activado, la caja vuelve a poner el reloj según internet en la siguiente sincronización. Para una caja sin internet, desactiva NTP arriba.",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "El reloj sigue a partir de ahí; también se pone en hora el reloj de batería de la caja.",
+		"Uhrzeit dieses Geräts übernehmen": "Usar la hora de este dispositivo",
+		"Uhrzeit setzen": "Poner en hora",
+		"Uhrzeit gesetzt.": "Hora fijada.",
+		"Uhrzeit abgeglichen.": "Hora sincronizada.",
+		"Ungültige Uhrzeit.": "Hora no válida.",
+		"Eine Firmware im D-Link-Format, z. B. für den": "Un firmware en formato D-Link, p. ej. para",
+		"Wechsel zurück zu Alt-F": "volver a Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Se escriben el kernel y el sistema de arranque; el sistema y los ajustes de ShareOS se quedan en la flash.",
+		"Aufgaben": "Tareas",
+		"Zeitgesteuerte Aufgaben": "Tareas programadas",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "Puede ejecutar tareas programadas en la caja – como usuario propio con permisos limitados, solo en su carpeta de datos, con límite de tiempo.",
+		"AUFGABE": "TAREA",
+		"ZEITPLAN (CRON)": "HORARIO (CRON)",
+		"AKTIV": "ACTIVA",
+		"noch nie": "nunca",
+		"Zeitlimit": "Límite de tiempo",
+		"Jetzt ausführen": "Ejecutar ahora",
+		"Aufgabe gestartet.": "Tarea iniciada.",
+		"Erlauben & installieren": "Permitir e instalar",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "La app se borra, junto con sus tareas y sus datos en la caja.",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Horario en formato cron (minuto hora día mes día_semana), como mucho cada 5 minutos, p. ej.",
+		"= täglich 3:30 Uhr.": "= cada día a las 3:30."
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"Sin swap, sin área de apps (los paquetes y datos de apps necesitan ext4 o Btrfs)."
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"$1 de swap por disco, sin área de apps (los paquetes y datos de apps necesitan ext4 o Btrfs)."
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"Restaurar: $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"Copia: $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"Copia: $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"$1 creado"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"CARPETA COMPARTIDA $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"USUARIO $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"Grupo $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"Permiso para $1"
+		],
+		[
+			"^auf (\\S+)$",
+			"en $1"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"Límite de $1 por unidad"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"Invitados (l)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"Carpeta compartida «$1» guardada."
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"¿Quitar la carpeta compartida «$1»?"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"Carpeta compartida «$1» quitada."
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"Usuario «$1» creado."
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"Usuario «$1» guardado."
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"¿Eliminar el usuario «$1»?"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"Usuario «$1» eliminado."
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"La cuenta se elimina; sus permisos en carpetas compartidas desaparecen.$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"Grupo «$1» creado."
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"¿Eliminar el grupo «$1»?"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"Grupo «$1» eliminado."
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"Contraseña de $1"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"Contraseña de $1 cambiada."
+		],
+		[
+			"^Übernommen: (.+)$",
+			"Importados: $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"Omitidos: $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"Carpetas compartidas: $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"Carpeta compartida: $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"Usuario: $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"Contraseña: $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F: $1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"El cambio se aplica al momento. Después, la caja espera $1 segundos una confirmación desde la nueva dirección – si no llega, restaura los ajustes anteriores. Así no puedes quedarte fuera."
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– sin confirmación la caja vuelve a los anteriores en $1 s."
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"La caja obtiene su dirección del router. Después puede ser accesible en otra dirección (búscala en el router). Si el cambio no se confirma en la caja en $1 segundos, vuelven a valer los ajustes anteriores."
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"La caja cambia a $1. Esta página abre entonces la nueva dirección y confirma el cambio. Si eso no funciona, vuelven a valer los ajustes anteriores tras $2 segundos."
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Esta página aplica y confirma los ajustes de red. Si eso no funciona, vuelven a valer los ajustes anteriores tras $1 segundos."
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"nueva dirección $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"esperando a la caja ($1 s) – ¿no accesible? Busca la nueva dirección en el router e inicia sesión allí."
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"esperando a la caja ($1 s)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1: arranca al encender"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1: ya no arranca al encender"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"Red: $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"Apariencia: $1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"Canal $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"Actualización $1 disponible"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"Actualización $1 disponible."
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"ACTUALIZACIÓN $1"
+		],
+		[
+			"^seit (.+)$",
+			"desde hace $1"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"$1 configuradas"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"$1 detectadas"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"previsto · fase $1"
+		],
+		[
+			"^Neueste · Beta$",
+			"Más reciente · Beta"
+		],
+		[
+			"^Neueste · Stabil$",
+			"Más reciente · Estable"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"CAMBIOS EN $1"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"ACCESO · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"NOMBRE PARA $1 ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"PROGRESO · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"Fuente: versiones de GitHub · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"instalada correctamente ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"Formatear $1"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 se borrará por completo. No se puede deshacer."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"Al pulsar «Configurar» se borra $1 por completo. La sincronización inicial se hace después en segundo plano (varias horas con discos grandes); la unidad se puede usar al momento."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"Al pulsar «Configurar» se borra $1 por completo."
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"$1 de swap por disco, área de apps en «$2» (si aún no existe ninguna)."
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"Sin swap, área de apps en «$1» (si aún no existe ninguna)."
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"Ambos discos guardan los mismos datos. Si uno falla, no se pierde nada. Útil: $1."
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"El doble de espacio ($1), pero sin redundancia – cada disco es una unidad propia."
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"El disco se convierte en una unidad de $1. Para tener redundancia, añade más tarde un segundo disco como espejo."
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1: ambos discos activos ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1: falta un disco ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"¿Quitar «$1»?"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"¿Borrar $1?"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"$1 se borrará por completo y se configurará como unidad «$2»."
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"ShareOS $1 se escribirá en la flash. Después hace falta reiniciar; durante el reinicio se instala el nuevo sistema. No apagues la caja mientras se escribe."
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$1 de $2"
+		],
+		[
+			"^(.+) installieren$",
+			"Instalar $1"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"Carga $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"RED · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1: montado"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1: desmontado"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1: quitado"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1: iniciado"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1: detenido"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1: reiniciado"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)."
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"máximo desde $1 °C"
+		],
+		[
+			"^jetzt: (.+)$",
+			"ahora: $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"último $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"$1 archivo(s) en espera"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"bandeja personal de $1 · token $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"bandeja compartida · token $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"personal: $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"BANDEJA $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"REGISTRO · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"Conexión correcta – $1 documentos en Paperless."
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"¿Quitar la bandeja «$1»?"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1: conexión correcta ($2 carpetas)."
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"¿Quitar la cuenta «$1»?"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"¿Quitar la tarea «$1»?"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"Carpeta compartida $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"Carpeta compartida $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → Carpeta personal"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron: $1 · de $2"
+		],
+		[
+			"^von (\\S+)$",
+			"de $1"
+		],
+		[
+			"^Fehler · (.+)$",
+			"Error · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"en marcha desde $1"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"Tarea: $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"Cuenta: $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"Bandeja: $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"Ventilador: $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"Servicios: $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"Configuración: $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"Formatear: $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"Instalar: $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"Reposo: $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"Almacenamiento: $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"Idioma: $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"Canal: $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"Certificado: $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"Comprobación fallida: $1"
+		],
+		[
+			"^(.+) frei$",
+			"$1 libre"
+		],
+		[
+			"^(.+) auswählen$",
+			"seleccionar $1"
+		],
+		[
+			"^(.+) herunterladen$",
+			"descargar $1"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"$1 seleccionado(s)."
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"Nuevo nombre para «$1»:"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"$1 elemento(s). Carpeta de destino como ruta en «$2», p. ej. Fotos/2026 (vacío = nivel superior)."
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"¿Eliminar $1 elemento(s)?"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – carpetas con su contenido. No se puede deshacer."
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"«$1» ya existe en esta carpeta."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"$1 archivo(s) subido(s)."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"$1 archivo(s) no subido(s)."
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"Igual que para todos ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"Descarga: $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"Carpeta: $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"Cambiar nombre: $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"Eliminar: $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"Mover: $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"Copiar: $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"Archivos: $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"Las apps web funcionan en su propio puerto ($1) – separadas de esta interfaz, así una app no puede usar tu inicio de sesión. Quien conozca la dirección puede abrir una app web en la red; «visible para» decide quién la ve en «Mi ShareOS»."
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"Las apps web funcionan en su propio puerto ($1 / $2 para HTTPS) – separadas de esta interfaz, así una app no puede usar tu inicio de sesión. Quien conozca la dirección puede abrir una app web en la red; «visible para» decide quién la ve en «Mi ShareOS»."
+		],
+		[
+			"^Stand (.+)$",
+			"a fecha de $1"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · visible para $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · VISIBLE PARA"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"¿Quitar $1?"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 instalada."
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 instalada (app propia)."
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 descargando …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 comprobándose …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 instalándose …"
+		],
+		[
+			"^Update (.+)$",
+			"Actualizar $1"
+		],
+		[
+			"^Store: (.*)$",
+			"Tienda: $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"Apps: $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"Quitar: $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"Fuentes: $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"Paquete: $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"Después arranca $1. Faltan entonces los paquetes adicionales de Alt-F – vuelve a grabar el mismo archivo en la página de firmware de Alt-F. Volver a ShareOS: graba el .bin de ShareOS en Alt-F; el sistema y los ajustes siguen ahí."
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"¿Instalar $1?"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"El kernel y el sistema de arranque se sustituyen y comprueban. No apagues la caja mientras se escribe."
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 está en la flash. ¿Reiniciar ahora?"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 está arrancando – su interfaz estará en breve en $2 (puerto 80)."
+		],
+		[
+			"^(.+) startet$",
+			"$1 está arrancando"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"Instalar: $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"Archivo de firmware: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 ya se puede desconectar."
+		],
+		[
+			"^(.+) formatieren$",
+			"Formatear $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"¿Borrar $1?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – nombre (letras, cifras, espacios, - y _) y sistema de archivos:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"Todo lo que hay en $1 se borra. Después es una unidad $2 «$3»."
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) se borra por completo y se configura de nuevo como volumen «$4» ($5)."
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"Área de apps en «$1» (si aún no existe ninguna)."
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"FECHA Y HORA ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"Hora: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"Sincronización: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"Hora: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (espejo (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (unidad individual)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"Error $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"Por defecto: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · máx. $2 s"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · TAREAS"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"Tareas: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"Tarea: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"Registro: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: permisos"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"en marcha",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"detenido",
+			"g"
+		],
+		[
+			" frei von ",
+			" libres de",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" de",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" usados",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"días encendido",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"contiene:",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"miembro RAID de",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"miembro RAID",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"Disco ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"Bahía ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"Sincronización inicial",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"Recuperación",
+			"g"
+		],
+		[
+			"Prüfung",
+			"Comprobación",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · faltan $1",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"Espejo (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"Unidad individual",
+			""
+		],
+		[
+			" umgelagert, ",
+			" reasignados,",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" pendientes",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"EN MARCHA",
+			"g"
+		],
+		[
+			" und ",
+			" y",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"d $1 h",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – no apagar.",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"Comprobación fallida:",
+			""
+		],
+		[
+			"^Kanal: ",
+			"Canal:",
+			""
+		],
+		[
+			"^Dienste: ",
+			"Servicios:",
+			""
+		],
+		[
+			"^Speicher: ",
+			"Almacenamiento:",
+			""
+		],
+		[
+			"^Download: ",
+			"Descarga:",
+			""
+		],
+		[
+			"^Installieren: ",
+			"Instalar:",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"Configurar:",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"Formatear:",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"Certificado:",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS:",
+			""
+		],
+		[
+			"^Sprache: ",
+			"Idioma:",
+			""
+		],
+		[
+			"^Logo: ",
+			"Logotipo:",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"medio",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"Ventilador:",
+			""
+		],
+		[
+			"^Hardware: ",
+			"Hardware:",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"grupo",
+			"g"
+		]
+	]
+}

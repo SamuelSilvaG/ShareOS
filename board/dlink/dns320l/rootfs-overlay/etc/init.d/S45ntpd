@@ -1,19 +1,27 @@
 #!/bin/sh
 #
 # Time sync: busybox ntpd; after a clock step the MCU's RTC is updated.
-# Servers: /etc/ntp.conf (later from UCI).
+# Settings: UCI shareos.time (ntp 0/1, list server); web: System → Time.
 #
 PID=/var/run/ntpd.pid
+servers() {
+	s=$(uci -q get shareos.time.server)
+	[ -n "$s" ] || s="0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org"
+	for x in $s; do printf -- '-p %s ' "$x"; done
+}
 case "$1" in
 	start)
 		printf "Starting ntpd: "
-		start-stop-daemon -S -q -b -m -p $PID -x /usr/sbin/ntpd -- -n -S /usr/sbin/shareos-ntp-hook \
+		if [ "$(uci -q get shareos.time.ntp)" = 0 ]; then echo "off (clock set by hand)"; exit 0; fi
+		mkdir -p /tmp/shareos-ntp
+		start-stop-daemon -S -q -b -m -p $PID -x /usr/sbin/ntpd -- -n -S /usr/sbin/shareos-ntp-hook $(servers) \
 			&& echo "OK" || echo "FAIL"
 		;;
 	stop)
 		printf "Stopping ntpd: "
 		start-stop-daemon -K -q -p $PID && echo "OK" || echo "FAIL"
+		rm -f $PID
 		;;
-	restart) "$0" stop; "$0" start ;;
+	restart) "$0" stop; sleep 1; "$0" start ;;
 	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
 esac

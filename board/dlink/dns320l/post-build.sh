@@ -66,3 +66,19 @@ for f in S30rpcbind:rpcbind S60nfs:nfs; do
 		mv "$TARGET_DIR/etc/init.d/${f%%:*}" "$TARGET_DIR/etc/init.d/${f#*:}"
 	fi
 done
+
+# USB sticks and disks: mounted when plugged in, cleaned up when pulled
+# (shareos-usb ignores the internal SATA disks)
+grep -q shareos-usb "$TARGET_DIR/etc/mdev.conf" || \
+	printf 'sd[a-z][0-9]*\troot:disk 660 */usr/sbin/shareos-usb hotplug\n' >> "$TARGET_DIR/etc/mdev.conf"
+
+# ntfs-3g: only mkntfs/ntfslabel are used (mounting goes through the kernel's ntfs3)
+for p in ntfs-3g ntfs-3g.probe lowntfs-3g ntfscat ntfscluster ntfscmp ntfsfix ntfsinfo ntfsls \
+	ntfscp ntfsclone ntfsresize ntfsundelete ntfstruncate ntfsmove ntfsdecrypt ntfswipe ntfsusermap ntfssecaudit; do
+	rm -f "$TARGET_DIR/bin/$p" "$TARGET_DIR/usr/bin/$p" "$TARGET_DIR/sbin/$p" "$TARGET_DIR/usr/sbin/$p"
+done
+rm -f "$TARGET_DIR/sbin/mount.ntfs" "$TARGET_DIR/sbin/mount.ntfs-3g" "$TARGET_DIR/sbin/mount.lowntfs-3g"
+
+# btrfs-progs: mkfs.btrfs, btrfs and the check are enough
+rm -f "$TARGET_DIR"/usr/bin/btrfs-convert "$TARGET_DIR"/usr/bin/btrfs-image "$TARGET_DIR"/usr/bin/btrfs-map-logical \
+	"$TARGET_DIR"/usr/bin/btrfs-select-super "$TARGET_DIR"/usr/bin/btrfs-find-root "$TARGET_DIR"/usr/bin/btrfstune

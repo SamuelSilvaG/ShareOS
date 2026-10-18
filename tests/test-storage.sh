@@ -45,13 +45,13 @@ mount --bind /dev "$R/dev"
 mount -t tmpfs tmpfs "$R/tmp"
 mkdir -p "$R/var/run/ubus"
 
-for i in 1 2; do
+for i in 1 2 3; do
 	truncate -s 300M "$T/disk$i.img"
 	l=$(losetup -fP --show "$T/disk$i.img") || { echo "losetup failed"; exit 1; }
 	LOOPS="$LOOPS $l"
 done
 set -- $LOOPS
-A=${1#/dev/} B=${2#/dev/}
+A=${1#/dev/} B=${2#/dev/} C=${3#/dev/}
 # qemu-user does not pass BLKRRPART on to the kernel, so the partitions sfdisk
 # writes inside the chroot would never show up; re-read them from the host
 ( while :; do for l in $LOOPS; do partx -u "$l" 2>/dev/null; done; sleep 0.3; done ) &
@@ -121,6 +121,54 @@ if [ -e /proc/mdstat ]; then
 else
 	echo "SKIP  mirror (no md driver on this host)"
 fi
+
+# --- file systems (the host kernel here may lack exfat/ntfs3/btrfs: then only
+# mkfs and the partition type are checked, the mount is expected to fail) ---
+hostfs() { grep -qw "$1" /proc/filesystems; }
+ptype() { run sfdisk -d /dev/$1 | sed -n "s/.*$2.*type=\([^,]*\).*/\1/p" | head -1; }
+for f in btrfs exfat ntfs; do
+	run shareos-storage setup single "v$f=$B:$f" --swap=0 --yes >/dev/null
+	t=$(run blkid -s TYPE -o value /dev/${B}p1)
+	if hostfs "$([ $f = ntfs ] && echo ntfs3 || echo $f)"; then
+		check "volume with $f: created, mounted, fstype in UCI" "[ '$t' = '$f' ] && mounted v$f && run uci get storage.v$f.fstype | grep -qx $f"
+	else
+		check "volume with $f: file system created (host cannot mount $f)" "[ '$t' = '$f' ] && run shareos-storage job | grep -q 'mounting v$f failed'"
+	fi
+done
+check "exFAT/NTFS volumes get the Windows partition type" "ptype $B ${B}p1 | grep -qi EBD0A0A2"
+run shareos-storage setup single "bad=$B:fat" --yes >/dev/null
+check "unknown file system rejected" "run shareos-storage job | grep -q 'invalid file system'"
+run shareos-storage setup single "nur=$B:exfat" --swap=0 --yes >/dev/null
+check "no app area on exFAT" "! run uci -q get storage.global.apps | grep -qx nur"
+
+# --- USB drives (loop device $C stands in for a stick) ---
+usb() { chroot "$R" /usr/bin/env SHAREOS_USB_DISKS="$C" /bin/sh -c "$*" 2>&1; }
+o=$(usb shareos-usb format $C ext4 Stick)
+check "usb format refuses without --yes" "echo \"\$o\" | grep -q 'add --yes'"
+o=$(usb shareos-usb format $C ext4 "'Mein Stick'" --yes); [ -n "${VERBOSE:-}" ] && echo "$o"
+check "usb: formatted with ext4 and mounted at /mnt/usb-mein_stick" "grep -q \" $R/mnt/usb-mein_stick \" /proc/mounts && usb shareos-usb list | grep -q '/mnt/usb-mein_stick ext4'"
+check "usb: MBR partition type 83" "ptype $C ${C}p1 | grep -qx 83"
+echo data > $R/mnt/usb-mein_stick/f
+usb shareos-usb umount-all >/dev/null
+check "usb: umount-all" "! grep -q \" $R/mnt/usb-mein_stick \" /proc/mounts && [ ! -d $R/mnt/usb-mein_stick ]"
+usb shareos-usb mount-all >/dev/null
+check "usb: mount-all finds it again, data there" "grep -qx data $R/mnt/usb-mein_stick/f"
+check "usb: internal disks are not touched by mount-all" "! grep -q \" $R/mnt/usb-.*${B}\" /proc/mounts"
+usb shareos-usb umount-all >/dev/null
+chroot "$R" /usr/bin/env SHAREOS_USB_DISKS="$C" ACTION=add MDEV=${C}p1 /usr/sbin/shareos-usb hotplug; sleep 4
+check "usb: plugged in (mdev hotplug) -> mounted" "grep -q \" $R/mnt/usb-mein_stick \" /proc/mounts"
+chroot "$R" /usr/bin/env ACTION=add MDEV=${B}p1 /usr/sbin/shareos-usb hotplug; sleep 3
+check "usb: hotplug ignores internal disks" "! grep -q \"^/dev/${B}p1 $R/mnt/usb-\" /proc/mounts"
+usb shareos-usb eject $C >/dev/null
+check "usb: eject unmounts" "! grep -q \" $R/mnt/usb-mein_stick \" /proc/mounts"
+for f in exfat vfat ntfs; do
+	usb shareos-usb format $C $f Stick --yes >/dev/null
+	want=$f; t=$(run blkid -s TYPE -o value /dev/${C}p1)
+	check "usb: formatted with $f" "[ '$t' = '$want' ]"
+done
+check "usb: NTFS/exFAT partition type 7" "ptype $C ${C}p1 | grep -qx 7"
+o=$(usb shareos-usb format $B ext4 X --yes)
+check "usb format refuses a non-USB disk" "echo \"\$o\" | grep -q 'not a USB drive'"
 
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

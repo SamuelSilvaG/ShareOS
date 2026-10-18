@@ -1,0 +1,1826 @@
+{
+	"language": "hi",
+	"name": "हिन्दी",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "सारांश",
+		"SPEICHER": "स्टोरेज",
+		"FREIGABEN": "शेयर",
+		"DIENSTE": "सेवाएँ",
+		"APPS": "ऐप्स",
+		"CLOUD": "क्लाउड",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "सिस्टम",
+		"NEU": "नया",
+		"ONLINE": "ऑनलाइन",
+		"OFFLINE": "ऑफ़लाइन",
+		"Abmelden": "लॉग आउट",
+		"Hell/Dunkel umschalten": "लाइट/डार्क बदलें",
+		"Hauptmenü": "मुख्य मेनू",
+		"System": "सिस्टम",
+		"verfügbar": "उपलब्ध",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "ShareOS इंटरफ़ेस के लिए JavaScript चाहिए।",
+		"Verwaltung – bitte anmelden.": "प्रबंधन – कृपया लॉग इन करें।",
+		"BENUTZER": "उपयोगकर्ता",
+		"PASSWORT": "पासवर्ड",
+		"Angemeldet bleiben (7 Tage)": "लॉग इन रहें (7 दिन)",
+		"Anmelden": "लॉग इन",
+		"Benutzer oder Passwort falsch.": "गलत उपयोगकर्ता या पासवर्ड।",
+		"Box nicht erreichbar.": "डिवाइस तक नहीं पहुँच सके।",
+		"Sitzung abgelaufen – bitte neu anmelden.": "सत्र समाप्त – कृपया फिर से लॉग इन करें।",
+		"live · alle 5 s": "लाइव · हर 5 सेकंड",
+		"AUSLASTUNG": "लोड",
+		"Gerätesteuerung aktiv": "बोर्ड नियंत्रण सक्रिय",
+		"keine MCU-Daten": "MCU डेटा नहीं",
+		"LÜFTER": "पंखा",
+		"TEMP": "तापमान",
+		"aus": "बंद",
+		"halb": "आधा",
+		"voll": "पूरा",
+		"kein Link": "लिंक नहीं",
+		"letzte 10 min": "पिछले 10 मिनट",
+		"Gateway · DNS": "गेटवे · DNS",
+		"sammle Messwerte …": "नमूने इकट्ठे हो रहे हैं …",
+		"Firmware": "फ़र्मवेयर",
+		"Start aus": "यहाँ से शुरू हुआ",
+		"Flash (UBI)": "फ़्लैश (UBI)",
+		"Netzwerk (RAM)": "नेटवर्क (RAM)",
+		"Einstellungen bleiben erhalten": "सेटिंग्स बनी रहती हैं",
+		"Änderungen gehen beim Neustart verloren": "रीस्टार्ट पर बदलाव खो जाते हैं",
+		"Laufzeit": "चालू समय",
+		"seit dem letzten Start": "पिछली शुरुआत से",
+		"Dienste": "सेवाएँ",
+		"laufen": "चल रही हैं",
+		"Flash frei": "फ़्लैश खाली",
+		"für Einstellungen & Pakete": "सेटिंग्स और पैकेज के लिए",
+		"Laufwerke": "ड्राइव",
+		"erkannt": "मिलीं",
+		"keine eingesteckt": "कोई जुड़ी नहीं",
+		"alle verwalten": "सब प्रबंधित करें",
+		"Update verfügbar": "अपडेट उपलब्ध",
+		"Lade Systemdaten …": "सिस्टम डेटा लोड हो रहा है …",
+		"Lade Dienste …": "सेवाएँ लोड हो रही हैं …",
+		"Lade Laufwerke …": "ड्राइव लोड हो रही हैं …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "कोई हार्ड डिस्क या USB स्टोरेज नहीं मिला। ShareOS पूरी तरह आंतरिक फ़्लैश से चलता है – ड्राइव जुड़ते ही यहाँ दिखेंगी।",
+		"unbekanntes Modell": "अज्ञात मॉडल",
+		"Start, Stopp, Neustart": "शुरू, बंद, रीस्टार्ट",
+		"Neustart": "रीस्टार्ट",
+		"Stopp": "बंद करें",
+		"Starten": "शुरू करें",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "वेब इंटरफ़ेस",
+		"Zeit (NTP)": "समय (NTP)",
+		"Zeitplaner": "शेड्यूलर",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "सिस्टम बस (ubus)",
+		"Systemprotokoll": "सिस्टम लॉग",
+		"Gerätesteuerung": "बोर्ड नियंत्रण",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "घड़ी सेट करता है, MCU घड़ी को मिलाकर रखता है",
+		"Schnittstelle für diese Oberfläche": "इस वेब इंटरफ़ेस का इंटरफ़ेस",
+		"Nachrichten zwischen den Diensten": "सेवाओं के बीच संदेश",
+		"syslogd, im RAM": "syslogd, RAM में",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "पंखा, तापमान, बटन, MCU घड़ी",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "यह हिस्सा अभी बना नहीं है। योजना:",
+		"FREIGABEN, BENUTZER & GRUPPEN": "शेयर, उपयोगकर्ता और समूह",
+		"APPS & PAKETE": "ऐप्स और पैकेज",
+		"CLOUD-SPEICHER": "क्लाउड स्टोरेज",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "फ़ोल्डर के हिसाब से शेयर, SMB, NFS, FTP और DLNA के स्विच के साथ",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "हर शेयर पर अनुमतियों वाले उपयोगकर्ता और समूह",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "नेटवर्क ड्राइव जोड़ना (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "बैकअप कार्य (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "GitHub पर पैकेज स्रोत (opkg feed)",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "श्रेणियों वाली सूची, कतार के साथ इंस्टॉल/हटाना",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "पैकेज सेटिंग्स और पैकेज (फ़्लैश) या डिस्क पर जाते हैं",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "rclone से खाते: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "सिंक कार्य: कॉपी, मिरर, दोनों दिशाओं में",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "एन्क्रिप्शन (crypt), बैंडविड्थ और समय-सारणी",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "NAS पर इनबॉक्स फ़ोल्डर → Paperless REST API से अपलोड (टोकन)",
+		"Status der Übertragungen über /api/tasks/": "/api/tasks/ से ट्रांसफ़र की स्थिति",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "हर फ़ोल्डर के लिए टैग और संवाददाता, NAS पर बैकअप निर्यात",
+		"VOLUMES": "वॉल्यूम",
+		"LAUFWERKE": "ड्राइव",
+		"EINSTELLUNGEN": "सेटिंग्स",
+		"RUHEZUSTAND": "स्टैंडबाय",
+		"NEU EINRICHTEN": "फिर से सेट करें",
+		"PLATTEN ABSCHALTEN NACH": "इतनी देर बाद डिस्क रोकें",
+		"nie": "कभी नहीं",
+		"10 Minuten": "10 मिनट",
+		"20 Minuten": "20 मिनट",
+		"30 Minuten": "30 मिनट",
+		"1 Stunde": "1 घंटा",
+		"2 Stunden": "2 घंटे",
+		"Swap": "स्वैप",
+		"Apps-Bereich": "ऐप क्षेत्र",
+		"noch keiner": "अभी कोई नहीं",
+		"keiner aktiv": "कोई सक्रिय नहीं",
+		"noch keine": "अभी कोई नहीं",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "बिजली और घिसाव बचाता है। अगली बार उपयोग पर डिस्क फिर घूमने लगती हैं (कुछ सेकंड)।",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "विज़ार्ड चुनी गई डिस्क मिटाकर फिर से सेट करता है। अकेली डिस्क को \"ड्राइव\" में सीधे भी फ़ॉर्मैट किया जा सकता है।",
+		"Assistent starten": "विज़ार्ड शुरू करें",
+		"Speicher einrichten": "स्टोरेज सेट करें",
+		"INTERNER FLASH": "आंतरिक फ़्लैश",
+		"128 MB NAND · UBI": "128 MB NAND · UBI",
+		"BEREICH": "क्षेत्र",
+		"EINGEHÄNGT": "माउंट स्थान",
+		"BELEGT": "उपयोग में",
+		"Einstellungen & Pakete": "सेटिंग्स और पैकेज",
+		"System (nur lesbar)": "सिस्टम (केवल पढ़ने के लिए)",
+		"Arbeitsspeicher (tmp)": "RAM (tmp)",
+		"Aushängen": "अनमाउंट",
+		"Einhängen": "माउंट",
+		"Entfernen": "हटाएँ",
+		"SMART lesen": "SMART पढ़ें",
+		"Löschen & formatieren": "मिटाएँ और फ़ॉर्मैट करें",
+		"Spiegel (RAID 1)": "मिरर (RAID 1)",
+		"Einzelnes Laufwerk": "अकेली ड्राइव",
+		"SMART noch nicht gelesen": "SMART अभी पढ़ा नहीं गया",
+		"schläft (SMART beim nächsten Aufwachen)": "स्लीप में (जागने पर SMART)",
+		"no SMART data": "SMART डेटा नहीं",
+		"SMART OK": "SMART ठीक",
+		"SMART WARNUNG": "SMART चेतावनी",
+		"SMART FEHLER": "SMART विफल",
+		"leer": "खाली",
+		"ohne Dateisystem": "फ़ाइल सिस्टम नहीं",
+		"nicht eingehängt": "माउंट नहीं",
+		"Dateisystem nicht gefunden": "फ़ाइल सिस्टम नहीं मिला",
+		"wartet": "प्रतीक्षा में",
+		"Pakete und App-Daten liegen in .shareos": "पैकेज और ऐप डेटा .shareos में रहते हैं",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "अभी कोई स्टोरेज सेट नहीं है। विज़ार्ड कुछ ही चरणों में डिस्क सेट करता है – मिरर के रूप में (दोनों डिस्क पर एक जैसा डेटा) या अलग-अलग ड्राइव के रूप में।",
+		"SPEICHER EINRICHTEN · ASSISTENT": "स्टोरेज सेट करें · विज़ार्ड",
+		"Abbrechen": "रद्द करें",
+		"Platten": "डिस्क",
+		"Aufbau": "ढाँचा",
+		"Name": "नाम",
+		"Bestätigen": "पुष्टि",
+		"Zurück": "पीछे",
+		"Weiter": "आगे",
+		"Einrichten": "सेट करें",
+		"Welche Platten sollen eingerichtet werden?": "कौन-सी डिस्क सेट करनी हैं?",
+		"Alles auf diesen Platten wird gelöscht.": "इन डिस्क पर सब कुछ मिट जाएगा।",
+		"Spiegel (RAID 1) – empfohlen": "मिरर (RAID 1) – सुझाया गया",
+		"Zwei getrennte Laufwerke": "दो अलग ड्राइव",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "हर डिस्क पर स्वैप",
+		"1 GB – empfohlen": "1 GB – सुझाया गया",
+		"keiner": "कोई नहीं",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "इस डिवाइस में केवल 256 MB RAM है। डिस्क पर स्वैप लोड के उछाल को संभालता है (शेयर, क्लाउड सिंक, पैकेज इंस्टॉल)। यह हर डिस्क की शुरुआत में एक छोटा पार्टीशन है; बाकी हिस्सा ड्राइव बनता है।",
+		"NAME DES SPIEGELS": "मिरर का नाम",
+		"LAUFWERK": "ड्राइव",
+		"PLATTEN": "डिस्क",
+		"GRÖSSE": "आकार",
+		"AUFBAU": "ढाँचा",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "छोटे अक्षर, अंक, - और _ (अधिकतम 16 अक्षर)। ड्राइव इस रूप में दिखेगी:",
+		"; Freigaben legst du später darauf an.": "; शेयर बाद में बनाए जाते हैं।",
+		"Platten löschen und einrichten?": "डिस्क मिटाकर सेट करें?",
+		"Löschen & einrichten": "मिटाएँ और सेट करें",
+		"Einrichtung gestartet.": "सेटअप शुरू हुआ।",
+		"Formatieren gestartet.": "फ़ॉर्मैट शुरू हुआ।",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "नई ड्राइव का नाम (a–z, 0–9, - और _, अधिकतम 16 अक्षर):",
+		"Bitte mindestens eine Platte auswählen.": "कम से कम एक डिस्क चुनें।",
+		"Höchstens zwei Platten.": "अधिकतम दो डिस्क।",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "अमान्य नाम: केवल a–z, 0–9, - और _, अधिकतम 16 अक्षर।",
+		"Die Namen müssen verschieden sein.": "नाम अलग-अलग होने चाहिए।",
+		"Ungültiger Name.": "अमान्य नाम।",
+		"Ruhezustand gespeichert.": "स्टैंडबाय सहेजा गया।",
+		"FIRMWARE": "फ़र्मवेयर",
+		"ALLGEMEIN": "सामान्य",
+		"ENERGIE & RESET": "पावर और रीसेट",
+		"PROTOKOLLE": "लॉग",
+		"DARSTELLUNG": "रूप-रंग",
+		"ÜBER": "परिचय",
+		"FIRMWARE-UPDATE": "फ़र्मवेयर अपडेट",
+		"Installiert": "इंस्टॉल किया हुआ",
+		"Kernel, Startsystem und System": "कर्नेल, initramfs और सिस्टम",
+		"noch nicht geprüft": "अभी जाँचा नहीं गया",
+		"aktuell": "नवीनतम",
+		"noch kein Release für dieses Gerät": "इस डिवाइस के लिए अभी कोई रिलीज़ नहीं",
+		"keine": "कोई नहीं",
+		"UPDATE-KANAL": "अपडेट चैनल",
+		"Stabil (Releases)": "स्थिर (रिलीज़)",
+		"Beta (auch Pre-Releases)": "बीटा (प्री-रिलीज़ भी)",
+		"Jetzt prüfen": "अभी जाँचें",
+		"Prüfe …": "जाँच हो रही है …",
+		"VERSIONEN": "संस्करण",
+		"von GitHub": "GitHub से",
+		"VERSION": "संस्करण",
+		"DATUM": "तारीख",
+		"KANAL": "चैनल",
+		"STABIL": "स्थिर",
+		"BETA": "बीटा",
+		"installiert": "इंस्टॉल",
+		"Laden": "डाउनलोड करें",
+		"Notes ↗": "नोट्स ↗",
+		"SO LÄUFT EIN UPDATE": "अपडेट कैसे होता है",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "GitHub से पैकेज डाउनलोड करके जाँचना (SHA-256, डिवाइस, आकार)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "कर्नेल और initramfs फ़्लैश में लिखकर वापस पढ़ना",
+		"Neues System bereitlegen": "नया सिस्टम तैयार करना",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "रीस्टार्ट: initramfs सिस्टम इंस्टॉल करता है, फिर ShareOS दोबारा शुरू होता है",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "सेटिंग्स और इंस्टॉल किए पैकेज बने रहते हैं। बीच में रुकने पर अगली शुरुआत में इंस्टॉलेशन दोहराया जाता है।",
+		"Herunterladen": "डाउनलोड",
+		"Prüfen": "जाँच",
+		"Bereit": "तैयार",
+		"Schreiben": "लिखना",
+		"Verwerfen": "छोड़ें",
+		"Fehler:": "त्रुटि:",
+		"Letztes Update:": "पिछला अपडेट:",
+		"Neustart nötig": "रीस्टार्ट ज़रूरी",
+		"Jetzt neu starten": "अभी रीस्टार्ट करें",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "जाँचा गया: SHA-256, सभी हिस्सों के चेकसम, इसी डिवाइस के लिए बना। सेटिंग्स और पैकेज बने रहते हैं।",
+		"ShareOS ist aktuell.": "ShareOS नवीनतम है।",
+		"Update geladen und geprüft.": "अपडेट डाउनलोड और जाँच हो गई।",
+		"Update geschrieben – bitte neu starten.": "अपडेट लिखा गया – कृपया रीस्टार्ट करें।",
+		"Update installieren?": "अपडेट इंस्टॉल करें?",
+		"Installieren": "इंस्टॉल करें",
+		"GERÄTENAME": "डिवाइस का नाम",
+		"HOSTNAME": "होस्टनेम",
+		"Speichern": "सहेजें",
+		"NEUES PASSWORT": "नया पासवर्ड",
+		"WIEDERHOLEN": "दोहराएँ",
+		"Passwort ändern": "पासवर्ड बदलें",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "अक्षर, अंक और हाइफ़न। तुरंत लागू; DHCP सर्वर इसे अगले नवीनीकरण पर देखेगा।",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "वेब इंटरफ़ेस और SSH के लिए। कम से कम 6 अक्षर।",
+		"Hostname gespeichert.": "होस्टनेम सहेजा गया।",
+		"Passwort geändert.": "पासवर्ड बदल गया।",
+		"Die Passwörter stimmen nicht überein.": "पासवर्ड मेल नहीं खाते।",
+		"ENERGIE": "पावर",
+		"Ausschalten": "बंद करें",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "बंद करने पर ShareOS रुकता है और बोर्ड नियंत्रण बिजली काट देता है। पावर बटन से चालू करें।",
+		"WERKSEINSTELLUNGEN": "फ़ैक्टरी रीसेट",
+		"löscht Einstellungen": "सेटिंग्स मिटाता है",
+		"Auf Werkseinstellungen zurücksetzen": "फ़ैक्टरी सेटिंग्स पर लौटाएँ",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "फ़्लैश से सभी सेटिंग्स और इंस्टॉल किए पैकेज हटाकर रीस्टार्ट करता है। सिस्टम और फ़र्मवेयर संस्करण बने रहते हैं। उसके बाद पासवर्ड फिर से होगा",
+		"Neu starten?": "रीस्टार्ट करें?",
+		"Neu starten": "रीस्टार्ट",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "डिवाइस रीस्टार्ट हो रहा है। यह पेज अपने आप फिर जुड़ जाएगा (लगभग 1–2 मिनट)।",
+		"Ausschalten?": "बंद करें?",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "ShareOS रुकता है और डिवाइस बंद हो जाता है। दोबारा डिवाइस पर ही चालू करें।",
+		"Werkseinstellungen?": "फ़ैक्टरी सेटिंग्स?",
+		"Zurücksetzen": "रीसेट करें",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "सभी सेटिंग्स और इंस्टॉल किए पैकेज मिट जाते हैं, फिर डिवाइस रीस्टार्ट होता है। उसके बाद पासवर्ड फिर से \"shareos\" होगा।",
+		"Neustart läuft": "रीस्टार्ट हो रहा है",
+		"ShareOS startet neu": "ShareOS फिर से शुरू हो रहा है",
+		"Box wird ausgeschaltet": "डिवाइस बंद हो रहा है",
+		"Du kannst dieses Fenster schließen.": "आप यह विंडो बंद कर सकते हैं।",
+		"Dienst wird neu gestartet": "सेवा फिर से शुरू हो रही है",
+		"warte auf die Box": "डिवाइस की प्रतीक्षा",
+		"Werkseinstellungen": "फ़ैक्टरी सेटिंग्स",
+		"PROTOKOLL": "लॉग",
+		"Quelle": "स्रोत",
+		"System (syslog)": "सिस्टम (syslog)",
+		"Kernel (dmesg)": "कर्नेल (dmesg)",
+		"Aktualisieren": "ताज़ा करें",
+		"lade …": "लोड हो रहा है …",
+		"(leer)": "(खाली)",
+		"nur in diesem Browser": "केवल यह ब्राउज़र",
+		"Helles Design": "लाइट थीम",
+		"Scanlines": "स्कैनलाइन",
+		"LOGO": "लोगो",
+		"gilt für alle": "सभी के लिए",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "ShareOS लोगो दिखाएँ (बंद: केवल टेक्स्ट)",
+		"SPRACHE": "भाषा",
+		"Akzentfarbe Grün": "एक्सेंट रंग हरा",
+		"Akzentfarbe Rot": "एक्सेंट रंग लाल",
+		"Akzentfarbe Blau": "एक्सेंट रंग नीला",
+		"Akzentfarbe Weiß": "एक्सेंट रंग सफ़ेद",
+		"Version": "संस्करण",
+		"Stufe": "चरण",
+		"Gerät": "डिवाइस",
+		"Firmware-Name": "फ़र्मवेयर नाम",
+		"PROJEKT": "प्रोजेक्ट",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS, D-Link NAS डिवाइसों के लिए मुफ़्त फ़र्मवेयर है, जो Alt-F से बना है। buildroot, Linux और BusyBox पर आधारित; संचालन OpenWrt की तरह (UCI, ubus, rpcd, ucode)। लाइसेंस GPLv2।",
+		"Einrichtung läuft": "सेटअप चल रहा है",
+		"Box nicht ausschalten.": "डिवाइस बंद न करें।",
+		"Einrichtung fehlgeschlagen:": "सेटअप विफल:",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "कनेक्शन",
+		"diese Seite: HTTPS": "यह पेज: HTTPS",
+		"diese Seite: HTTP": "यह पेज: HTTP",
+		"HTTPS auf Port 443": "पोर्ट 443 पर HTTPS",
+		"HTTP-Aufrufe auf HTTPS umleiten": "HTTP अनुरोधों को HTTPS पर भेजें",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "बदलाव के बाद वेब सर्वर फिर से शुरू होता है; पेज थोड़ी देर के लिए उपलब्ध नहीं रहता।",
+		"ZERTIFIKAT": "प्रमाणपत्र",
+		"selbstsigniert": "स्व-हस्ताक्षरित",
+		"eigenes Zertifikat": "अपना प्रमाणपत्र",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "अभी कोई प्रमाणपत्र नहीं – HTTPS चालू करने पर यह अपने आप बनता है।",
+		"Ausgestellt für": "किसके लिए जारी",
+		"Aussteller": "जारीकर्ता",
+		"Gültig ab": "से मान्य",
+		"Gültig bis": "तक मान्य",
+		"Namen": "नाम",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "ब्राउज़र स्व-हस्ताक्षरित प्रमाणपत्रों पर एक बार चेतावनी देते हैं। कनेक्शन फिर भी एन्क्रिप्टेड है; बिना चेतावनी वाले पेज के लिए अपना प्रमाणपत्र अपलोड करें (जैसे अपने इंट्रानेट CA या Let's Encrypt से)।",
+		"Neues selbstsigniertes Zertifikat": "नया स्व-हस्ताक्षरित प्रमाणपत्र",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "अपना प्रमाणपत्र अपलोड करें",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "प्रमाणपत्र (PEM, मध्यवर्ती प्रमाणपत्रों के साथ भी)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "निजी कुंजी (PEM, बिना पासवर्ड)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "उपयोग से पहले डिवाइस जाँचता है कि प्रमाणपत्र और कुंजी आपस में मेल खाते हैं। कुंजी कभी डिवाइस से बाहर नहीं जाती।",
+		"Zertifikat übernehmen": "प्रमाणपत्र उपयोग करें",
+		"Zertifikat übernommen.": "प्रमाणपत्र इंस्टॉल हुआ।",
+		"Zertifikat erstellt.": "प्रमाणपत्र बना।",
+		"Neues selbstsigniertes Zertifikat?": "नया स्व-हस्ताक्षरित प्रमाणपत्र?",
+		"Erstellen": "बनाएँ",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "मौजूदा नाम और IP के लिए नया प्रमाणपत्र बनकर पुराने की जगह लेता है। ब्राउज़र एक बार फिर चेतावनी दिखाएँगे।",
+		"Gespeichert – der Webserver startet neu.": "सहेजा गया – वेब सर्वर फिर से शुरू हो रहा है।",
+		"Lade …": "लोड हो रहा है …",
+		"SPRACHE DER OBERFLÄCHE": "इंटरफ़ेस की भाषा",
+		"Weitere Sprachen: eine Datei in": "और भाषाएँ: इसमें एक फ़ाइल",
+		"– siehe docs/TRANSLATING.md.": "– docs/TRANSLATING.md देखें।",
+		"AUS UNTER (°C, 0 = NIE)": "इससे नीचे बंद (°C, 0 = कभी नहीं)",
+		"VOLL AB (°C)": "इससे पूरा (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "इससे नीचे फिर आधा (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "सब कुछ बाद में सिस्टम में सेट किया जा सकता है। जब तक आप न बदलें, पासवर्ड \"shareos\" रहेगा।",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "Alt-F से लें",
+		"Auch Testversionen, mit neuen Funktionen früher.": "टेस्ट संस्करण भी, नई सुविधाएँ पहले।",
+		"Auf dieser Box wurden Einstellungen von": "इस डिवाइस में इससे सेटिंग्स हैं:",
+		"gefunden": "",
+		"Ausgewogen": "संतुलित",
+		"Benutzer": "उपयोगकर्ता",
+		"Freigaben": "शेयर",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "उपयोगकर्ता और शेयर बने रहते हैं और \"शेयर\" क्षेत्र में दिए जाते हैं। फ़्लैश में Alt-F का डेटा नहीं छुआ जाता।",
+		"Beta": "बीटा",
+		"Stabil": "स्थिर",
+		"Danach kannst du gleich die Festplatten einrichten.": "इसके बाद आप तुरंत हार्ड डिस्क सेट कर सकते हैं।",
+		"Das Standardpasswort": "डिफ़ॉल्ट पासवर्ड सबको पता है",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– अभी अपना पासवर्ड रखें। यह वेब इंटरफ़ेस और SSH के लिए है।",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "डिवाइस बोर्ड के तापमान के अनुसार पंखे को तीन स्तरों (बंद, आधा, पूरा) में चलाता है। बदलाव कुछ सेकंड में लागू होते हैं।",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "नारंगी USB LED शुरुआत में रेस्क्यू मोड और अपडेट दिखाती है और बदली नहीं जा सकती।",
+		"ERSTEINRICHTUNG": "पहली बार सेटअप",
+		"Eigene Werte": "अपने मान",
+		"Ersteinrichtung abgeschlossen.": "पहली बार सेटअप पूरा।",
+		"Ersteinrichtung erneut starten": "पहली बार सेटअप फिर चलाएँ",
+		"Ersteinrichtung überspringen?": "पहली बार सेटअप छोड़ें?",
+		"Fertig": "पूरा",
+		"Fertig & Speicher einrichten": "पूरा करें और स्टोरेज सेट करें",
+		"Gerätename": "डिवाइस का नाम",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "नाम, समय क्षेत्र और पंखा लें",
+		"Herzschlag (ShareOS läuft)": "धड़कन (ShareOS चल रहा है)",
+		"Kühl": "ठंडा",
+		"Leise": "शांत",
+		"LEDS": "LED",
+		"LÜFTER & LEDS": "पंखा और LED",
+		"Lüfter": "पंखा",
+		"Leer lassen, um das Passwort später zu ändern.": "पासवर्ड बाद में बदलने के लिए खाली छोड़ें।",
+		"Lüfter läuft immer, voll ab 45 °C": "पंखा हमेशा चालू, 45 °C से पूरा",
+		"Lüfter läuft immer, voll ab 50 °C": "पंखा हमेशा चालू, 50 °C से पूरा",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "40 °C से नीचे पंखा रुका, 55 °C से पूरा",
+		"Name & Zeit": "नाम और समय",
+		"Nur fertige Versionen – empfohlen.": "केवल तैयार संस्करण – सुझाया गया।",
+		"PLATTEN-LEDS (ROT)": "डिस्क LED (लाल)",
+		"POWER-LED": "पावर LED",
+		"STATUS-LED (BLAU)": "स्थिति LED (नीली)",
+		"Passwort": "पासवर्ड",
+		"Plattenzugriffe anzeigen": "डिस्क उपयोग दिखाएँ",
+		"Sprache": "भाषा",
+		"Temperaturen selbst festlegen": "तापमान खुद तय करें",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "नेटवर्क में डिवाइस इसी नाम से दिखता है। घड़ी NTP से अपने आप सेट होती है।",
+		"Update-Kanal": "अपडेट चैनल",
+		"Updates": "अपडेट",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "अपडेट GitHub से आते हैं और सिस्टम → फ़र्मवेयर में इंस्टॉल होते हैं।",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "ShareOS में आपका स्वागत है। डिवाइस कुछ ही चरणों में सेट हो जाता है; सब कुछ बाद में यहाँ बदला जा सकता है:",
+		"ändern.": "।",
+		"ZEITZONE": "समय क्षेत्र",
+		"Zeitzone": "समय क्षेत्र",
+		"blinkt": "टिमटिमाता",
+		"an": "चालू",
+		"sofort aktiv": "तुरंत लागू",
+		"wird geändert": "बदला जाएगा",
+		"bleibt (später ändern)": "वैसा ही रहेगा (बाद में बदलें)",
+		"ja": "हाँ",
+		"nein": "नहीं",
+		"Überspringen": "छोड़ें",
+		"Lüfter gespeichert.": "पंखा सहेजा गया।",
+		"LED gespeichert.": "LED सहेजी गई।",
+		"Ungültiger Gerätename.": "अमान्य डिवाइस नाम।",
+		"Das Passwort braucht mindestens 6 Zeichen.": "पासवर्ड में कम से कम 6 अक्षर चाहिए।",
+		"Paket wird erneut geprüft …": "पैकेज फिर से जाँचा जा रहा है …",
+		"System wird für den Neustart bereitgelegt …": "रीस्टार्ट के लिए सिस्टम तैयार हो रहा है …",
+		"Startsystem: Flash wird gelöscht …": "बूट सिस्टम: फ़्लैश मिटाया जा रहा है …",
+		"Startsystem wird geschrieben …": "बूट सिस्टम लिखा जा रहा है …",
+		"Startsystem wird geprüft …": "बूट सिस्टम की जाँच …",
+		"Kernel: Flash wird gelöscht …": "कर्नेल: फ़्लैश मिटाया जा रहा है …",
+		"Kernel wird geschrieben …": "कर्नेल लिखा जा रहा है …",
+		"Kernel wird geprüft …": "कर्नेल की जाँच …",
+		"Wird gestartet …": "शुरू हो रहा है …",
+		"nicht ausschalten": "बंद न करें",
+		", das dauert etwa 1–2 Minuten.": ", इसमें लगभग 1–2 मिनट लगते हैं।",
+		"Paket wird geprüft …": "पैकेज जाँचा जा रहा है …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 और सामग्री, लगभग आधा मिनट।",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– नया सिस्टम अगली शुरुआत में इंस्टॉल होगा (लगभग 1 मिनट, डिवाइस बंद न करें)।",
+		"NETZWERK": "नेटवर्क",
+		"ADRESSE": "पता",
+		"AKTUELL": "मौजूदा",
+		"AKZENTFARBE": "एक्सेंट रंग",
+		"BEIM START": "शुरुआत पर",
+		"BESCHREIBUNG": "विवरण",
+		"DIENST": "सेवा",
+		"HELL ODER DUNKEL": "लाइट या डार्क",
+		"HTTPS & ZERTIFIKAT": "HTTPS और प्रमाणपत्र",
+		"JETZT": "अभी",
+		"KENNZAHL": "माप",
+		"WERT": "मान",
+		"HINWEIS": "टिप्पणी",
+		"ART": "प्रकार",
+		"MODELL": "मॉडल",
+		"ZUSTAND": "स्थिति",
+		"INHALT": "सामग्री",
+		"IP-ADRESSE": "IP पता",
+		"SUBNETZMASKE": "सबनेट मास्क",
+		"DNS-SERVER (KOMMA-GETRENNT)": "DNS सर्वर (कॉमा से अलग)",
+		"Automatisch (DHCP) – vom Router": "अपने आप (DHCP) – राउटर से",
+		"Feste Adresse": "स्थिर पता",
+		"statisch": "स्थिर",
+		"Dunkel": "डार्क",
+		"Hell": "लाइट",
+		"Wie das Betriebssystem (automatisch)": "ऑपरेटिंग सिस्टम जैसा (अपने आप)",
+		"Grün": "हरा",
+		"Rot": "लाल",
+		"Blau": "नीला",
+		"Weiß": "सफ़ेद",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "लोगो और ब्राउज़र आइकन एक्सेंट रंग अपनाते हैं। यह सेटिंग सभी के लिए है, लॉग इन पेज समेत।",
+		"Scanlines (nur in diesem Browser)": "स्कैनलाइन (केवल यह ब्राउज़र)",
+		"Übernehmen": "लागू करें",
+		"verbunden": "जुड़ा हुआ",
+		"keine Adresse": "पता नहीं",
+		"ändern": "बदलें",
+		"Verbindung": "कनेक्शन",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "अगली शुरुआत से लागू। चल रही सेवाएँ \"स्थिति\" में शुरू और बंद की जाती हैं। डिवाइस नियंत्रण, सिस्टम बस, API और वेब इंटरफ़ेस हमेशा शुरू होते हैं, वरना डिवाइस चलाया नहीं जा सकता।",
+		"welche Dienste beim Einschalten starten": "डिवाइस चालू होने पर कौन-सी सेवाएँ शुरू हों",
+		"starten": "शुरू करें",
+		"immer": "हमेशा",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "इस सेवा के बिना डिवाइस चलाया नहीं जा सकता",
+		"Kachelansicht": "टाइल दृश्य",
+		"Tabellenansicht": "तालिका दृश्य",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "नई नेटवर्क सेटिंग्स पुष्टि की प्रतीक्षा में हैं",
+		"Behalten": "रखें",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "पिछला बदलाव पुष्ट नहीं हुआ; पिछली नेटवर्क सेटिंग्स फिर से लागू हैं।",
+		"Neue Netzwerkeinstellungen bestätigt.": "नई नेटवर्क सेटिंग्स पुष्ट हुईं।",
+		"Netzwerk ändern?": "नेटवर्क बदलें?",
+		"Netzwerk wird umgestellt": "नेटवर्क बदल रहा है",
+		"Netzwerk wird neu gestartet": "नेटवर्क फिर से शुरू हो रहा है",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "कनेक्शन नहीं – डिवाइस को पुरानी सेटिंग्स वापस लानी चाहिए थीं। पेज फिर से लोड करें।",
+		"eine Platte fehlt": "एक डिस्क गायब है",
+		"in Ordnung": "ठीक है",
+		"Sync wartet": "सिंक प्रतीक्षा में",
+		"STATUS": "स्थिति",
+		"AUTOSTART": "स्वतः शुरू",
+		"GRUPPEN": "समूह",
+		"Administrator": "एडमिनिस्ट्रेटर",
+		"Nur Freigaben": "केवल शेयर",
+		"lesen & schreiben": "पढ़ना और लिखना",
+		"nur lesen": "केवल पढ़ना",
+		"kein Zugriff": "पहुँच नहीं",
+		"unbegrenzt": "असीमित",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "शेयर के लिए ड्राइव चाहिए – पहले यहाँ सेट करें:",
+		"einrichten.": "।",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "अभी कोई शेयर नहीं। शेयर किसी ड्राइव के फ़ोल्डर को नेटवर्क पर उपलब्ध कराता है – Windows, macOS और Linux से।",
+		"Freigabe anlegen": "शेयर बनाएँ",
+		"Neue Freigabe": "नया शेयर",
+		"FREIGABE": "शेयर",
+		"ORDNER": "फ़ोल्डर",
+		"ZUGRIFF": "पहुँच",
+		"Laufwerk fehlt": "ड्राइव गायब",
+		"noch niemand": "अभी कोई नहीं",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS, MACOS, LINUX)",
+		"SMB-Freigaben anbieten": "SMB शेयर दें",
+		"ARBEITSGRUPPE": "वर्कग्रुप",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "कोई शेयर होते ही SMB सेवा अपने आप शुरू होती है। निजी फ़ोल्डर इस रूप में दिखते हैं:",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX, PROXMOX)",
+		"NFS-Freigaben anbieten": "NFS शेयर दें",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "NFS में उपयोगकर्ता खाते नहीं होते: सूची के कंप्यूटर या नेटवर्क को पहुँच मिलती है। फ़ाइलें इस रूप में सहेजी जाती हैं:",
+		"gespeichert. Einbinden z. B. mit": "। उदाहरण के लिए इससे माउंट करें:",
+		"kein Protokoll": "कोई प्रोटोकॉल नहीं",
+		"GAST": "अतिथि",
+		"Bearbeiten": "संपादित करें",
+		"Löschen": "मिटाएँ",
+		"Anlegen": "बनाएँ",
+		"NEUE FREIGABE": "नया शेयर",
+		"NAME": "नाम",
+		"ORDNER AUF DEM LAUFWERK": "ड्राइव पर फ़ोल्डर",
+		"wie der Name": "नाम के समान",
+		"ZUGRIFF ÜBER SMB": "SMB से पहुँच",
+		"Über SMB freigeben (Windows, macOS, Linux)": "SMB से शेयर करें (Windows, macOS, Linux)",
+		"Gäste dürfen ohne Passwort lesen": "अतिथि बिना पासवर्ड पढ़ सकते हैं",
+		"BENUTZER / GRUPPE": "उपयोगकर्ता / समूह",
+		"RECHT": "अनुमति",
+		"Noch keine Benutzer – unter": "अभी कोई उपयोगकर्ता नहीं – यहाँ बनाएँ:",
+		"anlegen, oder Gastzugang erlauben.": ", या अतिथि पहुँच दें।",
+		"ZUGRIFF ÜBER NFS": "NFS से पहुँच",
+		"Über NFS freigeben": "NFS से शेयर करें",
+		"NFS-Clients dürfen schreiben": "NFS क्लाइंट लिख सकते हैं",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "NFS क्लाइंट (IP या नेटवर्क, कॉमा से अलग)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "फ़ोल्डर न हो तो बना दिया जाता है। शेयर हटाने पर फ़ोल्डर और उसकी फ़ाइलें बनी रहती हैं।",
+		"kein Limit": "कोई सीमा नहीं",
+		"von": "में से",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "अभी कोई उपयोगकर्ता नहीं। एक ही खाता हर जगह काम करता है: शेयर, वेब इंटरफ़ेस और बाद में ऐप्स व क्लाउड सिंक के लिए।",
+		"Benutzer anlegen": "उपयोगकर्ता बनाएँ",
+		"Von Alt-F übernehmen": "Alt-F से आयात करें",
+		"Neuer Benutzer": "नया उपयोगकर्ता",
+		"ROLLE": "भूमिका",
+		"PERSÖNLICHER ORDNER": "निजी फ़ोल्डर",
+		"kein persönlicher Ordner": "निजी फ़ोल्डर नहीं",
+		"Rollen:": "भूमिकाएँ:",
+		"– alles, auch SSH.": "– सब कुछ, SSH समेत।",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– वेब इंटरफ़ेस में अपना क्षेत्र \"मेरा ShareOS\"।",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– शेयर तक पहुँच, वेब लॉग इन नहीं। खाता",
+		"bleibt immer Administrator.": "हमेशा एडमिनिस्ट्रेटर है।",
+		"· ohne Web": "· वेब नहीं",
+		"NEUER BENUTZER": "नया उपयोगकर्ता",
+		"BENUTZERNAME": "उपयोगकर्ता नाम",
+		"VOLLER NAME": "पूरा नाम",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "हर ड्राइव पर स्टोरेज सीमा (GB, 0 = असीमित)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "वेब इंटरफ़ेस में लॉग इन कर सकता है (\"मेरा ShareOS\")",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "उपयोगकर्ता नाम: छोटे अक्षर, अंक और _, अक्षर से शुरू। पासवर्ड शेयर के लिए और – भूमिका के अनुसार – वेब इंटरफ़ेस के लिए है।",
+		"GRUPPE": "समूह",
+		"MITGLIEDER": "सदस्य",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "समूह उपयोगकर्ताओं को इकट्ठा करते हैं, जैसे \"परिवार\" या \"मीडिया\"। फिर शेयर अनुमतियाँ पूरे समूह को दी जा सकती हैं।",
+		"Neue Gruppe": "नया समूह",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "सदस्य उपयोगकर्ता पर तय होते हैं (उपयोगकर्ता → संपादित करें)।",
+		"MEIN SHAREOS": "मेरा SHAREOS",
+		"Noch nichts gespeichert.": "अभी कुछ सहेजा नहीं है।",
+		"Persönlicher Ordner": "निजी फ़ोल्डर",
+		"Kein persönlicher Ordner eingerichtet.": "कोई निजी फ़ोल्डर सेट नहीं।",
+		"PASSWORT ÄNDERN": "पासवर्ड बदलें",
+		"AKTUELLES PASSWORT": "मौजूदा पासवर्ड",
+		"Gilt für die Freigaben und diese Oberfläche.": "शेयर और इस इंटरफ़ेस के लिए।",
+		"MEINE FREIGABEN": "मेरे शेयर",
+		"Dir wurde noch keine Freigabe zugewiesen.": "आपको अभी कोई शेयर नहीं दिया गया है।",
+		"APPS & CLOUD": "ऐप्स और क्लाउड",
+		"geplant": "योजना में",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "आपके लिए खोले गए ऐप्स और आपके अपने क्लाउड सिंक कार्य बाद में यहाँ दिखेंगे।",
+		"Mein ShareOS": "मेरा ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "NFS के लिए कम से कम एक क्लाइंट (IP या नेटवर्क) दें।",
+		"Gespeichert.": "सहेजा गया।",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "शेयर नेटवर्क से हट जाता है। फ़ोल्डर और उसकी सभी फ़ाइलें ड्राइव पर रहती हैं।",
+		"Benutzer von Alt-F übernehmen?": "Alt-F से उपयोगकर्ता आयात करें?",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "रखी गई Alt-F सेटिंग्स से उपयोगकर्ता और समूह बनाए जाते हैं (भूमिका \"केवल शेयर\")। जहाँ Alt-F ने पासवर्ड सहेजे थे, वे ले लिए जाते हैं।",
+		"Keine neuen Benutzer gefunden.": "कोई नया उपयोगकर्ता नहीं मिला।",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "समूह का नाम (a–z, 0–9 और _, अक्षर से शुरू):",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "सदस्य बने रहते हैं, पर इस समूह से मिली अनुमतियाँ खो देते हैं।",
+		"Setzen": "सेट करें",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "नया पासवर्ड (कम से कम 6 अक्षर)। शेयर के लिए और – भूमिका के अनुसार – वेब इंटरफ़ेस के लिए।",
+		"Bitte neu anmelden.": "कृपया फिर से लॉग इन करें।",
+		"Der persönliche Ordner bleibt erhalten.": "निजी फ़ोल्डर बना रहता है।",
+		"Benutzerkonten": "उपयोगकर्ता खाते",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "सेटिंग्स का बैकअप और बहाली",
+		"SICHERN": "बैकअप",
+		"JSON-Datei": "JSON फ़ाइल",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "एन्क्रिप्शन का पासवर्ड (वैकल्पिक)",
+		"leer = unverschlüsselt": "खाली = बिना एन्क्रिप्शन",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "इसमें सभी सेटिंग्स, पासवर्ड (हैश के रूप में) सहित उपयोगकर्ता, शेयर, नेटवर्क और कुंजी सहित HTTPS प्रमाणपत्र होते हैं। बिना पासवर्ड फ़ाइल पढ़ी जा सकती है – सुरक्षित रखें। पासवर्ड के साथ: AES-256, बहाली के लिए पासवर्ड चाहिए।",
+		"Sicherung herunterladen": "बैकअप डाउनलोड करें",
+		"WIEDERHERSTELLEN": "बहाल करें",
+		"SICHERUNGSDATEI": "बैकअप फ़ाइल",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "पासवर्ड (अगर एन्क्रिप्टेड है)",
+		"Erstellt": "बनाया गया",
+		"Zertifikat": "प्रमाणपत्र",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "बहाली मौजूदा सेटिंग्स, उपयोगकर्ताओं और शेयरों की जगह लेती है। उसके बाद रीस्टार्ट ज़रूरी है। ड्राइव का डेटा नहीं छुआ जाता।",
+		"Wiederherstellen": "बहाल करें",
+		"Einstellungen wiederherstellen?": "सेटिंग्स बहाल करें?",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "मौजूदा सेटिंग्स, उपयोगकर्ता और शेयर बैकअप से बदल दिए जाते हैं।",
+		"Wiederhergestellt": "बहाल हुआ",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "सेटिंग्स बहाल हो गईं। सब लागू करने के लिए अभी रीस्टार्ट करें?",
+		"Verschlüsselte Sicherung heruntergeladen.": "एन्क्रिप्टेड बैकअप डाउनलोड हुआ।",
+		"Sicherung heruntergeladen.": "बैकअप डाउनलोड हुआ।",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "बैकअप एन्क्रिप्टेड है – कृपया पासवर्ड दें।",
+		"ADRESSE VON PAPERLESS": "PAPERLESS पता",
+		"PRÜFEN ALLE": "हर इतनी देर में जाँचें",
+		"NACH DEM HOCHLADEN": "अपलोड के बाद",
+		"Datei löschen": "फ़ाइल मिटाएँ",
+		"aufheben (.paperless/done)": "रखें (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "इनबॉक्स फ़ोल्डर अपने आप भेजें",
+		"Jetzt übertragen": "अभी भेजें",
+		"SO FUNKTIONIERT ES": "यह कैसे काम करता है",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "Paperless में हर इनबॉक्स के लिए API टोकन बनाएँ (प्रोफ़ाइल → API टोकन)। दस्तावेज़ फिर उसी Paperless उपयोगकर्ता के होंगे।",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "फ़ाइलें (PDF, चित्र, Office) इनबॉक्स फ़ोल्डर में रखें – PC से या सीधे स्कैनर से।",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS उन्हें Paperless API से अपलोड करता है और दिखाता है कि Paperless ने उन्हें स्वीकार किया या नहीं।",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "निजी इनबॉक्स निजी फ़ोल्डर में होते हैं (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": "); उपयोगकर्ता \"मेरा ShareOS\" में अपना टोकन खुद भी दे सकते हैं। साझा इनबॉक्स किसी शेयर का उपयोग करते हैं, जैसे स्कैनर के लिए।",
+		"EINGÄNGE": "इनबॉक्स",
+		"übernommen": "स्वीकार",
+		"wird verarbeitet": "प्रोसेस हो रहा है",
+		"Fehler": "त्रुटि",
+		"Protokoll": "लॉग",
+		"nichts wartend": "कुछ प्रतीक्षा में नहीं",
+		"Neuer Eingang": "नया इनबॉक्स",
+		"NEUER EINGANG": "नया इनबॉक्स",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "निजी (निजी फ़ोल्डर में \"Paperless\" फ़ोल्डर)",
+		"gemeinsam (Ordner einer Freigabe)": "साझा (किसी शेयर का फ़ोल्डर)",
+		"API-TOKEN": "API टोकन",
+		"aktiv": "सक्रिय",
+		"Verbindung prüfen": "कनेक्शन जाँचें",
+		"aus Paperless: Profil → API-Token": "Paperless से: प्रोफ़ाइल → API टोकन",
+		"API-TOKEN (LEER = BEHALTEN)": "API टोकन (खाली = वैसा ही रखें)",
+		"TAGS FÜR NEUE DOKUMENTE": "नए दस्तावेज़ों के टैग",
+		"Schließen": "बंद करें",
+		"ZEIT": "समय",
+		"DATEI": "फ़ाइल",
+		"MELDUNG": "संदेश",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "अब कुछ नहीं भेजा जाएगा। फ़ोल्डर और उसकी फ़ाइलें बनी रहती हैं।",
+		"EINGANG": "इनबॉक्स",
+		"WARTEND": "प्रतीक्षा में",
+		"ZULETZT": "पिछला",
+		"gemeinsam": "साझा",
+		"Paperless → Profil → API-Token": "Paperless → प्रोफ़ाइल → API टोकन",
+		"Paperless-Eingang gespeichert.": "Paperless इनबॉक्स सहेजा गया।",
+		"Übertragung gestartet.": "ट्रांसफ़र शुरू हुआ।",
+		"MEIN EINGANG": "मेरा इनबॉक्स",
+		"MEIN API-TOKEN AUS PAPERLESS": "PAPERLESS से मेरा API टोकन",
+		"Dateien aus meinem Eingang übertragen": "मेरे इनबॉक्स से फ़ाइलें भेजें",
+		"Eingangsordner": "इनबॉक्स फ़ोल्डर",
+		"ZULETZT ÜBERTRAGEN": "हाल में भेजा गया",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "अभी कुछ नहीं भेजा गया। फ़ाइलें इनबॉक्स फ़ोल्डर में रखें – वे कुछ मिनटों में Paperless तक पहुँच जाती हैं।",
+		"KONTEN": "खाते",
+		"Testen": "जाँचें",
+		"Konto hinzufügen": "खाता जोड़ें",
+		"HINWEISE": "टिप्पणियाँ",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "लॉग इन जानकारी डिवाइस पर एन्क्रिप्टेड रहती है। Google Drive, OneDrive या Dropbox के लिए PC पर चलाएँ",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "और बना हुआ हिस्सा यहाँ चिपकाएँ। कार्य कम मेमोरी लेते हैं (एक साथ 2 ट्रांसफ़र); बैंडविड्थ सीमा, जैसे",
+		"hält das Netz frei.": ", नेटवर्क को खाली रखती है।",
+		"AUFTRÄGE": "कार्य",
+		"Jetzt starten": "अभी शुरू करें",
+		"Neuer Auftrag": "नया कार्य",
+		"NEUES CLOUD-KONTO": "नया क्लाउड खाता",
+		"SFTP (SSH-Server)": "SFTP (SSH सर्वर)",
+		"andere – rclone-Konfiguration einfügen": "अन्य – rclone कॉन्फ़िगरेशन चिपकाएँ",
+		"ADRESSE (WEBDAV-URL)": "पता (WEBDAV URL)",
+		"ANBIETER": "प्रदाता",
+		"PASSWORT / APP-PASSWORT": "पासवर्ड / ऐप पासवर्ड",
+		"Hinzufügen": "जोड़ें",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (AWS के लिए खाली)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "RCLONE.CONF से हिस्सा ([नाम] से शुरू)",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "लॉग इन जानकारी मिटा दी जाती है। इस खाते वाले कार्य काम करना बंद कर देते हैं। क्लाउड में कुछ नहीं मिटता।",
+		"NEUER AUFTRAG": "नया कार्य",
+		"ORDNER AUF DEM NAS": "NAS पर फ़ोल्डर",
+		"CLOUD-KONTO": "क्लाउड खाता",
+		"ORDNER IN DER CLOUD": "क्लाउड में फ़ोल्डर",
+		"RICHTUNG": "दिशा",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "अपलोड – क्लाउड में कॉपी, कुछ नहीं मिटता",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "डाउनलोड – NAS पर कॉपी, कुछ नहीं मिटता",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "क्लाउड पर मिरर – यहाँ जो नहीं है उसे क्लाउड में मिटाता है",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "क्लाउड से मिरर – क्लाउड में जो नहीं है उसे यहाँ मिटाता है",
+		"ZEITPLAN": "समय-सारणी",
+		"nur von Hand": "केवल हाथ से",
+		"stündlich": "हर घंटे",
+		"täglich um 2:30": "रोज़ 2:30 बजे",
+		"sonntags um 3:00": "रविवार को 3:00 बजे",
+		"eigene Zeit (cron)": "अपना समय (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "CRON समय (मिनट घंटा दिन महीना सप्ताह_दिन)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "बैंडविड्थ (खाली = असीमित)",
+		"Zeitplan aktiv": "समय-सारणी सक्रिय",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "मिरर लक्ष्य की ओर वह मिटाता है जो स्रोत में नहीं है – सामान्य बैकअप के लिए \"अपलोड\" चुनें।",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "कार्य अब नहीं चलेगा। NAS और क्लाउड की फ़ाइलें वैसी ही रहती हैं।",
+		"AUFTRAG": "कार्य",
+		"VON → NACH": "कहाँ से → कहाँ",
+		"Spiegeln?": "मिरर?",
+		"Verstanden": "समझ गया",
+		"Gestoppt.": "रोका गया।",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "क्लाउड से मिरर NAS की वे फ़ाइलें मिटाता है जो क्लाउड में नहीं हैं।",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "क्लाउड पर मिरर क्लाउड की वे फ़ाइलें मिटाता है जो NAS पर नहीं हैं।",
+		"MEINE CLOUD": "मेरा क्लाउड",
+		"eigene Konten und Aufträge": "अपने खाते और कार्य",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "लॉग इन जानकारी डिवाइस पर आपके निजी फ़ोल्डर में एन्क्रिप्टेड रहती है। Google Drive, OneDrive या Dropbox के लिए चलाएँ",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": ", नेटवर्क को खाली रखती है। जो आप डाउनलोड करते हैं वह आपकी स्टोरेज सीमा में गिना जाता है।",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "अपने क्लाउड सिंक कार्य बना सकता है (निजी फ़ोल्डर चाहिए)",
+		"APP & WIDGETS": "ऐप और विजेट",
+		"ALS APP INSTALLIEREN": "ऐप के रूप में इंस्टॉल करें",
+		"über das Browsermenü": "ब्राउज़र मेनू से",
+		"läuft als App": "ऐप के रूप में चल रहा है",
+		"bereit": "तैयार",
+		"nur über HTTPS": "केवल HTTPS",
+		"Diese Oberfläche läuft gerade als installierte App.": "यह इंटरफ़ेस इंस्टॉल किए ऐप के रूप में चल रहा है।",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "ब्राउज़र ShareOS को अपने आइकन वाले ऐप के रूप में इंस्टॉल कर सकता है।",
+		"Im Browsermenü": "ब्राउज़र मेनू में चुनें",
+		"„App installieren“": "\"ऐप इंस्टॉल करें\"",
+		"bzw.": "या",
+		"„Zum Startbildschirm hinzufügen“": "\"होम स्क्रीन में जोड़ें\"",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": "। स्व-हस्ताक्षरित प्रमाणपत्र के साथ ब्राउज़र असली इंस्टॉलेशन नहीं देते।",
+		"Browser installieren Web-Apps nur über": "ब्राउज़र वेब ऐप्स केवल इससे इंस्टॉल करते हैं:",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "भरोसेमंद प्रमाणपत्र वाला HTTPS",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(जैसे Let's Encrypt, सिस्टम → नेटवर्क में इंस्टॉल करें)। http:// पर Chrome का मेनू केवल यह देता है:",
+		"– das legt ein Lesezeichen-Symbol an.": "– इससे बुकमार्क आइकन बनता है।",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "Android पर: शॉर्टकट खोलने के लिए ऐप आइकन को देर तक दबाएँ",
+		"Übersicht, Speicher, Freigaben, Firmware": "सारांश, स्टोरेज, शेयर, फ़र्मवेयर",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": "। Chrome वेब ऐप्स के लिए असली होम स्क्रीन विजेट नहीं देता – इसके बजाय दाईं ओर विजेट ऐप्स के लिए स्थिति का उपयोग करें।",
+		"Als App installieren": "ऐप के रूप में इंस्टॉल करें",
+		"STATUS FÜR WIDGETS": "विजेट के लिए स्थिति",
+		"Status-Adresse einschalten": "स्थिति पता चालू करें",
+		"ADRESSE (GEHEIM HALTEN)": "पता (गुप्त रखें)",
+		"Kopieren": "कॉपी करें",
+		"Neuer Schlüssel": "नई कुंजी",
+		"Öffnen ↗": "खोलें ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "बिना लॉग इन छोटा JSON उत्तर देता है: नाम, संस्करण, चालू समय, लोड, तापमान, ड्राइव उपयोग, RAID स्थिति और चेतावनियाँ (",
+		"). Gedacht für Widget-Apps wie": ")। विजेट ऐप्स के लिए, जैसे",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android), Home Assistant या आपकी अपनी स्क्रिप्ट। जिसे पता मालूम है वह ये मान देख सकता है – इससे कोई कुछ बदल नहीं सकता।",
+		"Status-Adresse eingeschaltet.": "स्थिति पता चालू हुआ।",
+		"Status-Adresse ausgeschaltet.": "स्थिति पता बंद हुआ।",
+		"Neuen Schlüssel erzeugen?": "नई कुंजी बनाएँ?",
+		"Erzeugen": "बनाएँ",
+		"Neuer Schlüssel erzeugt.": "नई कुंजी बनी।",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "पुराना पता काम करना बंद कर देगा – विजेट को नया पता चाहिए।",
+		"Kopiert.": "कॉपी हो गया।",
+		"Bitte die Adresse selbst markieren und kopieren.": "कृपया पता खुद चुनकर कॉपी करें।",
+		"ShareOS ist als App installiert.": "ShareOS ऐप के रूप में इंस्टॉल है।",
+		"· Mein ShareOS": "· मेरा ShareOS",
+		"DATEIEN": "फ़ाइलें",
+		"Neuer Ordner": "नया फ़ोल्डर",
+		"Hochladen": "अपलोड",
+		"Umbenennen": "नाम बदलें",
+		"Verschieben": "ले जाएँ",
+		"Versteckte": "छिपी हुई",
+		"GEÄNDERT": "बदला गया",
+		"Dateien lassen sich auch einfach hierher ziehen.": "आप फ़ाइलें यहाँ खींचकर भी छोड़ सकते हैं।",
+		"Pfad": "पथ",
+		"Ordner nach oben": "ऊपर वाला फ़ोल्डर",
+		"Alle auswählen": "सब चुनें",
+		"Verschieben nach": "यहाँ ले जाएँ",
+		"Kopieren nach": "यहाँ कॉपी करें",
+		"Name des neuen Ordners:": "नए फ़ोल्डर का नाम:",
+		"Dieser Ordner ist leer.": "यह फ़ोल्डर खाली है।",
+		"SPEICHERLIMIT (GB)": "स्टोरेज सीमा (GB)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "वेब इंटरफ़ेस में निजी फ़ोल्डर के लिए फ़ाइल ब्राउज़र",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "उपयोगकर्ता नाम: छोटे अक्षर, अंक और _, अक्षर से शुरू। स्टोरेज सीमा हर ड्राइव पर लागू, 0 = असीमित। पासवर्ड शेयर के लिए और – भूमिका के अनुसार – वेब इंटरफ़ेस के लिए है।",
+		"nur für dich": "सिर्फ़ आपके लिए",
+		"Wie für alle": "सभी के जैसा",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "केवल आपके लॉग इन पर, हर डिवाइस पर लागू। लोगो और ब्राउज़र आइकन एक्सेंट रंग अपनाते हैं।",
+		"Datei ersetzen?": "फ़ाइल बदलें?",
+		"Ersetzen": "बदलें",
+		"übersprungen": "छोड़ा गया",
+		"fertig": "पूरा",
+		"Verbindung unterbrochen": "कनेक्शन टूट गया",
+		"Gelöscht.": "मिटाया गया।",
+		"Verschoben.": "ले जाया गया।",
+		"Darstellung wie für alle.": "रूप-रंग सभी वाले पर लौटा दिया गया।",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "कोई ड्राइव माउंट नहीं – पहले स्टोरेज में एक सेट करें।",
+		"Kein persönlicher Ordner vorhanden.": "कोई निजी फ़ोल्डर नहीं है।",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "केवल पहली 2000 प्रविष्टियाँ दिखाई गई हैं।",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "होस्टनेम सहेजा गया। नए नाम के लिए HTTPS प्रमाणपत्र फिर से जारी हुआ – ब्राउज़र एक बार और पूछेगा।",
+		"INSTALLIERT": "इंस्टॉल किए",
+		"STORE": "स्टोर",
+		"QUELLEN": "स्रोत",
+		"INSTALLIERTE APPS": "इंस्टॉल किए ऐप्स",
+		"Noch keine App installiert. Im": "अभी कोई ऐप इंस्टॉल नहीं है।",
+		"Store": "स्टोर",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "में इंस्टॉल करने के लिए ऐप्स हैं – या अपना पैकेज (.sapp) अपलोड करें।",
+		"Apps": "ऐप्स",
+		"APP-STORE": "ऐप स्टोर",
+		"Beta (auch Vorabversionen)": "बीटा (प्री-रिलीज़ भी)",
+		"Jetzt aktualisieren": "अभी ताज़ा करें",
+		"PAKET INSTALLIEREN": "पैकेज इंस्टॉल करें",
+		"PAKETDATEI": "पैकेज फ़ाइल",
+		"Für eigene Apps (gebaut mit": "अपने ऐप्स के लिए (ऐप रिपॉज़िटरी के",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "से बने)। अपलोड किए पैकेज \"अपने / असत्यापित\" माने जाते हैं।",
+		"Hochladen & installieren": "अपलोड करके इंस्टॉल करें",
+		"VERFÜGBARE APPS": "उपलब्ध ऐप्स",
+		"APP": "ऐप",
+		"HERAUSGEBER": "प्रकाशक",
+		"Werkzeuge": "टूल",
+		"Medien": "मीडिया",
+		"Büro": "ऑफ़िस",
+		"Netzwerk": "नेटवर्क",
+		"Download": "डाउनलोड",
+		"Sync": "सिंक",
+		"wird geladen …": "डाउनलोड हो रहा है …",
+		"aus dem Store": "स्टोर से",
+		"eigene / ungeprüft": "अपना / असत्यापित",
+		"eigene": "अपना",
+		"SICHTBAR FÜR": "किसे दिखे",
+		"alle Benutzer": "सभी उपयोगकर्ता",
+		"nur Administratoren": "केवल एडमिनिस्ट्रेटर",
+		"Alle Benutzer mit Web-Zugang": "वेब पहुँच वाले सभी उपयोगकर्ता",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "एडमिनिस्ट्रेटर सभी ऐप्स देखते हैं। चयन तय करता है कि \"मेरा ShareOS\" में ऐप किसे दिखे।",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "ऐप मिटा दिया जाता है। इसने ब्राउज़र में जो डेटा सहेजा वह वहीं रहता है।",
+		"APP-QUELLEN": "ऐप स्रोत",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "दूसरा स्रोत (कैटलॉग का पता)",
+		"Eine Quelle ist ein App-Katalog (": "स्रोत एक ऐप कैटलॉग है (",
+		") im Format des Repos": ") इस रिपॉज़िटरी के प्रारूप में:",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": "। अपने ऐप्स: रिपॉज़िटरी को टेम्पलेट बनाएँ, उसका GitHub Action पैकेज और कैटलॉग बनाता है। केवल भरोसेमंद स्रोत जोड़ें।",
+		"Quelle entfernen?": "स्रोत हटाएँ?",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "इस स्रोत के ऐप्स अब स्टोर में नहीं दिखेंगे। इंस्टॉल किए ऐप्स बने रहते हैं।",
+		"MEINE APPS": "मेरे ऐप्स",
+		"Store aktualisiert.": "स्टोर ताज़ा हुआ।",
+		"Entfernt.": "हटाया गया।",
+		"Lade den Katalog …": "कैटलॉग लोड हो रहा है …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "कोई ऐप नहीं मिला – इंटरनेट कनेक्शन और स्रोत जाँचें।",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "वेब पहुँच वाला कोई उपयोगकर्ता नहीं – शेयर → उपयोगकर्ता में एक बनाएँ।",
+		"braucht neuere ShareOS": "नया ShareOS चाहिए",
+		"noch nicht geladen": "अभी लोड नहीं हुआ",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "वेब ऐप्स अपने पोर्ट पर चलते हैं (8081 / HTTPS के लिए 8444) – इस इंटरफ़ेस से अलग, ताकि कोई ऐप आपके लॉग इन का उपयोग न कर सके। जिसे पता मालूम है वह नेटवर्क में वेब ऐप खोल सकता है; \"किसे दिखे\" तय करता है कि \"मेरा ShareOS\" में इसे कौन देखे।",
+		"Installation abgeschlossen": "इंस्टॉलेशन पूरा",
+		"(100 %) – jetzt neu starten.": "(100 %) – अभी रीस्टार्ट करें।",
+		"FIRMWARE-DATEI EINSPIELEN": "फ़र्मवेयर फ़ाइल इंस्टॉल करें",
+		"Hochladen & prüfen": "अपलोड करके जाँचें",
+		"Art": "प्रकार",
+		"andere Firmware": "अन्य फ़र्मवेयर",
+		"Einspielen": "इंस्टॉल करें",
+		"Firmware wird geschrieben": "फ़र्मवेयर लिखा जा रहा है",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "कर्नेल और बूट सिस्टम – प्रतीक्षा करें, बंद न करें",
+		"Geschrieben": "लिखा गया",
+		"Größe": "आकार",
+		"ext4 – empfohlen": "ext4 – सुझाया गया",
+		"exFAT – empfohlen": "exFAT – सुझाया गया",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "सब कुछ: हर उपयोगकर्ता की अनुमतियाँ, स्टोरेज सीमा, निजी फ़ोल्डर, ऐप्स।",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "हर उपयोगकर्ता की अनुमतियाँ, निजी फ़ोल्डर, ऐप्स; हर उपयोगकर्ता की स्टोरेज सीमा नहीं। ज़्यादा मेमोरी चाहिए।",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Windows और macOS पर भी पढ़ा जा सकता है। हर उपयोगकर्ता की अनुमतियाँ नहीं (जो शेयर में लिख सकता है वह उसमें सब बदल सकता है), स्टोरेज सीमा, निजी फ़ोल्डर और ऐप्स नहीं।",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Windows पर भी पढ़ा जा सकता है। हर उपयोगकर्ता की अनुमतियाँ, स्टोरेज सीमा, निजी फ़ोल्डर और ऐप्स नहीं।",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, टीवी; 4 GB से बड़ी फ़ाइलें।",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "पुराने उपकरणों के लिए (कार रेडियो, कैमरा); फ़ाइलें अधिकतम 4 GB।",
+		"Für Windows-Rechner.": "Windows कंप्यूटर के लिए।",
+		"Für Linux und Sicherungen mit Rechten.": "Linux और अनुमतियों वाले बैकअप के लिए।",
+		"DATEISYSTEM": "फ़ाइल सिस्टम",
+		"Sicher entfernen": "सुरक्षित रूप से निकालें",
+		"Formatieren": "फ़ॉर्मैट करें",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "नए वॉल्यूम का नाम (a–z, 0–9, - और _, अधिकतम 16 अक्षर) और फ़ाइल सिस्टम:",
+		"UHRZEIT DER BOX": "डिवाइस का समय",
+		"Zeitabgleich": "समय सिंक",
+		"aus dem Internet (NTP)": "इंटरनेट से (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP चालू है पर चल नहीं रहा",
+		"von Hand": "हाथ से",
+		"Zuletzt abgeglichen": "पिछला सिंक",
+		"noch nicht": "अभी नहीं",
+		"Batterie-Uhr": "बैटरी घड़ी",
+		"wird nach jedem Abgleich gestellt": "हर सिंक के बाद सेट होती है",
+		"Jetzt abgleichen": "अभी सिंक करें",
+		"ZEITZONE & ZEITSERVER": "समय क्षेत्र और समय सर्वर",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "इंटरनेट से समय अपने आप लें (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "समय सर्वर (हर पंक्ति में एक, अधिकतम 5)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "घरेलू नेटवर्क में राउटर भी समय सर्वर हो सकता है, जैसे",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": "। समय क्षेत्र लॉग, समय-सारणी और प्रदर्शन पर लागू होता है।",
+		"UHRZEIT VON HAND STELLEN": "घड़ी हाथ से सेट करें",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "जब तक NTP चालू है, डिवाइस अगले सिंक पर घड़ी फिर इंटरनेट के अनुसार कर देगा। बिना इंटरनेट वाले डिवाइस के लिए ऊपर NTP बंद करें।",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "घड़ी वहाँ से आगे चलती है; डिवाइस की बैटरी घड़ी भी सेट होती है।",
+		"Uhrzeit dieses Geräts übernehmen": "इस डिवाइस का समय लें",
+		"Uhrzeit setzen": "समय सेट करें",
+		"Uhrzeit gesetzt.": "समय सेट हुआ।",
+		"Uhrzeit abgeglichen.": "समय सिंक हुआ।",
+		"Ungültige Uhrzeit.": "अमान्य समय।",
+		"Eine Firmware im D-Link-Format, z. B. für den": "D-Link प्रारूप में फ़र्मवेयर, जैसे",
+		"Wechsel zurück zu Alt-F": "Alt-F पर लौटने",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "के लिए। कर्नेल और बूट सिस्टम लिखे जाते हैं; ShareOS का सिस्टम और सेटिंग्स फ़्लैश में रहते हैं।",
+		"Aufgaben": "कार्य",
+		"Zeitgesteuerte Aufgaben": "निर्धारित कार्य",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "डिवाइस पर निर्धारित कार्य चला सकता है – अपने अलग सीमित उपयोगकर्ता के रूप में, केवल अपने डेटा फ़ोल्डर में, समय सीमा के साथ।",
+		"AUFGABE": "कार्य",
+		"ZEITPLAN (CRON)": "समय-सारणी (CRON)",
+		"AKTIV": "सक्रिय",
+		"noch nie": "कभी नहीं",
+		"Zeitlimit": "समय सीमा",
+		"Jetzt ausführen": "अभी चलाएँ",
+		"Aufgabe gestartet.": "कार्य शुरू हुआ।",
+		"Erlauben & installieren": "अनुमति दें और इंस्टॉल करें",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "ऐप अपने कार्यों और डिवाइस पर अपने डेटा सहित मिटा दिया जाता है।",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "cron प्रारूप में समय-सारणी (मिनट घंटा दिन महीना सप्ताह_दिन), अधिकतम हर 5 मिनट, जैसे",
+		"= täglich 3:30 Uhr.": "= रोज़ 3:30 बजे।"
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"स्वैप नहीं, ऐप क्षेत्र नहीं (पैकेज और ऐप डेटा के लिए ext4 या Btrfs चाहिए)।"
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"हर डिस्क पर $1 स्वैप, ऐप क्षेत्र नहीं (पैकेज और ऐप डेटा के लिए ext4 या Btrfs चाहिए)।"
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"बहाल करें: $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"बैकअप: $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"बैकअप: $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"$1 बनाया गया"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"शेयर $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"उपयोगकर्ता $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"समूह $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"$1 के लिए अनुमति"
+		],
+		[
+			"^auf (\\S+)$",
+			"$1 पर"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"हर ड्राइव पर सीमा $1"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"अतिथि (प)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"शेयर \"$1\" सहेजा गया।"
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"शेयर \"$1\" हटाएँ?"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"शेयर \"$1\" हटाया गया।"
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"उपयोगकर्ता \"$1\" बनाया गया।"
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"उपयोगकर्ता \"$1\" सहेजा गया।"
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"उपयोगकर्ता \"$1\" मिटाएँ?"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"उपयोगकर्ता \"$1\" मिटाया गया।"
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"खाता हटाया जाता है; उसकी शेयर अनुमतियाँ खत्म हो जाती हैं।$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"समूह \"$1\" बनाया गया।"
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"समूह \"$1\" मिटाएँ?"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"समूह \"$1\" मिटाया गया।"
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"$1 का पासवर्ड"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"$1 का पासवर्ड बदला गया।"
+		],
+		[
+			"^Übernommen: (.+)$",
+			"आयात किए: $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"छोड़े गए: $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"शेयर: $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"शेयर: $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"उपयोगकर्ता: $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"पासवर्ड: $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F: $1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"बदलाव तुरंत लागू होता है। फिर डिवाइस नए पते से पुष्टि के लिए $1 सेकंड प्रतीक्षा करता है – पुष्टि न मिले तो पिछली सेटिंग्स वापस आ जाती हैं। इसलिए आप खुद को बाहर नहीं कर सकते।"
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– पुष्टि के बिना डिवाइस $1 सेकंड में पुरानी पर लौटेगा।"
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"डिवाइस अपना पता राउटर से लेता है। उसके बाद वह किसी दूसरे पते पर मिल सकता है (राउटर में देखें)। अगर $1 सेकंड में डिवाइस पर बदलाव की पुष्टि नहीं होती, तो पिछली सेटिंग्स फिर लागू होंगी।"
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"डिवाइस $1 पर बदलता है। फिर यह पेज नया पता खोलकर बदलाव की पुष्टि करता है। अगर यह काम न करे, तो $2 सेकंड बाद पिछली सेटिंग्स फिर लागू होंगी।"
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"नेटवर्क सेटिंग्स यह पेज लागू और पुष्ट करता है। अगर यह काम न करे, तो $1 सेकंड बाद पिछली सेटिंग्स फिर लागू होंगी।"
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"नया पता $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"डिवाइस की प्रतीक्षा ($1 सेकंड) – नहीं मिल रहा? राउटर में नया पता देखें और वहाँ लॉग इन करें।"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"डिवाइस की प्रतीक्षा ($1 सेकंड)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1: शुरुआत पर चालू होती है"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1: शुरुआत पर अब चालू नहीं होती"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"नेटवर्क: $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"रूप-रंग: $1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"चैनल $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"अपडेट $1 उपलब्ध"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"अपडेट $1 उपलब्ध।"
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"अपडेट $1"
+		],
+		[
+			"^seit (.+)$",
+			"$1 से"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"$1 सेट"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"$1 मिलीं"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"योजना में · चरण $1"
+		],
+		[
+			"^Neueste · Beta$",
+			"नवीनतम · बीटा"
+		],
+		[
+			"^Neueste · Stabil$",
+			"नवीनतम · स्थिर"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"$1 में बदलाव"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"पहुँच · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"$1 के लिए नाम ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"प्रगति · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"स्रोत: GitHub रिलीज़ · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"सफलतापूर्वक इंस्टॉल ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"$1 फ़ॉर्मैट करें"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 पूरी तरह मिट जाएगी। इसे वापस नहीं किया जा सकता।"
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"\"सेट करें\" पर क्लिक करने से $1 पूरी तरह मिट जाती है। शुरुआती सिंक उसके बाद पृष्ठभूमि में चलता है (बड़ी डिस्क पर कई घंटे); ड्राइव तुरंत उपयोग की जा सकती है।"
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"\"सेट करें\" पर क्लिक करने से $1 पूरी तरह मिट जाती है।"
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"हर डिस्क पर $1 स्वैप, ऐप क्षेत्र \"$2\" पर (अगर पहले से कोई न हो)।"
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"स्वैप नहीं, ऐप क्षेत्र \"$1\" पर (अगर पहले से कोई न हो)।"
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"दोनों डिस्क पर एक जैसा डेटा रहता है। एक खराब होने पर भी कुछ नहीं खोता। उपयोग योग्य: $1।"
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"दोगुनी जगह ($1), पर कोई सुरक्षा नहीं – हर डिस्क अपनी अलग ड्राइव है।"
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"डिस्क $1 की ड्राइव बनती है। सुरक्षा के लिए बाद में दूसरी डिस्क मिरर के रूप में जोड़ें।"
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1: दोनों डिस्क सक्रिय ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1: एक डिस्क गायब ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"\"$1\" हटाएँ?"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"$1 मिटाएँ?"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"$1 पूरी तरह मिटकर ड्राइव \"$2\" के रूप में सेट होगी।"
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"ShareOS $1 फ़्लैश में लिखा जाएगा। उसके बाद रीस्टार्ट ज़रूरी है, जिसमें नया सिस्टम इंस्टॉल होता है। लिखते समय डिवाइस बंद न करें।"
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$2 में से $1"
+		],
+		[
+			"^(.+) installieren$",
+			"$1 इंस्टॉल करें"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"लोड $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"नेटवर्क · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1: माउंट हुआ"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1: अनमाउंट हुआ"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1: हटाया गया"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1: शुरू हुई"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1: बंद हुई"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1: फिर से शुरू हुई"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)।"
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"$1 °C से पूरा"
+		],
+		[
+			"^jetzt: (.+)$",
+			"अभी: $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"पिछला $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"$1 फ़ाइल(ें) प्रतीक्षा में"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"$1 का निजी इनबॉक्स · टोकन $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"साझा इनबॉक्स · टोकन $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"निजी: $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"इनबॉक्स $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"लॉग · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"कनेक्शन ठीक – Paperless में $1 दस्तावेज़।"
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"इनबॉक्स \"$1\" हटाएँ?"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1: कनेक्शन ठीक ($2 फ़ोल्डर)।"
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"खाता \"$1\" हटाएँ?"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"कार्य \"$1\" हटाएँ?"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"शेयर $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"शेयर $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → निजी फ़ोल्डर"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron: $1 · $2 द्वारा"
+		],
+		[
+			"^von (\\S+)$",
+			"$1 द्वारा"
+		],
+		[
+			"^Fehler · (.+)$",
+			"त्रुटि · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"$1 से चल रहा है"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"कार्य: $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"खाता: $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"इनबॉक्स: $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"पंखा: $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"सेवाएँ: $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"सेटअप: $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"फ़ॉर्मैट: $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"इंस्टॉल: $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"स्टैंडबाय: $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"स्टोरेज: $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"भाषा: $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"चैनल: $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"प्रमाणपत्र: $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"जाँच विफल: $1"
+		],
+		[
+			"^(.+) frei$",
+			"$1 खाली"
+		],
+		[
+			"^(.+) auswählen$",
+			"$1 चुनें"
+		],
+		[
+			"^(.+) herunterladen$",
+			"$1 डाउनलोड करें"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"$1 चुने गए।"
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"\"$1\" का नया नाम:"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"$1 आइटम। लक्ष्य फ़ोल्डर \"$2\" में पथ के रूप में, जैसे Photos/2026 (खाली = सबसे ऊपर)।"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"$1 आइटम मिटाएँ?"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – फ़ोल्डर अपनी सामग्री के साथ। इसे वापस नहीं किया जा सकता।"
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"\"$1\" इस फ़ोल्डर में पहले से है।"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"$1 फ़ाइल(ें) अपलोड हुईं।"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"$1 फ़ाइल(ें) अपलोड नहीं हुईं।"
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"सभी के जैसा ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"डाउनलोड: $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"फ़ोल्डर: $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"नाम बदलें: $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"मिटाएँ: $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"ले जाएँ: $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"कॉपी: $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"फ़ाइलें: $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"वेब ऐप्स अपने पोर्ट ($1) पर चलते हैं – इस इंटरफ़ेस से अलग, ताकि कोई ऐप आपके लॉग इन का उपयोग न कर सके। जिसे पता मालूम है वह नेटवर्क में वेब ऐप खोल सकता है; \"किसे दिखे\" तय करता है कि \"मेरा ShareOS\" में इसे कौन देखे।"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"वेब ऐप्स अपने पोर्ट ($1 / HTTPS के लिए $2) पर चलते हैं – इस इंटरफ़ेस से अलग, ताकि कोई ऐप आपके लॉग इन का उपयोग न कर सके। जिसे पता मालूम है वह नेटवर्क में वेब ऐप खोल सकता है; \"किसे दिखे\" तय करता है कि \"मेरा ShareOS\" में इसे कौन देखे।"
+		],
+		[
+			"^Stand (.+)$",
+			"$1 तक की स्थिति"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · किसे दिखे: $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · किसे दिखे"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"$1 हटाएँ?"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 इंस्टॉल हुआ।"
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 इंस्टॉल हुआ (अपना ऐप)।"
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 डाउनलोड हो रहा है …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 की जाँच हो रही है …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 इंस्टॉल हो रहा है …"
+		],
+		[
+			"^Update (.+)$",
+			"$1 अपडेट करें"
+		],
+		[
+			"^Store: (.*)$",
+			"स्टोर: $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"ऐप्स: $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"हटाएँ: $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"स्रोत: $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"पैकेज: $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"उसके बाद $1 शुरू होगा। तब Alt-F के अतिरिक्त पैकेज नहीं होंगे – Alt-F के फ़र्मवेयर पेज पर वही फ़ाइल एक बार और फ़्लैश करें। ShareOS पर वापस: Alt-F में ShareOS की .bin फ़्लैश करें, सिस्टम और सेटिंग्स अभी भी मौजूद हैं।"
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"$1 इंस्टॉल करें?"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"कर्नेल और बूट सिस्टम बदले और जाँचे जाते हैं। लिखते समय डिवाइस बंद न करें।"
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 फ़्लैश में है। अभी रीस्टार्ट करें?"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 शुरू हो रहा है – उसका इंटरफ़ेस जल्द ही $2 पर होगा (पोर्ट 80)।"
+		],
+		[
+			"^(.+) startet$",
+			"$1 शुरू हो रहा है"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"इंस्टॉल: $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"फ़र्मवेयर फ़ाइल: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 अब निकाली जा सकती है।"
+		],
+		[
+			"^(.+) formatieren$",
+			"$1 फ़ॉर्मैट करें"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"$1 मिटाएँ?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – नाम (अक्षर, अंक, स्पेस, - और _) और फ़ाइल सिस्टम:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"$1 पर सब कुछ मिट जाता है। उसके बाद यह $2 ड्राइव \"$3\" होगी।"
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) पूरी तरह मिटकर वॉल्यूम \"$4\" ($5) के रूप में फिर से सेट होगी।"
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"ऐप क्षेत्र \"$1\" पर (अगर पहले से कोई न हो)।"
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"तारीख और समय ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"समय: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"सिंक: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"समय: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (मिरर (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (अकेली ड्राइव)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"त्रुटि $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"डिफ़ॉल्ट: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · अधिकतम $2 सेकंड"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · कार्य"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"कार्य: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"कार्य: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"लॉग: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: अनुमतियाँ"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"चल रही",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"बंद",
+			"g"
+		],
+		[
+			" frei von ",
+			" खाली, कुल",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" /",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" उपयोग में",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"दिन चालू",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"सामग्री:",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"RAID सदस्य,",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"RAID सदस्य",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"डिस्क ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"स्लॉट ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"शुरुआती सिंक",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"बहाली",
+			"g"
+		],
+		[
+			"Prüfung",
+			"जाँच",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · $1 बाकी",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"मिरर (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"अकेली ड्राइव",
+			""
+		],
+		[
+			" umgelagert, ",
+			" पुनर्आवंटित,",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" लंबित",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"चल रही",
+			"g"
+		],
+		[
+			" und ",
+			" और",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"दिन $1 घंटे",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – बंद न करें।",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"जाँच विफल:",
+			""
+		],
+		[
+			"^Kanal: ",
+			"चैनल:",
+			""
+		],
+		[
+			"^Dienste: ",
+			"सेवाएँ:",
+			""
+		],
+		[
+			"^Speicher: ",
+			"स्टोरेज:",
+			""
+		],
+		[
+			"^Download: ",
+			"डाउनलोड:",
+			""
+		],
+		[
+			"^Installieren: ",
+			"इंस्टॉल:",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"सेटअप:",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"फ़ॉर्मैट:",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"प्रमाणपत्र:",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS:",
+			""
+		],
+		[
+			"^Sprache: ",
+			"भाषा:",
+			""
+		],
+		[
+			"^Logo: ",
+			"लोगो:",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"आधा",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"पंखा:",
+			""
+		],
+		[
+			"^Hardware: ",
+			"हार्डवेयर:",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"समूह",
+			"g"
+		]
+	]
+}

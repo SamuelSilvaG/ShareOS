@@ -36,6 +36,37 @@ To test directly on a box, copy the file to `/www/i18n/` and add it to
 `/www/i18n/languages.json` there. Both files live in the overlay, so they
 survive a reboot.
 
+## Languages shipped
+
+English, German (source), Chinese (simplified), Hindi, Spanish, French,
+Arabic (right to left), Bengali, Portuguese (Brazil) and Russian – the most
+spoken languages. The translations other than English and German were made by
+an AI (Claude) from the English texts; corrections by native speakers are very
+welcome.
+
+## Translation lists (tools/i18n)
+
+The shipped languages are kept as simple lists, one text per line, numbered
+like `en.json`:
+
+```sh
+python3 tools/i18n/build-lang.py --list > /tmp/en.tsv     # E<n>/P<n>/W<n> + English text
+# translate the text after the tab, keep $1, $2 … as they are
+python3 tools/i18n/build-lang.py fr Français tools/i18n/fr.tsv
+```
+
+`build-lang.py` writes `i18n/<code>.json` with the German keys and the patterns
+of `en.json`. Missing lines fall back to English; a changed placeholder is
+reported and stops the build. When new texts are added to `en.json`, add the
+new numbers to each list (the numbers of existing texts stay the same as long
+as texts are only added at the end). `tests/check-i18n.py` (also in CI) checks
+that every language has all texts and patterns.
+
+## Right-to-left languages
+
+A language with `"dir": "rtl"` in `languages.json` and its code in `RTL` in
+`app.js` (ar, he, fa, ur) switches the page to right-to-left.
+
 ## The three sections
 
 | Section | Used for | Example |

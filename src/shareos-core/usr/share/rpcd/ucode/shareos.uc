@@ -194,6 +194,20 @@ const SMART_MAX_AGE = 1800;     // s; SMART reads keep disks awake, so cache the
 
 function valid_name(n) { return type(n) == 'string' && match(n, /^[a-z0-9][a-z0-9_-]{0,15}$/); }
 function valid_disk(d) { return type(d) == 'string' && match(d, /^sd[a-z]$/) && stat('/sys/block/' + d); }
+const USB = '/usr/sbin/shareos-usb';
+const FS_DISK = { ext4: 1, btrfs: 1, exfat: 1, ntfs: 1 };
+const FS_USB = { exfat: 1, vfat: 1, ntfs: 1, ext4: 1 };
+// USB sticks/disks hang below a USB host in sysfs; the bays are SATA
+function is_usb(d) { return valid_disk(d) && index(realpath('/sys/block/' + d) ?? '', '/usb') >= 0; }
+// mounted USB partitions: { dev, path, fs }
+function usb_mounts() {
+	let l = [];
+	for (let line in split(sh(USB + ' list').out, '\n')) {
+		let f = split(trim(line), ' ');
+		if (length(f) == 3) push(l, { dev: f[0], path: f[1], fs: f[2] });
+	}
+	return l;
+}
 
 function ubiblock_major() {
 	let m = match(readfile('/proc/devices') ?? '', /\n *([0-9]+) ubiblock\n/);
@@ -458,10 +472,44 @@ function zones() {
 function set_timezone(tz) {
 	if (!match(tz ?? '', /^[A-Za-z0-9_+\-]+(\/[A-Za-z0-9_+\-]+)*$/) || !stat('/usr/share/zoneinfo/' + tz))
 		return false;
+	let changed = tz != timezone();
 	unlink('/etc/localtime');
 	symlink('/usr/share/zoneinfo/' + tz, '/etc/localtime');
 	writefile('/etc/timezone', tz + '\n');
+	// running programs read the zone once: restart the ones that print times
+	if (changed)
+		system('(sleep 1; for s in /etc/init.d/S01syslogd /etc/init.d/S50crond; do [ -x $s ] && $s restart; done) >/dev/null 2>&1 &');
 	return true;
+}
+
+/* ---------- time: NTP, manual clock ---------- */
+
+const NTP_DEFAULT = [ '0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org' ];
+const RTC_TOOL = '/usr/sbin/dns320l-daemon';
+
+function ntp_servers(c) {
+	let l = c.get('shareos', 'time', 'server');
+	if (type(l) == 'string') l = [ l ];
+	return type(l) == 'array' && length(l) ? l : NTP_DEFAULT;
+}
+
+function time_info() {
+	let c = cursor();
+	let last = split(read_trim('/tmp/shareos-ntp/last') ?? '', ' ');
+	return {
+		now: time(),
+		timezone: timezone(),
+		ntp: c.get('shareos', 'time', 'ntp') != '0',
+		servers: ntp_servers(c),
+		last_sync: last[0] && match(last[0], /^[0-9]+$/) ? +last[0] : null,
+		ntp_running: system('pidof ntpd >/dev/null 2>&1') == 0,
+		rtc: !!stat(RTC_TOOL)
+	};
+}
+
+// clock -> the MCU's battery clock, so the time survives a power cut
+function rtc_save() {
+	if (stat(RTC_TOOL)) system(RTC_TOOL + ' -x systohc >/dev/null 2>&1');
 }
 
 function altf_scan() {
@@ -938,6 +986,7 @@ function files_roots(u) {
 			let mp = '/mnt/' + x['.name'];
 			if (index(mounts, ' ' + mp + ' ') >= 0) push(roots, { name: x['.name'], path: mp, home: false });
 		});
+		for (let m in usb_mounts()) push(roots, { name: substr(m.path, 5), path: m.path, home: false, usb: true });
 	} else {
 		let v = c.get('accounts', u, 'home'), p = '/mnt/' + v + '/home/' + u;
 		if (index(mounts, ' /mnt/' + v + ' ') >= 0 && stat(p)?.type == 'directory') push(roots, { name: 'home', path: p, home: true });
@@ -1450,6 +1499,62 @@ return {
 		}
 	},
 
+	'shareos.time': {
+		get: {
+			call: function() { return time_info(); }
+		},
+
+		// timezone, ntp (on/off), servers (host names or IPs, at most 5)
+		set: {
+			args: { timezone: '', ntp: true, servers: [] },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (a.timezone && !set_timezone(a.timezone)) return { error: 'unknown time zone' };
+				if (a.servers != null) {
+					if (type(a.servers) != 'array' || length(a.servers) > 5) return { error: 'at most 5 servers' };
+					for (let x in a.servers)
+						if (type(x) != 'string' || !match(x, /^[A-Za-z0-9]([A-Za-z0-9.-]{0,252}[A-Za-z0-9])?$/) && !match(x, /^[0-9a-fA-F:]+$/))
+							return { error: 'invalid server: ' + x };
+				}
+				c.set('shareos', 'time', 'time');
+				if (a.ntp != null) c.set('shareos', 'time', 'ntp', a.ntp ? '1' : '0');
+				if (a.servers != null) {
+					c.delete('shareos', 'time', 'server');
+					if (length(a.servers)) c.set('shareos', 'time', 'server', a.servers);
+				}
+				c.commit('shareos');
+				system('/etc/init.d/S45ntpd restart >/dev/null 2>&1');
+				return time_info();
+			}
+		},
+
+		// ask the servers once now (takes a few seconds)
+		sync: {
+			call: function() {
+				let args = join(' ', map(ntp_servers(cursor()), (x) => '-p ' + shq(x)));
+				let r = sh('timeout 20 ntpd -q -n ' + args);
+				if (r.rc != 0) return { error: 'no answer from the time servers' };
+				rtc_save();
+				writefile('/tmp/shareos-ntp/last', time() + ' manual\n');
+				return time_info();
+			}
+		},
+
+		// set the clock by hand: time = seconds since 1970 (UTC)
+		set_clock: {
+			args: { time: 0 },
+			call: function(req) {
+				let t = +req.args.time;
+				if (!(t >= 1735689600 && t < 4102444800)) return { error: 'invalid time' };   // 2025 … 2099
+				let g = gmtime(t);
+				let r = sh(sprintf('date -u -s "%04d-%02d-%02d %02d:%02d:%02d"', g.year, g.mon, g.mday, g.hour, g.min, g.sec));
+				if (r.rc != 0) return { error: 'setting the clock failed' };
+				rtc_save();
+				return time_info();
+			}
+		}
+	},
+
 	'shareos.setup': {
 		status: {
 			call: function() {
@@ -1511,7 +1616,8 @@ return {
 				let disks = [];
 				for (let d in lsblk()) {
 					if (d.type != 'disk' || !match(d.name, /^sd[a-z]$/)) continue;
-					d.smart = smart_read(d.name, false);
+					d.usb = is_usb(d.name);
+					d.smart = d.usb ? null : smart_read(d.name, false);
 					push(disks, d);
 				}
 				let c = cursor();
@@ -1527,6 +1633,7 @@ return {
 					arrays: mdstat(),
 					volumes: volumes(),
 					spindown: +(c.get('storage', 'global', 'spindown') ?? 0),
+					usb: usb_mounts(),
 					job: storage_job()
 				};
 			}
@@ -1543,7 +1650,8 @@ return {
 
 		setup: {
 			// layout mirror: name + disks[2]; layout single: volumes [{name, disk}]
-			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, confirm: false },
+			// fs: ext4 (default), btrfs, exfat, ntfs – for the mirror; volumes may carry their own
+			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, fs: '', confirm: false },
 			call: function(req) {
 				let a = req.args;
 				if (a.confirm !== true)
@@ -1552,6 +1660,8 @@ return {
 				if (!(swap >= 0 && swap <= 8192))
 					return { error: 'invalid swap size' };
 				let sw = '--swap=' + int(swap);
+				let fs = a.fs || 'ext4';
+				if (!FS_DISK[fs]) return { error: 'invalid file system' };
 				let j = storage_job();
 				if (j?.state == 'running')
 					return { error: 'a storage job is already running' };
@@ -1560,7 +1670,9 @@ return {
 					if (type(a.disks) != 'array' || length(a.disks) != 2 || a.disks[0] == a.disks[1] ||
 					    !valid_disk(a.disks[0]) || !valid_disk(a.disks[1]))
 						return { error: 'a mirror needs two different disks' };
-					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], sw, '--yes' ]);
+					if (is_usb(a.disks[0]) || is_usb(a.disks[1]))
+						return { error: 'USB drives are formatted with usb_format' };
+					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], sw, '--fs=' + fs, '--yes' ]);
 				}
 				if (a.layout == 'single') {
 					if (type(a.volumes) != 'array' || !length(a.volumes))
@@ -1569,8 +1681,10 @@ return {
 					for (let v in a.volumes) {
 						if (!valid_name(v?.name) || !valid_disk(v?.disk) || seen[v.name] || seen[v.disk])
 							return { error: 'invalid name or disk' };
+						if (v.fs && !FS_DISK[v.fs]) return { error: 'invalid file system' };
+						if (is_usb(v.disk)) return { error: 'USB drives are formatted with usb_format' };
 						seen[v.name] = seen[v.disk] = true;
-						push(args, v.name + '=' + v.disk);
+						push(args, v.name + '=' + v.disk + ':' + (v.fs || fs));
 					}
 					push(args, sw, '--yes');
 					return spawn_storage(args);
@@ -1588,6 +1702,33 @@ return {
 				let r = sh(STORAGE + ' ' + act + ' ' + shq(n));
 				if (r.rc == 0) system(USERS + ' sync >/dev/null 2>&1');
 				return r.rc == 0 ? { ok: true } : { error: trim(r.out) || act + ' failed' };
+			}
+		},
+
+		// USB stick/disk: unmount and power down, then it can be pulled
+		usb_eject: {
+			args: { disk: '' },
+			call: function(req) {
+				if (!is_usb(req.args.disk)) return { error: 'not a USB drive' };
+				let r = sh(USB + ' eject ' + req.args.disk);
+				if (r.rc != 0) return { error: replace(trim(r.out), /^error: /, '') || 'eject failed' };
+				return { ok: true };
+			}
+		},
+
+		// erase a USB stick/disk: one partition, fs: exfat (default), vfat, ntfs, ext4
+		usb_format: {
+			args: { disk: '', fs: '', name: '', confirm: false },
+			call: function(req) {
+				let a = req.args;
+				if (a.confirm !== true) return { error: 'confirm must be true' };
+				if (!is_usb(a.disk)) return { error: 'not a USB drive' };
+				let fs = a.fs || 'exfat';
+				if (!FS_USB[fs]) return { error: 'invalid file system' };
+				if (type(a.name) != 'string' || !match(a.name, /^[A-Za-z0-9 _-]{1,16}$/)) return { error: 'invalid name' };
+				if (storage_job()?.state == 'running') return { error: 'a storage job is already running' };
+				system(sprintf('start-stop-daemon -S -b -x %s -- format %s %s %s --yes', USB, a.disk, fs, shq(a.name)));
+				return { started: true };
 			}
 		},
 
@@ -2304,6 +2445,47 @@ return {
 				if (length(a.users)) c.set('apps', s, 'users', a.users);
 				c.commit('apps');
 				return { ok: true };
+			}
+		},
+
+		// scheduled task of an app: schedule (cron time, at most every 5 min) and on/off
+		job_set: {
+			args: { id: '', job: '', schedule: '', enabled: true },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || !match(a.job ?? '', /^[a-z][a-z0-9-]{0,23}$/)) return { error: 'invalid app or job' };
+				let s = 'job_' + replace(a.id, '-', '_') + '__' + replace(a.job, '-', '_');
+				if (c.get('apps', s) != 'appjob') return { error: 'unknown job' };
+				if (a.schedule != null && a.schedule != '') {
+					let min = split(a.schedule, ' ')[0], m = match(min, /^\*\/([0-9]+)$/);
+					if (!match(a.schedule, /^[0-9*\/,-]+( [0-9*\/,-]+){4}$/) || min == '*' || (m && +m[1] < 5))
+						return { error: 'invalid schedule (cron time, at most every 5 minutes)' };
+					if (a.schedule != c.get('apps', s, 'schedule')) { c.set('apps', s, 'schedule', a.schedule); c.set('apps', s, 'custom', '1'); }
+				}
+				if (a.enabled != null) c.set('apps', s, 'enabled', a.enabled ? '1' : '0');
+				c.commit('apps');
+				system('/usr/sbin/shareos-cron sync >/dev/null 2>&1');
+				return { ok: true };
+			}
+		},
+
+		// run a scheduled task now (in the background)
+		job_run: {
+			args: { id: '', job: '' },
+			call: function(req) {
+				let a = req.args;
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || !match(a.job ?? '', /^[a-z][a-z0-9-]{0,23}$/)) return { error: 'invalid app or job' };
+				system('start-stop-daemon -S -b -x ' + APPS_TOOL + ' -- run-job ' + shq(a.id) + ' ' + shq(a.job));
+				return { started: true };
+			}
+		},
+
+		job_log: {
+			args: { id: '', job: '' },
+			call: function(req) {
+				let a = req.args;
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || !match(a.job ?? '', /^[a-z][a-z0-9-]{0,23}$/)) return { error: 'invalid app or job' };
+				return apps_json([ 'job-log', a.id, a.job ]);
 			}
 		},
 

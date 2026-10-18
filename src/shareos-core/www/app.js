@@ -14,7 +14,9 @@
 // the first paint already matches
 let LANG = (() => { try { return localStorage.getItem('shareos.lang') || 'en'; } catch (e) { return 'en'; } })();
 let LOC = 'en-GB';
-const LOCALES = { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL', pl: 'pl-PL' };
+const LOCALES = { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL', pl: 'pl-PL', pt: 'pt-BR', ru: 'ru-RU', zh: 'zh-CN', hi: 'hi-IN', bn: 'bn-BD', ar: 'ar-EG' };
+// languages written right to left
+const RTL = { ar: 1, he: 1, fa: 1, ur: 1 };
 
 /* ---------- helpers --------------------------------------------------------- */
 
@@ -133,7 +135,7 @@ async function rpc(obj, method, args = {}, sid = S.sid) {
 const S = {
 	sid: store.get('sid'),
 	user: store.get('user') || 'root',
-	route: { tab: 'uebersicht', sub: '' },
+	route: { tab: 'overview', sub: '' },
 	info: null, prev: null,
 	cpu: null, rxRate: null, txRate: null,
 	rxHist: [], txHist: [],
@@ -149,15 +151,28 @@ const S = {
 };
 
 const TABS = [
-	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
+	['overview', 'ÜBERSICHT'], ['storage', 'SPEICHER'], ['shares', 'FREIGABEN'], ['services', 'DIENSTE'],
 	['apps', 'APPS', true], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['general', 'ALLGEMEIN'], ['time', 'ZEIT'], ['network', 'NETZWERK'], ['power', 'ENERGIE & RESET'], ['logs', 'PROTOKOLLE'], ['appearance', 'DARSTELLUNG'], ['about', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
-const SHR_SUBS = [['freigaben', 'FREIGABEN'], ['dateien', 'DATEIEN'], ['benutzer', 'BENUTZER'], ['gruppen', 'GRUPPEN']];
+const SHR_SUBS = [['shares', 'FREIGABEN'], ['files', 'DATEIEN'], ['users', 'BENUTZER'], ['groups', 'GRUPPEN']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
 // pages that moved: old link -> new place
-const SUB_MOVED = { hardware: 'energie', https: 'netzwerk' };
+const SUB_MOVED = { hardware: 'power', https: 'network' };
+// German page names of versions before 0.1.0-beta.8 (bookmarks, installed app shortcuts)
+const OLD_ROUTE = { uebersicht: 'overview', speicher: 'storage', freigaben: 'shares', dienste: 'services', allgemein: 'general',
+	zeit: 'time', netzwerk: 'network', energie: 'power', protokolle: 'logs', darstellung: 'appearance', ueber: 'about',
+	dateien: 'files', benutzer: 'users', gruppen: 'groups', installiert: 'installed', quellen: 'sources', mein: 'me' };
+function routeParts() {
+	const parts = location.hash.replace(/^#\/?/, '').split('/');
+	if (parts.some((p) => OLD_ROUTE[p])) {
+		const now = parts.map((p) => OLD_ROUTE[p] || p);
+		history.replaceState(null, '', '#/' + now.join('/'));
+		return now;
+	}
+	return parts;
+}
 
 // the logo is drawn in blue; these filters turn it into the other accent colours
 const LOGO_FILTER = {
@@ -362,7 +377,7 @@ async function tick() {
 		}
 		S.info = info;
 		renderHeader();
-		if (S.route.tab === 'uebersicht' && !S.fr) renderMain();
+		if (S.route.tab === 'overview' && !S.fr) renderMain();
 	} catch (e) {
 		if (e.code === 'offline') renderHeader(true);
 	}
@@ -479,19 +494,19 @@ function renderTabs() {
 }
 
 function parseRoute() {
-	const [tab, sub] = location.hash.replace(/^#\/?/, '').split('/');
-	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'uebersicht', sub: SUB_MOVED[sub] || sub || '' };
+	const [tab, sub] = routeParts();
+	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'overview', sub: SUB_MOVED[sub] || sub || '' };
 	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'firmware';
-	if (S.route.tab === 'dienste' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
-	if (S.route.tab === 'freigaben' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'freigaben';
-	if (S.route.tab === 'apps' && !APP_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'installiert';
+	if (S.route.tab === 'services' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
+	if (S.route.tab === 'shares' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'shares';
+	if (S.route.tab === 'apps' && !APP_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'installed';
 }
 
 function renderMain() {
 	const main = $('#main');
 	if (!main) return;
 	if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); return; }
-	const v = VIEWS[S.route.tab] || VIEWS.uebersicht;
+	const v = VIEWS[S.route.tab] || VIEWS.overview;
 	main.innerHTML = v().s;
 	VIEWS_AFTER[S.route.tab]?.();
 }
@@ -538,7 +553,7 @@ function diskCards(i, table = false) {
 const fsLabel = { '/overlay': 'Einstellungen & Pakete', '/rom': 'System (nur lesbar)', '/tmp': 'Arbeitsspeicher (tmp)' };
 
 const VIEWS = {
-	uebersicht() {
+	overview() {
 		const i = S.info;
 		if (!i) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Systemdaten …</span></div></div>`;
 		const m = i.memory || {}, used = (m.memtotal || 0) - (m.memavailable || 0);
@@ -590,28 +605,28 @@ const VIEWS = {
 			${diskCards(i, isTable('disks'))}
 		</section>
 		<section class="sec">
-			${secHead('services', 'DIENSTE', html`<a href="#/dienste">alle verwalten</a>`)}
+			${secHead('services', 'DIENSTE', html`<a href="#/services">alle verwalten</a>`)}
 			${serviceCards(false, isTable('services'))}
 		</section>`;
 	},
 
-	speicher: () => storageView(),
+	storage: () => storageView(),
 
-	freigaben() {
+	shares() {
 		const sub = S.route.sub;
 		return html`
-		<nav class="subtabs" aria-label="Freigaben">${SHR_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/freigaben/${id}">${label}</a>`)}</nav>
-		${sub === 'dateien' ? filesView() : !S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
-			: sub === 'benutzer' ? usersView() : sub === 'gruppen' ? groupsView() : sharesView()}`;
+		<nav class="subtabs" aria-label="Freigaben">${SHR_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/shares/${id}">${label}</a>`)}</nav>
+		${sub === 'files' ? filesView() : !S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
+			: sub === 'users' ? usersView() : sub === 'groups' ? groupsView() : sharesView()}`;
 	},
 	apps: () => appsView(),
 	cloud: () => cloudSection('admin'),
 	paperless: () => paperlessView(),
 
-	dienste() {
+	services() {
 		const sub = S.route.sub;
 		return html`
-		<nav class="subtabs" aria-label="Dienste">${SVC_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/dienste/${id}">${label}</a>`)}</nav>
+		<nav class="subtabs" aria-label="Dienste">${SVC_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/services/${id}">${label}</a>`)}</nav>
 		${sub === 'autostart' ? autostartView()
 			: html`<section class="sec">${secHead('services', 'DIENSTE', 'Start, Stopp, Neustart')}${serviceCards(true, isTable('services'))}</section>`}`;
 	},
@@ -671,7 +686,7 @@ function autostartView() {
 async function loadServices() {
 	try {
 		S.services = (await rpc('shareos.service', 'list')).services;
-		if (S.route.tab === 'dienste' || S.route.tab === 'uebersicht') renderMain();
+		if (S.route.tab === 'services' || S.route.tab === 'overview') renderMain();
 	} catch (e) { if (e.code !== 'auth') toast('Dienste: ' + e.message, true); }
 }
 
@@ -687,7 +702,7 @@ async function loadShareData() {
 		const [sh, acc, st] = await Promise.all([rpc('shareos.shares', 'list'), rpc('shareos.accounts', 'list'), rpc('shareos.storage', 'status')]);
 		S.shares = sh; S.acc = acc; S.vols = st.volumes || [];
 	} catch (e) { if (e.code !== 'auth') toast('Freigaben: ' + e.message, true); }
-	if (S.route.tab === 'freigaben' && !document.activeElement?.matches('input,select,textarea')) renderMain();
+	if (S.route.tab === 'shares' && !document.activeElement?.matches('input,select,textarea')) renderMain();
 }
 
 function accessOf(sh, tag) { return sh.rw.includes(tag) ? 'rw' : sh.ro.includes(tag) ? 'ro' : ''; }
@@ -706,7 +721,7 @@ function sharesView() {
 	${e ? shareEditor(e) : ''}
 	<section class="sec">
 		${secHead('shares', 'FREIGABEN', list.length ? list.length + ' eingerichtet' : 'noch keine')}
-		${!S.vols.length ? html`<div class="panel"><div class="empty">${svg(I.info)}<span>Für Freigaben wird ein Laufwerk gebraucht – zuerst unter <a href="#/speicher">Speicher</a> einrichten.</span></div></div>`
+		${!S.vols.length ? html`<div class="panel"><div class="empty">${svg(I.info)}<span>Für Freigaben wird ein Laufwerk gebraucht – zuerst unter <a href="#/storage">Speicher</a> einrichten.</span></div></div>`
 			: !list.length ? html`<div class="panel"><div class="empty">${svg(I.folder)}<div><span>Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.</span>
 				<div class="acts" style="margin-top:12px">${e ? '' : html`<button class="btn primary" type="button" data-act="sh-new">Freigabe anlegen</button>`}</div></div></div></div>`
 			: isTable('shares') ? html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>FREIGABE</th><th>ORDNER</th><th>PROTOKOLLE</th><th>ZUGRIFF</th><th></th></tr></thead>
@@ -775,7 +790,7 @@ function shareEditor(e) {
 		${rows.length ? html`<div class="tw" style="margin-top:12px"><table class="t" style="min-width:420px"><thead><tr><th>BENUTZER / GRUPPE</th><th style="width:220px">RECHT</th></tr></thead>
 			<tbody>${rows.map(([tag, label, icon]) => html`<tr><td><span style="display:inline-flex;gap:8px;align-items:center">${svg(icon)}${label}</span></td>
 				<td><select class="acl" data-tag="${tag}" aria-label="Recht für ${label}">${['', 'ro', 'rw'].map((v) => html`<option value="${v}"${accessOf(x, tag) === v ? raw(' selected') : ''}>${ACCESS_TXT[v]}</option>`)}</select></td></tr>`)}</tbody></table></div>`
-			: html`<p class="note">Noch keine Benutzer – unter <a href="#/freigaben/benutzer">Benutzer</a> anlegen, oder Gastzugang erlauben.</p>`}
+			: html`<p class="note">Noch keine Benutzer – unter <a href="#/shares/users">Benutzer</a> anlegen, oder Gastzugang erlauben.</p>`}
 		<div class="pt" style="margin:18px 0 8px">ZUGRIFF ÜBER NFS</div>
 		<div style="display:grid;gap:6px">
 			<label class="chk"><input type="checkbox" name="nfs"${x.nfs ? raw(' checked') : ''}>Über NFS freigeben</label>
@@ -839,7 +854,7 @@ function userEditor(e) {
 			<label class="f"><span>BENUTZERNAME</span><input name="name" value="${u.name}" maxlength="32" pattern="[a-z][a-z0-9_]{0,31}" required autocomplete="off"${isNew ? '' : raw(' readonly')}></label>
 			<label class="f"><span>VOLLER NAME</span><input name="fullname" value="${u.fullname}" maxlength="64"></label>
 			<label class="f"><span>ROLLE</span><select name="role">${Object.entries(ROLE_TXT).map(([k, t]) => html`<option value="${k}"${u.role === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
-			<label class="f"><span>PERSÖNLICHER ORDNER</span><select name="home"><option value="">keiner</option>${S.vols.map((v) => html`<option value="${v.name}"${u.home === v.name ? raw(' selected') : ''}>auf ${v.name}</option>`)}</select></label>
+			<label class="f"><span>PERSÖNLICHER ORDNER</span><select name="home"><option value="">keiner</option>${S.vols.filter(linuxFs).map((v) => html`<option value="${v.name}"${u.home === v.name ? raw(' selected') : ''}>auf ${v.name}</option>`)}</select></label>
 			<label class="f"><span>SPEICHERLIMIT (GB)</span><input name="quota" type="number" min="0" step="1" value="${Math.round((u.quota || 0) / 1000)}"></label>
 			${isNew ? html`<label class="f"><span>PASSWORT</span><input name="p1" type="password" minlength="6" autocomplete="new-password" required></label>
 				<label class="f"><span>WIEDERHOLEN</span><input name="p2" type="password" minlength="6" autocomplete="new-password" required></label>` : ''}
@@ -1042,7 +1057,7 @@ function cloudSection(scope) {
 				${st.installing ? html`<div style="margin-top:12px;display:flex;gap:10px;align-items:center"><div class="spin" style="margin:0;width:18px;height:18px"></div><span>wird geladen und geprüft …</span></div>`
 				: html`<div class="acts" style="margin-top:12px"><button class="btn primary" type="button" data-act="cl-install" ${st.apps ? '' : 'disabled'}>rclone installieren</button></div>`}
 				${st.install_error ? html`<p class="note" style="color:var(--red)">Fehler: ${st.install_error}</p>` : ''}
-				${st.apps ? '' : html`<p class="note">Zuerst unter <a href="#/speicher">Speicher</a> ein Laufwerk einrichten.</p>`}`
+				${st.apps ? '' : html`<p class="note">Zuerst unter <a href="#/storage">Speicher</a> ein Laufwerk einrichten.</p>`}`
 			: html`<span>Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.</span>`}
 		</div></div></div></section>`;
 	}
@@ -1172,12 +1187,12 @@ function cloudAfter(scope) {
 /* ---------- "Mein ShareOS" for plain users ------------------------------------ */
 
 function userTabs() {
-	return [['mein', 'MEIN SHAREOS'], ...(S.me?.files ? [['dateien', 'DATEIEN']] : []), ['darstellung', 'DARSTELLUNG']];
+	return [['me', 'MEIN SHAREOS'], ...(S.me?.files ? [['files', 'DATEIEN']] : []), ['appearance', 'DARSTELLUNG']];
 }
 
 function parseUserRoute() {
-	const t = location.hash.replace(/^#\/?/, '').split('/')[0];
-	S.utab = userTabs().some((x) => x[0] === t) ? t : 'mein';
+	const t = routeParts()[0];
+	S.utab = userTabs().some((x) => x[0] === t) ? t : 'me';
 }
 
 function renderUserTabs() {
@@ -1264,8 +1279,8 @@ function myPaperless() {
 function renderUserMain() {
 	const main = $('#main');
 	if (!main) return;
-	if (S.utab === 'dateien' && S.me?.files) { main.innerHTML = filesView().s; return; }
-	if (S.utab === 'darstellung') {
+	if (S.utab === 'files' && S.me?.files) { main.innerHTML = filesView().s; return; }
+	if (S.utab === 'appearance') {
 		main.innerHTML = userLookView().s;
 		$('#opt-utheme').addEventListener('change', (e) => {
 			const v = e.target.value;
@@ -1345,6 +1360,42 @@ function renderUserHome() {
 /* ---------- storage (Speicher) ---------------------------------------------- */
 
 const LAYOUT_TXT = { mirror: 'Spiegel (RAID 1)', single: 'Einzelnes Laufwerk' };
+// file systems: label and what the choice means
+const FS_DISK = [['ext4', 'ext4 – empfohlen', 'Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.'],
+	['btrfs', 'Btrfs', 'Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.'],
+	['exfat', 'exFAT', 'Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.'],
+	['ntfs', 'NTFS', 'Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.']];
+const FS_USB = [['exfat', 'exFAT – empfohlen', 'Windows, macOS, Linux, Fernseher; Dateien über 4 GB.'],
+	['vfat', 'FAT32', 'Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.'],
+	['ntfs', 'NTFS', 'Für Windows-Rechner.'],
+	['ext4', 'ext4', 'Für Linux und Sicherungen mit Rechten.']];
+const FS_NAME = { ext4: 'ext4', btrfs: 'Btrfs', exfat: 'exFAT', ntfs: 'NTFS', ntfs3: 'NTFS', vfat: 'FAT32' };
+const linuxFs = (v) => !v.fstype || v.fstype === 'ext4' || v.fstype === 'btrfs';
+const fsSelect = (list, val, cls = '') => html`<select class="${cls}">${list.map(([v, t]) => html`<option value="${v}"${val === v ? raw(' selected') : ''}>${t}</option>`)}</select>`;
+const fsNote = (list, val) => html`<p class="note fs-note" style="margin:6px 0 0">${(list.find((x) => x[0] === val) || list[0])[2]}</p>`;
+
+// form dialog: name + file system; resolves { name, fs } or null
+function fsDlg(title, text, name, list, fs, okLabel, max = 16) {
+	return new Promise((resolve) => {
+		const d = document.createElement('dialog');
+		d.className = 'dlg';
+		d.innerHTML = html`<form method="dialog"><h3>${title}</h3><p>${text}</p>
+			<div class="fields" style="grid-template-columns:1fr;margin-bottom:6px">
+				<label class="f"><span>NAME</span><input name="v" value="${name}" maxlength="${max}" required></label>
+				<label class="f"><span>DATEISYSTEM</span>${fsSelect(list, fs, 'fs-sel')}</label></div>
+			${fsNote(list, fs)}
+			<div class="acts" style="margin-top:16px"><button class="btn ghost" type="button" value="no">Abbrechen</button>
+			<button class="btn primary" type="submit" value="yes">${okLabel}</button></div></form>`.s;
+		$('#app').append(d);
+		let result = null;
+		$('.fs-sel', d).addEventListener('change', (e) => { $('.fs-note', d).textContent = list.find((x) => x[0] === e.target.value)[2]; });
+		$('button[value=no]', d).addEventListener('click', () => d.close());
+		$('form', d).addEventListener('submit', () => { result = { name: $('input', d).value.trim(), fs: $('.fs-sel', d).value }; });
+		d.addEventListener('close', () => { d.remove(); resolve(result); });
+		d.showModal();
+		$('input', d).select();
+	});
+}
 const SPINDOWN = [[0, 'nie'], [10, '10 Minuten'], [20, '20 Minuten'], [30, '30 Minuten'], [60, '1 Stunde'], [120, '2 Stunden']];
 
 function arrayOf(st, dev) {
@@ -1446,7 +1497,7 @@ function volumeTable(st, running) {
 			const md = arrayOf(st, v.device), degraded = md && md.health && md.health.includes('_'), p = pct(v.used, v.size);
 			return html`<tr>
 				<td><b>${v.name}</b>${S.storage?.apps === v.name ? html` <span class="tag">APPS</span>` : ''}<div class="mut" style="font-size:12px">${v.mountpoint}</div></td>
-				<td>${LAYOUT_TXT[v.layout] || v.layout || ''}${md ? html`<div class="mut" style="font-size:12px">${md.name} · ${md.health || '?'}</div>` : ''}</td>
+				<td>${LAYOUT_TXT[v.layout] || v.layout || ''} · ${FS_NAME[v.fstype] || v.fstype || 'ext4'}${md ? html`<div class="mut" style="font-size:12px">${md.name} · ${md.health || '?'}</div>` : ''}</td>
 				<td>${v.mounted ? html`${fmtBytes(v.used)} / ${fmtBytes(v.size)}` : '–'}</td>
 				<td>${v.mounted ? html`<div class="bar"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}</td>
 				<td>${!v.mounted ? html`<span class="tag err">nicht eingehängt</span>` : degraded ? html`<span class="tag warn">eine Platte fehlt</span>`
@@ -1458,11 +1509,10 @@ function volumeTable(st, running) {
 function diskTable(st, running) {
 	return html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>LAUFWERK</th><th>MODELL</th><th>GRÖSSE</th><th>SMART</th><th>INHALT</th><th></th></tr></thead>
 		<tbody>${st.disks.map((d) => html`<tr>
-			<td><b>${d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</b></td>
+			<td><b>${d.usb || d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</b></td>
 			<td>${d.model || 'unbekanntes Modell'}${d.serial ? html`<div class="mut" style="font-size:12px">${d.serial}</div>` : ''}</td>
 			<td>${fmtBytes(d.size)}</td><td>${smartLine(d.smart)}</td><td class="mut" style="font-size:12px">${diskUse(st, d).txt}</td>
-			<td><div class="acts"><button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
-				<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button></div></td></tr>`)}</tbody></table></div>`;
+			<td><div class="acts">${diskActions(d, running)}</div></td></tr>`)}</tbody></table></div>`;
 }
 
 function volumeCard(st, v, running) {
@@ -1473,7 +1523,7 @@ function volumeCard(st, v, running) {
 		<div class="icon">${svg(I.disk)}<span class="dot ${!v.mounted ? 'down' : degraded ? 'warn' : 'up'}"></span></div>
 		<div class="info">
 			<div class="name">${v.name}${S.storage?.apps === v.name ? html` <span class="tag" title="Pakete und App-Daten liegen in .shareos">APPS</span>` : ''}</div>
-			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
+			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''} · ${FS_NAME[v.fstype] || v.fstype || 'ext4'}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
 			${v.mounted ? html`<div class="bar" style="margin-top:10px"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}
 			${md ? html`<div class="desc" style="margin-top:8px">${md.name}: ${degraded ? html`<span style="color:var(--amber)">eine Platte fehlt (${md.health})</span>` : html`beide Platten aktiv (${md.health || '?'})`}</div>` : ''}
 			${md?.sync ? html`<div class="desc" style="margin-top:6px">${md.sync.action === 'resync' ? 'Erst-Synchronisierung' : md.sync.action === 'recovery' ? 'Wiederherstellung' : 'Prüfung'}: ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %' + (md.sync.finish ? ' · noch ' + fmtMin(md.sync.finish) : '')}</div>
@@ -1489,20 +1539,31 @@ function fmtMin(s) {
 	return m >= 90 ? `${(m / 60).toLocaleString(LOC, { maximumFractionDigits: 1 })} h` : `${Math.round(m)} min`;
 }
 
+function diskActions(d, running) {
+	if (d.usb) return html`<button class="btn sm" type="button" data-act="usb-eject" data-disk="${d.name}" ${running ? 'disabled' : ''}>Sicher entfernen</button>
+		<button class="btn sm danger" type="button" data-act="usb-format" data-disk="${d.name}" ${running ? 'disabled' : ''}>Formatieren</button>`;
+	return html`<button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
+		<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button>`;
+}
+
+// mounted partitions of a USB drive
+function usbLines(st, d) {
+	const m = (st.usb || []).filter((x) => x.dev.replace('/dev/', '').replace(/p?\d+$/, '') === d.name);
+	return m.length ? html`<div class="desc" style="margin-top:8px">${m.map((x) => html`<div>${FS_NAME[x.fs] || x.fs} · <code>${x.path}</code></div>`)}</div>`
+		: html`<div class="desc" style="margin-top:8px;color:var(--muted)">nicht eingehängt</div>`;
+}
+
 function diskCard(st, d, running) {
 	const use = diskUse(st, d);
 	const sm = d.smart;
 	return html`<div class="card">
 		<div class="icon">${svg(d.rm || d.tran === 'usb' ? I.usb : I.disk)}<span class="dot ${sm && !sm.standby && !sm.error && (sm.passed === false || sm.reallocated || sm.pending) ? 'warn' : 'up'}"></span></div>
 		<div class="info">
-			<div class="name">${d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</div>
+			<div class="name">${d.usb || d.tran === 'usb' ? 'USB' : 'Schacht'} · ${d.name}</div>
 			<div class="desc">${d.model || 'unbekanntes Modell'} · ${fmtBytes(d.size)}${d.serial ? ' · ' + d.serial : ''}</div>
-			<div class="desc" style="margin-top:8px">${smartLine(sm)}</div>
+			${d.usb ? usbLines(st, d) : html`<div class="desc" style="margin-top:8px">${smartLine(sm)}</div>`}
 			<div class="ip">${use.txt}</div>
-			<div class="acts" style="margin-top:12px">
-				<button class="btn sm" type="button" data-act="smart" data-disk="${d.name}">SMART lesen</button>
-				<button class="btn sm danger" type="button" data-act="format" data-disk="${d.name}" ${running || S.wiz ? 'disabled' : ''}>Löschen & formatieren</button>
-			</div>
+			<div class="acts" style="margin-top:12px">${diskActions(d, running)}</div>
 		</div></div>`;
 }
 
@@ -1510,7 +1571,7 @@ function diskCard(st, d, running) {
 
 function wizardView(st) {
 	const w = S.wiz;
-	const disks = st.disks.filter((d) => !d.rm && d.tran !== 'usb');
+	const disks = st.disks.filter((d) => !d.usb && !d.rm && d.tran !== 'usb');
 	const chosen = st.disks.filter((d) => w.disks.includes(d.name));
 	const steps = ['Platten', 'Aufbau', 'Name', 'Bestätigen'];
 	const smallest = Math.min(...chosen.map((d) => d.size));
@@ -1537,14 +1598,17 @@ function wizardView(st) {
 			<p class="note">Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.</p>`;
 	} else if (w.step === 2) {
 		const fields = w.layout === 'mirror' ? [['__mirror', 'NAME DES SPIEGELS']] : chosen.map((d) => [d.name, `NAME FÜR ${d.name.toUpperCase()} (${fmtBytes(d.size)})`]);
-		body = html`<div class="fields">${fields.map(([k, l]) => html`<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>`)}</div>
+		body = html`<div style="display:grid;gap:14px">${fields.map(([k, l]) => html`<div class="fields">
+				<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>
+				<label class="f"><span>DATEISYSTEM</span><select class="wiz-fs" data-k="${k}">${FS_DISK.map(([v, t]) => html`<option value="${v}"${(w.fs[k] || 'ext4') === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+				<div style="grid-column:1/-1">${fsNote(FS_DISK, w.fs[k] || 'ext4')}</div></div>`)}</div>
 			<p class="note">Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als <code>/mnt/&lt;name&gt;</code>; Freigaben legst du später darauf an.</p>`;
 	} else {
-		const vols = w.layout === 'mirror' ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(smallest)]]
-			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size)]);
-		body = html`<div class="tw"><table class="t" style="min-width:420px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th></tr></thead>
-			<tbody>${vols.map(([n, ds, sz]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td></tr>`)}</tbody></table></div>
-			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}Apps-Bereich auf „${w.layout === 'mirror' ? w.names.__mirror : w.names[w.disks[0]]}“ (falls noch keiner besteht).</p>
+		const vols = w.layout === 'mirror' ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(smallest), w.fs.__mirror || 'ext4']]
+			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size), w.fs[d.name] || 'ext4']);
+		body = html`<div class="tw"><table class="t" style="min-width:480px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th><th>DATEISYSTEM</th></tr></thead>
+			<tbody>${vols.map(([n, ds, sz, f]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td><td>${FS_NAME[f]}</td></tr>`)}</tbody></table></div>
+			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}${(() => { const k = (w.layout === 'mirror' ? ['__mirror'] : w.disks).find((x) => ['ext4', 'btrfs'].includes(w.fs[x] || 'ext4')); return k ? `Apps-Bereich auf „${w.names[k]}“ (falls noch keiner besteht).` : 'kein Apps-Bereich (Pakete und App-Daten brauchen ext4 oder Btrfs).'; })()}</p>
 			<p class="note" style="color:var(--amber)">Beim Klick auf „Einrichten“ werden ${chosen.map((d) => d.name).join(' und ')} vollständig gelöscht.${w.layout === 'mirror' ? ' Die Erst-Synchronisierung läuft danach im Hintergrund (bei großen Platten mehrere Stunden); das Laufwerk ist sofort nutzbar.' : ''}</p>`;
 	}
 	return html`<section class="sec"><div class="panel" style="border-color:var(--dim);box-shadow:var(--glow)">
@@ -1566,7 +1630,10 @@ function wizardCollect() {
 		w.layout = $('input[name=wiz-layout]:checked')?.value || w.layout;
 		if ($('#wiz-swap')) w.swap = +$('#wiz-swap').value;
 	}
-	if (w.step === 2) document.querySelectorAll('.wiz-name').forEach((x) => { w.names[x.dataset.k] = x.value.trim().toLowerCase(); });
+	if (w.step === 2) {
+		document.querySelectorAll('.wiz-name').forEach((x) => { w.names[x.dataset.k] = x.value.trim().toLowerCase(); });
+		document.querySelectorAll('.wiz-fs').forEach((x) => { w.fs[x.dataset.k] = x.value; });
+	}
 }
 
 const NAME_RE = /^[a-z0-9][a-z0-9_-]{0,15}$/;
@@ -1595,9 +1662,9 @@ async function loadStorage() {
 	try {
 		S.storage = await rpc('shareos.storage', 'status');
 		if (S.wizAfterLoad) { S.wizAfterLoad = false; if (!S.storage.volumes.length && S.storage.disks.length) { ACTIONS['wiz-start'](); } }
-		if (S.route.tab === 'speicher' && !(S.wiz && S.wiz.step === 2) && !document.activeElement?.matches('select')) renderMain();
+		if (S.route.tab === 'storage' && !(S.wiz && S.wiz.step === 2) && !document.activeElement?.matches('select')) renderMain();
 		const busy = S.storage.job?.state === 'running' || Object.values(S.storage.arrays || {}).some((a) => a.sync);
-		if (S.route.tab === 'speicher') S.stTimer = setTimeout(loadStorage, busy ? 3000 : 15000);
+		if (S.route.tab === 'storage') S.stTimer = setTimeout(loadStorage, busy ? 3000 : 15000);
 	} catch (e) {
 		if (e.code !== 'auth') { toast('Speicher: ' + e.message, true); S.stTimer = setTimeout(loadStorage, 15000); }
 	}
@@ -1690,7 +1757,7 @@ const SYS = {
 				</div>
 				<form class="panel" id="f-bin" style="margin-top:16px">
 					<div class="ph"><span class="pt">FIRMWARE-DATEI EINSPIELEN</span><span class="tag ml">.bin</span></div>
-					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. um <b>zurück zu Alt-F</b> zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
+					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. für den <b>Wechsel zurück zu Alt-F</b>. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
 					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>DATEI</span><input type="file" name="file" accept=".bin" required></label></div>
 					<div id="bin-info"></div>
 					<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Hochladen & prüfen</button></div>
@@ -1699,7 +1766,7 @@ const SYS = {
 		</div>`;
 	},
 
-	allgemein() {
+	general() {
 		const i = S.info || {};
 		return html`<div class="acts" style="margin-bottom:16px"><button class="btn ghost" type="button" data-act="fr-again">Ersteinrichtung erneut starten</button></div>
 		<div class="g2">
@@ -1739,6 +1806,47 @@ const SYS = {
 		</div>
 		<h2 class="gh" style="margin-top:22px">APP & WIDGETS</h2>
 		<div class="g2">${appPanel()}${widgetPanel()}</div>`;
+	},
+
+	time() {
+		const t = S.time;
+		if (!t) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const zones = S.zones || [t.timezone];
+		const last = t.last_sync ? new Date(t.last_sync * 1000).toLocaleString(LOC, { timeZone: tzSafe(t.timezone), dateStyle: 'short', timeStyle: 'short' }) : null;
+		return html`<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">UHRZEIT DER BOX</span><span class="tag ml">${t.timezone}</span></div>
+				<div id="clock-now" class="name" style="font-size:30px;letter-spacing:.04em;margin:6px 0 2px">${boxTime(t)}</div>
+				<div id="clock-date" class="mut" style="font-size:13px">${boxDate(t)}</div>
+				<dl class="kv" style="margin-top:14px">
+					<dt>Zeitabgleich</dt><dd>${t.ntp ? (t.ntp_running ? 'aus dem Internet (NTP)' : html`<span style="color:var(--amber)">NTP eingeschaltet, läuft aber nicht</span>`) : 'von Hand'}</dd>
+					<dt>Zuletzt abgeglichen</dt><dd>${last || (t.ntp ? 'noch nicht' : '–')}</dd>
+					${t.rtc ? html`<dt>Batterie-Uhr</dt><dd>wird nach jedem Abgleich gestellt</dd>` : ''}
+				</dl>
+				<div class="acts" style="margin-top:14px"><button class="btn" type="button" data-act="time-sync">${svg(I.reboot)}Jetzt abgleichen</button></div>
+			</div>
+			<form class="panel" id="f-time">
+				<div class="ph"><span class="pt">ZEITZONE & ZEITSERVER</span></div>
+				<div class="fields" style="grid-template-columns:1fr">
+					<label class="f"><span>ZEITZONE</span><select name="tz">${zones.map((z) => html`<option value="${z}"${z === t.timezone ? raw(' selected') : ''}>${z.replace(/_/g, ' ')}</option>`)}</select></label>
+					<label class="chk"><input type="checkbox" name="ntp"${t.ntp ? raw(' checked') : ''}><span>Uhrzeit automatisch aus dem Internet holen (NTP)</span></label>
+					<label class="f"><span>ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)</span><textarea name="servers" rows="4" spellcheck="false">${t.servers.join('\n')}</textarea></label>
+				</div>
+				<p class="note">Im Heimnetz kann auch der Router Zeitserver sein, z. B. <code>fritz.box</code>. Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+			</form>
+		</div>
+		<form class="panel" id="f-clock" style="margin-top:16px">
+			<div class="ph"><span class="pt">UHRZEIT VON HAND STELLEN</span></div>
+			<div class="fields">
+				<label class="f"><span>DATUM UND UHRZEIT (${t.timezone})</span><input name="dt" type="datetime-local" step="1" value="${localInput(t)}" required></label>
+			</div>
+			<p class="note">${t.ntp ? 'Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.' : 'Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.'}</p>
+			<div class="acts" style="margin-top:12px">
+				<button class="btn ghost" type="button" data-act="time-browser">Uhrzeit dieses Geräts übernehmen</button>
+				<button class="btn primary" type="submit">Uhrzeit setzen</button>
+			</div>
+		</form>`;
 	},
 
 	hardware() {
@@ -1823,7 +1931,7 @@ const SYS = {
 		</form>`;
 	},
 
-	energie() {
+	power() {
 		return html`<h2 class="gh">ENERGIE & RESET</h2><div class="g2">
 			<div class="panel">
 				<div class="ph"><span class="pt">ENERGIE</span></div>
@@ -1841,7 +1949,7 @@ const SYS = {
 		${SYS.hardware()}`;
 	},
 
-	netzwerk() {
+	network() {
 		const n = S.net, i = S.info || {}, e = i.network?.eth0 || {};
 		if (!n) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 		const st = n.proto === 'static';
@@ -1876,7 +1984,7 @@ const SYS = {
 					<dt>DNS</dt><dd>${(e.dns || []).join(', ') || '–'}</dd>
 					<dt>MAC</dt><dd>${e.mac || '–'}</dd>
 					<dt>Verbindung</dt><dd>${e.speed ? e.speed + ' Mbit/s' : '–'}</dd>
-					<dt>Gerätename</dt><dd>${i.hostname || '–'} <a href="#/system/allgemein" style="font-size:12px">ändern</a></dd>
+					<dt>Gerätename</dt><dd>${i.hostname || '–'} <a href="#/system/general" style="font-size:12px">ändern</a></dd>
 				</dl>
 			</div>
 		</div>
@@ -1884,7 +1992,7 @@ const SYS = {
 		${SYS.https()}`;
 	},
 
-	protokolle() {
+	logs() {
 		return html`<div class="panel">
 			<div class="ph"><span class="pt">PROTOKOLL</span>
 				<div class="acts ml"><select id="log-src" class="btn sm ghost" aria-label="Quelle"><option value="system">System (syslog)</option><option value="kernel">Kernel (dmesg)</option></select>
@@ -1893,7 +2001,7 @@ const SYS = {
 		</div>`;
 	},
 
-	darstellung() {
+	appearance() {
 		const names = { green: 'Grün', red: 'Rot', blue: 'Blau', white: 'Weiß' };
 		return html`<div class="panel" style="max-width:560px">
 			<div class="ph"><span class="pt">DARSTELLUNG</span><span class="tag ml">gilt für alle</span></div>
@@ -1921,7 +2029,7 @@ const SYS = {
 		</div>`;
 	},
 
-	ueber() {
+	about() {
 		const i = S.info || {}, r = i.release || {};
 		return html`<div class="g2">
 			<div class="panel">
@@ -1950,13 +2058,35 @@ const VIEWS_AFTER = {
 	apps() { appsAfter(); },
 	system() {
 		const sub = S.route.sub;
-		if (sub === 'protokolle') loadLog();
-		if (sub === 'netzwerk') {
+		if (sub === 'logs') loadLog();
+		if (sub === 'time') {
+			if (!S.time) loadTime();
+			clearInterval(S.clockTimer);
+			S.clockTimer = setInterval(() => {
+				if (!$('#clock-now') || !S.time) { clearInterval(S.clockTimer); return; }
+				const t = { ...S.time, now: Math.floor(Date.now() / 1000) + S.timeOffset };
+				$('#clock-now').textContent = boxTime(t); $('#clock-date').textContent = boxDate(t);
+			}, 1000);
+			$('#f-time')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, servers = f.servers.value.split(/\s+/).map((x) => x.trim()).filter(Boolean);
+				try { setTime(await rpc('shareos.time', 'set', { timezone: f.tz.value, ntp: f.ntp.checked, servers })); toast('Gespeichert.'); renderMain(); }
+				catch (err) { toast('Zeit: ' + err.message, true); }
+			});
+			$('#f-clock')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const sec = fromLocalInput(e.target.dt.value, S.time.timezone);
+				if (sec == null) { toast('Ungültige Uhrzeit.', true); return; }
+				try { setTime(await rpc('shareos.time', 'set_clock', { time: sec })); toast('Uhrzeit gesetzt.'); renderMain(); }
+				catch (err) { toast('Uhrzeit: ' + err.message, true); }
+			});
+		}
+		if (sub === 'network') {
 			if (!S.net) loadNet();
 			$('#net-proto')?.addEventListener('change', (e) => { $('#net-static').hidden = e.target.value !== 'static'; });
 			$('#f-net')?.addEventListener('submit', netSubmit);
 		}
-		if (sub === 'energie') {
+		if (sub === 'power') {
 			if (!S.hw) loadHw();
 			document.querySelectorAll('#f-fan input[name=preset]').forEach((r) => r.addEventListener('change', () => { $('#fan-custom').hidden = r.value !== 'custom'; }));
 			$('#f-fan')?.addEventListener('submit', async (e) => {
@@ -1973,7 +2103,7 @@ const VIEWS_AFTER = {
 					catch (err) { toast('LED: ' + err.message, true); }
 				});
 		}
-		if (sub === 'netzwerk') {
+		if (sub === 'network') {
 			if (!S.web) loadWeb();
 			$('#opt-https')?.addEventListener('change', (e) => webSet({ https: e.target.checked }));
 			$('#opt-redirect')?.addEventListener('change', (e) => webSet({ redirect: e.target.checked }));
@@ -2028,7 +2158,7 @@ const VIEWS_AFTER = {
 				btn.disabled = false;
 			});
 		}
-		if (sub === 'allgemein') {
+		if (sub === 'general') {
 			if (!S.widget) loadWidget();
 			$('#app-install')?.addEventListener('click', async () => {
 				const ev = S.installEvt; if (!ev) return;
@@ -2107,7 +2237,7 @@ const VIEWS_AFTER = {
 				catch (err) { toast('Passwort: ' + err.message, true); }
 			});
 		}
-		if (sub === 'darstellung') {
+		if (sub === 'appearance') {
 			$('#opt-theme').addEventListener('change', (e) => { S.theme = e.target.value; applyTheme(); renderHeader(); renderMain(); saveLook({ theme: S.theme }); });
 			$('#opt-lang').addEventListener('change', async (e) => {
 				try {
@@ -2135,7 +2265,7 @@ const VIEWS_AFTER = {
 			});
 		}
 	},
-	speicher() {
+	storage() {
 		if (!S.stActive) loadStorage();
 		$('#spindown')?.addEventListener('change', async (e) => {
 			try { await rpc('shareos.storage', 'spindown', { minutes: +e.target.value }); toast('Ruhezustand gespeichert.'); }
@@ -2169,8 +2299,8 @@ const VIEWS_AFTER = {
 			catch (err) { toast('Eingang: ' + err.message, true); }
 		});
 	},
-	freigaben() {
-		if (S.route.sub === 'dateien') return;
+	shares() {
+		if (S.route.sub === 'files') return;
 		if (!S.shares || !S.acc) { loadShareData(); return; }
 		$('#opt-smb')?.addEventListener('change', (e) => shareGlobal({ smb: e.target.checked }));
 		$('#opt-nfs')?.addEventListener('change', (e) => shareGlobal({ nfs: e.target.checked }));
@@ -2201,7 +2331,7 @@ const VIEWS_AFTER = {
 			catch (err) { toast('Benutzer: ' + err.message, true); }
 		});
 	},
-	dienste() {
+	services() {
 		if (!S.services) loadServices();
 		document.querySelectorAll('.as-toggle').forEach((c) => c.addEventListener('change', async () => {
 			c.disabled = true;
@@ -2214,14 +2344,45 @@ const VIEWS_AFTER = {
 			c.disabled = false;
 		}));
 	},
-	uebersicht() { if (!S.services) loadServices(); }
+	overview() { if (!S.services) loadServices(); }
 };
 
 
 
+// --- time page helpers: show the box's clock in the box's time zone ---
+function tzSafe(tz) { try { new Intl.DateTimeFormat('en', { timeZone: tz }); return tz; } catch (e) { return 'UTC'; } }
+function boxTime(t) { return new Date(t.now * 1000).toLocaleTimeString(LOC, { timeZone: tzSafe(t.timezone), hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+function boxDate(t) { return new Date(t.now * 1000).toLocaleDateString(LOC, { timeZone: tzSafe(t.timezone), weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+// "YYYY-MM-DDTHH:MM:SS" as the wall clock in time zone tz
+function localInput(t) {
+	const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: tzSafe(t.timezone), year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' })
+		.formatToParts(new Date(t.now * 1000)).map((x) => [x.type, x.value]));
+	return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}`;
+}
+// wall clock in tz -> seconds since 1970 (two rounds settle daylight saving)
+function fromLocalInput(v, tz) {
+	const m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)(?::(\d\d))?$/.exec(v || '');
+	if (!m) return null;
+	const want = Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0)) / 1000;
+	let guess = want;
+	for (let k = 0; k < 2; k++) {
+		const shown = localInput({ now: guess, timezone: tz }).match(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)$/);
+		guess += want - Date.UTC(+shown[1], shown[2] - 1, +shown[3], +shown[4], +shown[5], +shown[6]) / 1000;
+	}
+	return Math.round(guess);
+}
+function setTime(t) { S.time = t; S.timeOffset = t.now - Math.floor(Date.now() / 1000); }
+async function loadTime() {
+	try {
+		const [t, z] = await Promise.all([rpc('shareos.time', 'get'), S.zones ? null : rpc('shareos.setup', 'zones')]);
+		setTime(t); if (z) S.zones = z.zones;
+	} catch (e) { toast('Zeit: ' + e.message, true); }
+	if (S.route.tab === 'system' && S.route.sub === 'time') renderMain();
+}
+
 async function loadHw() {
 	try { S.hw = await rpc('shareos.hw', 'get'); } catch (e) { toast('Hardware: ' + e.message, true); }
-	if (S.route.sub === 'energie') renderMain();
+	if (S.route.sub === 'power') renderMain();
 }
 
 /* ---------- network ------------------------------------------------------------- */
@@ -2233,7 +2394,7 @@ function prefixMask(p) {
 
 async function loadNet() {
 	try { S.net = await rpc('shareos.net', 'get'); } catch (e) { toast('Netzwerk: ' + e.message, true); }
-	if (S.route.sub === 'netzwerk') renderMain();
+	if (S.route.sub === 'network') renderMain();
 	if (S.net?.pending) { clearTimeout(S.netTimer); S.netTimer = setTimeout(() => { S.net = null; loadNet(); }, 5000); }
 }
 
@@ -2411,8 +2572,8 @@ function frEnd(next) {
 	S.fr = null;
 	try { sessionStorage.removeItem('shareos.frstep'); } catch (e) { }
 	S.info = null; tick();
-	if (next === 'storage') { S.wizAfterLoad = true; location.hash = '#/speicher'; }
-	else { location.hash = '#/uebersicht'; renderMain(); }
+	if (next === 'storage') { S.wizAfterLoad = true; location.hash = '#/storage'; }
+	else { location.hash = '#/overview'; renderMain(); }
 }
 
 /* ---------- app (PWA) & widget status ---------- */
@@ -2421,7 +2582,7 @@ function frEnd(next) {
 window.addEventListener('beforeinstallprompt', (e) => {
 	e.preventDefault();
 	S.installEvt = e;
-	if (S.route?.tab === 'system' && S.route.sub === 'allgemein') renderMain();
+	if (S.route?.tab === 'system' && S.route.sub === 'general') renderMain();
 });
 window.addEventListener('appinstalled', () => { S.installEvt = null; toast('ShareOS ist als App installiert.'); });
 
@@ -2458,7 +2619,7 @@ function widgetPanel() {
 
 async function loadWidget() {
 	try { S.widget = await rpc('shareos.widget', 'get'); } catch (e) { S.widget = { enabled: false, token: '' }; }
-	if (S.route.tab === 'system' && S.route.sub === 'allgemein') renderMain();
+	if (S.route.tab === 'system' && S.route.sub === 'general') renderMain();
 }
 
 async function widgetSet(a) {
@@ -2477,7 +2638,7 @@ async function copyText(t) {
 
 async function loadWeb() {
 	try { S.web = await rpc('shareos.web', 'get'); } catch (e) { toast('HTTPS: ' + e.message, true); }
-	if (S.route.sub === 'netzwerk') renderMain();
+	if (S.route.sub === 'network') renderMain();
 }
 
 // the web server restarts after HTTPS changes: wait for it, keep the page
@@ -2560,8 +2721,8 @@ const ACTIONS = {
 		S.theme = effTheme() === 'light' ? 'dark' : 'light';
 		if (isUser()) S.me.ui = { ...S.me.ui, theme: S.theme };
 		applyTheme(); renderHeader();
-		if (isUser()) { renderUserHeader(); if (S.utab === 'darstellung') renderUserMain(); }
-		else if (S.route.sub === 'darstellung') renderMain();
+		if (isUser()) { renderUserHeader(); if (S.utab === 'appearance') renderUserMain(); }
+		else if (S.route.sub === 'appearance') renderMain();
 		// plain users change it only for themselves (the look for everyone is an admin setting)
 		saveLook({ theme: S.theme });
 	},
@@ -2656,7 +2817,7 @@ const ACTIONS = {
 		try { S.shares = await rpc('shareos.shares', 'del', { name: n }); toast(`Freigabe „${n}“ entfernt.`); renderMain(); } catch (e) { toast(e.message, true); }
 	},
 	'u-new'() {
-		S.uEdit = { mode: 'new', data: { name: '', fullname: '', role: 'share', home: S.vols[0]?.name || '', quota: 0, web: true, groups: [] } };
+		S.uEdit = { mode: 'new', data: { name: '', fullname: '', role: 'share', home: S.vols.filter(linuxFs)[0]?.name || '', quota: 0, web: true, groups: [] } };
 		renderMain(); window.scrollTo(0, 0);
 	},
 	'u-edit'(el) { S.uEdit = { mode: 'edit', data: structuredClone(S.acc.users.find((x) => x.name === el.dataset.name)) }; renderMain(); window.scrollTo(0, 0); },
@@ -2727,8 +2888,8 @@ const ACTIONS = {
 	},
 
 	'wiz-start'() {
-		const disks = (S.storage?.disks || []).filter((d) => !d.rm && d.tran !== 'usb').map((d) => d.name);
-		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', swap: 1024, names: { __mirror: 'daten' } };
+		const disks = (S.storage?.disks || []).filter((d) => !d.usb && !d.rm && d.tran !== 'usb').map((d) => d.name);
+		S.wiz = { step: 0, disks: disks.slice(0, 2), layout: disks.length >= 2 ? 'mirror' : 'single', swap: 1024, names: { __mirror: 'daten' }, fs: { __mirror: 'ext4' } };
 		renderMain();
 		window.scrollTo(0, 0);
 	},
@@ -2747,19 +2908,37 @@ const ACTIONS = {
 		const w = S.wiz;
 		if (!await confirmDlg('Platten löschen und einrichten?', `${w.disks.join(' und ')} werden vollständig gelöscht. Das lässt sich nicht rückgängig machen.`, 'Löschen & einrichten', true)) return;
 		const args = w.layout === 'mirror'
-			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, swap: w.swap, confirm: true }
-			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d })), swap: w.swap, confirm: true };
+			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, swap: w.swap, fs: w.fs.__mirror || 'ext4', confirm: true }
+			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d, fs: w.fs[d] || 'ext4' })), swap: w.swap, confirm: true };
 		try { await rpc('shareos.storage', 'setup', args); S.wiz = null; toast('Einrichtung gestartet.'); setTimeout(loadStorage, 1000); }
 		catch (e) { toast('Einrichten: ' + e.message, true); }
 	},
 	async format(el) {
 		const disk = el.dataset.disk;
 		const d = S.storage.disks.find((x) => x.name === disk);
-		const name = ((await promptDlg(`${disk} formatieren`, 'Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):', 'daten', 'Weiter')) || '').toLowerCase();
-		if (!name) return;
+		const r = await fsDlg(`${disk} formatieren`, 'Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:', 'daten', FS_DISK, 'ext4', 'Weiter');
+		if (!r) return;
+		const name = r.name.toLowerCase();
 		if (!NAME_RE.test(name)) { toast('Ungültiger Name.', true); return; }
-		if (!await confirmDlg(`${disk} löschen?`, `${disk} (${d?.model || ''}, ${fmtBytes(d?.size)}) wird vollständig gelöscht und als Laufwerk „${name}“ neu eingerichtet.`, 'Löschen & formatieren', true)) return;
-		try { await rpc('shareos.storage', 'setup', { layout: 'single', volumes: [{ name, disk }], confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
+		if (!await confirmDlg(`${disk} löschen?`, `${disk} (${d?.model || ''}, ${fmtBytes(d?.size)}) wird vollständig gelöscht und als Laufwerk „${name}“ (${FS_NAME[r.fs]}) neu eingerichtet.`, 'Löschen & formatieren', true)) return;
+		try { await rpc('shareos.storage', 'setup', { layout: 'single', volumes: [{ name, disk, fs: r.fs }], confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
+		catch (e) { toast('Formatieren: ' + e.message, true); }
+	},
+	async 'usb-eject'(el) {
+		el.disabled = true;
+		try {
+			await rpc('shareos.storage', 'usb_eject', { disk: el.dataset.disk });
+			toast(`${el.dataset.disk} kann jetzt abgezogen werden.`);
+		} catch (e) { toast('Entfernen: ' + e.message, true); el.disabled = false; }
+		setTimeout(loadStorage, 800);
+	},
+	async 'usb-format'(el) {
+		const disk = el.dataset.disk, d = S.storage.disks.find((x) => x.name === disk);
+		const r = await fsDlg(`${disk} formatieren`, `${d?.model || 'USB-Laufwerk'}, ${fmtBytes(d?.size)} – Name (Buchstaben, Ziffern, Leerzeichen, - und _) und Dateisystem:`, 'USB', FS_USB, 'exfat', 'Weiter');
+		if (!r) return;
+		if (!/^[A-Za-z0-9 _-]{1,16}$/.test(r.name)) { toast('Ungültiger Name.', true); return; }
+		if (!await confirmDlg(`${disk} löschen?`, `Alles auf ${disk} wird gelöscht. Danach ist es ein ${FS_NAME[r.fs]}-Laufwerk „${r.name}“.`, 'Löschen & formatieren', true)) return;
+		try { await rpc('shareos.storage', 'usb_format', { disk, fs: r.fs, name: r.name, confirm: true }); toast('Formatieren gestartet.'); setTimeout(loadStorage, 1000); }
 		catch (e) { toast('Formatieren: ' + e.message, true); }
 	},
 	async smart(el) {
@@ -2806,6 +2985,16 @@ const ACTIONS = {
 		renderMain();
 		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
 		catch (e) { S.updPending = null; toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
+	},
+
+	async 'time-sync'(el) {
+		el.disabled = true;
+		try { setTime(await rpc('shareos.time', 'sync')); toast('Uhrzeit abgeglichen.'); renderMain(); }
+		catch (e) { toast('Abgleich: ' + e.message, true); el.disabled = false; }
+	},
+	'time-browser'() {
+		const f = $('#f-clock');
+		if (f && S.time) f.dt.value = localInput({ now: Math.floor(Date.now() / 1000), timezone: S.time.timezone });
 	},
 
 	async 'upd-ack'() {
@@ -2863,20 +3052,21 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('change', (e) => {
 	if (e.target.name === 'wiz-layout' && S.wiz) { wizardCollect(); renderMain(); }
+	if (e.target.classList.contains('wiz-fs') && S.wiz) { wizardCollect(); renderMain(); }
 });
 
 window.addEventListener('hashchange', () => {
 	if (!S.sid || !$('#main')) return;
 	if (isUser()) {
 		parseUserRoute();
-		if (S.fb && S.utab === 'dateien') S.fb.roots = null;
+		if (S.fb && S.utab === 'files') S.fb.roots = null;
 		renderUserTabs(); renderUserMain(); window.scrollTo(0, 0);
 		return;
 	}
 	parseRoute();
-	if (S.route.tab !== 'speicher') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
-	if (S.route.tab !== 'freigaben') { S.shEdit = null; S.uEdit = null; }
-	if (S.fb && S.route.sub === 'dateien') S.fb.roots = null;   // volumes may have changed
+	if (S.route.tab !== 'storage') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
+	if (S.route.tab !== 'shares') { S.shEdit = null; S.uEdit = null; }
+	if (S.fb && S.route.sub === 'files') S.fb.roots = null;   // volumes may have changed
 	if (S.route.tab !== 'paperless') { S.plEdit = null; S.plLog = null; } else if (S.pl) loadPaperless();
 	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
 	else if (S.cloud?.scope === 'admin') loadCloud('admin');
@@ -3096,7 +3286,7 @@ for (const ev of ['dragover', 'dragleave', 'drop']) {
 
 /* ---------- APPS: installed apps, store, sources ----------------------------- */
 
-const APP_SUBS = [['installiert', 'INSTALLIERT'], ['store', 'STORE'], ['quellen', 'QUELLEN']];
+const APP_SUBS = [['installed', 'INSTALLIERT'], ['store', 'STORE'], ['sources', 'QUELLEN']];
 const APP_CAT = { tools: 'Werkzeuge', media: 'Medien', office: 'Büro', network: 'Netzwerk', system: 'System', download: 'Download', sync: 'Sync' };
 const txtOf = (d) => (d && typeof d === 'object' ? d[LANG] || d.de || d.en || '' : d || '');
 
@@ -3159,7 +3349,7 @@ function appsView() {
 	const nav = html`<nav class="subtabs" aria-label="Apps">${APP_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/apps/${id}">${label}</a>`)}</nav>`;
 	if (!A?.installed) return html`${nav}<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 	const job = A.job && JOB_TXT[A.job.state] ? html`<div class="banner" style="border-color:var(--dim)"><div class="spin" style="margin:0;width:20px;height:20px"></div><span><b>${A.job.id}</b> ${JOB_TXT[A.job.state]} …</span></div>` : '';
-	return html`${nav}${job}${sub === 'store' ? appStore() : sub === 'quellen' ? appSources() : appInstalled()}`;
+	return html`${nav}${job}${sub === 'store' ? appStore() : sub === 'sources' ? appSources() : appInstalled()}`;
 }
 
 function appUsersTxt(a) {
@@ -3172,6 +3362,7 @@ function appInstalled() {
 	const A = S.apps, list = A.installed.apps || [], cat = {};
 	for (const c of A.catalog?.apps || []) cat[c.id] = c;
 	if (A.edit) return appUsersEditor(A.edit);
+	if (A.jobs) return appJobsEditor(A.jobs);
 	const upd = (a) => cat[a.id]?.update_available ? cat[a.id] : null;
 	const t = isTable('apps');
 	return html`<section class="sec">${secHead('apps', 'INSTALLIERTE APPS', list.length ? `${list.length}` : '')}
@@ -3185,6 +3376,7 @@ function appInstalled() {
 			<div class="info"><div class="name">${a.name} <span class="mut" style="font-size:12px">${a.version}</span></div>
 				<div class="desc">${txtOf(a.description)}</div>
 				<div class="desc" style="margin-top:6px"><span class="tag ${a.verified ? 'ok' : 'warn'}">${a.verified ? 'aus dem Store' : 'eigene / ungeprüft'}</span> ${upd(a) ? html`<span class="tag warn">Update ${upd(a).latest}</span>` : ''}</div>
+				${(a.permissions || []).length ? html`<div class="desc" style="margin-top:6px">${a.permissions.map((p) => html`<span class="tag" title="${PERM_TXT[p] || p}">${PERM_TAG[p] || p}</span> `)}</div>` : ''}
 				<div class="ip">${a.publisher} · sichtbar für ${appUsersTxt(a)}</div>
 				<div class="acts" style="margin-top:10px">${appActions(a, upd(a))}</div></div></div>`)}</div>`}
 		<p class="note">Web-Apps laufen auf einem eigenen Port (${A.installed.port}${A.installed.https ? ' / ' + A.installed.https_port + ' für HTTPS' : ''}) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.</p>
@@ -3195,8 +3387,34 @@ function appActions(a, upd) {
 	const busy = !!(S.apps.job && JOB_TXT[S.apps.job.state]);
 	return html`<a class="btn sm" href="${appUrl(a)}" target="_blank" rel="noopener">Öffnen ↗</a>
 		${upd ? html`<button class="btn sm primary" type="button" data-act="app-install" data-id="${a.id}" data-v="${upd.latest}" ${busy ? 'disabled' : ''}>${svg(I.dl)}Aktualisieren</button>` : ''}
+		${(a.jobs || []).length ? html`<button class="btn sm ghost" type="button" data-act="app-jobs" data-id="${a.id}">${svg(I.clock)}Aufgaben</button>` : ''}
 		<button class="btn sm ghost" type="button" data-act="app-users" data-id="${a.id}">${svg(I.users)}Benutzer</button>
 		<button class="btn sm ghost" type="button" data-act="app-remove" data-id="${a.id}">${svg(I.trash)}Entfernen</button>`;
+}
+
+// permissions an app can ask for (app.json "permissions")
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben' };
+const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.' };
+
+function appJobsEditor(id) {
+	const a = (S.apps.installed.apps || []).find((x) => x.id === id);
+	if (!a) { S.apps.jobs = null; return ''; }
+	const last = (j) => !j.last ? html`<span class="mut">noch nie</span>`
+		: html`${fmtTime(j.last.time)} · ${j.last.timeout ? html`<span class="tag warn">Zeitlimit</span>` : j.last.rc === 0 ? html`<span class="tag ok">OK</span>` : html`<span class="tag err">Fehler ${j.last.rc}</span>`} · ${j.last.duration} s`;
+	return html`<section class="sec"><form class="panel" id="f-appjobs" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">${a.name.toUpperCase()} · AUFGABEN</span><button class="btn sm ghost ml" type="button" data-act="app-jobs-cancel">Schließen</button></div>
+		<div class="tw"><table class="t" style="min-width:760px"><thead><tr><th>AUFGABE</th><th>ZEITPLAN (CRON)</th><th>AKTIV</th><th>ZULETZT</th><th></th></tr></thead><tbody>
+			${a.jobs.map((j) => html`<tr data-job="${j.id}"><td><b>${j.name}</b><div class="mut" style="font-size:12px">${j.command} · max. ${j.timeout} s</div></td>
+				<td><label class="f" style="margin:0;width:160px"><input class="job-sched" value="${j.schedule}" spellcheck="false" pattern="[0-9*/,\\-]+( [0-9*/,\\-]+){4}"></label>${j.schedule !== j.default_schedule ? html`<div class="mut" style="font-size:11px">Standard: ${j.default_schedule}</div>` : ''}</td>
+				<td><label class="chk"><input type="checkbox" class="job-on"${j.enabled ? raw(' checked') : ''}></label></td>
+				<td style="font-size:12px">${j.running ? html`<span class="tag">läuft</span>` : last(j)}</td>
+				<td style="white-space:nowrap"><button class="btn sm" type="button" data-act="app-job-run" data-id="${a.id}" data-job="${j.id}" ${j.running ? 'disabled' : ''}>Jetzt ausführen</button>
+					<button class="btn sm ghost" type="button" data-act="app-job-log" data-id="${a.id}" data-job="${j.id}">Protokoll</button></td></tr>`)}
+		</tbody></table></div>
+		${S.apps.jobLog ? html`<div class="pt" style="margin:14px 0 6px">PROTOKOLL · ${S.apps.jobLog.job}</div><pre class="logbox" style="max-height:260px">${S.apps.jobLog.log || '(leer)'}</pre>` : ''}
+		<p class="note"><span>${PERM_TXT.cron}</span> Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B. <code>30 3 * * *</code> = täglich 3:30 Uhr.</p>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
 }
 
 function appUsersEditor(id) {
@@ -3270,10 +3488,19 @@ function appSources() {
 
 function appsAfter() {
 	if (!S.apps?.installed) { loadApps(); return; }
-	if (S.route.sub === 'installiert' && !S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; }).catch(() => {});
+	if (S.route.sub === 'installed' && !S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; }).catch(() => {});
 	$('#app-channel')?.addEventListener('change', async (e) => {
 		try { await rpc('shareos.apps', 'store_set', { channel: e.target.value }); S.apps.store.channel = e.target.value; refreshCatalog(true); }
 		catch (err) { toast('Store: ' + err.message, true); }
+	});
+	$('#f-appjobs')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const id = S.apps.jobs;
+		try {
+			for (const tr of e.target.querySelectorAll('tr[data-job]'))
+				await rpc('shareos.apps', 'job_set', { id, job: tr.dataset.job, schedule: $('.job-sched', tr).value.trim(), enabled: $('.job-on', tr).checked });
+			toast('Gespeichert.'); loadApps(['installed']);
+		} catch (err) { toast('Aufgaben: ' + err.message, true); }
 	});
 	$('#f-appusers input[name=all]')?.addEventListener('change', (e) => { $('#app-users-list').hidden = e.target.checked; });
 	$('#f-appusers')?.addEventListener('submit', async (e) => {
@@ -3308,6 +3535,10 @@ function appsAfter() {
 Object.assign(ACTIONS, {
 	'app-refresh'() { refreshCatalog(); },
 	async 'app-install'(el) {
+		const c = (S.apps.catalog?.apps || []).find((x) => x.id === el.dataset.id);
+		const v = c?.versions.find((x) => x.version === el.dataset.v) || c?.versions[0];
+		const perms = v?.permissions || [];
+		if (perms.length && !await confirmDlg(`${c.name}: Berechtigungen`, perms.map((p) => PERM_TXT[p] || p).join(' '), 'Erlauben & installieren')) return;
 		try {
 			await rpc('shareos.apps', 'install', { id: el.dataset.id, version: el.dataset.v });
 			S.apps.job = { state: 'downloading', id: el.dataset.id };
@@ -3317,12 +3548,26 @@ Object.assign(ACTIONS, {
 	},
 	async 'app-remove'(el) {
 		const a = (S.apps.installed.apps || []).find((x) => x.id === el.dataset.id);
-		if (!await confirmDlg(`${a?.name || el.dataset.id} entfernen?`, 'Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.', 'Entfernen', true)) return;
+		if (!await confirmDlg(`${a?.name || el.dataset.id} entfernen?`, (a?.jobs || []).length ? 'Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.' : 'Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.', 'Entfernen', true)) return;
 		try { await rpc('shareos.apps', 'remove', { id: el.dataset.id }); toast('Entfernt.'); loadApps(['installed', 'catalog']); }
 		catch (e) { toast('Entfernen: ' + e.message, true); }
 	},
 	'app-users'(el) { S.apps.edit = el.dataset.id; if (!S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; renderMain(); }).catch(() => {}); renderMain(); window.scrollTo(0, 0); },
 	'app-users-cancel'() { S.apps.edit = null; renderMain(); },
+	'app-jobs'(el) { S.apps.jobs = el.dataset.id; S.apps.jobLog = null; renderMain(); window.scrollTo(0, 0); },
+	'app-jobs-cancel'() { S.apps.jobs = null; S.apps.jobLog = null; renderMain(); },
+	async 'app-job-run'(el) {
+		el.disabled = true;
+		try {
+			await rpc('shareos.apps', 'job_run', { id: el.dataset.id, job: el.dataset.job });
+			toast('Aufgabe gestartet.');
+			setTimeout(() => loadApps(['installed']), 1500);
+		} catch (e) { toast('Aufgabe: ' + e.message, true); el.disabled = false; }
+	},
+	async 'app-job-log'(el) {
+		try { const r = await rpc('shareos.apps', 'job_log', { id: el.dataset.id, job: el.dataset.job }); S.apps.jobLog = { job: el.dataset.job, log: r.log }; renderMain(); }
+		catch (e) { toast('Protokoll: ' + e.message, true); }
+	},
 	async 'app-src-del'(el) {
 		const sources = S.apps.store.sources.filter((_, i) => i !== +el.dataset.i);
 		if (!await confirmDlg('Quelle entfernen?', 'Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.', 'Entfernen', true)) return;
@@ -3342,6 +3587,7 @@ if ('serviceWorker' in navigator && window.isSecureContext)
 	LANG = await loadUiSettings();
 	LOC = LOCALES[LANG] || LANG;
 	document.documentElement.lang = LANG;
+	document.documentElement.dir = RTL[LANG] ? 'rtl' : 'ltr';
 	if (await i18nLoad(LANG)) i18nStart($('#app'));
 	i18nLanguages().then((l) => { S.languages = l; });
 	applyTheme();
@@ -3349,7 +3595,7 @@ if ('serviceWorker' in navigator && window.isSecureContext)
 	if (m) {
 		S.sid = m[1];
 		store.set('sid', S.sid, false);
-		history.replaceState(null, '', '#/system/netzwerk');
+		history.replaceState(null, '', '#/system/network');
 	}
 	if (S.sid) {
 		try {

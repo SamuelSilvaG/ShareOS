@@ -4,6 +4,16 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.8
+
+- **File system per volume:** ext4 (recommended), Btrfs, exFAT or NTFS in the storage wizard and when formatting a disk; the interface says what each choice means (permissions, storage limit, personal folders, apps).
+- **USB sticks and disks:** mounted automatically at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), visible in the file browser for admins, **Safely remove** button, **Format** with exFAT, FAT32, NTFS or ext4. The disks in the bays are never touched by this.
+- Tools on board: mkfs for Btrfs, exFAT, FAT and NTFS.
+- **System → Time:** time zone, NTP on/off with own time servers (e.g. the router), *sync now*, set the clock by hand (or take the time of the browser); the battery clock of the box is set too.
+- Page addresses in English (`#/storage`, `#/shares/users`, `#/system/time` …); old German links and app shortcuts are redirected.
+- **10 languages:** English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese and Russian. Translations other than English/German by AI – corrections welcome.
+- **Scheduled tasks for apps** (permission `cron`): an app can declare tasks in its `app.json` (script from the package, schedule, time limit). They run as the app's own restricted user (`app-<id>`), only in its data folder, at most every 5 minutes and up to 5 per app. The install dialog lists the permissions; *Apps → Tasks* changes the schedule, switches tasks on/off, runs them now and shows the last log.
+
 ## 0.1.0-beta.7
 
 - **Install without the serial console:** flash the ShareOS `.bin` from the Alt-F or D-Link firmware page. On the first start ShareOS installs its system by itself – from a USB stick with the `.sysupgrade.tar` (FAT32/exFAT/ext4) or from GitHub (checksum verified). Not yet tried on real hardware.

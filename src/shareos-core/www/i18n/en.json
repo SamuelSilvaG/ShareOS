@@ -173,7 +173,6 @@
 		"; Freigaben legst du später darauf an.": "; you create shares on it later.",
 		"Platten löschen und einrichten?": "Erase and set up the disks?",
 		"Löschen & einrichten": "Erase & set up",
-		"Weiter ": "Next",
 		"Einrichtung gestartet.": "Setup started.",
 		"Formatieren gestartet.": "Formatting started.",
 		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "Name of the new drive (a–z, 0–9, - and _, max. 16 characters):",
@@ -525,7 +524,7 @@
 		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– own area “My ShareOS” in the web interface.",
 		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– access to shares, no web login. The account",
 		"bleibt immer Administrator.": "is always an administrator.",
-		" · ohne Web": " · no web",
+		"· ohne Web": "· no web",
 		"NEUER BENUTZER": "NEW USER",
 		"BENUTZERNAME": "USER NAME",
 		"VOLLER NAME": "FULL NAME",
@@ -561,7 +560,7 @@
 		"Setzen": "Set",
 		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "New password (at least 6 characters). Used for shares and – depending on the role – for the web interface.",
 		"Bitte neu anmelden.": "Please log in again.",
-		" Der persönliche Ordner bleibt erhalten.": " The personal folder is kept.",
+		"Der persönliche Ordner bleibt erhalten.": "The personal folder is kept.",
 		"Benutzerkonten": "User accounts",
 		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "BACK UP & RESTORE SETTINGS",
 		"SICHERN": "BACK UP",
@@ -810,9 +809,6 @@
 		"Installation abgeschlossen": "Installation finished",
 		"(100 %) – jetzt neu starten.": "(100 %) – restart now.",
 		"FIRMWARE-DATEI EINSPIELEN": "INSTALL FIRMWARE FILE",
-		"Eine Firmware im D-Link-Format, z. B. um ": "A firmware in D-Link format, e.g. to go ",
-		"zurück zu Alt-F": "back to Alt-F",
-		" zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash.",
 		"Hochladen & prüfen": "Upload & check",
 		"Art": "Type",
 		"andere Firmware": "other firmware",
@@ -820,9 +816,71 @@
 		"Firmware wird geschrieben": "Writing firmware",
 		"Kernel und Startsystem – bitte warten, nicht ausschalten": "Kernel and boot system – please wait, do not switch off",
 		"Geschrieben": "Written",
-		"Größe": "Size"
+		"Größe": "Size",
+		"ext4 – empfohlen": "ext4 – recommended",
+		"exFAT – empfohlen": "exFAT – recommended",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "Everything: permissions per user, storage limit, personal folders, apps.",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "Permissions per user, personal folders, apps; no storage limit per user. Needs more memory.",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Also readable on Windows and macOS. No permissions per user (whoever may write to a share may change everything in it), no storage limit, no personal folders, no apps.",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Also readable on Windows. No permissions per user, no storage limit, no personal folders, no apps.",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, TVs; files over 4 GB.",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "For older devices (car radio, camera); files up to 4 GB.",
+		"Für Windows-Rechner.": "For Windows computers.",
+		"Für Linux und Sicherungen mit Rechten.": "For Linux and backups with permissions.",
+		"DATEISYSTEM": "FILE SYSTEM",
+		"Sicher entfernen": "Safely remove",
+		"Formatieren": "Format",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Name of the new volume (a–z, 0–9, - and _, at most 16 characters) and file system:",
+		"UHRZEIT DER BOX": "TIME ON THE BOX",
+		"Zeitabgleich": "Time sync",
+		"aus dem Internet (NTP)": "from the internet (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP switched on but not running",
+		"von Hand": "by hand",
+		"Zuletzt abgeglichen": "Last synced",
+		"noch nicht": "not yet",
+		"Batterie-Uhr": "Battery clock",
+		"wird nach jedem Abgleich gestellt": "is set after every sync",
+		"Jetzt abgleichen": "Sync now",
+		"ZEITZONE & ZEITSERVER": "TIME ZONE & TIME SERVERS",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "Get the time from the internet automatically (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "TIME SERVERS (ONE PER LINE, AT MOST 5)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "In a home network the router can be the time server too, e.g.",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": ". The time zone applies to logs, schedules and the display.",
+		"UHRZEIT VON HAND STELLEN": "SET THE CLOCK BY HAND",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "While NTP is on, the box sets the clock from the internet again at the next sync. For a box without internet, switch NTP off above.",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "The clock keeps running from there; the box's battery clock is set too.",
+		"Uhrzeit dieses Geräts übernehmen": "Take this device's time",
+		"Uhrzeit setzen": "Set time",
+		"Uhrzeit gesetzt.": "Time set.",
+		"Uhrzeit abgeglichen.": "Time synced.",
+		"Ungültige Uhrzeit.": "Invalid time.",
+		"Eine Firmware im D-Link-Format, z. B. für den": "A firmware in D-Link format, e.g. for the",
+		"Wechsel zurück zu Alt-F": "switch back to Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash.",
+		"Aufgaben": "Tasks",
+		"Zeitgesteuerte Aufgaben": "Scheduled tasks",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "May run scheduled tasks on the box – as its own restricted user, only in its data folder, with a time limit.",
+		"AUFGABE": "TASK",
+		"ZEITPLAN (CRON)": "SCHEDULE (CRON)",
+		"AKTIV": "ACTIVE",
+		"noch nie": "never",
+		"Zeitlimit": "Time limit",
+		"Jetzt ausführen": "Run now",
+		"Aufgabe gestartet.": "Task started.",
+		"Erlauben & installieren": "Allow & install",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "The app is deleted, with its tasks and its data on the box.",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Schedule in cron format (minute hour day month weekday), at most every 5 minutes, e.g.",
+		"= täglich 3:30 Uhr.": "= daily at 3:30."
 	},
 	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"No swap, no app area (packages and app data need ext4 or Btrfs)."
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"$1 swap per disk, no app area (packages and app data need ext4 or Btrfs)."
+		],
 		[
 			"^Wiederherstellen: (.*)$",
 			"Restore: $1"
@@ -1482,6 +1540,90 @@
 		[
 			"^Firmware-Datei: (.*)$",
 			"Firmware file: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 can be unplugged now."
+		],
+		[
+			"^(.+) formatieren$",
+			"Format $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"Erase $1?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – name (letters, digits, spaces, - and _) and file system:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"Everything on $1 is erased. Afterwards it is a $2 drive “$3”."
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) is erased completely and set up again as volume “$4” ($5)."
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"App area on “$1” (unless there is one already)."
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"DATE AND TIME ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"Time: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"Sync: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"Time: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (mirror (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (single drive)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"Error $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"Default: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · max. $2 s"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · TASKS"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"Tasks: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"Task: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"Log: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: permissions"
 		]
 	],
 	"words": [

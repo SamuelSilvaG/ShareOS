@@ -90,6 +90,10 @@ the box for why the web server was not running.
 | 12:45 | App repository with the `.sapp` package format, build, one release per version and the catalog `index.json` via GitHub Actions; Webpad 1.0.0 as the first app with its libraries packaged (works offline). In the firmware: APPS area with store, install with SHA-256 check, own web server port for apps, visibility per user, upload of own packages. |
 | 13:15 | Jan sends photos of the board and the serial console for the docs (EXIF removed) and asks for README and docs to be updated with every release – `docs/RELEASE.md` now lists that. The "Restart now" button only appears once the progress bar is at 100 %. |
 | 13:34 | Question: can ShareOS be flashed from an old D-Link or Alt-F firmware? Jan: "Yes please, a compatible bin from the web interface, the system installed from a USB stick." The ShareOS `.bin` installs the system by itself on the first start – from a USB stick or from GitHub – and System → Firmware can write an Alt-F `.bin` to go back. Tested in the emulator with a simulated flash and damaged and foreign bundles. |
+| 15:02 | Jan reports that messages such as "Last update: installed" and "Setup failed: wipefs sdc failed" cannot be closed. They get an **x** and the box forgets them; erasing a disk now reports the reason. |
+| 15:10 | Jan: safely remove USB sticks, and a choice of **file system** when formatting – sticks and disks. For disks he picks ext4, Btrfs, exFAT and NTFS, for USB exFAT, FAT32, NTFS and ext4. USB drives are mounted when plugged in and get "Safely remove" and "Format". |
+| 16:20 | Jan tests `beta.6`: the APPS area logs admins out – its functions were missing from the access rules; a new CI check makes sure every function is covered. The log was in UTC (musl writes UTC time stamps), now in local time. |
+| 16:30 | Jan asks for **time settings under System** and the **10 most spoken languages**. New page System → Time (time zone, NTP with own servers, clock by hand) and eight new languages translated by Claude, Arabic with a right-to-left layout. |
 
 ## Notable problems solved
 

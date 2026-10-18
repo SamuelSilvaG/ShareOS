@@ -210,6 +210,20 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Benutzer** legt fest, wem die App in „Mein ShareOS“ angezeigt wird (alle, einzelne Benutzer, Gruppen).
 - **Eigene App:** unter Store → *Paket installieren* eine `.sapp`-Datei hochladen (gebaut mit `tools/build.py` aus dem App-Repo). Sie wird als „eigene / ungeprüft“ markiert.
 - **Weitere Quellen** (eigene Kataloge) unter APPS → Quellen.
+- **Geplante Aufgaben** (ab beta.8, für Apps mit der Berechtigung `cron`): Der Installationsdialog nennt die Berechtigungen. **APPS → Installiert → Aufgaben** zeigt Zeitplan, an/aus und den letzten Lauf; *Jetzt ausführen*, danach zeigt *Protokoll* die Ausgabe. Ein geänderter Zeitplan bleibt nach einem App-Update erhalten. Prüfen mit `crontab -l` (Zeile `shareos-apps run-job`) und `ps` (die Aufgabe läuft als Benutzer `app-<id>`).
+
+## 13. Dateisysteme und USB-Laufwerke
+
+- **Speicher → Assistent**: Im Schritt „Name“ gibt es je Laufwerk die Auswahl **ext4** (empfohlen, alle Funktionen), **Btrfs** (ohne Speicherlimit je Benutzer), **exFAT** und **NTFS** (auch an Windows/macOS lesbar; keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps). Die Zusammenfassung zeigt das gewählte Dateisystem. Das gleiche Feld hat „Löschen & formatieren“ an einer Platte.
+- **USB-Stick einstecken**: Er erscheint unter Speicher → Laufwerke als „USB · sdX“ und ist nach wenigen Sekunden unter `/mnt/usb-<name>` eingehängt (FAT32, exFAT, NTFS, ext4, Btrfs). Admins sehen ihn im Dateibrowser.
+- **Sicher entfernen**: schreibt alles weg, hängt aus und schaltet den Stick ab. Danach kommt „sdX kann jetzt abgezogen werden“. Wird ein Stick ohne diesen Knopf abgezogen, räumt ShareOS den Einhängepunkt auf.
+- **Formatieren** (am USB-Laufwerk): Name und Dateisystem wählen – **exFAT** (empfohlen), **FAT32**, **NTFS** oder **ext4**. Der Stick bekommt eine Partition (MBR), damit ihn jeder Rechner, jede Kamera und jeder Fernseher liest.
+- Die Platten in den Schächten werden nie automatisch eingehängt; die USB-Funktionen fassen sie nicht an.
+
+## 14. Zeit und Sprachen
+
+- **System → Zeit:** Die Uhr der Box läuft live in ihrer Zeitzone. Zeitzone ändern, NTP aus- und einschalten, eigene Zeitserver eintragen (z. B. `fritz.box`), *Jetzt abgleichen*. Mit NTP aus lässt sich die Uhr von Hand stellen oder die Zeit des Browsers übernehmen. Protokolle zeigen danach die Ortszeit.
+- **System → Darstellung → Sprache:** 10 Sprachen (Englisch, Deutsch, Chinesisch, Hindi, Spanisch, Französisch, Arabisch, Bengalisch, Portugiesisch, Russisch). Arabisch stellt die Seite auf rechts-nach-links um. Die Übersetzungen außer Deutsch/Englisch sind maschinell – Fehler bitte melden.
 
 ## Zurück zu Alt-F
 
