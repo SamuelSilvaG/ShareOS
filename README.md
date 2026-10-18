@@ -31,29 +31,69 @@ ShareOS updates itself from there.
 ShareOS is built on a current, maintainable base while keeping what made
 Alt-F easy to use: the stock U-Boot and the stock flash layout.
 
-| | Alt-F (legacy) | ShareOS |
-|---|---|---|
-| Build system | buildroot 2009.08 fork | buildroot 2026.02 LTS, `BR2_EXTERNAL` tree |
-| Toolchain | GCC 7.4, uClibc-ng | GCC 14, musl |
-| Kernel | 4.14 (EOL) | 6.18 LTS |
-| Configuration | scattered files, shell CGIs | UCI + ubus/rpcd/ucode |
-| Web interface | shell CGIs | new interface (light/dark, accent colours, tiles or tables), installable as an app |
-| Updates | manual upload | GitHub Releases, checked every 6 hours, verified, with progress – tested on hardware |
-| Shares | Samba 3.6 | ksmbd (SMB 2/3), NFS v4 |
+## Features
 
-What is in it:
+Version in brackets = first release with the feature.
 
-- **Storage:** setup assistant with a choice of ext4, Btrfs, exFAT or NTFS, RAID 1, SMART, disk standby, swap
-- **USB drives:** mounted when plugged in, *safely remove*, formatting with exFAT, FAT32, NTFS or ext4
-- **Shares and users:** SMB/NFS shares with permissions per user and group, storage limit per user, one account for shares, web interface and apps, import of Alt-F users with their passwords
-- **"My ShareOS":** users with web access get their own area (storage, shares, password, look, file browser, Paperless, cloud)
-- **File browser:** admins for all drives, users for their personal folder (per user)
-- **Apps:** store with one-click install from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) (web apps such as Webpad; own apps and catalogs possible), visibility per user
-- **Cloud sync** with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive and more) for the device and per user
-- **Paperless-ngx:** inbox folders per user or shared (e.g. for a scanner)
-- **Firmware:** online updates from GitHub, first installation from the Alt-F/D-Link web interface (system from USB stick or GitHub), back to Alt-F by uploading its `.bin`
-- **System:** first-run assistant, network with automatic rollback, HTTPS (own certificate possible), services and autostart, fan/LEDs, logs, settings backup (JSON, optionally AES-256), status address for widget apps
-- English and German interface (more languages: [docs/TRANSLATING.md](docs/TRANSLATING.md))
+**Storage**
+- Setup wizard: one disk, two separate disks or a mirror (RAID 1, mdadm), optional swap partition per disk
+- File system per volume: **ext4** (recommended: owners, storage limit per user, personal folders, apps), **Btrfs**, **exFAT**, **NTFS** (beta.8)
+- SMART values and health, disk standby, RAID status with sync progress, mount/unmount/remove volumes
+- **USB sticks and disks:** mounted at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), **Safely remove**, **Format** with exFAT, FAT32, NTFS or ext4 (beta.8)
+
+**Shares, users, files**
+- SMB 2/3 (ksmbd) and NFS v4 shares with read/write permissions per user and group, guest access optional
+- Users and groups; one account for shares, web interface and apps; storage limit per user (ext4); import of Alt-F users with their passwords
+- "My ShareOS": users with web access manage their own password, look, shares, storage, cloud and Paperless
+- File browser in the web interface: admins for all drives and USB drives, users for their personal folder (enabled per user); upload/download with progress, drag and drop, large files
+
+**Apps and integrations**
+- APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps): one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
+- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
+- Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
+- Installable as an app (PWA), status address for widget apps (beta.4)
+
+**Firmware and system**
+- Online updates from GitHub Releases: checked every 6 hours, SHA-256 verified, progress for download, check and installation (beta.1)
+- First installation from the Alt-F or D-Link web interface: the `.bin` fetches the system from a USB stick or from GitHub (beta.7)
+- Back to Alt-F (or any D-Link `.bin`) from the firmware page, checked and read back (beta.7)
+- First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP
+- HTTPS with a self-signed certificate that follows name and IP, own certificate possible
+- Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256), messages that can be closed
+- Look: light/dark/system, accent colours, tiles or tables, per user; English and German (more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
+- SSH/SFTP (Dropbear), rescue system in the initramfs (SSH, flash tools)
+
+## D-Link firmware, Alt-F and ShareOS compared (DNS-320L)
+
+| | D-Link firmware (ShareCenter) | Alt-F | ShareOS |
+|---|---|---|---|
+| Last release | 1.11 (last version listed for CVE-2024-3273); product end of life | 1.0 (Oct 2017); trunk r3935 (basis of ShareOS) | 0.1.0 betas (2026), updated continuously |
+| Linux kernel | 2.6.31 ¹ | 3.10.32 (0.1RC4, 2014), 4.4.86 (1.0), 4.14.268 (trunk) | **6.18 LTS** |
+| Boot loader | Marvell U-Boot 1.1.4 | stock U-Boot (unchanged) | stock U-Boot (unchanged, never written) |
+| Build system / toolchain | D-Link GPL sources, uClibc ¹ | buildroot 2009.08 fork, GCC 7.4, uClibc-ng 1.0.44 (trunk) | buildroot 2026.02 LTS (`BR2_EXTERNAL`), GCC 14.3, musl 1.2.6 |
+| System layout | own image formats | squashfs/jffs2, packages in the flash or on disk | squashfs in UBI + UBIFS overlay for settings and packages |
+| SMB | Samba 3.x, SMB1 ¹ | Samba 3.6.25: SMB1 and SMB2 (1.0); Samba 4.15 as an optional package | ksmbd (in the kernel): SMB 2.1/3 |
+| NFS | ¹ | nfs-utils | NFS v4 (nfs-utils 2.8) |
+| SSH | none (only via fun_plug workarounds) | Dropbear (OpenSSH as a package) | Dropbear 2026.91, SFTP |
+| Web interface | ShareCenter UI | BusyBox httpd + shell CGIs | uhttpd + ubus/rpcd (ucode), new interface, light/dark, per user |
+| Configuration | own config files | many scattered files | UCI (OpenWrt style), backup/restore as JSON |
+| Updates | manual upload of a `.bin` | manual upload of a `.bin` | online from GitHub Releases, verified, every 6 h checked |
+| File systems | ext3/ext4; FAT32/NTFS via FUSE ¹ | ext2/3/4, FAT, NTFS (ntfs-3g), btrfs, LVM2 | ext4, Btrfs, exFAT, NTFS (kernel ntfs3), FAT32 |
+| RAID | own metadata format ¹ | mdadm (RAID 0/1/5, JBOD), LVM | mdadm RAID 1 (mirror) |
+| USB drives | mounted ¹ | mounted on plug-in | mounted on plug-in, safely remove, format (4 file systems) |
+| Users and rights | users, groups, quota ¹ | users, groups, quota | users, groups, rights per share, storage limit per user, users with their own web area |
+| Extensions | add-ons (discontinued) | ipkg packages with a web page | app store (ShareOS-Apps), web apps on their own port |
+| Cloud / documents | – | – (single packages) | rclone cloud sync, Paperless-ngx inbox |
+| HTTPS | ¹ | self-signed or Let's Encrypt | self-signed (follows name/IP) or own certificate |
+| Security | unpatched remote code execution (CVE-2024-3273, CVE-2024-3274); D-Link advises to retire the devices | last release 2017; old kernel and Samba | current kernel and libraries, updates via GitHub |
+| Install | factory | `.bin` via the D-Link/Alt-F web page | `.bin` via the D-Link/Alt-F web page + system from USB stick/GitHub, or serial console; back to Alt-F from the web page |
+
+¹ Details of the D-Link firmware are taken from vendor pages and community
+reports and were not checked on a box. Alt-F data from its release notes
+(`legacy/alt-f/NEWS`) and build configuration in this repository. Sources:
+[CVE-2024-3273](https://cve.circl.lu/vuln/cve-2024-3273),
+[D-Link storage security notice](https://www.dlink.com/de/de/support/storagesecurity),
+[DNS-320L boot loader banners](https://hackaday.io/project/179084-rebuilding-the-linux-for-dns-320l-nas).
 
 **Installing:** flash the ShareOS `.bin` from the Alt-F or D-Link firmware
 page; ShareOS then installs its system from a USB stick or from GitHub by
