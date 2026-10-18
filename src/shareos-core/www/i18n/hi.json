@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "अमान्य समय।",
 		"Eine Firmware im D-Link-Format, z. B. für den": "D-Link प्रारूप में फ़र्मवेयर, जैसे",
 		"Wechsel zurück zu Alt-F": "Alt-F पर लौटने",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "के लिए। कर्नेल और बूट सिस्टम लिखे जाते हैं; ShareOS का सिस्टम और सेटिंग्स फ़्लैश में रहते हैं।"
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "के लिए। कर्नेल और बूट सिस्टम लिखे जाते हैं; ShareOS का सिस्टम और सेटिंग्स फ़्लैश में रहते हैं।",
+		"Aufgaben": "कार्य",
+		"Zeitgesteuerte Aufgaben": "निर्धारित कार्य",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "डिवाइस पर निर्धारित कार्य चला सकता है – अपने अलग सीमित उपयोगकर्ता के रूप में, केवल अपने डेटा फ़ोल्डर में, समय सीमा के साथ।",
+		"AUFGABE": "कार्य",
+		"ZEITPLAN (CRON)": "समय-सारणी (CRON)",
+		"AKTIV": "सक्रिय",
+		"noch nie": "कभी नहीं",
+		"Zeitlimit": "समय सीमा",
+		"Jetzt ausführen": "अभी चलाएँ",
+		"Aufgabe gestartet.": "कार्य शुरू हुआ।",
+		"Erlauben & installieren": "अनुमति दें और इंस्टॉल करें",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "ऐप अपने कार्यों और डिवाइस पर अपने डेटा सहित मिटा दिया जाता है।",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "cron प्रारूप में समय-सारणी (मिनट घंटा दिन महीना सप्ताह_दिन), अधिकतम हर 5 मिनट, जैसे",
+		"= täglich 3:30 Uhr.": "= रोज़ 3:30 बजे।"
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (अकेली ड्राइव)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"त्रुटि $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"डिफ़ॉल्ट: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · अधिकतम $2 सेकंड"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · कार्य"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"कार्य: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"कार्य: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"लॉग: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: अनुमतियाँ"
 		]
 	],
 	"words": [

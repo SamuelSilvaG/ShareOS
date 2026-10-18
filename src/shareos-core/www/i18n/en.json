@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "Invalid time.",
 		"Eine Firmware im D-Link-Format, z. B. für den": "A firmware in D-Link format, e.g. for the",
 		"Wechsel zurück zu Alt-F": "switch back to Alt-F",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash."
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash.",
+		"Aufgaben": "Tasks",
+		"Zeitgesteuerte Aufgaben": "Scheduled tasks",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "May run scheduled tasks on the box – as its own restricted user, only in its data folder, with a time limit.",
+		"AUFGABE": "TASK",
+		"ZEITPLAN (CRON)": "SCHEDULE (CRON)",
+		"AKTIV": "ACTIVE",
+		"noch nie": "never",
+		"Zeitlimit": "Time limit",
+		"Jetzt ausführen": "Run now",
+		"Aufgabe gestartet.": "Task started.",
+		"Erlauben & installieren": "Allow & install",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "The app is deleted, with its tasks and its data on the box.",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Schedule in cron format (minute hour day month weekday), at most every 5 minutes, e.g.",
+		"= täglich 3:30 Uhr.": "= daily at 3:30."
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (single drive)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"Error $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"Default: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · max. $2 s"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · TASKS"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"Tasks: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"Task: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"Log: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: permissions"
 		]
 	],
 	"words": [

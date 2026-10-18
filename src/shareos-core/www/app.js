@@ -3362,6 +3362,7 @@ function appInstalled() {
 	const A = S.apps, list = A.installed.apps || [], cat = {};
 	for (const c of A.catalog?.apps || []) cat[c.id] = c;
 	if (A.edit) return appUsersEditor(A.edit);
+	if (A.jobs) return appJobsEditor(A.jobs);
 	const upd = (a) => cat[a.id]?.update_available ? cat[a.id] : null;
 	const t = isTable('apps');
 	return html`<section class="sec">${secHead('apps', 'INSTALLIERTE APPS', list.length ? `${list.length}` : '')}
@@ -3375,6 +3376,7 @@ function appInstalled() {
 			<div class="info"><div class="name">${a.name} <span class="mut" style="font-size:12px">${a.version}</span></div>
 				<div class="desc">${txtOf(a.description)}</div>
 				<div class="desc" style="margin-top:6px"><span class="tag ${a.verified ? 'ok' : 'warn'}">${a.verified ? 'aus dem Store' : 'eigene / ungeprüft'}</span> ${upd(a) ? html`<span class="tag warn">Update ${upd(a).latest}</span>` : ''}</div>
+				${(a.permissions || []).length ? html`<div class="desc" style="margin-top:6px">${a.permissions.map((p) => html`<span class="tag" title="${PERM_TXT[p] || p}">${PERM_TAG[p] || p}</span> `)}</div>` : ''}
 				<div class="ip">${a.publisher} · sichtbar für ${appUsersTxt(a)}</div>
 				<div class="acts" style="margin-top:10px">${appActions(a, upd(a))}</div></div></div>`)}</div>`}
 		<p class="note">Web-Apps laufen auf einem eigenen Port (${A.installed.port}${A.installed.https ? ' / ' + A.installed.https_port + ' für HTTPS' : ''}) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.</p>
@@ -3385,8 +3387,34 @@ function appActions(a, upd) {
 	const busy = !!(S.apps.job && JOB_TXT[S.apps.job.state]);
 	return html`<a class="btn sm" href="${appUrl(a)}" target="_blank" rel="noopener">Öffnen ↗</a>
 		${upd ? html`<button class="btn sm primary" type="button" data-act="app-install" data-id="${a.id}" data-v="${upd.latest}" ${busy ? 'disabled' : ''}>${svg(I.dl)}Aktualisieren</button>` : ''}
+		${(a.jobs || []).length ? html`<button class="btn sm ghost" type="button" data-act="app-jobs" data-id="${a.id}">${svg(I.clock)}Aufgaben</button>` : ''}
 		<button class="btn sm ghost" type="button" data-act="app-users" data-id="${a.id}">${svg(I.users)}Benutzer</button>
 		<button class="btn sm ghost" type="button" data-act="app-remove" data-id="${a.id}">${svg(I.trash)}Entfernen</button>`;
+}
+
+// permissions an app can ask for (app.json "permissions")
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben' };
+const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.' };
+
+function appJobsEditor(id) {
+	const a = (S.apps.installed.apps || []).find((x) => x.id === id);
+	if (!a) { S.apps.jobs = null; return ''; }
+	const last = (j) => !j.last ? html`<span class="mut">noch nie</span>`
+		: html`${fmtTime(j.last.time)} · ${j.last.timeout ? html`<span class="tag warn">Zeitlimit</span>` : j.last.rc === 0 ? html`<span class="tag ok">OK</span>` : html`<span class="tag err">Fehler ${j.last.rc}</span>`} · ${j.last.duration} s`;
+	return html`<section class="sec"><form class="panel" id="f-appjobs" style="border-color:var(--dim);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">${a.name.toUpperCase()} · AUFGABEN</span><button class="btn sm ghost ml" type="button" data-act="app-jobs-cancel">Schließen</button></div>
+		<div class="tw"><table class="t" style="min-width:760px"><thead><tr><th>AUFGABE</th><th>ZEITPLAN (CRON)</th><th>AKTIV</th><th>ZULETZT</th><th></th></tr></thead><tbody>
+			${a.jobs.map((j) => html`<tr data-job="${j.id}"><td><b>${j.name}</b><div class="mut" style="font-size:12px">${j.command} · max. ${j.timeout} s</div></td>
+				<td><label class="f" style="margin:0;width:160px"><input class="job-sched" value="${j.schedule}" spellcheck="false" pattern="[0-9*/,\\-]+( [0-9*/,\\-]+){4}"></label>${j.schedule !== j.default_schedule ? html`<div class="mut" style="font-size:11px">Standard: ${j.default_schedule}</div>` : ''}</td>
+				<td><label class="chk"><input type="checkbox" class="job-on"${j.enabled ? raw(' checked') : ''}></label></td>
+				<td style="font-size:12px">${j.running ? html`<span class="tag">läuft</span>` : last(j)}</td>
+				<td style="white-space:nowrap"><button class="btn sm" type="button" data-act="app-job-run" data-id="${a.id}" data-job="${j.id}" ${j.running ? 'disabled' : ''}>Jetzt ausführen</button>
+					<button class="btn sm ghost" type="button" data-act="app-job-log" data-id="${a.id}" data-job="${j.id}">Protokoll</button></td></tr>`)}
+		</tbody></table></div>
+		${S.apps.jobLog ? html`<div class="pt" style="margin:14px 0 6px">PROTOKOLL · ${S.apps.jobLog.job}</div><pre class="logbox" style="max-height:260px">${S.apps.jobLog.log || '(leer)'}</pre>` : ''}
+		<p class="note"><span>${PERM_TXT.cron}</span> Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B. <code>30 3 * * *</code> = täglich 3:30 Uhr.</p>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
 }
 
 function appUsersEditor(id) {
@@ -3465,6 +3493,15 @@ function appsAfter() {
 		try { await rpc('shareos.apps', 'store_set', { channel: e.target.value }); S.apps.store.channel = e.target.value; refreshCatalog(true); }
 		catch (err) { toast('Store: ' + err.message, true); }
 	});
+	$('#f-appjobs')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const id = S.apps.jobs;
+		try {
+			for (const tr of e.target.querySelectorAll('tr[data-job]'))
+				await rpc('shareos.apps', 'job_set', { id, job: tr.dataset.job, schedule: $('.job-sched', tr).value.trim(), enabled: $('.job-on', tr).checked });
+			toast('Gespeichert.'); loadApps(['installed']);
+		} catch (err) { toast('Aufgaben: ' + err.message, true); }
+	});
 	$('#f-appusers input[name=all]')?.addEventListener('change', (e) => { $('#app-users-list').hidden = e.target.checked; });
 	$('#f-appusers')?.addEventListener('submit', async (e) => {
 		e.preventDefault();
@@ -3498,6 +3535,10 @@ function appsAfter() {
 Object.assign(ACTIONS, {
 	'app-refresh'() { refreshCatalog(); },
 	async 'app-install'(el) {
+		const c = (S.apps.catalog?.apps || []).find((x) => x.id === el.dataset.id);
+		const v = c?.versions.find((x) => x.version === el.dataset.v) || c?.versions[0];
+		const perms = v?.permissions || [];
+		if (perms.length && !await confirmDlg(`${c.name}: Berechtigungen`, perms.map((p) => PERM_TXT[p] || p).join(' '), 'Erlauben & installieren')) return;
 		try {
 			await rpc('shareos.apps', 'install', { id: el.dataset.id, version: el.dataset.v });
 			S.apps.job = { state: 'downloading', id: el.dataset.id };
@@ -3507,12 +3548,26 @@ Object.assign(ACTIONS, {
 	},
 	async 'app-remove'(el) {
 		const a = (S.apps.installed.apps || []).find((x) => x.id === el.dataset.id);
-		if (!await confirmDlg(`${a?.name || el.dataset.id} entfernen?`, 'Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.', 'Entfernen', true)) return;
+		if (!await confirmDlg(`${a?.name || el.dataset.id} entfernen?`, (a?.jobs || []).length ? 'Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.' : 'Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.', 'Entfernen', true)) return;
 		try { await rpc('shareos.apps', 'remove', { id: el.dataset.id }); toast('Entfernt.'); loadApps(['installed', 'catalog']); }
 		catch (e) { toast('Entfernen: ' + e.message, true); }
 	},
 	'app-users'(el) { S.apps.edit = el.dataset.id; if (!S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; renderMain(); }).catch(() => {}); renderMain(); window.scrollTo(0, 0); },
 	'app-users-cancel'() { S.apps.edit = null; renderMain(); },
+	'app-jobs'(el) { S.apps.jobs = el.dataset.id; S.apps.jobLog = null; renderMain(); window.scrollTo(0, 0); },
+	'app-jobs-cancel'() { S.apps.jobs = null; S.apps.jobLog = null; renderMain(); },
+	async 'app-job-run'(el) {
+		el.disabled = true;
+		try {
+			await rpc('shareos.apps', 'job_run', { id: el.dataset.id, job: el.dataset.job });
+			toast('Aufgabe gestartet.');
+			setTimeout(() => loadApps(['installed']), 1500);
+		} catch (e) { toast('Aufgabe: ' + e.message, true); el.disabled = false; }
+	},
+	async 'app-job-log'(el) {
+		try { const r = await rpc('shareos.apps', 'job_log', { id: el.dataset.id, job: el.dataset.job }); S.apps.jobLog = { job: el.dataset.job, log: r.log }; renderMain(); }
+		catch (e) { toast('Protokoll: ' + e.message, true); }
+	},
 	async 'app-src-del'(el) {
 		const sources = S.apps.store.sources.filter((_, i) => i !== +el.dataset.i);
 		if (!await confirmDlg('Quelle entfernen?', 'Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.', 'Entfernen', true)) return;

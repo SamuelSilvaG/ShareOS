@@ -121,5 +121,57 @@ check "users stay after reinstalling" "run 'shareos-apps list' | js \"d['apps'][
 check "remove" "rpc shareos.apps remove '{\"id\":\"hello\"}' | js \"d['ok']\" && [ ! -e $R/www-apps/hello ] && ! run 'uci -q get apps.app_hello' | grep -q app"
 check "invalid id rejected" "rpc shareos.apps remove '{\"id\":\"../etc\"}' | grep -q 'invalid'"
 
+# --- scheduled tasks (permission "cron") ---
+mkjob() {   # dir id [python dict update for the manifest]
+	mkapp "$1" "$2" 1.0.0
+	mkdir -p "$1/files/jobs"
+	cat > "$1/files/jobs/tick.sh" <<'SH'
+echo "user=$(id -un) dir=$(pwd) app=$APP_ID"
+date +%s >> "$APP_DATA/ticks"
+touch "$APP_DIR/hack" 2>/dev/null && echo HACKED || echo denied
+cat /etc/shadow >/dev/null 2>&1 && echo SHADOW || echo noshadow
+SH
+	printf 'sleep 30\n' > "$1/files/jobs/slow.sh"
+	python3 - "$1/app.json" "${3:-{\}}" <<'PY'
+import json, sys
+f, upd = sys.argv[1], sys.argv[2]
+d = json.load(open(f))
+d.update({"permissions": ["cron"], "jobs": [{"id": "tick", "name": "Tick", "command": "jobs/tick.sh", "schedule": "*/10 * * * *", "timeout": 60},
+                                             {"id": "slow", "name": "Slow", "command": "jobs/slow.sh", "schedule": "0 4 * * *", "timeout": 10}]})
+d.update(eval(upd))
+json.dump(d, open(f, "w"))
+PY
+}
+mkjob $T/j1 ticker; pack $T/j1 $P/ticker.sapp
+mkjob $T/j2 noperm '{"permissions": []}'; pack $T/j2 $P/noperm.sapp
+mkjob $T/j3 rootish '{"permissions": ["cron", "root"]}'; pack $T/j3 $P/rootish.sapp
+mkjob $T/j4 hasty '{"jobs": [{"id": "x", "command": "jobs/tick.sh", "schedule": "* * * * *"}]}'; pack $T/j4 $P/hasty.sapp
+mkjob $T/j5 nofile '{"jobs": [{"id": "x", "command": "jobs/missing.sh", "schedule": "0 * * * *"}]}'; pack $T/j5 $P/nofile.sapp
+mkjob $T/j6 ticker '{"version": "1.1.0", "jobs": [{"id": "tick", "name": "Tick", "command": "jobs/tick.sh", "schedule": "*/20 * * * *"}]}'; pack $T/j6 $P/ticker-1.1.sapp
+check "jobs without the permission cron rejected" "run 'shareos-apps install-file /tmp/pkg/noperm.sapp' | grep -q 'need the permission'"
+check "unknown permission rejected (newer ShareOS needed)" "run 'shareos-apps install-file /tmp/pkg/rootish.sapp' | grep -q 'not known to this ShareOS'"
+check "schedule more often than every 5 minutes rejected" "run 'shareos-apps install-file /tmp/pkg/hasty.sapp' | grep -q 'every 5 minutes'"
+check "job command missing in the package rejected" "run 'shareos-apps install-file /tmp/pkg/nofile.sapp' | grep -q 'missing in the package'"
+o=$(run 'shareos-apps install-file /tmp/pkg/ticker.sapp')
+check "app with jobs installed: own user and data folder" "echo '$o' | js \"d['ok']\" && grep -q '^app-ticker:' $R/etc/passwd && [ \"\$(run 'stat -c %U /var/lib/shareos-apps/ticker')\" = app-ticker ]"
+check "jobs listed with schedule and permission" "run 'shareos-apps list' | js \"[ (j['id'], j['schedule'], j['enabled']) for a in d['apps'] if a['id']=='ticker' for j in a['jobs']]==[('tick','*/10 * * * *',True),('slow','0 4 * * *',True)] and 'cron' in [a for a in d['apps'] if a['id']=='ticker'][0]['permissions']\""
+check "cron entries written" "grep -q '^\*/10 \* \* \* \* /usr/sbin/shareos-apps run-job ticker tick' $R/etc/crontabs/root && grep -q 'run-job ticker slow' $R/etc/crontabs/root"
+o=$(run 'shareos-apps run-job ticker tick')
+L=$(run 'shareos-apps job-log ticker tick')
+check "job runs as the app user in its data folder" "echo '$o' | js \"d['rc']==0\" && echo '$L' | grep -q 'user=app-ticker dir=/var/lib/shareos-apps/ticker app=ticker' && [ -s $R/var/lib/shareos-apps/ticker/ticks ]"
+check "job cannot change the app files or read /etc/shadow" "echo '$L' | grep -q denied && echo '$L' | grep -q noshadow"
+o=$(run 'shareos-apps run-job ticker slow')
+check "time limit stops a job" "echo '$o' | js \"d['timeout'] and d['duration']<25\""
+run 'ubus call shareos.apps job_set "{\"id\":\"ticker\",\"job\":\"tick\",\"schedule\":\"* * * * *\"}"' > $T/js1
+check "rpc: too frequent schedule rejected" "grep -q 'every 5 minutes' $T/js1"
+rpc_ok=$(run 'ubus call shareos.apps job_set "{\"id\":\"ticker\",\"job\":\"tick\",\"schedule\":\"15 2 * * *\"}"')
+check "rpc: own schedule stored" "echo '$rpc_ok' | grep -q ok && grep -q '^15 2 \* \* \* /usr/sbin/shareos-apps run-job ticker tick' $R/etc/crontabs/root"
+run 'ubus call shareos.apps job_set "{\"id\":\"ticker\",\"job\":\"slow\",\"enabled\":false}"' >/dev/null
+check "rpc: job switched off, cron entry gone" "! grep -q 'run-job ticker slow' $R/etc/crontabs/root"
+run 'shareos-apps install-file /tmp/pkg/ticker-1.1.sapp' >/dev/null
+check "update keeps the own schedule, removed jobs disappear" "run 'shareos-apps list' | js \"[(j['id'], j['schedule']) for a in d['apps'] if a['id']=='ticker' for j in a['jobs']]==[('tick','15 2 * * *')]\" && ! run 'uci -q get apps.job_ticker__slow' | grep -q appjob"
+run 'shareos-apps remove ticker' >/dev/null
+check "remove: user, data, jobs and cron entries gone" "! grep -q '^app-ticker:' $R/etc/passwd && ! grep -q '^app-ticker:' $R/etc/group && [ ! -e $R/var/lib/shareos-apps/ticker ] && ! run 'uci show apps' | grep -q appjob && ! grep -q 'run-job ticker' $R/etc/crontabs/root"
+
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

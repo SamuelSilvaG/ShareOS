@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "Hora inválida.",
 		"Eine Firmware im D-Link-Format, z. B. für den": "Um firmware no formato D-Link, por ex. para",
 		"Wechsel zurück zu Alt-F": "voltar ao Alt-F",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". São gravados o kernel e o sistema de inicialização; o sistema e as configurações do ShareOS ficam na flash."
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". São gravados o kernel e o sistema de inicialização; o sistema e as configurações do ShareOS ficam na flash.",
+		"Aufgaben": "Tarefas",
+		"Zeitgesteuerte Aufgaben": "Tarefas agendadas",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "Pode executar tarefas agendadas na caixa – como usuário próprio restrito, só na sua pasta de dados, com limite de tempo.",
+		"AUFGABE": "TAREFA",
+		"ZEITPLAN (CRON)": "AGENDA (CRON)",
+		"AKTIV": "ATIVA",
+		"noch nie": "nunca",
+		"Zeitlimit": "Limite de tempo",
+		"Jetzt ausführen": "Executar agora",
+		"Aufgabe gestartet.": "Tarefa iniciada.",
+		"Erlauben & installieren": "Permitir e instalar",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "O app é excluído, com suas tarefas e seus dados na caixa.",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Agenda no formato cron (minuto hora dia mês dia_semana), no máximo a cada 5 minutos, por ex.",
+		"= täglich 3:30 Uhr.": "= diariamente às 3:30."
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (unidade única)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"Erro $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"Padrão: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · máx. $2 s"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · TAREFAS"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"Tarefas: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"Tarefa: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"Log: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: permissões"
 		]
 	],
 	"words": [

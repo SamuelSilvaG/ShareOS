@@ -1070,3 +1070,25 @@ W35	moitié
 W36	Ventilateur :
 W37	Matériel :
 W38	groupe
+E854	Tâches
+E855	Tâches planifiées
+E856	Peut exécuter des tâches planifiées sur le boîtier – sous son propre utilisateur restreint, seulement dans son dossier de données, avec une limite de temps.
+E857	TÂCHE
+E858	PLANIFICATION (CRON)
+E859	ACTIVE
+E860	jamais
+E861	Limite de temps
+E862	Exécuter maintenant
+E863	Tâche lancée.
+E864	Autoriser et installer
+E865	L'app est supprimée, avec ses tâches et ses données sur le boîtier.
+E866	Planification au format cron (minute heure jour mois jour_semaine), au plus toutes les 5 minutes, p. ex.
+E867	= tous les jours à 3:30.
+P180	Erreur $1
+P181	Par défaut : $1
+P182	$1 · max. $2 s
+P183	$1 · TÂCHES
+P184	Tâches : $1
+P185	Tâche : $1
+P186	Journal : $1
+P187	$1 : autorisations

@@ -12,6 +12,7 @@ pre-releases for test devices only.
 - **System → Time:** time zone, NTP on/off with own time servers (e.g. the router), *sync now*, set the clock by hand (or take the time of the browser); the battery clock of the box is set too.
 - Page addresses in English (`#/storage`, `#/shares/users`, `#/system/time` …); old German links and app shortcuts are redirected.
 - **10 languages:** English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese and Russian. Translations other than English/German by AI – corrections welcome.
+- **Scheduled tasks for apps** (permission `cron`): an app can declare tasks in its `app.json` (script from the package, schedule, time limit). They run as the app's own restricted user (`app-<id>`), only in its data folder, at most every 5 minutes and up to 5 per app. The install dialog lists the permissions; *Apps → Tasks* changes the schedule, switches tasks on/off, runs them now and shows the last log.
 
 ## 0.1.0-beta.7
 

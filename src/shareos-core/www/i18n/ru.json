@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "Недопустимое время.",
 		"Eine Firmware im D-Link-Format, z. B. für den": "Прошивка в формате D-Link, например для",
 		"Wechsel zurück zu Alt-F": "возврата к Alt-F",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Записываются ядро и загрузочная система; система и настройки ShareOS остаются во flash."
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Записываются ядро и загрузочная система; система и настройки ShareOS остаются во flash.",
+		"Aufgaben": "Задачи",
+		"Zeitgesteuerte Aufgaben": "Задачи по расписанию",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "Может выполнять задачи по расписанию на устройстве – от имени своего ограниченного пользователя, только в своей папке данных, с ограничением времени.",
+		"AUFGABE": "ЗАДАЧА",
+		"ZEITPLAN (CRON)": "РАСПИСАНИЕ (CRON)",
+		"AKTIV": "АКТИВНА",
+		"noch nie": "никогда",
+		"Zeitlimit": "Лимит времени",
+		"Jetzt ausführen": "Выполнить сейчас",
+		"Aufgabe gestartet.": "Задача запущена.",
+		"Erlauben & installieren": "Разрешить и установить",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "Приложение удаляется вместе с его задачами и данными на устройстве.",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Расписание в формате cron (минута час день месяц день_недели), не чаще чем раз в 5 минут, например",
+		"= täglich 3:30 Uhr.": "= ежедневно в 3:30."
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (отдельный диск)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"Ошибка $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"По умолчанию: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · макс. $2 с"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · ЗАДАЧИ"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"Задачи: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"Задача: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"Журнал: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: разрешения"
 		]
 	],
 	"words": [

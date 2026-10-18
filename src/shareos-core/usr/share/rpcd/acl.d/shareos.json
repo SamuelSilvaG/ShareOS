@@ -84,7 +84,8 @@
 					"installed",
 					"catalog",
 					"status",
-					"store_get"
+					"store_get",
+					"job_log"
 				],
 				"shareos.time": [
 					"get"
@@ -221,7 +222,9 @@
 					"install_upload",
 					"remove",
 					"set",
-					"store_set"
+					"store_set",
+					"job_set",
+					"job_run"
 				],
 				"shareos.time": [
 					"set",

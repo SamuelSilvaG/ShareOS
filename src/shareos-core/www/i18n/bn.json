@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "অবৈধ সময়।",
 		"Eine Firmware im D-Link-Format, z. B. für den": "D-Link ফরম্যাটে একটি ফার্মওয়্যার, যেমন",
 		"Wechsel zurück zu Alt-F": "Alt-F-এ ফেরার",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "জন্য। কার্নেল ও বুট সিস্টেম লেখা হয়; ShareOS-এর সিস্টেম ও সেটিংস ফ্ল্যাশে থাকে।"
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "জন্য। কার্নেল ও বুট সিস্টেম লেখা হয়; ShareOS-এর সিস্টেম ও সেটিংস ফ্ল্যাশে থাকে।",
+		"Aufgaben": "কাজ",
+		"Zeitgesteuerte Aufgaben": "নির্ধারিত কাজ",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "ডিভাইসে নির্ধারিত কাজ চালাতে পারে – নিজস্ব সীমিত ব্যবহারকারী হিসেবে, শুধু নিজের ডেটা ফোল্ডারে, সময়সীমাসহ।",
+		"AUFGABE": "কাজ",
+		"ZEITPLAN (CRON)": "সময়সূচি (CRON)",
+		"AKTIV": "সক্রিয়",
+		"noch nie": "কখনো না",
+		"Zeitlimit": "সময়সীমা",
+		"Jetzt ausführen": "এখনই চালান",
+		"Aufgabe gestartet.": "কাজ শুরু হয়েছে।",
+		"Erlauben & installieren": "অনুমতি দিয়ে ইনস্টল করুন",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "অ্যাপটি এর কাজ ও ডিভাইসের ডেটাসহ মুছে ফেলা হয়।",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "cron ফরম্যাটে সময়সূচি (মিনিট ঘণ্টা দিন মাস সপ্তাহের_দিন), সর্বোচ্চ প্রতি ৫ মিনিটে, যেমন",
+		"= täglich 3:30 Uhr.": "= প্রতিদিন ৩:৩০-এ।"
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (একক ড্রাইভ)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"ত্রুটি $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"ডিফল্ট: $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · সর্বোচ্চ $2 সেকেন্ড"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · কাজ"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"কাজ: $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"কাজ: $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"লগ: $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1: অনুমতি"
 		]
 	],
 	"words": [

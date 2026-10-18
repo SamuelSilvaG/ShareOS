@@ -49,6 +49,7 @@ Version in brackets = first release with the feature.
 
 **Apps and integrations**
 - APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps): one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
+- App permissions: scheduled tasks (`cron`) as a restricted app user, schedule editable in the interface (beta.8)
 - Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)

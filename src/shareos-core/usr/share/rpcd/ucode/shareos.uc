@@ -2448,6 +2448,47 @@ return {
 			}
 		},
 
+		// scheduled task of an app: schedule (cron time, at most every 5 min) and on/off
+		job_set: {
+			args: { id: '', job: '', schedule: '', enabled: true },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || !match(a.job ?? '', /^[a-z][a-z0-9-]{0,23}$/)) return { error: 'invalid app or job' };
+				let s = 'job_' + replace(a.id, '-', '_') + '__' + replace(a.job, '-', '_');
+				if (c.get('apps', s) != 'appjob') return { error: 'unknown job' };
+				if (a.schedule != null && a.schedule != '') {
+					let min = split(a.schedule, ' ')[0], m = match(min, /^\*\/([0-9]+)$/);
+					if (!match(a.schedule, /^[0-9*\/,-]+( [0-9*\/,-]+){4}$/) || min == '*' || (m && +m[1] < 5))
+						return { error: 'invalid schedule (cron time, at most every 5 minutes)' };
+					if (a.schedule != c.get('apps', s, 'schedule')) { c.set('apps', s, 'schedule', a.schedule); c.set('apps', s, 'custom', '1'); }
+				}
+				if (a.enabled != null) c.set('apps', s, 'enabled', a.enabled ? '1' : '0');
+				c.commit('apps');
+				system('/usr/sbin/shareos-cron sync >/dev/null 2>&1');
+				return { ok: true };
+			}
+		},
+
+		// run a scheduled task now (in the background)
+		job_run: {
+			args: { id: '', job: '' },
+			call: function(req) {
+				let a = req.args;
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || !match(a.job ?? '', /^[a-z][a-z0-9-]{0,23}$/)) return { error: 'invalid app or job' };
+				system('start-stop-daemon -S -b -x ' + APPS_TOOL + ' -- run-job ' + shq(a.id) + ' ' + shq(a.job));
+				return { started: true };
+			}
+		},
+
+		job_log: {
+			args: { id: '', job: '' },
+			call: function(req) {
+				let a = req.args;
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || !match(a.job ?? '', /^[a-z][a-z0-9-]{0,23}$/)) return { error: 'invalid app or job' };
+				return apps_json([ 'job-log', a.id, a.job ]);
+			}
+		},
+
 		store_get: {
 			call: function() {
 				let c = cursor(), src = c.get('apps', 'store', 'source');

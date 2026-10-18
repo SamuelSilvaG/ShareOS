@@ -1070,3 +1070,25 @@ W35	metade
 W36	Ventoinha:
 W37	Hardware:
 W38	grupo
+E854	Tarefas
+E855	Tarefas agendadas
+E856	Pode executar tarefas agendadas na caixa – como usuário próprio restrito, só na sua pasta de dados, com limite de tempo.
+E857	TAREFA
+E858	AGENDA (CRON)
+E859	ATIVA
+E860	nunca
+E861	Limite de tempo
+E862	Executar agora
+E863	Tarefa iniciada.
+E864	Permitir e instalar
+E865	O app é excluído, com suas tarefas e seus dados na caixa.
+E866	Agenda no formato cron (minuto hora dia mês dia_semana), no máximo a cada 5 minutos, por ex.
+E867	= diariamente às 3:30.
+P180	Erro $1
+P181	Padrão: $1
+P182	$1 · máx. $2 s
+P183	$1 · TAREFAS
+P184	Tarefas: $1
+P185	Tarefa: $1
+P186	Log: $1
+P187	$1: permissões

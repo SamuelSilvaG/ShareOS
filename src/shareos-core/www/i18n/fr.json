@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "Heure invalide.",
 		"Eine Firmware im D-Link-Format, z. B. für den": "Un firmware au format D-Link, p. ex. pour le",
 		"Wechsel zurück zu Alt-F": "retour à Alt-F",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Le noyau et le système de démarrage sont écrits ; le système et les réglages de ShareOS restent dans la flash."
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Le noyau et le système de démarrage sont écrits ; le système et les réglages de ShareOS restent dans la flash.",
+		"Aufgaben": "Tâches",
+		"Zeitgesteuerte Aufgaben": "Tâches planifiées",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "Peut exécuter des tâches planifiées sur le boîtier – sous son propre utilisateur restreint, seulement dans son dossier de données, avec une limite de temps.",
+		"AUFGABE": "TÂCHE",
+		"ZEITPLAN (CRON)": "PLANIFICATION (CRON)",
+		"AKTIV": "ACTIVE",
+		"noch nie": "jamais",
+		"Zeitlimit": "Limite de temps",
+		"Jetzt ausführen": "Exécuter maintenant",
+		"Aufgabe gestartet.": "Tâche lancée.",
+		"Erlauben & installieren": "Autoriser et installer",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "L'app est supprimée, avec ses tâches et ses données sur le boîtier.",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Planification au format cron (minute heure jour mois jour_semaine), au plus toutes les 5 minutes, p. ex.",
+		"= täglich 3:30 Uhr.": "= tous les jours à 3:30."
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (disque unique)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"Erreur $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"Par défaut : $1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · max. $2 s"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · TÂCHES"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"Tâches : $1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"Tâche : $1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"Journal : $1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1 : autorisations"
 		]
 	],
 	"words": [

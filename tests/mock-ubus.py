@@ -214,7 +214,14 @@ def files_call(user, method, args):
     return {'error': 'unknown'}
 
 
-APPS = {'installed': {}, 'job': None, 'channel': 'stable',
+APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Backup', 'version': '0.3.0', 'publisher': 'Jan', 'description': {'de': 'Sichert Notizen jede Nacht', 'en': 'backs up notes every night'},
+                       'type': 'webapp', 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': ['cron'], 'verified': False, 'source': 'upload',
+                       'installed': 0, 'users': ['*'],
+                       'jobs': [{'id': 'nightly', 'name': 'Nightly backup', 'command': 'jobs/backup.sh', 'timeout': 300, 'schedule': '30 3 * * *', 'default_schedule': '30 3 * * *',
+                                 'enabled': True, 'running': False, 'last': {'time': 1792290600, 'duration': 4, 'rc': 0, 'timeout': False}},
+                                {'id': 'cleanup', 'name': 'Clean up old backups', 'command': 'jobs/cleanup.sh', 'timeout': 120, 'schedule': '0 5 * * 0', 'default_schedule': '0 4 * * 0',
+                                 'enabled': False, 'running': False, 'last': None}]}},
+        'job': None, 'channel': 'stable',
         'sources': ['https://github.com/UniqueDroid/ShareOS-Apps/releases/download/catalog/index.json'], 'refreshed': 0}
 CATALOG = [
     {'id': 'webpad', 'name': 'Webpad', 'publisher': 'UniqueDroid', 'category': 'tools', 'type': 'webapp',
@@ -284,6 +291,21 @@ def apps_call(method, args):
     if method == 'set':
         APPS['installed'][args['id']]['users'] = args['users']
         return {'ok': True}
+    if method == 'job_set':
+        for j in APPS['installed'][args['id']]['jobs']:
+            if j['id'] == args['job']:
+                if args.get('schedule'):
+                    j['schedule'] = args['schedule']
+                if args.get('enabled') is not None:
+                    j['enabled'] = args['enabled']
+        return {'ok': True}
+    if method == 'job_run':
+        for j in APPS['installed'][args['id']]['jobs']:
+            if j['id'] == args['job']:
+                j['last'] = {'time': int(time.time()), 'duration': 3, 'rc': 0, 'timeout': False}
+        return {'started': True}
+    if method == 'job_log':
+        return {'log': 'backup of 12 notes written to backups/2026-10-18.zip\n', 'last': None}
     if method == 'upload_ticket':
         return {'url': '/cgi-bin/files?t=upload'}
     if method == 'install_upload':

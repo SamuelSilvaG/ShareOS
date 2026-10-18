@@ -856,7 +856,21 @@
 		"Ungültige Uhrzeit.": "时间无效。",
 		"Eine Firmware im D-Link-Format, z. B. für den": "D-Link 格式的固件，例如用于",
 		"Wechsel zurück zu Alt-F": "切换回 Alt-F",
-		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "。写入内核和启动系统；ShareOS 的系统和设置保留在闪存中。"
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "。写入内核和启动系统；ShareOS 的系统和设置保留在闪存中。",
+		"Aufgaben": "任务",
+		"Zeitgesteuerte Aufgaben": "计划任务",
+		"Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.": "可以在设备上运行计划任务 – 以其专用的受限用户身份，仅在其数据文件夹中运行，并有时间限制。",
+		"AUFGABE": "任务",
+		"ZEITPLAN (CRON)": "计划 (CRON)",
+		"AKTIV": "启用",
+		"noch nie": "从未",
+		"Zeitlimit": "时间限制",
+		"Jetzt ausführen": "立即运行",
+		"Aufgabe gestartet.": "任务已开始。",
+		"Erlauben & installieren": "允许并安装",
+		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "应用将被删除，包括其任务和设备上的数据。",
+		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Cron 格式的计划 (分 时 日 月 星期)，最多每 5 分钟一次，例如",
+		"= täglich 3:30 Uhr.": "= 每天 3:30。"
 	},
 	"patterns": [
 		[
@@ -1578,6 +1592,38 @@
 		[
 			"^(.+) \\(Einzelnes Laufwerk\\)$",
 			"$1 (单个驱动器)"
+		],
+		[
+			"^Fehler (\\d+)$",
+			"错误 $1"
+		],
+		[
+			"^Standard: (.+)$",
+			"默认：$1"
+		],
+		[
+			"^(.+) · max\\. (\\d+) s$",
+			"$1 · 最长 $2 秒"
+		],
+		[
+			"^(.+) · AUFGABEN$",
+			"$1 · 任务"
+		],
+		[
+			"^Aufgaben: (.*)$",
+			"任务：$1"
+		],
+		[
+			"^Aufgabe: (.*)$",
+			"任务：$1"
+		],
+		[
+			"^Protokoll: (.*)$",
+			"日志：$1"
+		],
+		[
+			"^(.+): Berechtigungen$",
+			"$1：权限"
 		]
 	],
 	"words": [
