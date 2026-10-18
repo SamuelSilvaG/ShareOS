@@ -1,0 +1,1780 @@
+{
+	"language": "bn",
+	"name": "বাংলা",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "সারসংক্ষেপ",
+		"SPEICHER": "স্টোরেজ",
+		"FREIGABEN": "শেয়ার",
+		"DIENSTE": "সার্ভিস",
+		"APPS": "অ্যাপ",
+		"CLOUD": "ক্লাউড",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "সিস্টেম",
+		"NEU": "নতুন",
+		"ONLINE": "অনলাইন",
+		"OFFLINE": "অফলাইন",
+		"Abmelden": "লগ আউট",
+		"Hell/Dunkel umschalten": "লাইট/ডার্ক বদলান",
+		"Hauptmenü": "প্রধান মেনু",
+		"System": "সিস্টেম",
+		"verfügbar": "উপলব্ধ",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "ShareOS ইন্টারফেসের জন্য JavaScript দরকার।",
+		"Verwaltung – bitte anmelden.": "পরিচালনা – অনুগ্রহ করে লগ ইন করুন।",
+		"BENUTZER": "ব্যবহারকারী",
+		"PASSWORT": "পাসওয়ার্ড",
+		"Angemeldet bleiben (7 Tage)": "লগ ইন থাকুন (৭ দিন)",
+		"Anmelden": "লগ ইন",
+		"Benutzer oder Passwort falsch.": "ভুল ব্যবহারকারী বা পাসওয়ার্ড।",
+		"Box nicht erreichbar.": "ডিভাইসে পৌঁছানো যাচ্ছে না।",
+		"Sitzung abgelaufen – bitte neu anmelden.": "সেশনের মেয়াদ শেষ – আবার লগ ইন করুন।",
+		"live · alle 5 s": "লাইভ · প্রতি ৫ সেকেন্ডে",
+		"AUSLASTUNG": "লোড",
+		"Gerätesteuerung aktiv": "বোর্ড নিয়ন্ত্রণ সক্রিয়",
+		"keine MCU-Daten": "MCU-র তথ্য নেই",
+		"LÜFTER": "পাখা",
+		"TEMP": "তাপমাত্রা",
+		"aus": "বন্ধ",
+		"halb": "অর্ধেক",
+		"voll": "পূর্ণ",
+		"kein Link": "লিঙ্ক নেই",
+		"letzte 10 min": "শেষ ১০ মিনিট",
+		"Gateway · DNS": "গেটওয়ে · DNS",
+		"sammle Messwerte …": "নমুনা সংগ্রহ হচ্ছে …",
+		"Firmware": "ফার্মওয়্যার",
+		"Start aus": "যেখান থেকে চালু হয়েছে",
+		"Flash (UBI)": "ফ্ল্যাশ (UBI)",
+		"Netzwerk (RAM)": "নেটওয়ার্ক (RAM)",
+		"Einstellungen bleiben erhalten": "সেটিংস থেকে যায়",
+		"Änderungen gehen beim Neustart verloren": "রিস্টার্টে পরিবর্তন হারিয়ে যায়",
+		"Laufzeit": "চালু থাকার সময়",
+		"seit dem letzten Start": "শেষ চালুর পর থেকে",
+		"Dienste": "সার্ভিস",
+		"laufen": "চলছে",
+		"Flash frei": "ফ্ল্যাশে খালি",
+		"für Einstellungen & Pakete": "সেটিংস ও প্যাকেজের জন্য",
+		"Laufwerke": "ড্রাইভ",
+		"erkannt": "পাওয়া গেছে",
+		"keine eingesteckt": "কোনোটি যুক্ত নেই",
+		"alle verwalten": "সব পরিচালনা",
+		"Update verfügbar": "আপডেট উপলব্ধ",
+		"Lade Systemdaten …": "সিস্টেমের তথ্য লোড হচ্ছে …",
+		"Lade Dienste …": "সার্ভিস লোড হচ্ছে …",
+		"Lade Laufwerke …": "ড্রাইভ লোড হচ্ছে …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "কোনো হার্ড ডিস্ক বা USB স্টোরেজ পাওয়া যায়নি। ShareOS পুরোপুরি অভ্যন্তরীণ ফ্ল্যাশ থেকে চলে – ড্রাইভ যুক্ত করলেই এখানে দেখা যাবে।",
+		"unbekanntes Modell": "অজানা মডেল",
+		"Start, Stopp, Neustart": "চালু, বন্ধ, রিস্টার্ট",
+		"Neustart": "রিস্টার্ট",
+		"Stopp": "বন্ধ করুন",
+		"Starten": "চালু করুন",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "ওয়েব ইন্টারফেস",
+		"Zeit (NTP)": "সময় (NTP)",
+		"Zeitplaner": "শিডিউলার",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "সিস্টেম বাস (ubus)",
+		"Systemprotokoll": "সিস্টেম লগ",
+		"Gerätesteuerung": "বোর্ড নিয়ন্ত্রণ",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "ঘড়ি মেলায়, MCU ঘড়ি মিলিয়ে রাখে",
+		"Schnittstelle für diese Oberfläche": "এই ওয়েব ইন্টারফেসের ইন্টারফেস",
+		"Nachrichten zwischen den Diensten": "সার্ভিসগুলোর মধ্যে বার্তা",
+		"syslogd, im RAM": "syslogd, RAM-এ",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "পাখা, তাপমাত্রা, বোতাম, MCU ঘড়ি",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "এই অংশটি এখনও তৈরি হয়নি। পরিকল্পনা:",
+		"FREIGABEN, BENUTZER & GRUPPEN": "শেয়ার, ব্যবহারকারী ও গ্রুপ",
+		"APPS & PAKETE": "অ্যাপ ও প্যাকেজ",
+		"CLOUD-SPEICHER": "ক্লাউড স্টোরেজ",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "ফোল্ডারভিত্তিক শেয়ার, SMB, NFS, FTP ও DLNA-র সুইচসহ",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "প্রতি শেয়ারে অনুমতিসহ ব্যবহারকারী ও গ্রুপ",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "নেটওয়ার্ক ড্রাইভ যুক্ত করা (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "ব্যাকআপ কাজ (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "GitHub-এ প্যাকেজের উৎস (opkg feed)",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "বিভাগসহ তালিকা, সারির মাধ্যমে ইনস্টল/মুছে ফেলা",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "প্যাকেজ যায় সেটিংস ও প্যাকেজ (ফ্ল্যাশ) বা ডিস্কে",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "rclone দিয়ে অ্যাকাউন্ট: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "সিঙ্ক কাজ: কপি, মিরর, দুই দিকে",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "এনক্রিপশন (crypt), ব্যান্ডউইথ ও সময়সূচি",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "NAS-এ ইনবক্স ফোল্ডার → Paperless REST API দিয়ে আপলোড (টোকেন)",
+		"Status der Übertragungen über /api/tasks/": "/api/tasks/ দিয়ে স্থানান্তরের অবস্থা",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "প্রতি ফোল্ডারে ট্যাগ ও প্রেরক, NAS-এ ব্যাকআপ রপ্তানি",
+		"VOLUMES": "ভলিউম",
+		"LAUFWERKE": "ড্রাইভ",
+		"EINSTELLUNGEN": "সেটিংস",
+		"RUHEZUSTAND": "স্ট্যান্ডবাই",
+		"NEU EINRICHTEN": "আবার সেট আপ",
+		"PLATTEN ABSCHALTEN NACH": "এতক্ষণ পর ডিস্ক থামান",
+		"nie": "কখনো না",
+		"10 Minuten": "১০ মিনিট",
+		"20 Minuten": "২০ মিনিট",
+		"30 Minuten": "৩০ মিনিট",
+		"1 Stunde": "১ ঘণ্টা",
+		"2 Stunden": "২ ঘণ্টা",
+		"Swap": "সোয়াপ",
+		"Apps-Bereich": "অ্যাপ এলাকা",
+		"noch keiner": "এখনও নেই",
+		"keiner aktiv": "কোনোটি সক্রিয় নয়",
+		"noch keine": "এখনও নেই",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "বিদ্যুৎ ও ক্ষয় বাঁচায়। পরের ব্যবহারে ডিস্ক আবার ঘুরতে শুরু করে (কয়েক সেকেন্ড)।",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "উইজার্ড বাছাই করা ডিস্ক মুছে আবার সেট আপ করে। আলাদা ডিস্ক \"ড্রাইভ\"-এ সরাসরিও ফরম্যাট করা যায়।",
+		"Assistent starten": "উইজার্ড চালু করুন",
+		"Speicher einrichten": "স্টোরেজ সেট আপ করুন",
+		"INTERNER FLASH": "অভ্যন্তরীণ ফ্ল্যাশ",
+		"128 MB NAND · UBI": "১২৮ MB NAND · UBI",
+		"BEREICH": "এলাকা",
+		"EINGEHÄNGT": "মাউন্ট স্থান",
+		"BELEGT": "ব্যবহৃত",
+		"Einstellungen & Pakete": "সেটিংস ও প্যাকেজ",
+		"System (nur lesbar)": "সিস্টেম (শুধু পড়ার জন্য)",
+		"Arbeitsspeicher (tmp)": "RAM (tmp)",
+		"Aushängen": "আনমাউন্ট",
+		"Einhängen": "মাউন্ট",
+		"Entfernen": "সরান",
+		"SMART lesen": "SMART পড়ুন",
+		"Löschen & formatieren": "মুছে ফরম্যাট করুন",
+		"Spiegel (RAID 1)": "মিরর (RAID 1)",
+		"Einzelnes Laufwerk": "একক ড্রাইভ",
+		"SMART noch nicht gelesen": "SMART এখনও পড়া হয়নি",
+		"schläft (SMART beim nächsten Aufwachen)": "ঘুমন্ত (জাগলে SMART)",
+		"no SMART data": "SMART তথ্য নেই",
+		"SMART OK": "SMART ঠিক আছে",
+		"SMART WARNUNG": "SMART সতর্কতা",
+		"SMART FEHLER": "SMART ব্যর্থ",
+		"leer": "খালি",
+		"ohne Dateisystem": "ফাইল সিস্টেম নেই",
+		"nicht eingehängt": "মাউন্ট করা নেই",
+		"Dateisystem nicht gefunden": "ফাইল সিস্টেম পাওয়া যায়নি",
+		"wartet": "অপেক্ষমাণ",
+		"Pakete und App-Daten liegen in .shareos": "প্যাকেজ ও অ্যাপের তথ্য .shareos-এ থাকে",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "এখনও কোনো স্টোরেজ সেট আপ নেই। উইজার্ড কয়েক ধাপে ডিস্ক সেট আপ করে – মিরর হিসেবে (দুটি ডিস্কে একই তথ্য) বা আলাদা ড্রাইভ হিসেবে।",
+		"SPEICHER EINRICHTEN · ASSISTENT": "স্টোরেজ সেট আপ · উইজার্ড",
+		"Abbrechen": "বাতিল",
+		"Platten": "ডিস্ক",
+		"Aufbau": "কাঠামো",
+		"Name": "নাম",
+		"Bestätigen": "নিশ্চিত করুন",
+		"Zurück": "পেছনে",
+		"Weiter": "পরবর্তী",
+		"Einrichten": "সেট আপ",
+		"Welche Platten sollen eingerichtet werden?": "কোন ডিস্কগুলো সেট আপ করবেন?",
+		"Alles auf diesen Platten wird gelöscht.": "এই ডিস্কগুলোর সবকিছু মুছে যাবে।",
+		"Spiegel (RAID 1) – empfohlen": "মিরর (RAID 1) – প্রস্তাবিত",
+		"Zwei getrennte Laufwerke": "দুটি আলাদা ড্রাইভ",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "প্রতি ডিস্কে সোয়াপ",
+		"1 GB – empfohlen": "১ GB – প্রস্তাবিত",
+		"keiner": "কোনোটি না",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "এই ডিভাইসে মাত্র ২৫৬ MB RAM আছে। ডিস্কের সোয়াপ লোডের চাপ সামলায় (শেয়ার, ক্লাউড সিঙ্ক, প্যাকেজ ইনস্টল)। এটি প্রতিটি ডিস্কের শুরুতে একটি ছোট পার্টিশন; বাকিটা ড্রাইভ হয়।",
+		"NAME DES SPIEGELS": "মিররের নাম",
+		"LAUFWERK": "ড্রাইভ",
+		"PLATTEN": "ডিস্ক",
+		"GRÖSSE": "আকার",
+		"AUFBAU": "কাঠামো",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "ছোট হাতের অক্ষর, সংখ্যা, - ও _ (সর্বোচ্চ ১৬ অক্ষর)। ড্রাইভটি দেখা যাবে এভাবে:",
+		"; Freigaben legst du später darauf an.": "; শেয়ার পরে তৈরি করা হয়।",
+		"Platten löschen und einrichten?": "ডিস্ক মুছে সেট আপ করবেন?",
+		"Löschen & einrichten": "মুছে সেট আপ করুন",
+		"Einrichtung gestartet.": "সেট আপ শুরু হয়েছে।",
+		"Formatieren gestartet.": "ফরম্যাট শুরু হয়েছে।",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "নতুন ড্রাইভের নাম (a–z, 0–9, - ও _, সর্বোচ্চ ১৬ অক্ষর):",
+		"Bitte mindestens eine Platte auswählen.": "অন্তত একটি ডিস্ক বাছাই করুন।",
+		"Höchstens zwei Platten.": "সর্বোচ্চ দুটি ডিস্ক।",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "অবৈধ নাম: শুধু a–z, 0–9, - ও _, সর্বোচ্চ ১৬ অক্ষর।",
+		"Die Namen müssen verschieden sein.": "নামগুলো আলাদা হতে হবে।",
+		"Ungültiger Name.": "অবৈধ নাম।",
+		"Ruhezustand gespeichert.": "স্ট্যান্ডবাই সংরক্ষিত।",
+		"FIRMWARE": "ফার্মওয়্যার",
+		"ALLGEMEIN": "সাধারণ",
+		"ENERGIE & RESET": "পাওয়ার ও রিসেট",
+		"PROTOKOLLE": "লগ",
+		"DARSTELLUNG": "চেহারা",
+		"ÜBER": "পরিচিতি",
+		"FIRMWARE-UPDATE": "ফার্মওয়্যার আপডেট",
+		"Installiert": "ইনস্টল করা",
+		"Kernel, Startsystem und System": "কার্নেল, initramfs ও সিস্টেম",
+		"noch nicht geprüft": "এখনও যাচাই করা হয়নি",
+		"aktuell": "হালনাগাদ",
+		"noch kein Release für dieses Gerät": "এই ডিভাইসের জন্য এখনও রিলিজ নেই",
+		"keine": "কোনোটি না",
+		"UPDATE-KANAL": "আপডেট চ্যানেল",
+		"Stabil (Releases)": "স্থিতিশীল (রিলিজ)",
+		"Beta (auch Pre-Releases)": "বিটা (প্রি-রিলিজও)",
+		"Jetzt prüfen": "এখন যাচাই করুন",
+		"Prüfe …": "যাচাই হচ্ছে …",
+		"VERSIONEN": "সংস্করণ",
+		"von GitHub": "GitHub থেকে",
+		"VERSION": "সংস্করণ",
+		"DATUM": "তারিখ",
+		"KANAL": "চ্যানেল",
+		"STABIL": "স্থিতিশীল",
+		"BETA": "বিটা",
+		"installiert": "ইনস্টল করা",
+		"Laden": "ডাউনলোড",
+		"Notes ↗": "নোট ↗",
+		"SO LÄUFT EIN UPDATE": "আপডেট কীভাবে হয়",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "GitHub থেকে প্যাকেজ ডাউনলোড করে যাচাই (SHA-256, ডিভাইস, আকার)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "কার্নেল ও initramfs ফ্ল্যাশে লিখে আবার পড়া",
+		"Neues System bereitlegen": "নতুন সিস্টেম প্রস্তুত করা",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "রিস্টার্ট: initramfs সিস্টেম ইনস্টল করে, তারপর ShareOS আবার চালু হয়",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "সেটিংস ও ইনস্টল করা প্যাকেজ থেকে যায়। মাঝপথে থামলে পরের চালুতে ইনস্টল আবার হয়।",
+		"Herunterladen": "ডাউনলোড",
+		"Prüfen": "যাচাই",
+		"Bereit": "প্রস্তুত",
+		"Schreiben": "লেখা",
+		"Verwerfen": "বাদ দিন",
+		"Fehler:": "ত্রুটি:",
+		"Letztes Update:": "শেষ আপডেট:",
+		"Neustart nötig": "রিস্টার্ট দরকার",
+		"Jetzt neu starten": "এখনই রিস্টার্ট করুন",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "যাচাই করা হয়েছে: SHA-256, সব অংশের চেকসাম, এই ডিভাইসের জন্য তৈরি। সেটিংস ও প্যাকেজ থেকে যায়।",
+		"ShareOS ist aktuell.": "ShareOS হালনাগাদ আছে।",
+		"Update geladen und geprüft.": "আপডেট ডাউনলোড ও যাচাই হয়েছে।",
+		"Update geschrieben – bitte neu starten.": "আপডেট লেখা হয়েছে – রিস্টার্ট করুন।",
+		"Update installieren?": "আপডেট ইনস্টল করবেন?",
+		"Installieren": "ইনস্টল করুন",
+		"GERÄTENAME": "ডিভাইসের নাম",
+		"HOSTNAME": "হোস্টনেম",
+		"Speichern": "সংরক্ষণ",
+		"NEUES PASSWORT": "নতুন পাসওয়ার্ড",
+		"WIEDERHOLEN": "আবার লিখুন",
+		"Passwort ändern": "পাসওয়ার্ড বদলান",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "অক্ষর, সংখ্যা ও হাইফেন। সঙ্গে সঙ্গে কার্যকর; DHCP সার্ভার পরের নবায়নে দেখবে।",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "ওয়েব ইন্টারফেস ও SSH-এর জন্য। অন্তত ৬ অক্ষর।",
+		"Hostname gespeichert.": "হোস্টনেম সংরক্ষিত।",
+		"Passwort geändert.": "পাসওয়ার্ড বদলানো হয়েছে।",
+		"Die Passwörter stimmen nicht überein.": "পাসওয়ার্ড মিলছে না।",
+		"ENERGIE": "পাওয়ার",
+		"Ausschalten": "বন্ধ করুন",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "বন্ধ করলে ShareOS থামে এবং বোর্ড নিয়ন্ত্রণ বিদ্যুৎ বন্ধ করে। পাওয়ার বোতাম দিয়ে চালু করুন।",
+		"WERKSEINSTELLUNGEN": "ফ্যাক্টরি রিসেট",
+		"löscht Einstellungen": "সেটিংস মুছে ফেলে",
+		"Auf Werkseinstellungen zurücksetzen": "ফ্যাক্টরি সেটিংসে ফেরান",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "ফ্ল্যাশ থেকে সব সেটিংস ও ইনস্টল করা প্যাকেজ মুছে রিস্টার্ট করে। সিস্টেম ও ফার্মওয়্যার সংস্করণ থেকে যায়। এরপর পাসওয়ার্ড আবার হবে",
+		"Neu starten?": "রিস্টার্ট করবেন?",
+		"Neu starten": "রিস্টার্ট",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "ডিভাইস রিস্টার্ট হচ্ছে। এই পৃষ্ঠা নিজে থেকেই আবার যুক্ত হবে (প্রায় ১–২ মিনিট)।",
+		"Ausschalten?": "বন্ধ করবেন?",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "ShareOS থামে এবং ডিভাইস বন্ধ হয়। ডিভাইসেই আবার চালু করুন।",
+		"Werkseinstellungen?": "ফ্যাক্টরি সেটিংস?",
+		"Zurücksetzen": "রিসেট",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "সব সেটিংস ও ইনস্টল করা প্যাকেজ মুছে যায়, তারপর ডিভাইস রিস্টার্ট হয়। এরপর পাসওয়ার্ড আবার \"shareos\" হবে।",
+		"Neustart läuft": "রিস্টার্ট হচ্ছে",
+		"ShareOS startet neu": "ShareOS আবার চালু হচ্ছে",
+		"Box wird ausgeschaltet": "ডিভাইস বন্ধ হচ্ছে",
+		"Du kannst dieses Fenster schließen.": "আপনি এই উইন্ডো বন্ধ করতে পারেন।",
+		"Dienst wird neu gestartet": "সার্ভিস আবার চালু হচ্ছে",
+		"warte auf die Box": "ডিভাইসের অপেক্ষা",
+		"Werkseinstellungen": "ফ্যাক্টরি সেটিংস",
+		"PROTOKOLL": "লগ",
+		"Quelle": "উৎস",
+		"System (syslog)": "সিস্টেম (syslog)",
+		"Kernel (dmesg)": "কার্নেল (dmesg)",
+		"Aktualisieren": "রিফ্রেশ",
+		"lade …": "লোড হচ্ছে …",
+		"(leer)": "(খালি)",
+		"nur in diesem Browser": "শুধু এই ব্রাউজার",
+		"Helles Design": "লাইট থিম",
+		"Scanlines": "স্ক্যানলাইন",
+		"LOGO": "লোগো",
+		"gilt für alle": "সবার জন্য",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "ShareOS লোগো দেখান (বন্ধ: শুধু লেখা)",
+		"SPRACHE": "ভাষা",
+		"Akzentfarbe Grün": "অ্যাকসেন্ট রং সবুজ",
+		"Akzentfarbe Rot": "অ্যাকসেন্ট রং লাল",
+		"Akzentfarbe Blau": "অ্যাকসেন্ট রং নীল",
+		"Akzentfarbe Weiß": "অ্যাকসেন্ট রং সাদা",
+		"Version": "সংস্করণ",
+		"Stufe": "পর্যায়",
+		"Gerät": "ডিভাইস",
+		"Firmware-Name": "ফার্মওয়্যারের নাম",
+		"PROJEKT": "প্রকল্প",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS হলো D-Link NAS ডিভাইসের জন্য মুক্ত ফার্মওয়্যার, Alt-F থেকে তৈরি। buildroot, Linux ও BusyBox-এর উপর ভিত্তি করে; পরিচালনা OpenWrt-এর মতো (UCI, ubus, rpcd, ucode)। লাইসেন্স GPLv2।",
+		"Einrichtung läuft": "সেট আপ চলছে",
+		"Box nicht ausschalten.": "ডিভাইস বন্ধ করবেন না।",
+		"Einrichtung fehlgeschlagen:": "সেট আপ ব্যর্থ:",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "সংযোগ",
+		"diese Seite: HTTPS": "এই পৃষ্ঠা: HTTPS",
+		"diese Seite: HTTP": "এই পৃষ্ঠা: HTTP",
+		"HTTPS auf Port 443": "পোর্ট ৪৪৩-এ HTTPS",
+		"HTTP-Aufrufe auf HTTPS umleiten": "HTTP অনুরোধ HTTPS-এ পাঠান",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "পরিবর্তনের পর ওয়েব সার্ভার আবার চালু হয়; পৃষ্ঠাটি কিছুক্ষণ পাওয়া যায় না।",
+		"ZERTIFIKAT": "সার্টিফিকেট",
+		"selbstsigniert": "স্ব-স্বাক্ষরিত",
+		"eigenes Zertifikat": "নিজের সার্টিফিকেট",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "এখনও সার্টিফিকেট নেই – HTTPS চালু করলে নিজে থেকে তৈরি হয়।",
+		"Ausgestellt für": "যার জন্য ইস্যু",
+		"Aussteller": "ইস্যুকারী",
+		"Gültig ab": "থেকে বৈধ",
+		"Gültig bis": "পর্যন্ত বৈধ",
+		"Namen": "নাম",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "ব্রাউজার স্ব-স্বাক্ষরিত সার্টিফিকেট নিয়ে একবার সতর্ক করে। তবুও সংযোগ এনক্রিপ্টেড থাকে; সতর্কতা ছাড়া পৃষ্ঠার জন্য নিজের সার্টিফিকেট আপলোড করুন (যেমন নিজের ইন্ট্রানেট CA বা Let's Encrypt থেকে)।",
+		"Neues selbstsigniertes Zertifikat": "নতুন স্ব-স্বাক্ষরিত সার্টিফিকেট",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "নিজের সার্টিফিকেট আপলোড করুন",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "সার্টিফিকেট (PEM, মধ্যবর্তী সার্টিফিকেটসহ চলবে)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "প্রাইভেট কী (PEM, পাসওয়ার্ড ছাড়া)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "ব্যবহারের আগে ডিভাইস যাচাই করে যে সার্টিফিকেট ও কী মেলে। কী কখনো ডিভাইস ছাড়ে না।",
+		"Zertifikat übernehmen": "সার্টিফিকেট ব্যবহার করুন",
+		"Zertifikat übernommen.": "সার্টিফিকেট ইনস্টল হয়েছে।",
+		"Zertifikat erstellt.": "সার্টিফিকেট তৈরি হয়েছে।",
+		"Neues selbstsigniertes Zertifikat?": "নতুন স্ব-স্বাক্ষরিত সার্টিফিকেট?",
+		"Erstellen": "তৈরি করুন",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "বর্তমান নাম ও IP-র জন্য নতুন সার্টিফিকেট তৈরি হয়ে পুরোনোটির জায়গা নেয়। ব্রাউজার আরও একবার সতর্কতা দেখাবে।",
+		"Gespeichert – der Webserver startet neu.": "সংরক্ষিত – ওয়েব সার্ভার আবার চালু হচ্ছে।",
+		"Lade …": "লোড হচ্ছে …",
+		"SPRACHE DER OBERFLÄCHE": "ইন্টারফেসের ভাষা",
+		"Weitere Sprachen: eine Datei in": "আরও ভাষা: এখানে একটি ফাইল",
+		"– siehe docs/TRANSLATING.md.": "– docs/TRANSLATING.md দেখুন।",
+		"AUS UNTER (°C, 0 = NIE)": "এর নিচে বন্ধ (°C, 0 = কখনো না)",
+		"VOLL AB (°C)": "এর থেকে পূর্ণ (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "এর নিচে আবার অর্ধেক (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "সবকিছু পরে সিস্টেমে ঠিক করা যায়। আপনি না বদলানো পর্যন্ত পাসওয়ার্ড \"shareos\" থাকবে।",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "Alt-F থেকে নিন",
+		"Auch Testversionen, mit neuen Funktionen früher.": "পরীক্ষামূলক সংস্করণও, নতুন সুবিধা আগে।",
+		"Auf dieser Box wurden Einstellungen von": "এই ডিভাইসে এখান থেকে সেটিংস আছে:",
+		"gefunden": "",
+		"Ausgewogen": "ভারসাম্য",
+		"Benutzer": "ব্যবহারকারী",
+		"Freigaben": "শেয়ার",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "ব্যবহারকারী ও শেয়ার থেকে যায় এবং \"শেয়ার\" অংশে দেওয়া হয়। ফ্ল্যাশের Alt-F তথ্য অপরিবর্তিত থাকে।",
+		"Beta": "বিটা",
+		"Stabil": "স্থিতিশীল",
+		"Danach kannst du gleich die Festplatten einrichten.": "এরপর আপনি সঙ্গে সঙ্গে হার্ড ডিস্ক সেট আপ করতে পারেন।",
+		"Das Standardpasswort": "ডিফল্ট পাসওয়ার্ড সবাই জানে",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– এখনই নিজের পাসওয়ার্ড দিন। এটি ওয়েব ইন্টারফেস ও SSH-এর জন্য।",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "ডিভাইস বোর্ডের তাপমাত্রা অনুযায়ী পাখা তিন ধাপে চালায় (বন্ধ, অর্ধেক, পূর্ণ)। পরিবর্তন কয়েক সেকেন্ডে কার্যকর হয়।",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "কমলা USB LED চালুর সময় রেসকিউ মোড ও আপডেট দেখায় এবং বদলানো যায় না।",
+		"ERSTEINRICHTUNG": "প্রথমবার সেট আপ",
+		"Eigene Werte": "নিজের মান",
+		"Ersteinrichtung abgeschlossen.": "প্রথমবার সেট আপ শেষ।",
+		"Ersteinrichtung erneut starten": "প্রথমবার সেট আপ আবার চালান",
+		"Ersteinrichtung überspringen?": "প্রথমবার সেট আপ এড়িয়ে যাবেন?",
+		"Fertig": "শেষ",
+		"Fertig & Speicher einrichten": "শেষ করে স্টোরেজ সেট আপ করুন",
+		"Gerätename": "ডিভাইসের নাম",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "নাম, সময় অঞ্চল ও পাখা নিন",
+		"Herzschlag (ShareOS läuft)": "হৃদস্পন্দন (ShareOS চলছে)",
+		"Kühl": "ঠান্ডা",
+		"Leise": "নীরব",
+		"LEDS": "LED",
+		"LÜFTER & LEDS": "পাখা ও LED",
+		"Lüfter": "পাখা",
+		"Leer lassen, um das Passwort später zu ändern.": "পাসওয়ার্ড পরে বদলাতে খালি রাখুন।",
+		"Lüfter läuft immer, voll ab 45 °C": "পাখা সবসময় চালু, ৪৫ °C থেকে পূর্ণ",
+		"Lüfter läuft immer, voll ab 50 °C": "পাখা সবসময় চালু, ৫০ °C থেকে পূর্ণ",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "৪০ °C-এর নিচে পাখা থামে, ৫৫ °C থেকে পূর্ণ",
+		"Name & Zeit": "নাম ও সময়",
+		"Nur fertige Versionen – empfohlen.": "শুধু চূড়ান্ত সংস্করণ – প্রস্তাবিত।",
+		"PLATTEN-LEDS (ROT)": "ডিস্ক LED (লাল)",
+		"POWER-LED": "পাওয়ার LED",
+		"STATUS-LED (BLAU)": "অবস্থা LED (নীল)",
+		"Passwort": "পাসওয়ার্ড",
+		"Plattenzugriffe anzeigen": "ডিস্ক ব্যবহার দেখান",
+		"Sprache": "ভাষা",
+		"Temperaturen selbst festlegen": "তাপমাত্রা নিজে ঠিক করুন",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "নেটওয়ার্কে ডিভাইসটি এই নামে দেখা যায়। ঘড়ি NTP দিয়ে নিজে থেকেই মেলে।",
+		"Update-Kanal": "আপডেট চ্যানেল",
+		"Updates": "আপডেট",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "আপডেট GitHub থেকে আসে এবং সিস্টেম → ফার্মওয়্যারে ইনস্টল হয়।",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "ShareOS-এ স্বাগতম। কয়েক ধাপেই ডিভাইস সেট আপ হয়; সবকিছু পরে এখানে বদলানো যায়:",
+		"ändern.": "।",
+		"ZEITZONE": "সময় অঞ্চল",
+		"Zeitzone": "সময় অঞ্চল",
+		"blinkt": "জ্বলে-নেভে",
+		"an": "চালু",
+		"sofort aktiv": "সঙ্গে সঙ্গে কার্যকর",
+		"wird geändert": "বদলানো হবে",
+		"bleibt (später ändern)": "থেকে যাবে (পরে বদলান)",
+		"ja": "হ্যাঁ",
+		"nein": "না",
+		"Überspringen": "এড়িয়ে যান",
+		"Lüfter gespeichert.": "পাখা সংরক্ষিত।",
+		"LED gespeichert.": "LED সংরক্ষিত।",
+		"Ungültiger Gerätename.": "অবৈধ ডিভাইসের নাম।",
+		"Das Passwort braucht mindestens 6 Zeichen.": "পাসওয়ার্ডে অন্তত ৬ অক্ষর দরকার।",
+		"Paket wird erneut geprüft …": "প্যাকেজ আবার যাচাই হচ্ছে …",
+		"System wird für den Neustart bereitgelegt …": "রিস্টার্টের জন্য সিস্টেম প্রস্তুত হচ্ছে …",
+		"Startsystem: Flash wird gelöscht …": "বুট সিস্টেম: ফ্ল্যাশ মোছা হচ্ছে …",
+		"Startsystem wird geschrieben …": "বুট সিস্টেম লেখা হচ্ছে …",
+		"Startsystem wird geprüft …": "বুট সিস্টেম যাচাই হচ্ছে …",
+		"Kernel: Flash wird gelöscht …": "কার্নেল: ফ্ল্যাশ মোছা হচ্ছে …",
+		"Kernel wird geschrieben …": "কার্নেল লেখা হচ্ছে …",
+		"Kernel wird geprüft …": "কার্নেল যাচাই হচ্ছে …",
+		"Wird gestartet …": "চালু হচ্ছে …",
+		"nicht ausschalten": "বন্ধ করবেন না",
+		", das dauert etwa 1–2 Minuten.": ", এতে প্রায় ১–২ মিনিট লাগে।",
+		"Paket wird geprüft …": "প্যাকেজ যাচাই হচ্ছে …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 ও বিষয়বস্তু, প্রায় আধা মিনিট।",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– নতুন সিস্টেম পরের চালুতে ইনস্টল হবে (প্রায় ১ মিনিট, ডিভাইস বন্ধ করবেন না)।",
+		"NETZWERK": "নেটওয়ার্ক",
+		"ADRESSE": "ঠিকানা",
+		"AKTUELL": "বর্তমান",
+		"AKZENTFARBE": "অ্যাকসেন্ট রং",
+		"BEIM START": "চালুর সময়",
+		"BESCHREIBUNG": "বিবরণ",
+		"DIENST": "সার্ভিস",
+		"HELL ODER DUNKEL": "লাইট বা ডার্ক",
+		"HTTPS & ZERTIFIKAT": "HTTPS ও সার্টিফিকেট",
+		"JETZT": "এখন",
+		"KENNZAHL": "পরিমাপ",
+		"WERT": "মান",
+		"HINWEIS": "মন্তব্য",
+		"ART": "ধরন",
+		"MODELL": "মডেল",
+		"ZUSTAND": "অবস্থা",
+		"INHALT": "বিষয়বস্তু",
+		"IP-ADRESSE": "IP ঠিকানা",
+		"SUBNETZMASKE": "সাবনেট মাস্ক",
+		"DNS-SERVER (KOMMA-GETRENNT)": "DNS সার্ভার (কমা দিয়ে আলাদা)",
+		"Automatisch (DHCP) – vom Router": "স্বয়ংক্রিয় (DHCP) – রাউটার থেকে",
+		"Feste Adresse": "স্থির ঠিকানা",
+		"statisch": "স্থির",
+		"Dunkel": "ডার্ক",
+		"Hell": "লাইট",
+		"Wie das Betriebssystem (automatisch)": "অপারেটিং সিস্টেমের মতো (স্বয়ংক্রিয়)",
+		"Grün": "সবুজ",
+		"Rot": "লাল",
+		"Blau": "নীল",
+		"Weiß": "সাদা",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "লোগো ও ব্রাউজার আইকন অ্যাকসেন্ট রং নেয়। এই সেটিং সবার জন্য, লগ ইন পৃষ্ঠাসহ।",
+		"Scanlines (nur in diesem Browser)": "স্ক্যানলাইন (শুধু এই ব্রাউজার)",
+		"Übernehmen": "প্রয়োগ করুন",
+		"verbunden": "সংযুক্ত",
+		"keine Adresse": "ঠিকানা নেই",
+		"ändern": "বদলান",
+		"Verbindung": "সংযোগ",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "পরের চালু থেকে কার্যকর। চলমান সার্ভিস \"অবস্থা\"-তে চালু ও বন্ধ করা হয়। ডিভাইস নিয়ন্ত্রণ, সিস্টেম বাস, API ও ওয়েব ইন্টারফেস সবসময় চালু হয়, নইলে ডিভাইস চালানো যেত না।",
+		"welche Dienste beim Einschalten starten": "ডিভাইস চালু হলে কোন সার্ভিসগুলো চালু হবে",
+		"starten": "চালু করুন",
+		"immer": "সবসময়",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "এই সার্ভিস ছাড়া ডিভাইস চালানো যায় না",
+		"Kachelansicht": "টাইল দৃশ্য",
+		"Tabellenansicht": "টেবিল দৃশ্য",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "নতুন নেটওয়ার্ক সেটিংস নিশ্চিতকরণের অপেক্ষায়",
+		"Behalten": "রাখুন",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "শেষ পরিবর্তন নিশ্চিত হয়নি; আগের নেটওয়ার্ক সেটিংস আবার সক্রিয়।",
+		"Neue Netzwerkeinstellungen bestätigt.": "নতুন নেটওয়ার্ক সেটিংস নিশ্চিত হয়েছে।",
+		"Netzwerk ändern?": "নেটওয়ার্ক বদলাবেন?",
+		"Netzwerk wird umgestellt": "নেটওয়ার্ক বদলানো হচ্ছে",
+		"Netzwerk wird neu gestartet": "নেটওয়ার্ক আবার চালু হচ্ছে",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "সংযোগ নেই – ডিভাইসের পুরোনো সেটিংস ফিরিয়ে আনার কথা। পৃষ্ঠাটি আবার লোড করুন।",
+		"eine Platte fehlt": "একটি ডিস্ক নেই",
+		"in Ordnung": "ঠিক আছে",
+		"Sync wartet": "সিঙ্ক অপেক্ষায়",
+		"STATUS": "অবস্থা",
+		"AUTOSTART": "স্বয়ংক্রিয় চালু",
+		"GRUPPEN": "গ্রুপ",
+		"Administrator": "প্রশাসক",
+		"Nur Freigaben": "শুধু শেয়ার",
+		"lesen & schreiben": "পড়া ও লেখা",
+		"nur lesen": "শুধু পড়া",
+		"kein Zugriff": "প্রবেশাধিকার নেই",
+		"unbegrenzt": "সীমাহীন",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "শেয়ারের জন্য ড্রাইভ দরকার – আগে এখানে সেট আপ করুন:",
+		"einrichten.": "।",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "এখনও কোনো শেয়ার নেই। শেয়ার একটি ড্রাইভের ফোল্ডারকে নেটওয়ার্কে পাওয়া যোগ্য করে – Windows, macOS ও Linux থেকে।",
+		"Freigabe anlegen": "শেয়ার তৈরি করুন",
+		"Neue Freigabe": "নতুন শেয়ার",
+		"FREIGABE": "শেয়ার",
+		"ORDNER": "ফোল্ডার",
+		"ZUGRIFF": "প্রবেশাধিকার",
+		"Laufwerk fehlt": "ড্রাইভ নেই",
+		"noch niemand": "এখনও কেউ নয়",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS, MACOS, LINUX)",
+		"SMB-Freigaben anbieten": "SMB শেয়ার দিন",
+		"ARBEITSGRUPPE": "ওয়ার্কগ্রুপ",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "কোনো শেয়ার থাকলেই SMB সার্ভিস নিজে থেকে চালু হয়। ব্যক্তিগত ফোল্ডার দেখা যায় এভাবে:",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX, PROXMOX)",
+		"NFS-Freigaben anbieten": "NFS শেয়ার দিন",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "NFS-এ ব্যবহারকারী অ্যাকাউন্ট নেই: তালিকার কম্পিউটার বা নেটওয়ার্ক প্রবেশাধিকার পায়। ফাইল সংরক্ষিত হয় এভাবে:",
+		"gespeichert. Einbinden z. B. mit": "। উদাহরণস্বরূপ এভাবে মাউন্ট করুন:",
+		"kein Protokoll": "প্রোটোকল নেই",
+		"GAST": "অতিথি",
+		"Bearbeiten": "সম্পাদনা",
+		"Löschen": "মুছুন",
+		"Anlegen": "তৈরি করুন",
+		"NEUE FREIGABE": "নতুন শেয়ার",
+		"NAME": "নাম",
+		"ORDNER AUF DEM LAUFWERK": "ড্রাইভের ফোল্ডার",
+		"wie der Name": "নামের মতো",
+		"ZUGRIFF ÜBER SMB": "SMB দিয়ে প্রবেশাধিকার",
+		"Über SMB freigeben (Windows, macOS, Linux)": "SMB দিয়ে শেয়ার করুন (Windows, macOS, Linux)",
+		"Gäste dürfen ohne Passwort lesen": "অতিথিরা পাসওয়ার্ড ছাড়া পড়তে পারবে",
+		"BENUTZER / GRUPPE": "ব্যবহারকারী / গ্রুপ",
+		"RECHT": "অনুমতি",
+		"Noch keine Benutzer – unter": "এখনও কোনো ব্যবহারকারী নেই – এখানে তৈরি করুন:",
+		"anlegen, oder Gastzugang erlauben.": ", অথবা অতিথি প্রবেশাধিকার দিন।",
+		"ZUGRIFF ÜBER NFS": "NFS দিয়ে প্রবেশাধিকার",
+		"Über NFS freigeben": "NFS দিয়ে শেয়ার করুন",
+		"NFS-Clients dürfen schreiben": "NFS ক্লায়েন্ট লিখতে পারবে",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "NFS ক্লায়েন্ট (IP বা নেটওয়ার্ক, কমা দিয়ে আলাদা)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "ফোল্ডার না থাকলে তৈরি হয়। শেয়ার সরালে ফোল্ডার ও এর ফাইল থেকে যায়।",
+		"kein Limit": "সীমা নেই",
+		"von": "এর মধ্যে",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "এখনও কোনো ব্যবহারকারী নেই। একটি অ্যাকাউন্টই সব জায়গায় কাজ করে: শেয়ার, ওয়েব ইন্টারফেস এবং পরে অ্যাপ ও ক্লাউড সিঙ্কের জন্য।",
+		"Benutzer anlegen": "ব্যবহারকারী তৈরি করুন",
+		"Von Alt-F übernehmen": "Alt-F থেকে আমদানি",
+		"Neuer Benutzer": "নতুন ব্যবহারকারী",
+		"ROLLE": "ভূমিকা",
+		"PERSÖNLICHER ORDNER": "ব্যক্তিগত ফোল্ডার",
+		"kein persönlicher Ordner": "ব্যক্তিগত ফোল্ডার নেই",
+		"Rollen:": "ভূমিকা:",
+		"– alles, auch SSH.": "– সবকিছু, SSH-সহ।",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– ওয়েব ইন্টারফেসে নিজের এলাকা \"আমার ShareOS\"।",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– শেয়ারে প্রবেশাধিকার, ওয়েব লগ ইন নেই। অ্যাকাউন্ট",
+		"bleibt immer Administrator.": "সবসময় প্রশাসক।",
+		"· ohne Web": "· ওয়েব নেই",
+		"NEUER BENUTZER": "নতুন ব্যবহারকারী",
+		"BENUTZERNAME": "ব্যবহারকারীর নাম",
+		"VOLLER NAME": "পুরো নাম",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "প্রতি ড্রাইভে স্টোরেজ সীমা (GB, 0 = সীমাহীন)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "ওয়েব ইন্টারফেসে লগ ইন করতে পারবে (\"আমার ShareOS\")",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "ব্যবহারকারীর নাম: ছোট হাতের অক্ষর, সংখ্যা ও _, অক্ষর দিয়ে শুরু। পাসওয়ার্ড শেয়ারের জন্য এবং – ভূমিকা অনুযায়ী – ওয়েব ইন্টারফেসের জন্য।",
+		"GRUPPE": "গ্রুপ",
+		"MITGLIEDER": "সদস্য",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "গ্রুপ ব্যবহারকারীদের একত্র করে, যেমন \"পরিবার\" বা \"মিডিয়া\"। তখন শেয়ারের অনুমতি পুরো গ্রুপকে দেওয়া যায়।",
+		"Neue Gruppe": "নতুন গ্রুপ",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "সদস্য ব্যবহারকারীর কাছে ঠিক করা হয় (ব্যবহারকারী → সম্পাদনা)।",
+		"MEIN SHAREOS": "আমার SHAREOS",
+		"Noch nichts gespeichert.": "এখনও কিছু সংরক্ষিত নেই।",
+		"Persönlicher Ordner": "ব্যক্তিগত ফোল্ডার",
+		"Kein persönlicher Ordner eingerichtet.": "কোনো ব্যক্তিগত ফোল্ডার সেট আপ নেই।",
+		"PASSWORT ÄNDERN": "পাসওয়ার্ড বদলান",
+		"AKTUELLES PASSWORT": "বর্তমান পাসওয়ার্ড",
+		"Gilt für die Freigaben und diese Oberfläche.": "শেয়ার ও এই ইন্টারফেসের জন্য।",
+		"MEINE FREIGABEN": "আমার শেয়ার",
+		"Dir wurde noch keine Freigabe zugewiesen.": "আপনাকে এখনও কোনো শেয়ার দেওয়া হয়নি।",
+		"APPS & CLOUD": "অ্যাপ ও ক্লাউড",
+		"geplant": "পরিকল্পিত",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "আপনার জন্য খোলা অ্যাপ ও আপনার নিজের ক্লাউড সিঙ্ক কাজ পরে এখানে দেখা যাবে।",
+		"Mein ShareOS": "আমার ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "NFS-এর জন্য অন্তত একটি ক্লায়েন্ট (IP বা নেটওয়ার্ক) দিন।",
+		"Gespeichert.": "সংরক্ষিত।",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "শেয়ারটি নেটওয়ার্ক থেকে সরে যায়। ফোল্ডার ও এর সব ফাইল ড্রাইভে থাকে।",
+		"Benutzer von Alt-F übernehmen?": "Alt-F থেকে ব্যবহারকারী আমদানি করবেন?",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "রাখা Alt-F সেটিংস থেকে ব্যবহারকারী ও গ্রুপ তৈরি হয় (ভূমিকা \"শুধু শেয়ার\")। যেখানে Alt-F পাসওয়ার্ড রেখেছিল, তা নেওয়া হয়।",
+		"Keine neuen Benutzer gefunden.": "নতুন কোনো ব্যবহারকারী পাওয়া যায়নি।",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "গ্রুপের নাম (a–z, 0–9 ও _, অক্ষর দিয়ে শুরু):",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "সদস্যরা থাকে, তবে এই গ্রুপের মাধ্যমে পাওয়া অনুমতি হারায়।",
+		"Setzen": "ঠিক করুন",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "নতুন পাসওয়ার্ড (অন্তত ৬ অক্ষর)। শেয়ারের জন্য এবং – ভূমিকা অনুযায়ী – ওয়েব ইন্টারফেসের জন্য।",
+		"Bitte neu anmelden.": "অনুগ্রহ করে আবার লগ ইন করুন।",
+		"Der persönliche Ordner bleibt erhalten.": "ব্যক্তিগত ফোল্ডার থেকে যায়।",
+		"Benutzerkonten": "ব্যবহারকারী অ্যাকাউন্ট",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "সেটিংসের ব্যাকআপ ও পুনরুদ্ধার",
+		"SICHERN": "ব্যাকআপ",
+		"JSON-Datei": "JSON ফাইল",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "এনক্রিপশনের পাসওয়ার্ড (ঐচ্ছিক)",
+		"leer = unverschlüsselt": "খালি = এনক্রিপশন ছাড়া",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "এতে সব সেটিংস, পাসওয়ার্ডসহ (হ্যাশ হিসেবে) ব্যবহারকারী, শেয়ার, নেটওয়ার্ক এবং কীসহ HTTPS সার্টিফিকেট থাকে। পাসওয়ার্ড ছাড়া ফাইলটি পড়া যায় – নিরাপদে রাখুন। পাসওয়ার্ডসহ: AES-256, পুনরুদ্ধারে পাসওয়ার্ড লাগে।",
+		"Sicherung herunterladen": "ব্যাকআপ ডাউনলোড করুন",
+		"WIEDERHERSTELLEN": "পুনরুদ্ধার",
+		"SICHERUNGSDATEI": "ব্যাকআপ ফাইল",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "পাসওয়ার্ড (এনক্রিপ্টেড হলে)",
+		"Erstellt": "তৈরি",
+		"Zertifikat": "সার্টিফিকেট",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "পুনরুদ্ধার বর্তমান সেটিংস, ব্যবহারকারী ও শেয়ারের জায়গা নেয়। এরপর রিস্টার্ট দরকার। ড্রাইভের তথ্য স্পর্শ করা হয় না।",
+		"Wiederherstellen": "পুনরুদ্ধার করুন",
+		"Einstellungen wiederherstellen?": "সেটিংস পুনরুদ্ধার করবেন?",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "বর্তমান সেটিংস, ব্যবহারকারী ও শেয়ার ব্যাকআপ দিয়ে বদলানো হবে।",
+		"Wiederhergestellt": "পুনরুদ্ধার হয়েছে",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "সেটিংস পুনরুদ্ধার হয়েছে। সব কার্যকর করতে এখনই রিস্টার্ট করবেন?",
+		"Verschlüsselte Sicherung heruntergeladen.": "এনক্রিপ্টেড ব্যাকআপ ডাউনলোড হয়েছে।",
+		"Sicherung heruntergeladen.": "ব্যাকআপ ডাউনলোড হয়েছে।",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "ব্যাকআপ এনক্রিপ্টেড – পাসওয়ার্ড দিন।",
+		"ADRESSE VON PAPERLESS": "PAPERLESS ঠিকানা",
+		"PRÜFEN ALLE": "এতক্ষণ পরপর যাচাই",
+		"NACH DEM HOCHLADEN": "আপলোডের পর",
+		"Datei löschen": "ফাইল মুছুন",
+		"aufheben (.paperless/done)": "রাখুন (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "ইনবক্স ফোল্ডার স্বয়ংক্রিয়ভাবে পাঠান",
+		"Jetzt übertragen": "এখনই পাঠান",
+		"SO FUNKTIONIERT ES": "কীভাবে কাজ করে",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "Paperless-এ প্রতিটি ইনবক্সের জন্য API টোকেন তৈরি করুন (প্রোফাইল → API টোকেন)। তখন নথিগুলো সেই Paperless ব্যবহারকারীর হবে।",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "ফাইল (PDF, ছবি, Office) ইনবক্স ফোল্ডারে রাখুন – PC থেকে বা সরাসরি স্ক্যানার থেকে।",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS সেগুলো Paperless API দিয়ে আপলোড করে এবং Paperless গ্রহণ করেছে কি না দেখায়।",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "ব্যক্তিগত ইনবক্স ব্যক্তিগত ফোল্ডারে থাকে (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": "); ব্যবহারকারীরা \"আমার ShareOS\"-এ নিজের টোকেনও দিতে পারেন। যৌথ ইনবক্স একটি শেয়ার ব্যবহার করে, যেমন স্ক্যানারের জন্য।",
+		"EINGÄNGE": "ইনবক্স",
+		"übernommen": "গৃহীত",
+		"wird verarbeitet": "প্রক্রিয়াধীন",
+		"Fehler": "ত্রুটি",
+		"Protokoll": "লগ",
+		"nichts wartend": "কিছু অপেক্ষায় নেই",
+		"Neuer Eingang": "নতুন ইনবক্স",
+		"NEUER EINGANG": "নতুন ইনবক্স",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "ব্যক্তিগত (ব্যক্তিগত ফোল্ডারে \"Paperless\" ফোল্ডার)",
+		"gemeinsam (Ordner einer Freigabe)": "যৌথ (একটি শেয়ারের ফোল্ডার)",
+		"API-TOKEN": "API টোকেন",
+		"aktiv": "সক্রিয়",
+		"Verbindung prüfen": "সংযোগ পরীক্ষা",
+		"aus Paperless: Profil → API-Token": "Paperless থেকে: প্রোফাইল → API টোকেন",
+		"API-TOKEN (LEER = BEHALTEN)": "API টোকেন (খালি = যেমন আছে)",
+		"TAGS FÜR NEUE DOKUMENTE": "নতুন নথির ট্যাগ",
+		"Schließen": "বন্ধ করুন",
+		"ZEIT": "সময়",
+		"DATEI": "ফাইল",
+		"MELDUNG": "বার্তা",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "আর কিছু পাঠানো হবে না। ফোল্ডার ও এর ফাইল থেকে যায়।",
+		"EINGANG": "ইনবক্স",
+		"WARTEND": "অপেক্ষায়",
+		"ZULETZT": "শেষ",
+		"gemeinsam": "যৌথ",
+		"Paperless → Profil → API-Token": "Paperless → প্রোফাইল → API টোকেন",
+		"Paperless-Eingang gespeichert.": "Paperless ইনবক্স সংরক্ষিত।",
+		"Übertragung gestartet.": "স্থানান্তর শুরু হয়েছে।",
+		"MEIN EINGANG": "আমার ইনবক্স",
+		"MEIN API-TOKEN AUS PAPERLESS": "PAPERLESS থেকে আমার API টোকেন",
+		"Dateien aus meinem Eingang übertragen": "আমার ইনবক্সের ফাইল পাঠান",
+		"Eingangsordner": "ইনবক্স ফোল্ডার",
+		"ZULETZT ÜBERTRAGEN": "সম্প্রতি পাঠানো",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "এখনও কিছু পাঠানো হয়নি। ফাইল ইনবক্স ফোল্ডারে রাখুন – কয়েক মিনিটে Paperless-এ পৌঁছায়।",
+		"KONTEN": "অ্যাকাউন্ট",
+		"Testen": "পরীক্ষা",
+		"Konto hinzufügen": "অ্যাকাউন্ট যোগ করুন",
+		"HINWEISE": "মন্তব্য",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "লগ ইনের তথ্য ডিভাইসে এনক্রিপ্টেড থাকে। Google Drive, OneDrive বা Dropbox-এর জন্য PC-তে চালান",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "এবং তৈরি অংশটি এখানে পেস্ট করুন। কাজগুলো কম মেমোরি নেয় (একসঙ্গে ২টি স্থানান্তর); ব্যান্ডউইথ সীমা, যেমন",
+		"hält das Netz frei.": ", নেটওয়ার্ক ফাঁকা রাখে।",
+		"AUFTRÄGE": "কাজ",
+		"Jetzt starten": "এখনই শুরু করুন",
+		"Neuer Auftrag": "নতুন কাজ",
+		"NEUES CLOUD-KONTO": "নতুন ক্লাউড অ্যাকাউন্ট",
+		"SFTP (SSH-Server)": "SFTP (SSH সার্ভার)",
+		"andere – rclone-Konfiguration einfügen": "অন্য – rclone কনফিগারেশন পেস্ট করুন",
+		"ADRESSE (WEBDAV-URL)": "ঠিকানা (WEBDAV URL)",
+		"ANBIETER": "সরবরাহকারী",
+		"PASSWORT / APP-PASSWORT": "পাসওয়ার্ড / অ্যাপ পাসওয়ার্ড",
+		"Hinzufügen": "যোগ করুন",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (AWS-এর জন্য খালি)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "RCLONE.CONF থেকে অংশ ([নাম] দিয়ে শুরু)",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "লগ ইনের তথ্য মুছে ফেলা হয়। এই অ্যাকাউন্টের কাজগুলো বন্ধ হয়ে যায়। ক্লাউডে কিছু মোছা হয় না।",
+		"NEUER AUFTRAG": "নতুন কাজ",
+		"ORDNER AUF DEM NAS": "NAS-এর ফোল্ডার",
+		"CLOUD-KONTO": "ক্লাউড অ্যাকাউন্ট",
+		"ORDNER IN DER CLOUD": "ক্লাউডের ফোল্ডার",
+		"RICHTUNG": "দিক",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "আপলোড – ক্লাউডে কপি, কিছু মোছা হয় না",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "ডাউনলোড – NAS-এ কপি, কিছু মোছা হয় না",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "ক্লাউডে মিরর – এখানে যা নেই তা ক্লাউড থেকে মোছে",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "ক্লাউড থেকে মিরর – ক্লাউডে যা নেই তা এখান থেকে মোছে",
+		"ZEITPLAN": "সময়সূচি",
+		"nur von Hand": "শুধু হাতে",
+		"stündlich": "প্রতি ঘণ্টায়",
+		"täglich um 2:30": "প্রতিদিন ২:৩০-এ",
+		"sonntags um 3:00": "রবিবার ৩:০০-এ",
+		"eigene Zeit (cron)": "নিজের সময় (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "CRON সময় (মিনিট ঘণ্টা দিন মাস সপ্তাহের_দিন)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "ব্যান্ডউইথ (খালি = সীমাহীন)",
+		"Zeitplan aktiv": "সময়সূচি সক্রিয়",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "মিরর লক্ষ্যের দিকে তা মোছে যা উৎসে নেই – সাধারণ ব্যাকআপের জন্য \"আপলোড\" বাছুন।",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "কাজটি আর চলবে না। NAS ও ক্লাউডের ফাইল যেমন আছে তেমন থাকবে।",
+		"AUFTRAG": "কাজ",
+		"VON → NACH": "কোথা থেকে → কোথায়",
+		"Spiegeln?": "মিরর?",
+		"Verstanden": "বুঝেছি",
+		"Gestoppt.": "থামানো হয়েছে।",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "ক্লাউড থেকে মিরর NAS-এর সেই ফাইলগুলো মোছে যেগুলো ক্লাউডে নেই।",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "ক্লাউডে মিরর ক্লাউডের সেই ফাইলগুলো মোছে যেগুলো NAS-এ নেই।",
+		"MEINE CLOUD": "আমার ক্লাউড",
+		"eigene Konten und Aufträge": "নিজের অ্যাকাউন্ট ও কাজ",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "লগ ইনের তথ্য ডিভাইসে আপনার ব্যক্তিগত ফোল্ডারে এনক্রিপ্টেড থাকে। Google Drive, OneDrive বা Dropbox-এর জন্য চালান",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": ", নেটওয়ার্ক ফাঁকা রাখে। আপনি যা ডাউনলোড করেন তা আপনার স্টোরেজ সীমায় গণনা হয়।",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "নিজের ক্লাউড সিঙ্ক কাজ তৈরি করতে পারবে (ব্যক্তিগত ফোল্ডার দরকার)",
+		"APP & WIDGETS": "অ্যাপ ও উইজেট",
+		"ALS APP INSTALLIEREN": "অ্যাপ হিসেবে ইনস্টল করুন",
+		"über das Browsermenü": "ব্রাউজার মেনু দিয়ে",
+		"läuft als App": "অ্যাপ হিসেবে চলছে",
+		"bereit": "প্রস্তুত",
+		"nur über HTTPS": "শুধু HTTPS",
+		"Diese Oberfläche läuft gerade als installierte App.": "এই ইন্টারফেস ইনস্টল করা অ্যাপ হিসেবে চলছে।",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "ব্রাউজার ShareOS-কে নিজস্ব আইকনসহ অ্যাপ হিসেবে ইনস্টল করতে পারে।",
+		"Im Browsermenü": "ব্রাউজার মেনুতে বাছুন",
+		"„App installieren“": "\"অ্যাপ ইনস্টল করুন\"",
+		"bzw.": "অথবা",
+		"„Zum Startbildschirm hinzufügen“": "\"হোম স্ক্রিনে যোগ করুন\"",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": "। স্ব-স্বাক্ষরিত সার্টিফিকেটে ব্রাউজার আসল ইনস্টল দেয় না।",
+		"Browser installieren Web-Apps nur über": "ব্রাউজার ওয়েব অ্যাপ শুধু এর মাধ্যমে ইনস্টল করে:",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "বিশ্বস্ত সার্টিফিকেটসহ HTTPS",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(যেমন Let's Encrypt, সিস্টেম → নেটওয়ার্কে ইনস্টল করুন)। http:// দিয়ে Chrome-এর মেনু শুধু এটি দেয়:",
+		"– das legt ein Lesezeichen-Symbol an.": "– এতে একটি বুকমার্ক আইকন তৈরি হয়।",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "Android-এ: শর্টকাট খুলতে অ্যাপ আইকন চেপে ধরুন",
+		"Übersicht, Speicher, Freigaben, Firmware": "সারসংক্ষেপ, স্টোরেজ, শেয়ার, ফার্মওয়্যার",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": "। Chrome ওয়েব অ্যাপের জন্য আসল হোম স্ক্রিন উইজেট দেয় না – বরং ডানদিকে উইজেট অ্যাপের জন্য অবস্থা ব্যবহার করুন।",
+		"Als App installieren": "অ্যাপ হিসেবে ইনস্টল করুন",
+		"STATUS FÜR WIDGETS": "উইজেটের জন্য অবস্থা",
+		"Status-Adresse einschalten": "অবস্থার ঠিকানা চালু করুন",
+		"ADRESSE (GEHEIM HALTEN)": "ঠিকানা (গোপন রাখুন)",
+		"Kopieren": "কপি",
+		"Neuer Schlüssel": "নতুন কী",
+		"Öffnen ↗": "খুলুন ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "লগ ইন ছাড়াই ছোট JSON উত্তর দেয়: নাম, সংস্করণ, চালু থাকার সময়, লোড, তাপমাত্রা, ড্রাইভের ব্যবহার, RAID অবস্থা ও সতর্কতা (",
+		"). Gedacht für Widget-Apps wie": ")। উইজেট অ্যাপের জন্য, যেমন",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android), Home Assistant বা নিজের স্ক্রিপ্ট। যে ঠিকানা জানে সে এই মানগুলো দেখতে পায় – এ দিয়ে কেউ কিছু বদলাতে পারে না।",
+		"Status-Adresse eingeschaltet.": "অবস্থার ঠিকানা চালু হয়েছে।",
+		"Status-Adresse ausgeschaltet.": "অবস্থার ঠিকানা বন্ধ হয়েছে।",
+		"Neuen Schlüssel erzeugen?": "নতুন কী তৈরি করবেন?",
+		"Erzeugen": "তৈরি করুন",
+		"Neuer Schlüssel erzeugt.": "নতুন কী তৈরি হয়েছে।",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "পুরোনো ঠিকানা কাজ করা বন্ধ করবে – উইজেটের নতুন ঠিকানা লাগবে।",
+		"Kopiert.": "কপি হয়েছে।",
+		"Bitte die Adresse selbst markieren und kopieren.": "ঠিকানাটি নিজে বাছাই করে কপি করুন।",
+		"ShareOS ist als App installiert.": "ShareOS অ্যাপ হিসেবে ইনস্টল করা আছে।",
+		"· Mein ShareOS": "· আমার ShareOS",
+		"DATEIEN": "ফাইল",
+		"Neuer Ordner": "নতুন ফোল্ডার",
+		"Hochladen": "আপলোড",
+		"Umbenennen": "নাম বদলান",
+		"Verschieben": "সরান",
+		"Versteckte": "লুকানো",
+		"GEÄNDERT": "পরিবর্তিত",
+		"Dateien lassen sich auch einfach hierher ziehen.": "আপনি ফাইল এখানে টেনেও আনতে পারেন।",
+		"Pfad": "পাথ",
+		"Ordner nach oben": "উপরের ফোল্ডার",
+		"Alle auswählen": "সব বাছাই",
+		"Verschieben nach": "এখানে সরান",
+		"Kopieren nach": "এখানে কপি করুন",
+		"Name des neuen Ordners:": "নতুন ফোল্ডারের নাম:",
+		"Dieser Ordner ist leer.": "এই ফোল্ডার খালি।",
+		"SPEICHERLIMIT (GB)": "স্টোরেজ সীমা (GB)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "ওয়েব ইন্টারফেসে ব্যক্তিগত ফোল্ডারের জন্য ফাইল ব্রাউজার",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "ব্যবহারকারীর নাম: ছোট হাতের অক্ষর, সংখ্যা ও _, অক্ষর দিয়ে শুরু। স্টোরেজ সীমা প্রতি ড্রাইভে প্রযোজ্য, 0 = সীমাহীন। পাসওয়ার্ড শেয়ারের জন্য এবং – ভূমিকা অনুযায়ী – ওয়েব ইন্টারফেসের জন্য।",
+		"nur für dich": "শুধু আপনার জন্য",
+		"Wie für alle": "সবার মতো",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "শুধু আপনার লগ ইনে, সব ডিভাইসে প্রযোজ্য। লোগো ও ব্রাউজার আইকন অ্যাকসেন্ট রং নেয়।",
+		"Datei ersetzen?": "ফাইল বদলাবেন?",
+		"Ersetzen": "বদলান",
+		"übersprungen": "এড়ানো হয়েছে",
+		"fertig": "শেষ",
+		"Verbindung unterbrochen": "সংযোগ বিচ্ছিন্ন",
+		"Gelöscht.": "মুছে ফেলা হয়েছে।",
+		"Verschoben.": "সরানো হয়েছে।",
+		"Darstellung wie für alle.": "চেহারা সবার মতো করে দেওয়া হয়েছে।",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "কোনো ড্রাইভ মাউন্ট নেই – আগে স্টোরেজে একটি সেট আপ করুন।",
+		"Kein persönlicher Ordner vorhanden.": "কোনো ব্যক্তিগত ফোল্ডার নেই।",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "শুধু প্রথম ২০০০টি এন্ট্রি দেখানো হয়েছে।",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "হোস্টনেম সংরক্ষিত। নতুন নামের জন্য HTTPS সার্টিফিকেট আবার ইস্যু হয়েছে – ব্রাউজার আরেকবার জিজ্ঞেস করবে।",
+		"INSTALLIERT": "ইনস্টল করা",
+		"STORE": "স্টোর",
+		"QUELLEN": "উৎস",
+		"INSTALLIERTE APPS": "ইনস্টল করা অ্যাপ",
+		"Noch keine App installiert. Im": "এখনও কোনো অ্যাপ ইনস্টল নেই।",
+		"Store": "স্টোরে",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "ইনস্টল করার মতো অ্যাপ আছে – অথবা নিজের প্যাকেজ (.sapp) আপলোড করুন।",
+		"Apps": "অ্যাপ",
+		"APP-STORE": "অ্যাপ স্টোর",
+		"Beta (auch Vorabversionen)": "বিটা (প্রি-রিলিজও)",
+		"Jetzt aktualisieren": "এখনই রিফ্রেশ",
+		"PAKET INSTALLIEREN": "প্যাকেজ ইনস্টল করুন",
+		"PAKETDATEI": "প্যাকেজ ফাইল",
+		"Für eigene Apps (gebaut mit": "নিজের অ্যাপের জন্য (অ্যাপ রিপোজিটরির",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "দিয়ে তৈরি)। আপলোড করা প্যাকেজ \"নিজের / যাচাই করা হয়নি\" হিসেবে গণ্য।",
+		"Hochladen & installieren": "আপলোড করে ইনস্টল করুন",
+		"VERFÜGBARE APPS": "উপলব্ধ অ্যাপ",
+		"APP": "অ্যাপ",
+		"HERAUSGEBER": "প্রকাশক",
+		"Werkzeuge": "টুল",
+		"Medien": "মিডিয়া",
+		"Büro": "অফিস",
+		"Netzwerk": "নেটওয়ার্ক",
+		"Download": "ডাউনলোড",
+		"Sync": "সিঙ্ক",
+		"wird geladen …": "ডাউনলোড হচ্ছে …",
+		"aus dem Store": "স্টোর থেকে",
+		"eigene / ungeprüft": "নিজের / যাচাই করা হয়নি",
+		"eigene": "নিজের",
+		"SICHTBAR FÜR": "কারা দেখবে",
+		"alle Benutzer": "সব ব্যবহারকারী",
+		"nur Administratoren": "শুধু প্রশাসক",
+		"Alle Benutzer mit Web-Zugang": "ওয়েব প্রবেশাধিকারসহ সব ব্যবহারকারী",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "প্রশাসকরা সব অ্যাপ দেখেন। বাছাই ঠিক করে \"আমার ShareOS\"-এ অ্যাপটি কারা দেখবে।",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "অ্যাপটি মুছে ফেলা হয়। এটি ব্রাউজারে যে তথ্য রেখেছে তা সেখানেই থাকে।",
+		"APP-QUELLEN": "অ্যাপের উৎস",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "অন্য উৎস (ক্যাটালগের ঠিকানা)",
+		"Eine Quelle ist ein App-Katalog (": "উৎস হলো একটি অ্যাপ ক্যাটালগ (",
+		") im Format des Repos": ") এই রিপোজিটরির ফরম্যাটে:",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": "। নিজের অ্যাপ: রিপোজিটরিটিকে টেমপ্লেট হিসেবে নিন, এর GitHub Action প্যাকেজ ও ক্যাটালগ তৈরি করে। শুধু বিশ্বস্ত উৎস যোগ করুন।",
+		"Quelle entfernen?": "উৎস সরাবেন?",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "এই উৎসের অ্যাপ আর স্টোরে দেখা যাবে না। ইনস্টল করা অ্যাপ থেকে যায়।",
+		"MEINE APPS": "আমার অ্যাপ",
+		"Store aktualisiert.": "স্টোর রিফ্রেশ হয়েছে।",
+		"Entfernt.": "সরানো হয়েছে।",
+		"Lade den Katalog …": "ক্যাটালগ লোড হচ্ছে …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "কোনো অ্যাপ পাওয়া যায়নি – ইন্টারনেট সংযোগ ও উৎস যাচাই করুন।",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "ওয়েব প্রবেশাধিকারসহ কোনো ব্যবহারকারী নেই – শেয়ার → ব্যবহারকারীতে একজন তৈরি করুন।",
+		"braucht neuere ShareOS": "নতুন ShareOS দরকার",
+		"noch nicht geladen": "এখনও লোড হয়নি",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "ওয়েব অ্যাপ নিজস্ব পোর্টে চলে (8081 / HTTPS-এর জন্য 8444) – এই ইন্টারফেস থেকে আলাদা, তাই কোনো অ্যাপ আপনার লগ ইন ব্যবহার করতে পারে না। যে ঠিকানা জানে সে নেটওয়ার্কে ওয়েব অ্যাপ খুলতে পারে; \"কারা দেখবে\" ঠিক করে \"আমার ShareOS\"-এ এটি কে দেখবে।",
+		"Installation abgeschlossen": "ইনস্টল শেষ",
+		"(100 %) – jetzt neu starten.": "(100 %) – এখনই রিস্টার্ট করুন।",
+		"FIRMWARE-DATEI EINSPIELEN": "ফার্মওয়্যার ফাইল ইনস্টল করুন",
+		"Hochladen & prüfen": "আপলোড করে যাচাই",
+		"Art": "ধরন",
+		"andere Firmware": "অন্য ফার্মওয়্যার",
+		"Einspielen": "ইনস্টল করুন",
+		"Firmware wird geschrieben": "ফার্মওয়্যার লেখা হচ্ছে",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "কার্নেল ও বুট সিস্টেম – অপেক্ষা করুন, বন্ধ করবেন না",
+		"Geschrieben": "লেখা হয়েছে",
+		"Größe": "আকার",
+		"ext4 – empfohlen": "ext4 – প্রস্তাবিত",
+		"exFAT – empfohlen": "exFAT – প্রস্তাবিত",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "সবকিছু: প্রতি ব্যবহারকারীর অনুমতি, স্টোরেজ সীমা, ব্যক্তিগত ফোল্ডার, অ্যাপ।",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "প্রতি ব্যবহারকারীর অনুমতি, ব্যক্তিগত ফোল্ডার, অ্যাপ; প্রতি ব্যবহারকারীর স্টোরেজ সীমা নেই। বেশি মেমোরি লাগে।",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Windows ও macOS-এও পড়া যায়। প্রতি ব্যবহারকারীর অনুমতি নেই (যে শেয়ারে লিখতে পারে সে এতে সব বদলাতে পারে), স্টোরেজ সীমা, ব্যক্তিগত ফোল্ডার ও অ্যাপ নেই।",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Windows-এও পড়া যায়। প্রতি ব্যবহারকারীর অনুমতি, স্টোরেজ সীমা, ব্যক্তিগত ফোল্ডার ও অ্যাপ নেই।",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, টিভি; ৪ GB-এর বড় ফাইল।",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "পুরোনো যন্ত্রের জন্য (গাড়ির রেডিও, ক্যামেরা); ফাইল সর্বোচ্চ ৪ GB।",
+		"Für Windows-Rechner.": "Windows কম্পিউটারের জন্য।",
+		"Für Linux und Sicherungen mit Rechten.": "Linux ও অনুমতিসহ ব্যাকআপের জন্য।",
+		"DATEISYSTEM": "ফাইল সিস্টেম",
+		"Sicher entfernen": "নিরাপদে বের করুন",
+		"Formatieren": "ফরম্যাট",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "নতুন ভলিউমের নাম (a–z, 0–9, - ও _, সর্বোচ্চ ১৬ অক্ষর) ও ফাইল সিস্টেম:",
+		"UHRZEIT DER BOX": "ডিভাইসের সময়",
+		"Zeitabgleich": "সময় সিঙ্ক",
+		"aus dem Internet (NTP)": "ইন্টারনেট থেকে (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP চালু আছে কিন্তু চলছে না",
+		"von Hand": "হাতে",
+		"Zuletzt abgeglichen": "শেষ সিঙ্ক",
+		"noch nicht": "এখনও না",
+		"Batterie-Uhr": "ব্যাটারি ঘড়ি",
+		"wird nach jedem Abgleich gestellt": "প্রতি সিঙ্কের পর ঠিক করা হয়",
+		"Jetzt abgleichen": "এখনই সিঙ্ক করুন",
+		"ZEITZONE & ZEITSERVER": "সময় অঞ্চল ও সময় সার্ভার",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "ইন্টারনেট থেকে সময় স্বয়ংক্রিয়ভাবে নিন (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "সময় সার্ভার (প্রতি লাইনে একটি, সর্বোচ্চ ৫টি)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "বাড়ির নেটওয়ার্কে রাউটারও সময় সার্ভার হতে পারে, যেমন",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": "। সময় অঞ্চল লগ, সময়সূচি ও প্রদর্শনে প্রযোজ্য।",
+		"UHRZEIT VON HAND STELLEN": "ঘড়ি হাতে ঠিক করুন",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "NTP চালু থাকলে ডিভাইস পরের সিঙ্কে ঘড়ি আবার ইন্টারনেট অনুযায়ী করবে। ইন্টারনেট ছাড়া ডিভাইসের জন্য উপরে NTP বন্ধ করুন।",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "ঘড়ি সেখান থেকে চলতে থাকে; ডিভাইসের ব্যাটারি ঘড়িও ঠিক করা হয়।",
+		"Uhrzeit dieses Geräts übernehmen": "এই ডিভাইসের সময় নিন",
+		"Uhrzeit setzen": "সময় ঠিক করুন",
+		"Uhrzeit gesetzt.": "সময় ঠিক হয়েছে।",
+		"Uhrzeit abgeglichen.": "সময় সিঙ্ক হয়েছে।",
+		"Ungültige Uhrzeit.": "অবৈধ সময়।",
+		"Eine Firmware im D-Link-Format, z. B. für den": "D-Link ফরম্যাটে একটি ফার্মওয়্যার, যেমন",
+		"Wechsel zurück zu Alt-F": "Alt-F-এ ফেরার",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": "জন্য। কার্নেল ও বুট সিস্টেম লেখা হয়; ShareOS-এর সিস্টেম ও সেটিংস ফ্ল্যাশে থাকে।"
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"সোয়াপ নেই, অ্যাপ এলাকা নেই (প্যাকেজ ও অ্যাপের তথ্যের জন্য ext4 বা Btrfs দরকার)।"
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"প্রতি ডিস্কে $1 সোয়াপ, অ্যাপ এলাকা নেই (প্যাকেজ ও অ্যাপের তথ্যের জন্য ext4 বা Btrfs দরকার)।"
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"পুনরুদ্ধার: $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"ব্যাকআপ: $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"ব্যাকআপ: $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"$1 তৈরি হয়েছে"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"শেয়ার $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"ব্যবহারকারী $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"গ্রুপ $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"$1-এর অনুমতি"
+		],
+		[
+			"^auf (\\S+)$",
+			"$1-এ"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"প্রতি ড্রাইভে সীমা $1"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"অতিথি (প)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"শেয়ার \"$1\" সংরক্ষিত।"
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"শেয়ার \"$1\" সরাবেন?"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"শেয়ার \"$1\" সরানো হয়েছে।"
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"ব্যবহারকারী \"$1\" তৈরি হয়েছে।"
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"ব্যবহারকারী \"$1\" সংরক্ষিত।"
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"ব্যবহারকারী \"$1\" মুছবেন?"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"ব্যবহারকারী \"$1\" মুছে ফেলা হয়েছে।"
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"অ্যাকাউন্টটি সরানো হয়; এর শেয়ার অনুমতি বাতিল হয়।$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"গ্রুপ \"$1\" তৈরি হয়েছে।"
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"গ্রুপ \"$1\" মুছবেন?"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"গ্রুপ \"$1\" মুছে ফেলা হয়েছে।"
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"$1-এর পাসওয়ার্ড"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"$1-এর পাসওয়ার্ড বদলানো হয়েছে।"
+		],
+		[
+			"^Übernommen: (.+)$",
+			"আমদানি: $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"এড়ানো: $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"শেয়ার: $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"শেয়ার: $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"ব্যবহারকারী: $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"পাসওয়ার্ড: $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F: $1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"পরিবর্তন সঙ্গে সঙ্গে কার্যকর হয়। তারপর ডিভাইস নতুন ঠিকানা থেকে নিশ্চিতকরণের জন্য $1 সেকেন্ড অপেক্ষা করে – না এলে আগের সেটিংস ফিরিয়ে আনে। তাই আপনি নিজেকে বাইরে আটকে ফেলতে পারবেন না।"
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– নিশ্চিতকরণ ছাড়া ডিভাইস $1 সেকেন্ডে পুরোনো সেটিংসে ফিরবে।"
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"ডিভাইস রাউটার থেকে ঠিকানা পায়। এরপর এটি অন্য ঠিকানায় থাকতে পারে (রাউটারে দেখুন)। $1 সেকেন্ডের মধ্যে ডিভাইসে পরিবর্তন নিশ্চিত না হলে আগের সেটিংস আবার কার্যকর হবে।"
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"ডিভাইস $1-এ বদলায়। তারপর এই পৃষ্ঠা নতুন ঠিকানা খুলে পরিবর্তন নিশ্চিত করে। তা কাজ না করলে $2 সেকেন্ড পর আগের সেটিংস আবার কার্যকর হবে।"
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"নেটওয়ার্ক সেটিংস এই পৃষ্ঠা প্রয়োগ ও নিশ্চিত করে। তা কাজ না করলে $1 সেকেন্ড পর আগের সেটিংস আবার কার্যকর হবে।"
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"নতুন ঠিকানা $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"ডিভাইসের অপেক্ষা ($1 সেকেন্ড) – পাওয়া যাচ্ছে না? রাউটারে নতুন ঠিকানা দেখে সেখানে লগ ইন করুন।"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"ডিভাইসের অপেক্ষা ($1 সেকেন্ড)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1: চালুর সময় শুরু হয়"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1: চালুর সময় আর শুরু হয় না"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"নেটওয়ার্ক: $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"চেহারা: $1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"চ্যানেল $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"আপডেট $1 উপলব্ধ"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"আপডেট $1 উপলব্ধ।"
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"আপডেট $1"
+		],
+		[
+			"^seit (.+)$",
+			"$1 ধরে"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"$1টি সেট আপ"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"$1টি পাওয়া গেছে"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"পরিকল্পিত · পর্যায় $1"
+		],
+		[
+			"^Neueste · Beta$",
+			"সর্বশেষ · বিটা"
+		],
+		[
+			"^Neueste · Stabil$",
+			"সর্বশেষ · স্থিতিশীল"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"$1-এ পরিবর্তন"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"প্রবেশাধিকার · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"$1-এর নাম ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"অগ্রগতি · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"উৎস: GitHub রিলিজ · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"সফলভাবে ইনস্টল ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"$1 ফরম্যাট"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 পুরোপুরি মুছে যাবে। এটি ফেরানো যায় না।"
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"\"সেট আপ\"-এ ক্লিক করলে $1 পুরোপুরি মুছে যায়। প্রাথমিক সিঙ্ক এরপর পটভূমিতে চলে (বড় ডিস্কে কয়েক ঘণ্টা); ড্রাইভ সঙ্গে সঙ্গে ব্যবহার করা যায়।"
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"\"সেট আপ\"-এ ক্লিক করলে $1 পুরোপুরি মুছে যায়।"
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"প্রতি ডিস্কে $1 সোয়াপ, অ্যাপ এলাকা \"$2\"-এ (যদি আগে না থাকে)।"
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"সোয়াপ নেই, অ্যাপ এলাকা \"$1\"-এ (যদি আগে না থাকে)।"
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"দুটি ডিস্কে একই তথ্য থাকে। একটি নষ্ট হলেও কিছু হারায় না। ব্যবহারযোগ্য: $1।"
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"দ্বিগুণ জায়গা ($1), কিন্তু সুরক্ষা নেই – প্রতিটি ডিস্ক আলাদা ড্রাইভ।"
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"ডিস্কটি $1-এর ড্রাইভ হবে। সুরক্ষার জন্য পরে দ্বিতীয় ডিস্ক মিরর হিসেবে যোগ করুন।"
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1: দুটি ডিস্কই সক্রিয় ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1: একটি ডিস্ক নেই ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"\"$1\" সরাবেন?"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"$1 মুছবেন?"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"$1 পুরোপুরি মুছে ড্রাইভ \"$2\" হিসেবে সেট আপ হবে।"
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"ShareOS $1 ফ্ল্যাশে লেখা হবে। এরপর রিস্টার্ট দরকার, যার সময় নতুন সিস্টেম ইনস্টল হয়। লেখার সময় ডিভাইস বন্ধ করবেন না।"
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$2-এর মধ্যে $1"
+		],
+		[
+			"^(.+) installieren$",
+			"$1 ইনস্টল করুন"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"লোড $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"নেটওয়ার্ক · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1: মাউন্ট হয়েছে"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1: আনমাউন্ট হয়েছে"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1: সরানো হয়েছে"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1: চালু হয়েছে"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1: বন্ধ হয়েছে"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1: আবার চালু হয়েছে"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)।"
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"$1 °C থেকে পূর্ণ"
+		],
+		[
+			"^jetzt: (.+)$",
+			"এখন: $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"শেষ $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"$1টি ফাইল অপেক্ষায়"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"$1-এর ব্যক্তিগত ইনবক্স · টোকেন $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"যৌথ ইনবক্স · টোকেন $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"ব্যক্তিগত: $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"ইনবক্স $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"লগ · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"সংযোগ ঠিক আছে – Paperless-এ $1টি নথি।"
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"ইনবক্স \"$1\" সরাবেন?"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1: সংযোগ ঠিক আছে ($2টি ফোল্ডার)।"
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"অ্যাকাউন্ট \"$1\" সরাবেন?"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"কাজ \"$1\" সরাবেন?"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"শেয়ার $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"শেয়ার $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → ব্যক্তিগত ফোল্ডার"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron: $1 · $2 দ্বারা"
+		],
+		[
+			"^von (\\S+)$",
+			"$1 দ্বারা"
+		],
+		[
+			"^Fehler · (.+)$",
+			"ত্রুটি · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"$1 থেকে চলছে"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"কাজ: $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"অ্যাকাউন্ট: $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"ইনবক্স: $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"পাখা: $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"সার্ভিস: $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"সেট আপ: $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"ফরম্যাট: $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"ইনস্টল: $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"স্ট্যান্ডবাই: $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"স্টোরেজ: $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"ভাষা: $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"চ্যানেল: $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"সার্টিফিকেট: $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"যাচাই ব্যর্থ: $1"
+		],
+		[
+			"^(.+) frei$",
+			"$1 খালি"
+		],
+		[
+			"^(.+) auswählen$",
+			"$1 বাছাই"
+		],
+		[
+			"^(.+) herunterladen$",
+			"$1 ডাউনলোড"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"$1টি বাছাই করা হয়েছে।"
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"\"$1\"-এর নতুন নাম:"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"$1টি আইটেম। লক্ষ্য ফোল্ডার \"$2\"-এ পাথ হিসেবে, যেমন Photos/2026 (খালি = সবচেয়ে উপরে)।"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"$1টি আইটেম মুছবেন?"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – ফোল্ডার তাদের বিষয়বস্তুসহ। এটি ফেরানো যায় না।"
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"\"$1\" এই ফোল্ডারে আগেই আছে।"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"$1টি ফাইল আপলোড হয়েছে।"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"$1টি ফাইল আপলোড হয়নি।"
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"সবার মতো ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"ডাউনলোড: $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"ফোল্ডার: $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"নাম বদল: $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"মোছা: $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"সরানো: $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"কপি: $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"ফাইল: $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"ওয়েব অ্যাপ নিজস্ব পোর্টে ($1) চলে – এই ইন্টারফেস থেকে আলাদা, তাই কোনো অ্যাপ আপনার লগ ইন ব্যবহার করতে পারে না। যে ঠিকানা জানে সে নেটওয়ার্কে ওয়েব অ্যাপ খুলতে পারে; \"কারা দেখবে\" ঠিক করে \"আমার ShareOS\"-এ এটি কে দেখবে।"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"ওয়েব অ্যাপ নিজস্ব পোর্টে ($1 / HTTPS-এর জন্য $2) চলে – এই ইন্টারফেস থেকে আলাদা, তাই কোনো অ্যাপ আপনার লগ ইন ব্যবহার করতে পারে না। যে ঠিকানা জানে সে নেটওয়ার্কে ওয়েব অ্যাপ খুলতে পারে; \"কারা দেখবে\" ঠিক করে \"আমার ShareOS\"-এ এটি কে দেখবে।"
+		],
+		[
+			"^Stand (.+)$",
+			"$1 পর্যন্ত অবস্থা"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · কারা দেখবে: $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · কারা দেখবে"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"$1 সরাবেন?"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 ইনস্টল হয়েছে।"
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 ইনস্টল হয়েছে (নিজের অ্যাপ)।"
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 ডাউনলোড হচ্ছে …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 যাচাই হচ্ছে …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 ইনস্টল হচ্ছে …"
+		],
+		[
+			"^Update (.+)$",
+			"$1 আপডেট করুন"
+		],
+		[
+			"^Store: (.*)$",
+			"স্টোর: $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"অ্যাপ: $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"সরানো: $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"উৎস: $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"প্যাকেজ: $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"এরপর $1 চালু হবে। তখন Alt-F-এর অতিরিক্ত প্যাকেজ থাকবে না – Alt-F-এর ফার্মওয়্যার পৃষ্ঠায় একই ফাইল আরেকবার ফ্ল্যাশ করুন। ShareOS-এ ফেরা: Alt-F-এ ShareOS-এর .bin ফ্ল্যাশ করুন, সিস্টেম ও সেটিংস এখনও আছে।"
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"$1 ইনস্টল করবেন?"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"কার্নেল ও বুট সিস্টেম বদলে যাচাই করা হয়। লেখার সময় ডিভাইস বন্ধ করবেন না।"
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 ফ্ল্যাশে আছে। এখনই রিস্টার্ট করবেন?"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 চালু হচ্ছে – এর ইন্টারফেস শিগগির $2-এ থাকবে (পোর্ট 80)।"
+		],
+		[
+			"^(.+) startet$",
+			"$1 চালু হচ্ছে"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"ইনস্টল: $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"ফার্মওয়্যার ফাইল: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 এখন খুলে নেওয়া যায়।"
+		],
+		[
+			"^(.+) formatieren$",
+			"$1 ফরম্যাট"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"$1 মুছবেন?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – নাম (অক্ষর, সংখ্যা, স্পেস, - ও _) ও ফাইল সিস্টেম:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"$1-এর সবকিছু মুছে যায়। এরপর এটি একটি $2 ড্রাইভ \"$3\" হবে।"
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) পুরোপুরি মুছে ভলিউম \"$4\" ($5) হিসেবে আবার সেট আপ হবে।"
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"অ্যাপ এলাকা \"$1\"-এ (যদি আগে না থাকে)।"
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"তারিখ ও সময় ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"সময়: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"সিঙ্ক: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"সময়: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (মিরর (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (একক ড্রাইভ)"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"চলছে",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"বন্ধ",
+			"g"
+		],
+		[
+			" frei von ",
+			" খালি, মোট",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" /",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" ব্যবহৃত",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"দিন চালু",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"আছে:",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"RAID সদস্য,",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"RAID সদস্য",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"ডিস্ক ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"স্লট ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"প্রাথমিক সিঙ্ক",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"পুনরুদ্ধার",
+			"g"
+		],
+		[
+			"Prüfung",
+			"যাচাই",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · বাকি $1",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"মিরর (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"একক ড্রাইভ",
+			""
+		],
+		[
+			" umgelagert, ",
+			" পুনর্বণ্টিত,",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" অপেক্ষমাণ",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"চলছে",
+			"g"
+		],
+		[
+			" und ",
+			" ও",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"দিন $1 ঘণ্টা",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – বন্ধ করবেন না।",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"যাচাই ব্যর্থ:",
+			""
+		],
+		[
+			"^Kanal: ",
+			"চ্যানেল:",
+			""
+		],
+		[
+			"^Dienste: ",
+			"সার্ভিস:",
+			""
+		],
+		[
+			"^Speicher: ",
+			"স্টোরেজ:",
+			""
+		],
+		[
+			"^Download: ",
+			"ডাউনলোড:",
+			""
+		],
+		[
+			"^Installieren: ",
+			"ইনস্টল:",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"সেট আপ:",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"ফরম্যাট:",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"সার্টিফিকেট:",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS:",
+			""
+		],
+		[
+			"^Sprache: ",
+			"ভাষা:",
+			""
+		],
+		[
+			"^Logo: ",
+			"লোগো:",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"অর্ধেক",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"পাখা:",
+			""
+		],
+		[
+			"^Hardware: ",
+			"হার্ডওয়্যার:",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"গ্রুপ",
+			"g"
+		]
+	]
+}

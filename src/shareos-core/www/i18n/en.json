@@ -173,7 +173,6 @@
 		"; Freigaben legst du später darauf an.": "; you create shares on it later.",
 		"Platten löschen und einrichten?": "Erase and set up the disks?",
 		"Löschen & einrichten": "Erase & set up",
-		"Weiter ": "Next",
 		"Einrichtung gestartet.": "Setup started.",
 		"Formatieren gestartet.": "Formatting started.",
 		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "Name of the new drive (a–z, 0–9, - and _, max. 16 characters):",
@@ -525,7 +524,7 @@
 		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– own area “My ShareOS” in the web interface.",
 		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– access to shares, no web login. The account",
 		"bleibt immer Administrator.": "is always an administrator.",
-		" · ohne Web": " · no web",
+		"· ohne Web": "· no web",
 		"NEUER BENUTZER": "NEW USER",
 		"BENUTZERNAME": "USER NAME",
 		"VOLLER NAME": "FULL NAME",
@@ -561,7 +560,7 @@
 		"Setzen": "Set",
 		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "New password (at least 6 characters). Used for shares and – depending on the role – for the web interface.",
 		"Bitte neu anmelden.": "Please log in again.",
-		" Der persönliche Ordner bleibt erhalten.": " The personal folder is kept.",
+		"Der persönliche Ordner bleibt erhalten.": "The personal folder is kept.",
 		"Benutzerkonten": "User accounts",
 		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "BACK UP & RESTORE SETTINGS",
 		"SICHERN": "BACK UP",
@@ -810,9 +809,6 @@
 		"Installation abgeschlossen": "Installation finished",
 		"(100 %) – jetzt neu starten.": "(100 %) – restart now.",
 		"FIRMWARE-DATEI EINSPIELEN": "INSTALL FIRMWARE FILE",
-		"Eine Firmware im D-Link-Format, z. B. um ": "A firmware in D-Link format, e.g. to go ",
-		"zurück zu Alt-F": "back to Alt-F",
-		" zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash.",
 		"Hochladen & prüfen": "Upload & check",
 		"Art": "Type",
 		"andere Firmware": "other firmware",
@@ -834,7 +830,33 @@
 		"DATEISYSTEM": "FILE SYSTEM",
 		"Sicher entfernen": "Safely remove",
 		"Formatieren": "Format",
-		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Name of the new volume (a–z, 0–9, - and _, at most 16 characters) and file system:"
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Name of the new volume (a–z, 0–9, - and _, at most 16 characters) and file system:",
+		"UHRZEIT DER BOX": "TIME ON THE BOX",
+		"Zeitabgleich": "Time sync",
+		"aus dem Internet (NTP)": "from the internet (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP switched on but not running",
+		"von Hand": "by hand",
+		"Zuletzt abgeglichen": "Last synced",
+		"noch nicht": "not yet",
+		"Batterie-Uhr": "Battery clock",
+		"wird nach jedem Abgleich gestellt": "is set after every sync",
+		"Jetzt abgleichen": "Sync now",
+		"ZEITZONE & ZEITSERVER": "TIME ZONE & TIME SERVERS",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "Get the time from the internet automatically (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "TIME SERVERS (ONE PER LINE, AT MOST 5)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "In a home network the router can be the time server too, e.g.",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": ". The time zone applies to logs, schedules and the display.",
+		"UHRZEIT VON HAND STELLEN": "SET THE CLOCK BY HAND",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "While NTP is on, the box sets the clock from the internet again at the next sync. For a box without internet, switch NTP off above.",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "The clock keeps running from there; the box's battery clock is set too.",
+		"Uhrzeit dieses Geräts übernehmen": "Take this device's time",
+		"Uhrzeit setzen": "Set time",
+		"Uhrzeit gesetzt.": "Time set.",
+		"Uhrzeit abgeglichen.": "Time synced.",
+		"Ungültige Uhrzeit.": "Invalid time.",
+		"Eine Firmware im D-Link-Format, z. B. für den": "A firmware in D-Link format, e.g. for the",
+		"Wechsel zurück zu Alt-F": "switch back to Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash."
 	},
 	"patterns": [
 		[
@@ -1532,6 +1554,30 @@
 		[
 			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
 			"App area on “$1” (unless there is one already)."
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"DATE AND TIME ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"Time: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"Sync: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"Time: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (mirror (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (single drive)"
 		]
 	],
 	"words": [

@@ -219,6 +219,11 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Formatieren** (am USB-Laufwerk): Name und Dateisystem wählen – **exFAT** (empfohlen), **FAT32**, **NTFS** oder **ext4**. Der Stick bekommt eine Partition (MBR), damit ihn jeder Rechner, jede Kamera und jeder Fernseher liest.
 - Die Platten in den Schächten werden nie automatisch eingehängt; die USB-Funktionen fassen sie nicht an.
 
+## 14. Zeit und Sprachen
+
+- **System → Zeit:** Die Uhr der Box läuft live in ihrer Zeitzone. Zeitzone ändern, NTP aus- und einschalten, eigene Zeitserver eintragen (z. B. `fritz.box`), *Jetzt abgleichen*. Mit NTP aus lässt sich die Uhr von Hand stellen oder die Zeit des Browsers übernehmen. Protokolle zeigen danach die Ortszeit.
+- **System → Darstellung → Sprache:** 10 Sprachen (Englisch, Deutsch, Chinesisch, Hindi, Spanisch, Französisch, Arabisch, Bengalisch, Portugiesisch, Russisch). Arabisch stellt die Seite auf rechts-nach-links um. Die Übersetzungen außer Deutsch/Englisch sind maschinell – Fehler bitte melden.
+
 ## Zurück zu Alt-F
 
 1. Die Alt-F-`.bin` für den DNS-320L bereitlegen (z. B. `Alt-F-1.0-DNS-320L-rev-A.bin`).

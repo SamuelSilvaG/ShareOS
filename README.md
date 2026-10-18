@@ -60,7 +60,9 @@ Version in brackets = first release with the feature.
 - First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP
 - HTTPS with a self-signed certificate that follows name and IP, own certificate possible
 - Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256), messages that can be closed
-- Look: light/dark/system, accent colours, tiles or tables, per user; English and German (more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
+- Look: light/dark/system, accent colours, tiles or tables, per user
+- 10 languages: English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese, Russian (beta.8; more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
+- Time: time zone, NTP on/off with own servers (e.g. the router), sync now, set the clock by hand; the battery clock follows (beta.8)
 - SSH/SFTP (Dropbear), rescue system in the initramfs (SSH, flash tools)
 
 ## D-Link firmware, Alt-F and ShareOS compared (DNS-320L)

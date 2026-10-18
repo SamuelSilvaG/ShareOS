@@ -1,0 +1,1780 @@
+{
+	"language": "fr",
+	"name": "Français",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "APERÇU",
+		"SPEICHER": "STOCKAGE",
+		"FREIGABEN": "PARTAGES",
+		"DIENSTE": "SERVICES",
+		"APPS": "APPS",
+		"CLOUD": "CLOUD",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "SYSTÈME",
+		"NEU": "NOUVEAU",
+		"ONLINE": "EN LIGNE",
+		"OFFLINE": "HORS LIGNE",
+		"Abmelden": "Se déconnecter",
+		"Hell/Dunkel umschalten": "Basculer clair/sombre",
+		"Hauptmenü": "Menu principal",
+		"System": "Système",
+		"verfügbar": "disponible",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "L'interface ShareOS nécessite JavaScript.",
+		"Verwaltung – bitte anmelden.": "Administration – veuillez vous connecter.",
+		"BENUTZER": "UTILISATEUR",
+		"PASSWORT": "MOT DE PASSE",
+		"Angemeldet bleiben (7 Tage)": "Rester connecté (7 jours)",
+		"Anmelden": "Se connecter",
+		"Benutzer oder Passwort falsch.": "Utilisateur ou mot de passe incorrect.",
+		"Box nicht erreichbar.": "Boîtier injoignable.",
+		"Sitzung abgelaufen – bitte neu anmelden.": "Session expirée – veuillez vous reconnecter.",
+		"live · alle 5 s": "en direct · toutes les 5 s",
+		"AUSLASTUNG": "CHARGE",
+		"Gerätesteuerung aktiv": "contrôle de carte actif",
+		"keine MCU-Daten": "pas de données MCU",
+		"LÜFTER": "VENTILATEUR",
+		"TEMP": "TEMP",
+		"aus": "arrêt",
+		"halb": "moitié",
+		"voll": "plein",
+		"kein Link": "pas de lien",
+		"letzte 10 min": "10 dernières min",
+		"Gateway · DNS": "Passerelle · DNS",
+		"sammle Messwerte …": "collecte des mesures …",
+		"Firmware": "Firmware",
+		"Start aus": "Démarré depuis",
+		"Flash (UBI)": "Flash (UBI)",
+		"Netzwerk (RAM)": "Réseau (RAM)",
+		"Einstellungen bleiben erhalten": "Les réglages sont conservés",
+		"Änderungen gehen beim Neustart verloren": "Les modifications sont perdues au redémarrage",
+		"Laufzeit": "Temps de fonctionnement",
+		"seit dem letzten Start": "depuis le dernier démarrage",
+		"Dienste": "Services",
+		"laufen": "en cours",
+		"Flash frei": "Flash libre",
+		"für Einstellungen & Pakete": "pour réglages et paquets",
+		"Laufwerke": "Disques",
+		"erkannt": "détectés",
+		"keine eingesteckt": "aucun branché",
+		"alle verwalten": "tout gérer",
+		"Update verfügbar": "Mise à jour disponible",
+		"Lade Systemdaten …": "Chargement des données système …",
+		"Lade Dienste …": "Chargement des services …",
+		"Lade Laufwerke …": "Chargement des disques …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "Aucun disque dur ni stockage USB détecté. ShareOS fonctionne entièrement depuis la flash interne – les disques apparaissent ici dès qu'ils sont branchés.",
+		"unbekanntes Modell": "modèle inconnu",
+		"Start, Stopp, Neustart": "démarrer, arrêter, redémarrer",
+		"Neustart": "Redémarrer",
+		"Stopp": "Arrêter",
+		"Starten": "Démarrer",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "Interface web",
+		"Zeit (NTP)": "Heure (NTP)",
+		"Zeitplaner": "Planificateur",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "Bus système (ubus)",
+		"Systemprotokoll": "Journal système",
+		"Gerätesteuerung": "Contrôle de carte",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "règle l'horloge, garde l'horloge MCU à l'heure",
+		"Schnittstelle für diese Oberfläche": "interface pour cette page web",
+		"Nachrichten zwischen den Diensten": "messages entre les services",
+		"syslogd, im RAM": "syslogd, en RAM",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "ventilateur, température, boutons, horloge MCU",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "Cette partie n'est pas encore construite. Prévu :",
+		"FREIGABEN, BENUTZER & GRUPPEN": "PARTAGES, UTILISATEURS ET GROUPES",
+		"APPS & PAKETE": "APPS ET PAQUETS",
+		"CLOUD-SPEICHER": "STOCKAGE CLOUD",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "Partages par dossier avec interrupteurs pour SMB, NFS, FTP et DLNA",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "Utilisateurs et groupes avec droits par partage",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "Monter des lecteurs réseau (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "Tâches de sauvegarde (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "Source de paquets (flux opkg) sur GitHub",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "Catalogue par catégories, installer/supprimer avec une file d'attente",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "Les paquets vont dans réglages et paquets (flash) ou sur le disque",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "Comptes via rclone : Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "Tâches de synchronisation : copier, miroir, bidirectionnel",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "Chiffrement (crypt), bande passante et planification",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "Dossier d'entrée sur le NAS → envoi via l'API REST de Paperless (jeton)",
+		"Status der Übertragungen über /api/tasks/": "État du transfert via /api/tasks/",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "Étiquettes et correspondant par dossier, export de sauvegarde vers le NAS",
+		"VOLUMES": "VOLUMES",
+		"LAUFWERKE": "DISQUES",
+		"EINSTELLUNGEN": "RÉGLAGES",
+		"RUHEZUSTAND": "MISE EN VEILLE",
+		"NEU EINRICHTEN": "RÉINSTALLER",
+		"PLATTEN ABSCHALTEN NACH": "ARRÊTER LES DISQUES APRÈS",
+		"nie": "jamais",
+		"10 Minuten": "10 minutes",
+		"20 Minuten": "20 minutes",
+		"30 Minuten": "30 minutes",
+		"1 Stunde": "1 heure",
+		"2 Stunden": "2 heures",
+		"Swap": "Swap",
+		"Apps-Bereich": "Espace des apps",
+		"noch keiner": "pas encore",
+		"keiner aktiv": "aucun actif",
+		"noch keine": "pas encore",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "Économise l'énergie et l'usure. Les disques redémarrent au prochain accès (quelques secondes).",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "L'assistant efface les disques choisis et les configure à nouveau. Un disque seul peut aussi être formaté directement sous « Disques ».",
+		"Assistent starten": "Lancer l'assistant",
+		"Speicher einrichten": "Configurer le stockage",
+		"INTERNER FLASH": "FLASH INTERNE",
+		"128 MB NAND · UBI": "128 Mo NAND · UBI",
+		"BEREICH": "ZONE",
+		"EINGEHÄNGT": "MONTÉ",
+		"BELEGT": "UTILISÉ",
+		"Einstellungen & Pakete": "Réglages et paquets",
+		"System (nur lesbar)": "Système (lecture seule)",
+		"Arbeitsspeicher (tmp)": "RAM (tmp)",
+		"Aushängen": "Démonter",
+		"Einhängen": "Monter",
+		"Entfernen": "Retirer",
+		"SMART lesen": "Lire SMART",
+		"Löschen & formatieren": "Effacer et formater",
+		"Spiegel (RAID 1)": "Miroir (RAID 1)",
+		"Einzelnes Laufwerk": "Disque unique",
+		"SMART noch nicht gelesen": "SMART pas encore lu",
+		"schläft (SMART beim nächsten Aufwachen)": "en veille (SMART au réveil)",
+		"no SMART data": "pas de données SMART",
+		"SMART OK": "SMART OK",
+		"SMART WARNUNG": "AVERTISSEMENT SMART",
+		"SMART FEHLER": "SMART EN ÉCHEC",
+		"leer": "vide",
+		"ohne Dateisystem": "pas de système de fichiers",
+		"nicht eingehängt": "non monté",
+		"Dateisystem nicht gefunden": "système de fichiers introuvable",
+		"wartet": "en attente",
+		"Pakete und App-Daten liegen in .shareos": "Les paquets et données des apps sont dans .shareos",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "Aucun stockage configuré. L'assistant configure les disques en quelques étapes – en miroir (les deux disques ont les mêmes données) ou en disques séparés.",
+		"SPEICHER EINRICHTEN · ASSISTENT": "CONFIGURER LE STOCKAGE · ASSISTANT",
+		"Abbrechen": "Annuler",
+		"Platten": "Disques",
+		"Aufbau": "Structure",
+		"Name": "Nom",
+		"Bestätigen": "Confirmer",
+		"Zurück": "Retour",
+		"Weiter": "Suivant",
+		"Einrichten": "Configurer",
+		"Welche Platten sollen eingerichtet werden?": "Quels disques faut-il configurer ?",
+		"Alles auf diesen Platten wird gelöscht.": "Tout le contenu de ces disques sera effacé.",
+		"Spiegel (RAID 1) – empfohlen": "Miroir (RAID 1) – recommandé",
+		"Zwei getrennte Laufwerke": "Deux disques séparés",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "SWAP PAR DISQUE",
+		"1 GB – empfohlen": "1 Go – recommandé",
+		"keiner": "aucun",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "Le boîtier n'a que 256 Mo de RAM. Le swap sur les disques absorbe les pics de charge (partages, synchronisation cloud, installation de paquets). C'est une petite partition au début de chaque disque ; le reste devient le volume.",
+		"NAME DES SPIEGELS": "NOM DU MIROIR",
+		"LAUFWERK": "VOLUME",
+		"PLATTEN": "DISQUES",
+		"GRÖSSE": "TAILLE",
+		"AUFBAU": "STRUCTURE",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "Minuscules, chiffres, - et _ (16 caractères max.). Le volume apparaît sous",
+		"; Freigaben legst du später darauf an.": " ; les partages se créent ensuite.",
+		"Platten löschen und einrichten?": "Effacer et configurer les disques ?",
+		"Löschen & einrichten": "Effacer et configurer",
+		"Einrichtung gestartet.": "Configuration lancée.",
+		"Formatieren gestartet.": "Formatage lancé.",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "Nom du nouveau volume (a–z, 0–9, - et _, 16 caractères max.) :",
+		"Bitte mindestens eine Platte auswählen.": "Choisissez au moins un disque.",
+		"Höchstens zwei Platten.": "Deux disques au maximum.",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "Nom invalide : seulement a–z, 0–9, - et _, 16 caractères max.",
+		"Die Namen müssen verschieden sein.": "Les noms doivent être différents.",
+		"Ungültiger Name.": "Nom invalide.",
+		"Ruhezustand gespeichert.": "Mise en veille enregistrée.",
+		"FIRMWARE": "FIRMWARE",
+		"ALLGEMEIN": "GÉNÉRAL",
+		"ENERGIE & RESET": "ALIMENTATION ET RÉINITIALISATION",
+		"PROTOKOLLE": "JOURNAUX",
+		"DARSTELLUNG": "APPARENCE",
+		"ÜBER": "À PROPOS",
+		"FIRMWARE-UPDATE": "MISE À JOUR DU FIRMWARE",
+		"Installiert": "Installé",
+		"Kernel, Startsystem und System": "Noyau, initramfs et système",
+		"noch nicht geprüft": "pas encore vérifié",
+		"aktuell": "à jour",
+		"noch kein Release für dieses Gerät": "pas encore de version pour cet appareil",
+		"keine": "aucune",
+		"UPDATE-KANAL": "CANAL DE MISE À JOUR",
+		"Stabil (Releases)": "Stable (versions)",
+		"Beta (auch Pre-Releases)": "Bêta (aussi les préversions)",
+		"Jetzt prüfen": "Vérifier maintenant",
+		"Prüfe …": "Vérification …",
+		"VERSIONEN": "VERSIONS",
+		"von GitHub": "depuis GitHub",
+		"VERSION": "VERSION",
+		"DATUM": "DATE",
+		"KANAL": "CANAL",
+		"STABIL": "STABLE",
+		"BETA": "BÊTA",
+		"installiert": "installée",
+		"Laden": "Télécharger",
+		"Notes ↗": "Notes ↗",
+		"SO LÄUFT EIN UPDATE": "COMMENT SE PASSE UNE MISE À JOUR",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "Télécharger le paquet depuis GitHub et le vérifier (SHA-256, appareil, tailles)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "Écrire noyau et initramfs dans la flash et les relire",
+		"Neues System bereitlegen": "Préparer le nouveau système",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "Redémarrage : l'initramfs installe le système, puis ShareOS redémarre",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "Les réglages et paquets installés sont conservés. En cas d'interruption, l'installation reprend au démarrage suivant.",
+		"Herunterladen": "Téléchargement",
+		"Prüfen": "Vérification",
+		"Bereit": "Prêt",
+		"Schreiben": "Écriture",
+		"Verwerfen": "Abandonner",
+		"Fehler:": "Erreur :",
+		"Letztes Update:": "Dernière mise à jour :",
+		"Neustart nötig": "Redémarrage nécessaire",
+		"Jetzt neu starten": "Redémarrer maintenant",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Vérifié : SHA-256, sommes de toutes les parties, fait pour cet appareil. Les réglages et paquets sont conservés.",
+		"ShareOS ist aktuell.": "ShareOS est à jour.",
+		"Update geladen und geprüft.": "Mise à jour téléchargée et vérifiée.",
+		"Update geschrieben – bitte neu starten.": "Mise à jour écrite – veuillez redémarrer.",
+		"Update installieren?": "Installer la mise à jour ?",
+		"Installieren": "Installer",
+		"GERÄTENAME": "NOM DE L'APPAREIL",
+		"HOSTNAME": "NOM D'HÔTE",
+		"Speichern": "Enregistrer",
+		"NEUES PASSWORT": "NOUVEAU MOT DE PASSE",
+		"WIEDERHOLEN": "RÉPÉTER",
+		"Passwort ändern": "Changer le mot de passe",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "Lettres, chiffres et tirets. Effet immédiat ; le serveur DHCP le voit au prochain renouvellement.",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "Vaut pour l'interface web et SSH. Au moins 6 caractères.",
+		"Hostname gespeichert.": "Nom d'hôte enregistré.",
+		"Passwort geändert.": "Mot de passe changé.",
+		"Die Passwörter stimmen nicht überein.": "Les mots de passe ne correspondent pas.",
+		"ENERGIE": "ALIMENTATION",
+		"Ausschalten": "Éteindre",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "À l'arrêt, ShareOS s'arrête et le contrôle de carte coupe le courant. Rallumer avec le bouton d'alimentation.",
+		"WERKSEINSTELLUNGEN": "RÉINITIALISATION D'USINE",
+		"löscht Einstellungen": "efface les réglages",
+		"Auf Werkseinstellungen zurücksetzen": "Rétablir les réglages d'usine",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "Supprime tous les réglages et paquets installés de la flash et redémarre. Le système et la version du firmware restent. Le mot de passe redevient ensuite",
+		"Neu starten?": "Redémarrer ?",
+		"Neu starten": "Redémarrer",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "Le boîtier redémarre. Cette page se reconnecte d'elle-même (environ 1–2 minutes).",
+		"Ausschalten?": "Éteindre ?",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "ShareOS s'arrête et le boîtier s'éteint. Rallumer sur l'appareil.",
+		"Werkseinstellungen?": "Réglages d'usine ?",
+		"Zurücksetzen": "Réinitialiser",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "Tous les réglages et paquets installés sont effacés, puis le boîtier redémarre. Le mot de passe redevient « shareos ».",
+		"Neustart läuft": "Redémarrage",
+		"ShareOS startet neu": "ShareOS redémarre",
+		"Box wird ausgeschaltet": "Le boîtier s'éteint",
+		"Du kannst dieses Fenster schließen.": "Vous pouvez fermer cette fenêtre.",
+		"Dienst wird neu gestartet": "Le service redémarre",
+		"warte auf die Box": "attente du boîtier",
+		"Werkseinstellungen": "Réglages d'usine",
+		"PROTOKOLL": "JOURNAL",
+		"Quelle": "Source",
+		"System (syslog)": "Système (syslog)",
+		"Kernel (dmesg)": "Noyau (dmesg)",
+		"Aktualisieren": "Actualiser",
+		"lade …": "chargement …",
+		"(leer)": "(vide)",
+		"nur in diesem Browser": "ce navigateur seulement",
+		"Helles Design": "Thème clair",
+		"Scanlines": "Lignes de balayage",
+		"LOGO": "LOGO",
+		"gilt für alle": "vaut pour tout le monde",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "Afficher le logo ShareOS (désactivé : texte seul)",
+		"SPRACHE": "LANGUE",
+		"Akzentfarbe Grün": "Couleur d'accent verte",
+		"Akzentfarbe Rot": "Couleur d'accent rouge",
+		"Akzentfarbe Blau": "Couleur d'accent bleue",
+		"Akzentfarbe Weiß": "Couleur d'accent blanche",
+		"Version": "Version",
+		"Stufe": "Étape",
+		"Gerät": "Appareil",
+		"Firmware-Name": "Nom du firmware",
+		"PROJEKT": "PROJET",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS est un firmware libre pour les boîtiers NAS D-Link, dérivé d'Alt-F. Basé sur buildroot, Linux et BusyBox ; fonctionnement inspiré d'OpenWrt (UCI, ubus, rpcd, ucode). Licence GPLv2.",
+		"Einrichtung läuft": "Configuration en cours",
+		"Box nicht ausschalten.": "N'éteignez pas le boîtier.",
+		"Einrichtung fehlgeschlagen:": "La configuration a échoué :",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "CONNEXION",
+		"diese Seite: HTTPS": "cette page : HTTPS",
+		"diese Seite: HTTP": "cette page : HTTP",
+		"HTTPS auf Port 443": "HTTPS sur le port 443",
+		"HTTP-Aufrufe auf HTTPS umleiten": "Rediriger les requêtes HTTP vers HTTPS",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "Après un changement, le serveur web redémarre ; la page est brièvement injoignable.",
+		"ZERTIFIKAT": "CERTIFICAT",
+		"selbstsigniert": "autosigné",
+		"eigenes Zertifikat": "certificat personnel",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "Pas encore de certificat – il est créé automatiquement quand HTTPS est activé.",
+		"Ausgestellt für": "Délivré à",
+		"Aussteller": "Émetteur",
+		"Gültig ab": "Valable du",
+		"Gültig bis": "Valable jusqu'au",
+		"Namen": "Noms",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "Les navigateurs avertissent une fois pour les certificats autosignés. La connexion est quand même chiffrée ; pour une page sans avertissement, importez votre propre certificat (p. ex. de votre AC intranet ou de Let's Encrypt).",
+		"Neues selbstsigniertes Zertifikat": "Nouveau certificat autosigné",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "IMPORTER UN CERTIFICAT PERSONNEL",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "CERTIFICAT (PEM, INTERMÉDIAIRES BIENVENUS)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "CLÉ PRIVÉE (PEM, SANS MOT DE PASSE)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "Avant utilisation, le boîtier vérifie que certificat et clé vont ensemble. La clé ne quitte jamais le boîtier.",
+		"Zertifikat übernehmen": "Utiliser le certificat",
+		"Zertifikat übernommen.": "Certificat installé.",
+		"Zertifikat erstellt.": "Certificat créé.",
+		"Neues selbstsigniertes Zertifikat?": "Nouveau certificat autosigné ?",
+		"Erstellen": "Créer",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "Un nouveau certificat pour le nom et l'IP actuels est créé et remplace l'ancien. Les navigateurs afficheront à nouveau un avertissement une fois.",
+		"Gespeichert – der Webserver startet neu.": "Enregistré – le serveur web redémarre.",
+		"Lade …": "Chargement …",
+		"SPRACHE DER OBERFLÄCHE": "LANGUE DE L'INTERFACE",
+		"Weitere Sprachen: eine Datei in": "Autres langues : un fichier dans",
+		"– siehe docs/TRANSLATING.md.": "– voir docs/TRANSLATING.md.",
+		"AUS UNTER (°C, 0 = NIE)": "ARRÊT EN DESSOUS DE (°C, 0 = JAMAIS)",
+		"VOLL AB (°C)": "PLEIN À PARTIR DE (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "RETOUR À MOITIÉ EN DESSOUS DE (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "Tout se règle plus tard sous Système. Le mot de passe reste « shareos » tant que vous ne le changez pas.",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "Reprendre d'Alt-F",
+		"Auch Testversionen, mit neuen Funktionen früher.": "Aussi les versions de test, avec les nouveautés plus tôt.",
+		"Auf dieser Box wurden Einstellungen von": "Ce boîtier a des réglages de",
+		"gefunden": "",
+		"Ausgewogen": "Équilibré",
+		"Benutzer": "Utilisateur",
+		"Freigaben": "Partages",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "Les utilisateurs et partages sont conservés et proposés dans la partie « Partages ». Les données Alt-F dans la flash restent intactes.",
+		"Beta": "Bêta",
+		"Stabil": "Stable",
+		"Danach kannst du gleich die Festplatten einrichten.": "Ensuite, vous pouvez configurer tout de suite les disques durs.",
+		"Das Standardpasswort": "Tout le monde connaît le mot de passe par défaut",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– choisissez-en un maintenant. Il vaut pour l'interface web et SSH.",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "Le boîtier règle le ventilateur en trois paliers (arrêt, moitié, plein) selon la température de la carte. Les changements s'appliquent en quelques secondes.",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "La LED USB orange indique le mode de secours et les mises à jour au démarrage et n'est pas réglable.",
+		"ERSTEINRICHTUNG": "PREMIÈRE CONFIGURATION",
+		"Eigene Werte": "Valeurs personnalisées",
+		"Ersteinrichtung abgeschlossen.": "Première configuration terminée.",
+		"Ersteinrichtung erneut starten": "Relancer la première configuration",
+		"Ersteinrichtung überspringen?": "Passer la première configuration ?",
+		"Fertig": "Terminé",
+		"Fertig & Speicher einrichten": "Terminé et configurer le stockage",
+		"Gerätename": "Nom de l'appareil",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "Reprendre nom, fuseau horaire et ventilateur",
+		"Herzschlag (ShareOS läuft)": "Battement (ShareOS en marche)",
+		"Kühl": "Frais",
+		"Leise": "Silencieux",
+		"LEDS": "LED",
+		"LÜFTER & LEDS": "VENTILATEUR ET LED",
+		"Lüfter": "Ventilateur",
+		"Leer lassen, um das Passwort später zu ändern.": "Laisser vide pour changer le mot de passe plus tard.",
+		"Lüfter läuft immer, voll ab 45 °C": "Ventilateur toujours en marche, plein à partir de 45 °C",
+		"Lüfter läuft immer, voll ab 50 °C": "Ventilateur toujours en marche, plein à partir de 50 °C",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "Ventilateur arrêté sous 40 °C, plein à partir de 55 °C",
+		"Name & Zeit": "Nom et heure",
+		"Nur fertige Versionen – empfohlen.": "Seulement les versions finales – recommandé.",
+		"PLATTEN-LEDS (ROT)": "LED DES DISQUES (ROUGES)",
+		"POWER-LED": "LED D'ALIMENTATION",
+		"STATUS-LED (BLAU)": "LED D'ÉTAT (BLEUE)",
+		"Passwort": "Mot de passe",
+		"Plattenzugriffe anzeigen": "Afficher les accès disque",
+		"Sprache": "Langue",
+		"Temperaturen selbst festlegen": "Choisir soi-même les températures",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "Le boîtier apparaît sous ce nom sur le réseau. L'horloge se règle seule par NTP.",
+		"Update-Kanal": "Canal de mise à jour",
+		"Updates": "Mises à jour",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "Les mises à jour viennent de GitHub et s'installent sous Système → Firmware.",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "Bienvenue dans ShareOS. Le boîtier se configure en quelques étapes ; tout peut être modifié plus tard sous",
+		"ändern.": ".",
+		"ZEITZONE": "FUSEAU HORAIRE",
+		"Zeitzone": "Fuseau horaire",
+		"blinkt": "clignote",
+		"an": "allumée",
+		"sofort aktiv": "effet immédiat",
+		"wird geändert": "sera modifié",
+		"bleibt (später ändern)": "reste (modifier plus tard)",
+		"ja": "oui",
+		"nein": "non",
+		"Überspringen": "Passer",
+		"Lüfter gespeichert.": "Ventilateur enregistré.",
+		"LED gespeichert.": "LED enregistrée.",
+		"Ungültiger Gerätename.": "Nom d'appareil invalide.",
+		"Das Passwort braucht mindestens 6 Zeichen.": "Le mot de passe doit comporter au moins 6 caractères.",
+		"Paket wird erneut geprüft …": "Nouvelle vérification du paquet …",
+		"System wird für den Neustart bereitgelegt …": "Préparation du système pour le redémarrage …",
+		"Startsystem: Flash wird gelöscht …": "Système de démarrage : effacement de la flash …",
+		"Startsystem wird geschrieben …": "Écriture du système de démarrage …",
+		"Startsystem wird geprüft …": "Vérification du système de démarrage …",
+		"Kernel: Flash wird gelöscht …": "Noyau : effacement de la flash …",
+		"Kernel wird geschrieben …": "Écriture du noyau …",
+		"Kernel wird geprüft …": "Vérification du noyau …",
+		"Wird gestartet …": "Démarrage …",
+		"nicht ausschalten": "ne pas éteindre",
+		", das dauert etwa 1–2 Minuten.": ", cela prend environ 1–2 minutes.",
+		"Paket wird geprüft …": "Vérification du paquet …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 et contenu, environ une demi-minute.",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– le nouveau système est installé au prochain démarrage (environ 1 minute, n'éteignez pas le boîtier).",
+		"NETZWERK": "RÉSEAU",
+		"ADRESSE": "ADRESSE",
+		"AKTUELL": "ACTUEL",
+		"AKZENTFARBE": "COULEUR D'ACCENT",
+		"BEIM START": "AU DÉMARRAGE",
+		"BESCHREIBUNG": "DESCRIPTION",
+		"DIENST": "SERVICE",
+		"HELL ODER DUNKEL": "CLAIR OU SOMBRE",
+		"HTTPS & ZERTIFIKAT": "HTTPS ET CERTIFICAT",
+		"JETZT": "MAINTENANT",
+		"KENNZAHL": "MESURE",
+		"WERT": "VALEUR",
+		"HINWEIS": "REMARQUE",
+		"ART": "TYPE",
+		"MODELL": "MODÈLE",
+		"ZUSTAND": "SANTÉ",
+		"INHALT": "CONTENU",
+		"IP-ADRESSE": "ADRESSE IP",
+		"SUBNETZMASKE": "MASQUE DE SOUS-RÉSEAU",
+		"DNS-SERVER (KOMMA-GETRENNT)": "SERVEURS DNS (SÉPARÉS PAR DES VIRGULES)",
+		"Automatisch (DHCP) – vom Router": "Automatique (DHCP) – par le routeur",
+		"Feste Adresse": "Adresse statique",
+		"statisch": "statique",
+		"Dunkel": "Sombre",
+		"Hell": "Clair",
+		"Wie das Betriebssystem (automatisch)": "Comme le système d'exploitation (automatique)",
+		"Grün": "Vert",
+		"Rot": "Rouge",
+		"Blau": "Bleu",
+		"Weiß": "Blanc",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "Le logo et l'icône du navigateur prennent la couleur d'accent. Le réglage vaut pour tout le monde, y compris la page de connexion.",
+		"Scanlines (nur in diesem Browser)": "Lignes de balayage (ce navigateur seulement)",
+		"Übernehmen": "Appliquer",
+		"verbunden": "connecté",
+		"keine Adresse": "pas d'adresse",
+		"ändern": "modifier",
+		"Verbindung": "Connexion",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "S'applique au prochain démarrage. Les services en cours se démarrent et s'arrêtent sous « État ». Contrôle de l'appareil, bus système, API et interface web démarrent toujours, sinon le boîtier ne serait plus utilisable.",
+		"welche Dienste beim Einschalten starten": "quels services démarrent à la mise sous tension",
+		"starten": "démarrer",
+		"immer": "toujours",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "Sans ce service, le boîtier n'est plus utilisable",
+		"Kachelansicht": "Vue en tuiles",
+		"Tabellenansicht": "Vue en tableau",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "De nouveaux réglages réseau attendent une confirmation",
+		"Behalten": "Garder",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "La dernière modification n'a pas été confirmée ; les réglages réseau précédents sont de nouveau actifs.",
+		"Neue Netzwerkeinstellungen bestätigt.": "Nouveaux réglages réseau confirmés.",
+		"Netzwerk ändern?": "Modifier le réseau ?",
+		"Netzwerk wird umgestellt": "Changement de réseau",
+		"Netzwerk wird neu gestartet": "Redémarrage du réseau",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "Pas de connexion – le boîtier devrait avoir rétabli les anciens réglages. Rechargez la page.",
+		"eine Platte fehlt": "un disque manque",
+		"in Ordnung": "OK",
+		"Sync wartet": "Synchronisation en attente",
+		"STATUS": "ÉTAT",
+		"AUTOSTART": "DÉMARRAGE AUTOMATIQUE",
+		"GRUPPEN": "GROUPES",
+		"Administrator": "Administrateur",
+		"Nur Freigaben": "Partages uniquement",
+		"lesen & schreiben": "lecture et écriture",
+		"nur lesen": "lecture seule",
+		"kein Zugriff": "pas d'accès",
+		"unbegrenzt": "illimité",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "Les partages ont besoin d'un volume – configurez-le d'abord sous",
+		"einrichten.": ".",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "Aucun partage pour l'instant. Un partage rend un dossier d'un volume accessible sur le réseau – depuis Windows, macOS et Linux.",
+		"Freigabe anlegen": "Créer un partage",
+		"Neue Freigabe": "Nouveau partage",
+		"FREIGABE": "PARTAGE",
+		"ORDNER": "DOSSIER",
+		"ZUGRIFF": "ACCÈS",
+		"Laufwerk fehlt": "volume manquant",
+		"noch niemand": "personne pour l'instant",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS, MACOS, LINUX)",
+		"SMB-Freigaben anbieten": "Proposer des partages SMB",
+		"ARBEITSGRUPPE": "GROUPE DE TRAVAIL",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "Le service SMB démarre automatiquement dès qu'il existe un partage. Les dossiers personnels apparaissent sous",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX, PROXMOX)",
+		"NFS-Freigaben anbieten": "Proposer des partages NFS",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "NFS n'a pas de comptes utilisateurs : les ordinateurs ou réseaux indiqués obtiennent l'accès. Les fichiers sont enregistrés sous",
+		"gespeichert. Einbinden z. B. mit": ". Monter p. ex. avec",
+		"kein Protokoll": "aucun protocole",
+		"GAST": "INVITÉ",
+		"Bearbeiten": "Modifier",
+		"Löschen": "Supprimer",
+		"Anlegen": "Créer",
+		"NEUE FREIGABE": "NOUVEAU PARTAGE",
+		"NAME": "NOM",
+		"ORDNER AUF DEM LAUFWERK": "DOSSIER SUR LE VOLUME",
+		"wie der Name": "comme le nom",
+		"ZUGRIFF ÜBER SMB": "ACCÈS PAR SMB",
+		"Über SMB freigeben (Windows, macOS, Linux)": "Partager par SMB (Windows, macOS, Linux)",
+		"Gäste dürfen ohne Passwort lesen": "Les invités peuvent lire sans mot de passe",
+		"BENUTZER / GRUPPE": "UTILISATEUR / GROUPE",
+		"RECHT": "DROIT",
+		"Noch keine Benutzer – unter": "Pas encore d'utilisateurs – créez-les sous",
+		"anlegen, oder Gastzugang erlauben.": ", ou autorisez l'accès invité.",
+		"ZUGRIFF ÜBER NFS": "ACCÈS PAR NFS",
+		"Über NFS freigeben": "Partager par NFS",
+		"NFS-Clients dürfen schreiben": "Les clients NFS peuvent écrire",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "CLIENTS NFS (IP OU RÉSEAU, SÉPARÉS PAR DES VIRGULES)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "Le dossier est créé s'il manque. Supprimer un partage conserve le dossier et ses fichiers.",
+		"kein Limit": "pas de limite",
+		"von": "de",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "Pas encore d'utilisateurs. Un seul compte sert partout : pour les partages, l'interface web et plus tard les apps et la synchronisation cloud.",
+		"Benutzer anlegen": "Créer un utilisateur",
+		"Von Alt-F übernehmen": "Importer depuis Alt-F",
+		"Neuer Benutzer": "Nouvel utilisateur",
+		"ROLLE": "RÔLE",
+		"PERSÖNLICHER ORDNER": "DOSSIER PERSONNEL",
+		"kein persönlicher Ordner": "pas de dossier personnel",
+		"Rollen:": "Rôles :",
+		"– alles, auch SSH.": "– tout, y compris SSH.",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– espace personnel « Mon ShareOS » dans l'interface web.",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– accès aux partages, pas de connexion web. Le compte",
+		"bleibt immer Administrator.": "est toujours administrateur.",
+		"· ohne Web": "· sans web",
+		"NEUER BENUTZER": "NOUVEL UTILISATEUR",
+		"BENUTZERNAME": "NOM D'UTILISATEUR",
+		"VOLLER NAME": "NOM COMPLET",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "LIMITE DE STOCKAGE PAR VOLUME (GO, 0 = ILLIMITÉ)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "Peut se connecter à l'interface web (« Mon ShareOS »)",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Nom d'utilisateur : minuscules, chiffres et _, commençant par une lettre. Le mot de passe sert pour les partages et – selon le rôle – pour l'interface web.",
+		"GRUPPE": "GROUPE",
+		"MITGLIEDER": "MEMBRES",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "Les groupes réunissent des utilisateurs, p. ex. « famille » ou « médias ». Les droits de partage peuvent alors être donnés à tout le groupe.",
+		"Neue Gruppe": "Nouveau groupe",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "Les membres se règlent sur l'utilisateur (Utilisateurs → Modifier).",
+		"MEIN SHAREOS": "MON SHAREOS",
+		"Noch nichts gespeichert.": "Rien d'enregistré pour l'instant.",
+		"Persönlicher Ordner": "Dossier personnel",
+		"Kein persönlicher Ordner eingerichtet.": "Aucun dossier personnel configuré.",
+		"PASSWORT ÄNDERN": "CHANGER LE MOT DE PASSE",
+		"AKTUELLES PASSWORT": "MOT DE PASSE ACTUEL",
+		"Gilt für die Freigaben und diese Oberfläche.": "Sert pour les partages et cette interface.",
+		"MEINE FREIGABEN": "MES PARTAGES",
+		"Dir wurde noch keine Freigabe zugewiesen.": "Aucun partage ne vous a encore été attribué.",
+		"APPS & CLOUD": "APPS ET CLOUD",
+		"geplant": "prévu",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "Les apps qui vous sont ouvertes et vos propres tâches de synchronisation cloud apparaîtront ici plus tard.",
+		"Mein ShareOS": "Mon ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "Indiquez au moins un client (IP ou réseau) pour NFS.",
+		"Gespeichert.": "Enregistré.",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "Le partage disparaît du réseau. Le dossier et tous ses fichiers restent sur le volume.",
+		"Benutzer von Alt-F übernehmen?": "Importer les utilisateurs d'Alt-F ?",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "Les utilisateurs et groupes des réglages Alt-F conservés sont créés (rôle « Partages uniquement »). Les mots de passe sont repris là où Alt-F les avait enregistrés.",
+		"Keine neuen Benutzer gefunden.": "Aucun nouvel utilisateur trouvé.",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "Nom du groupe (a–z, 0–9 et _, commençant par une lettre) :",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "Les membres restent, mais perdent les droits donnés par ce groupe.",
+		"Setzen": "Définir",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Nouveau mot de passe (au moins 6 caractères). Sert pour les partages et – selon le rôle – pour l'interface web.",
+		"Bitte neu anmelden.": "Veuillez vous reconnecter.",
+		"Der persönliche Ordner bleibt erhalten.": "Le dossier personnel est conservé.",
+		"Benutzerkonten": "Comptes utilisateurs",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "SAUVEGARDER ET RESTAURER LES RÉGLAGES",
+		"SICHERN": "SAUVEGARDER",
+		"JSON-Datei": "Fichier JSON",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "MOT DE PASSE DE CHIFFREMENT (FACULTATIF)",
+		"leer = unverschlüsselt": "vide = non chiffré",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Contient tous les réglages, les utilisateurs avec leurs mots de passe (sous forme de hachage), les partages, le réseau et le certificat HTTPS avec sa clé. Sans mot de passe, le fichier est lisible – gardez-le en lieu sûr. Avec mot de passe : AES-256, le mot de passe est nécessaire pour restaurer.",
+		"Sicherung herunterladen": "Télécharger la sauvegarde",
+		"WIEDERHERSTELLEN": "RESTAURER",
+		"SICHERUNGSDATEI": "FICHIER DE SAUVEGARDE",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "MOT DE PASSE (SI CHIFFRÉ)",
+		"Erstellt": "Créée le",
+		"Zertifikat": "Certificat",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "La restauration remplace les réglages, utilisateurs et partages actuels. Un redémarrage est ensuite nécessaire. Les données des volumes ne sont pas touchées.",
+		"Wiederherstellen": "Restaurer",
+		"Einstellungen wiederherstellen?": "Restaurer les réglages ?",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "Les réglages, utilisateurs et partages actuels sont remplacés par la sauvegarde.",
+		"Wiederhergestellt": "Restauré",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "Les réglages sont restaurés. Redémarrer maintenant pour que tout s'applique ?",
+		"Verschlüsselte Sicherung heruntergeladen.": "Sauvegarde chiffrée téléchargée.",
+		"Sicherung heruntergeladen.": "Sauvegarde téléchargée.",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "La sauvegarde est chiffrée – veuillez saisir le mot de passe.",
+		"ADRESSE VON PAPERLESS": "ADRESSE PAPERLESS",
+		"PRÜFEN ALLE": "VÉRIFIER TOUTES LES",
+		"NACH DEM HOCHLADEN": "APRÈS L'ENVOI",
+		"Datei löschen": "Supprimer le fichier",
+		"aufheben (.paperless/done)": "conserver (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "Envoyer automatiquement les dossiers d'entrée",
+		"Jetzt übertragen": "Envoyer maintenant",
+		"SO FUNKTIONIERT ES": "FONCTIONNEMENT",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "Créez dans Paperless un jeton API pour chaque boîte d'entrée (Profil → Jeton API). Les documents appartiennent alors à cet utilisateur Paperless.",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "Déposez des fichiers (PDF, images, Office) dans le dossier d'entrée – depuis un PC ou directement depuis le scanner.",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS les envoie via l'API Paperless et indique si Paperless les a acceptés.",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "Les boîtes personnelles sont dans le dossier personnel (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": ") ; les utilisateurs peuvent aussi saisir eux-mêmes leur jeton sous « Mon ShareOS ». Les boîtes partagées utilisent un partage, p. ex. pour un scanner.",
+		"EINGÄNGE": "BOÎTES D'ENTRÉE",
+		"übernommen": "accepté",
+		"wird verarbeitet": "en traitement",
+		"Fehler": "Erreur",
+		"Protokoll": "Journal",
+		"nichts wartend": "rien en attente",
+		"Neuer Eingang": "Nouvelle boîte d'entrée",
+		"NEUER EINGANG": "NOUVELLE BOÎTE D'ENTRÉE",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "personnelle (dossier « Paperless » dans le dossier personnel)",
+		"gemeinsam (Ordner einer Freigabe)": "partagée (dossier d'un partage)",
+		"API-TOKEN": "JETON API",
+		"aktiv": "active",
+		"Verbindung prüfen": "Tester la connexion",
+		"aus Paperless: Profil → API-Token": "depuis Paperless : Profil → Jeton API",
+		"API-TOKEN (LEER = BEHALTEN)": "JETON API (VIDE = CONSERVER)",
+		"TAGS FÜR NEUE DOKUMENTE": "ÉTIQUETTES POUR LES NOUVEAUX DOCUMENTS",
+		"Schließen": "Fermer",
+		"ZEIT": "HEURE",
+		"DATEI": "FICHIER",
+		"MELDUNG": "MESSAGE",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "Plus rien ne sera envoyé. Le dossier et ses fichiers sont conservés.",
+		"EINGANG": "BOÎTE",
+		"WARTEND": "EN ATTENTE",
+		"ZULETZT": "DERNIER",
+		"gemeinsam": "partagée",
+		"Paperless → Profil → API-Token": "Paperless → Profil → Jeton API",
+		"Paperless-Eingang gespeichert.": "Boîte Paperless enregistrée.",
+		"Übertragung gestartet.": "Transfert lancé.",
+		"MEIN EINGANG": "MA BOÎTE D'ENTRÉE",
+		"MEIN API-TOKEN AUS PAPERLESS": "MON JETON API PAPERLESS",
+		"Dateien aus meinem Eingang übertragen": "Envoyer les fichiers de ma boîte",
+		"Eingangsordner": "Dossier d'entrée",
+		"ZULETZT ÜBERTRAGEN": "ENVOYÉS RÉCEMMENT",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "Rien d'envoyé pour l'instant. Déposez des fichiers dans le dossier d'entrée – ils arrivent dans Paperless en quelques minutes.",
+		"KONTEN": "COMPTES",
+		"Testen": "Tester",
+		"Konto hinzufügen": "Ajouter un compte",
+		"HINWEISE": "REMARQUES",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Les identifiants restent chiffrés sur le boîtier. Pour Google Drive, OneDrive ou Dropbox, exécutez",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "sur un PC et collez ici la section obtenue. Les tâches utilisent peu de mémoire (2 transferts à la fois) ; une limite de bande passante comme",
+		"hält das Netz frei.": "garde le réseau libre.",
+		"AUFTRÄGE": "TÂCHES",
+		"Jetzt starten": "Lancer maintenant",
+		"Neuer Auftrag": "Nouvelle tâche",
+		"NEUES CLOUD-KONTO": "NOUVEAU COMPTE CLOUD",
+		"SFTP (SSH-Server)": "SFTP (serveur SSH)",
+		"andere – rclone-Konfiguration einfügen": "autre – coller une configuration rclone",
+		"ADRESSE (WEBDAV-URL)": "ADRESSE (URL WEBDAV)",
+		"ANBIETER": "FOURNISSEUR",
+		"PASSWORT / APP-PASSWORT": "MOT DE PASSE / MOT DE PASSE D'APP",
+		"Hinzufügen": "Ajouter",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (VIDE POUR AWS)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "SECTION DE RCLONE.CONF (COMMENCE PAR [NOM])",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "Les identifiants sont supprimés. Les tâches qui utilisent ce compte ne fonctionnent plus. Rien n'est supprimé dans le cloud.",
+		"NEUER AUFTRAG": "NOUVELLE TÂCHE",
+		"ORDNER AUF DEM NAS": "DOSSIER SUR LE NAS",
+		"CLOUD-KONTO": "COMPTE CLOUD",
+		"ORDNER IN DER CLOUD": "DOSSIER DANS LE CLOUD",
+		"RICHTUNG": "SENS",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "Envoi – copier vers le cloud, rien n'est supprimé",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "Réception – copier vers le NAS, rien n'est supprimé",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "Miroir vers le cloud – supprime dans le cloud ce qui manque ici",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "Miroir depuis le cloud – supprime ici ce qui manque dans le cloud",
+		"ZEITPLAN": "PLANIFICATION",
+		"nur von Hand": "manuel seulement",
+		"stündlich": "toutes les heures",
+		"täglich um 2:30": "tous les jours à 2:30",
+		"sonntags um 3:00": "le dimanche à 3:00",
+		"eigene Zeit (cron)": "heure personnalisée (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "HEURE CRON (MIN HEURE JOUR MOIS JOUR_SEMAINE)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "BANDE PASSANTE (VIDE = ILLIMITÉE)",
+		"Zeitplan aktiv": "Planification active",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "Le miroir supprime côté cible ce qui manque côté source – pour de simples sauvegardes, choisissez « Envoi ».",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "La tâche ne s'exécutera plus. Les fichiers sur le NAS et dans le cloud restent tels quels.",
+		"AUFTRAG": "TÂCHE",
+		"VON → NACH": "DE → VERS",
+		"Spiegeln?": "Miroir ?",
+		"Verstanden": "Compris",
+		"Gestoppt.": "Arrêtée.",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "Le miroir depuis le cloud supprime sur le NAS les fichiers absents du cloud.",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "Le miroir vers le cloud supprime dans le cloud les fichiers absents du NAS.",
+		"MEINE CLOUD": "MON CLOUD",
+		"eigene Konten und Aufträge": "comptes et tâches personnels",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Les identifiants restent chiffrés sur le boîtier, dans votre dossier personnel. Pour Google Drive, OneDrive ou Dropbox, exécutez",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": "garde le réseau libre. Ce que vous téléchargez compte dans votre limite de stockage.",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "Peut créer ses propres tâches de synchronisation cloud (nécessite un dossier personnel)",
+		"APP & WIDGETS": "APP ET WIDGETS",
+		"ALS APP INSTALLIEREN": "INSTALLER COMME APP",
+		"über das Browsermenü": "via le menu du navigateur",
+		"läuft als App": "fonctionne comme app",
+		"bereit": "prêt",
+		"nur über HTTPS": "HTTPS seulement",
+		"Diese Oberfläche läuft gerade als installierte App.": "Cette interface fonctionne comme app installée.",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "Le navigateur peut installer ShareOS comme app avec sa propre icône.",
+		"Im Browsermenü": "Dans le menu du navigateur, choisissez",
+		"„App installieren“": "« Installer l'app »",
+		"bzw.": "ou",
+		"„Zum Startbildschirm hinzufügen“": "« Ajouter à l'écran d'accueil »",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": ". Avec un certificat autosigné, les navigateurs ne proposent pas la vraie installation.",
+		"Browser installieren Web-Apps nur über": "Les navigateurs n'installent des apps web que par",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "HTTPS avec un certificat de confiance",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(p. ex. Let's Encrypt, à installer sous SYSTÈME → RÉSEAU). En http://, le menu de Chrome propose seulement",
+		"– das legt ein Lesezeichen-Symbol an.": "– cela crée une icône de favori.",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "Sous Android : appui long sur l'icône de l'app pour ouvrir les raccourcis",
+		"Übersicht, Speicher, Freigaben, Firmware": "Aperçu, Stockage, Partages, Firmware",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": ". Chrome ne propose pas de vrais widgets d'écran d'accueil pour les apps web – utilisez plutôt l'état pour apps de widgets à droite.",
+		"Als App installieren": "Installer comme app",
+		"STATUS FÜR WIDGETS": "ÉTAT POUR LES WIDGETS",
+		"Status-Adresse einschalten": "Activer l'adresse d'état",
+		"ADRESSE (GEHEIM HALTEN)": "ADRESSE (À GARDER SECRÈTE)",
+		"Kopieren": "Copier",
+		"Neuer Schlüssel": "Nouvelle clé",
+		"Öffnen ↗": "Ouvrir ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "Renvoie une courte réponse JSON sans connexion : nom, version, temps de fonctionnement, charge, température, occupation des volumes, état RAID et avertissements (",
+		"). Gedacht für Widget-Apps wie": "). Prévu pour des apps de widgets comme",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android), Home Assistant ou vos propres scripts. Qui connaît l'adresse voit ces valeurs – personne ne peut rien modifier avec.",
+		"Status-Adresse eingeschaltet.": "Adresse d'état activée.",
+		"Status-Adresse ausgeschaltet.": "Adresse d'état désactivée.",
+		"Neuen Schlüssel erzeugen?": "Créer une nouvelle clé ?",
+		"Erzeugen": "Créer",
+		"Neuer Schlüssel erzeugt.": "Nouvelle clé créée.",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "L'ancienne adresse ne fonctionne plus – les widgets ont besoin de la nouvelle.",
+		"Kopiert.": "Copié.",
+		"Bitte die Adresse selbst markieren und kopieren.": "Veuillez sélectionner et copier l'adresse vous-même.",
+		"ShareOS ist als App installiert.": "ShareOS est installé comme app.",
+		"· Mein ShareOS": "· Mon ShareOS",
+		"DATEIEN": "FICHIERS",
+		"Neuer Ordner": "Nouveau dossier",
+		"Hochladen": "Envoyer",
+		"Umbenennen": "Renommer",
+		"Verschieben": "Déplacer",
+		"Versteckte": "Cachés",
+		"GEÄNDERT": "MODIFIÉ",
+		"Dateien lassen sich auch einfach hierher ziehen.": "Vous pouvez aussi simplement glisser des fichiers ici.",
+		"Pfad": "Chemin",
+		"Ordner nach oben": "Dossier parent",
+		"Alle auswählen": "Tout sélectionner",
+		"Verschieben nach": "Déplacer vers",
+		"Kopieren nach": "Copier vers",
+		"Name des neuen Ordners:": "Nom du nouveau dossier :",
+		"Dieser Ordner ist leer.": "Ce dossier est vide.",
+		"SPEICHERLIMIT (GB)": "LIMITE DE STOCKAGE (GO)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "Explorateur de fichiers pour le dossier personnel dans l'interface web",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Nom d'utilisateur : minuscules, chiffres et _, commençant par une lettre. La limite de stockage vaut par volume, 0 = illimité. Le mot de passe sert pour les partages et – selon le rôle – pour l'interface web.",
+		"nur für dich": "rien que pour vous",
+		"Wie für alle": "Comme pour tout le monde",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "Vaut seulement pour votre connexion, sur tous les appareils. Le logo et l'icône du navigateur prennent la couleur d'accent.",
+		"Datei ersetzen?": "Remplacer le fichier ?",
+		"Ersetzen": "Remplacer",
+		"übersprungen": "ignoré",
+		"fertig": "terminé",
+		"Verbindung unterbrochen": "Connexion perdue",
+		"Gelöscht.": "Supprimé.",
+		"Verschoben.": "Déplacé.",
+		"Darstellung wie für alle.": "Apparence remise à celle de tout le monde.",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "Aucun volume monté – configurez-en d'abord un sous STOCKAGE.",
+		"Kein persönlicher Ordner vorhanden.": "Il n'y a pas de dossier personnel.",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "Seules les 2000 premières entrées sont affichées.",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "Nom d'hôte enregistré. Le certificat HTTPS a été réémis pour le nouveau nom – le navigateur demandera encore une fois.",
+		"INSTALLIERT": "INSTALLÉES",
+		"STORE": "BOUTIQUE",
+		"QUELLEN": "SOURCES",
+		"INSTALLIERTE APPS": "APPS INSTALLÉES",
+		"Noch keine App installiert. Im": "Aucune app installée pour l'instant. La",
+		"Store": "boutique",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "propose des apps à installer – ou envoyez votre propre paquet (.sapp).",
+		"Apps": "Apps",
+		"APP-STORE": "BOUTIQUE D'APPS",
+		"Beta (auch Vorabversionen)": "Bêta (aussi les préversions)",
+		"Jetzt aktualisieren": "Actualiser maintenant",
+		"PAKET INSTALLIEREN": "INSTALLER UN PAQUET",
+		"PAKETDATEI": "FICHIER DE PAQUET",
+		"Für eigene Apps (gebaut mit": "Pour vos propres apps (construites avec",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "depuis le dépôt d'apps). Les paquets envoyés comptent comme « personnels / non vérifiés ».",
+		"Hochladen & installieren": "Envoyer et installer",
+		"VERFÜGBARE APPS": "APPS DISPONIBLES",
+		"APP": "APP",
+		"HERAUSGEBER": "ÉDITEUR",
+		"Werkzeuge": "Outils",
+		"Medien": "Médias",
+		"Büro": "Bureautique",
+		"Netzwerk": "Réseau",
+		"Download": "Téléchargement",
+		"Sync": "Synchronisation",
+		"wird geladen …": "téléchargement …",
+		"aus dem Store": "de la boutique",
+		"eigene / ungeprüft": "personnelle / non vérifiée",
+		"eigene": "personnelle",
+		"SICHTBAR FÜR": "VISIBLE PAR",
+		"alle Benutzer": "tous les utilisateurs",
+		"nur Administratoren": "administrateurs seulement",
+		"Alle Benutzer mit Web-Zugang": "Tous les utilisateurs avec accès web",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "Les administrateurs voient toutes les apps. La sélection décide qui voit l'app dans « Mon ShareOS ».",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "L'app est supprimée. Les données qu'elle a enregistrées dans le navigateur y restent.",
+		"APP-QUELLEN": "SOURCES D'APPS",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "AUTRE SOURCE (ADRESSE DU CATALOGUE)",
+		"Eine Quelle ist ein App-Katalog (": "Une source est un catalogue d'apps (",
+		") im Format des Repos": ") au format du dépôt",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": ". Apps personnelles : utilisez le dépôt comme modèle, son GitHub Action construit paquets et catalogue. N'ajoutez que des sources de confiance.",
+		"Quelle entfernen?": "Retirer la source ?",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "Les apps de cette source n'apparaissent plus dans la boutique. Les apps installées restent.",
+		"MEINE APPS": "MES APPS",
+		"Store aktualisiert.": "Boutique actualisée.",
+		"Entfernt.": "Retiré.",
+		"Lade den Katalog …": "Chargement du catalogue …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "Aucune app trouvée – vérifiez la connexion internet et les sources.",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "Aucun utilisateur avec accès web – créez-en un sous Partages → Utilisateurs.",
+		"braucht neuere ShareOS": "nécessite un ShareOS plus récent",
+		"noch nicht geladen": "pas encore chargé",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Les apps web fonctionnent sur leur propre port (8081 / 8444 pour HTTPS) – séparées de cette interface, ainsi une app ne peut pas utiliser votre connexion. Qui connaît l'adresse peut ouvrir une app web sur le réseau ; « visible par » décide qui la voit dans « Mon ShareOS ».",
+		"Installation abgeschlossen": "Installation terminée",
+		"(100 %) – jetzt neu starten.": "(100 %) – redémarrez maintenant.",
+		"FIRMWARE-DATEI EINSPIELEN": "INSTALLER UN FICHIER DE FIRMWARE",
+		"Hochladen & prüfen": "Envoyer et vérifier",
+		"Art": "Type",
+		"andere Firmware": "autre firmware",
+		"Einspielen": "Installer",
+		"Firmware wird geschrieben": "Écriture du firmware",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "Noyau et système de démarrage – patientez, n'éteignez pas",
+		"Geschrieben": "Écrit",
+		"Größe": "Taille",
+		"ext4 – empfohlen": "ext4 – recommandé",
+		"exFAT – empfohlen": "exFAT – recommandé",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "Tout : droits par utilisateur, limite de stockage, dossiers personnels, apps.",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "Droits par utilisateur, dossiers personnels, apps ; pas de limite de stockage par utilisateur. Demande plus de mémoire.",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Lisible aussi sous Windows et macOS. Pas de droits par utilisateur (qui peut écrire dans un partage peut tout y modifier), pas de limite de stockage, pas de dossiers personnels, pas d'apps.",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Lisible aussi sous Windows. Pas de droits par utilisateur, pas de limite de stockage, pas de dossiers personnels, pas d'apps.",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, téléviseurs ; fichiers de plus de 4 Go.",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "Pour les appareils anciens (autoradio, appareil photo) ; fichiers de 4 Go au plus.",
+		"Für Windows-Rechner.": "Pour les ordinateurs Windows.",
+		"Für Linux und Sicherungen mit Rechten.": "Pour Linux et les sauvegardes avec droits.",
+		"DATEISYSTEM": "SYSTÈME DE FICHIERS",
+		"Sicher entfernen": "Retirer en toute sécurité",
+		"Formatieren": "Formater",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Nom du nouveau volume (a–z, 0–9, - et _, 16 caractères au plus) et système de fichiers :",
+		"UHRZEIT DER BOX": "HEURE DU BOÎTIER",
+		"Zeitabgleich": "Synchronisation de l'heure",
+		"aus dem Internet (NTP)": "depuis internet (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP activé mais pas en cours",
+		"von Hand": "à la main",
+		"Zuletzt abgeglichen": "Dernière synchronisation",
+		"noch nicht": "pas encore",
+		"Batterie-Uhr": "Horloge à pile",
+		"wird nach jedem Abgleich gestellt": "est réglée après chaque synchronisation",
+		"Jetzt abgleichen": "Synchroniser maintenant",
+		"ZEITZONE & ZEITSERVER": "FUSEAU HORAIRE ET SERVEURS DE TEMPS",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "Obtenir l'heure automatiquement depuis internet (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "SERVEURS DE TEMPS (UN PAR LIGNE, 5 AU PLUS)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "Dans un réseau domestique, le routeur peut aussi servir de serveur de temps, p. ex.",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": ". Le fuseau horaire s'applique aux journaux, aux planifications et à l'affichage.",
+		"UHRZEIT VON HAND STELLEN": "RÉGLER L'HORLOGE À LA MAIN",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "Tant que NTP est activé, le boîtier remet l'horloge à l'heure d'internet à la prochaine synchronisation. Pour un boîtier sans internet, désactivez NTP ci-dessus.",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "L'horloge continue ensuite ; l'horloge à pile du boîtier est réglée aussi.",
+		"Uhrzeit dieses Geräts übernehmen": "Reprendre l'heure de cet appareil",
+		"Uhrzeit setzen": "Régler l'heure",
+		"Uhrzeit gesetzt.": "Heure réglée.",
+		"Uhrzeit abgeglichen.": "Heure synchronisée.",
+		"Ungültige Uhrzeit.": "Heure invalide.",
+		"Eine Firmware im D-Link-Format, z. B. für den": "Un firmware au format D-Link, p. ex. pour le",
+		"Wechsel zurück zu Alt-F": "retour à Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Le noyau et le système de démarrage sont écrits ; le système et les réglages de ShareOS restent dans la flash."
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"Pas de swap, pas d'espace des apps (paquets et données d'apps nécessitent ext4 ou Btrfs)."
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"$1 de swap par disque, pas d'espace des apps (paquets et données d'apps nécessitent ext4 ou Btrfs)."
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"Restaurer : $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"Sauvegarde : $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"Sauvegarde : $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"$1 créé"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"PARTAGE $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"UTILISATEUR $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"Groupe $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"Droit pour $1"
+		],
+		[
+			"^auf (\\S+)$",
+			"sur $1"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"Limite $1 par volume"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"Invités (l)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"Partage « $1 » enregistré."
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"Retirer le partage « $1 » ?"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"Partage « $1 » retiré."
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"Utilisateur « $1 » créé."
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"Utilisateur « $1 » enregistré."
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"Supprimer l'utilisateur « $1 » ?"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"Utilisateur « $1 » supprimé."
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"Le compte est supprimé ; ses droits de partage disparaissent.$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"Groupe « $1 » créé."
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"Supprimer le groupe « $1 » ?"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"Groupe « $1 » supprimé."
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"Mot de passe de $1"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"Mot de passe de $1 changé."
+		],
+		[
+			"^Übernommen: (.+)$",
+			"Importés : $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"Ignorés : $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"Partages : $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"Partage : $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"Utilisateur : $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"Mot de passe : $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F : $1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"Le changement prend effet immédiatement. Le boîtier attend ensuite $1 secondes une confirmation depuis la nouvelle adresse – sans réponse, il rétablit les réglages précédents. Vous ne pouvez donc pas vous enfermer dehors."
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– sans confirmation, le boîtier revient aux anciens dans $1 s."
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"Le boîtier obtient son adresse du routeur. Il peut ensuite être joignable à une autre adresse (à chercher dans le routeur). Si le changement n'est pas confirmé sur le boîtier dans les $1 secondes, les réglages précédents s'appliquent à nouveau."
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Le boîtier passe à $1. Cette page ouvre alors la nouvelle adresse et confirme le changement. Si cela ne fonctionne pas, les réglages précédents s'appliquent à nouveau après $2 secondes."
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Les réglages réseau sont appliqués et confirmés par cette page. Si cela ne fonctionne pas, les réglages précédents s'appliquent à nouveau après $1 secondes."
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"nouvelle adresse $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"attente du boîtier ($1 s) – injoignable ? Cherchez la nouvelle adresse dans le routeur et connectez-vous là."
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"attente du boîtier ($1 s)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1 : démarre au lancement"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1 : ne démarre plus au lancement"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"Réseau : $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"Apparence : $1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"Canal $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"Mise à jour $1 disponible"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"Mise à jour $1 disponible."
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"MISE À JOUR $1"
+		],
+		[
+			"^seit (.+)$",
+			"depuis $1"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"$1 configuré(s)"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"$1 détecté(s)"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"prévu · phase $1"
+		],
+		[
+			"^Neueste · Beta$",
+			"Dernière · Bêta"
+		],
+		[
+			"^Neueste · Stabil$",
+			"Dernière · Stable"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"CHANGEMENTS DANS $1"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"ACCÈS · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"NOM POUR $1 ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"PROGRESSION · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"Source : versions GitHub · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"installée avec succès ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"Formater $1"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 sera entièrement effacé. C'est irréversible."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"Un clic sur « Configurer » efface entièrement $1. La synchronisation initiale se fait ensuite en arrière-plan (plusieurs heures pour de gros disques) ; le volume est utilisable tout de suite."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"Un clic sur « Configurer » efface entièrement $1."
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"$1 de swap par disque, espace des apps sur « $2 » (s'il n'en existe pas déjà un)."
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"Pas de swap, espace des apps sur « $1 » (s'il n'en existe pas déjà un)."
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"Les deux disques ont les mêmes données. Si l'un tombe en panne, rien n'est perdu. Utilisable : $1."
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"Deux fois plus de place ($1), mais pas de redondance – chaque disque est un volume à part."
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"Le disque devient un volume de $1. Pour la redondance, ajoutez plus tard un second disque en miroir."
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1 : les deux disques actifs ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1 : un disque manque ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"Retirer « $1 » ?"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"Effacer $1 ?"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"$1 sera entièrement effacé et configuré comme volume « $2 »."
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"ShareOS $1 va être écrit dans la flash. Un redémarrage est ensuite nécessaire, pendant lequel le nouveau système s'installe. N'éteignez pas le boîtier pendant l'écriture."
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$1 sur $2"
+		],
+		[
+			"^(.+) installieren$",
+			"Installer $1"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"Charge $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"RÉSEAU · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1 : monté"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1 : démonté"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1 : retiré"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1 : démarré"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1 : arrêté"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1 : redémarré"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)."
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"plein à partir de $1 °C"
+		],
+		[
+			"^jetzt: (.+)$",
+			"maintenant : $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"dernier $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"$1 fichier(s) en attente"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"boîte personnelle de $1 · jeton $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"boîte partagée · jeton $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"personnelle : $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"BOÎTE $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"JOURNAL · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"Connexion OK – $1 documents dans Paperless."
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"Retirer la boîte « $1 » ?"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1 : connexion OK ($2 dossiers)."
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"Retirer le compte « $1 » ?"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"Retirer la tâche « $1 » ?"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"Partage $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"Partage $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → Dossier personnel"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron : $1 · par $2"
+		],
+		[
+			"^von (\\S+)$",
+			"par $1"
+		],
+		[
+			"^Fehler · (.+)$",
+			"Erreur · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"en cours depuis $1"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"Tâche : $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"Compte : $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"Boîte : $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"Ventilateur : $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"Services : $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"Configuration : $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"Formater : $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"Installer : $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"Veille : $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"Stockage : $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"Langue : $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"Canal : $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"Certificat : $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"Échec de la vérification : $1"
+		],
+		[
+			"^(.+) frei$",
+			"$1 libre"
+		],
+		[
+			"^(.+) auswählen$",
+			"sélectionner $1"
+		],
+		[
+			"^(.+) herunterladen$",
+			"télécharger $1"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"$1 sélectionné(s)."
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"Nouveau nom pour « $1 » :"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"$1 élément(s). Dossier cible sous forme de chemin dans « $2 », p. ex. Photos/2026 (vide = premier niveau)."
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"Supprimer $1 élément(s) ?"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – dossiers avec leur contenu. C'est irréversible."
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"« $1 » existe déjà dans ce dossier."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"$1 fichier(s) envoyé(s)."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"$1 fichier(s) non envoyé(s)."
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"Comme pour tout le monde ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"Téléchargement : $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"Dossier : $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"Renommer : $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"Supprimer : $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"Déplacer : $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"Copier : $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"Fichiers : $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"Les apps web fonctionnent sur leur propre port ($1) – séparées de cette interface, ainsi une app ne peut pas utiliser votre connexion. Qui connaît l'adresse peut ouvrir une app web sur le réseau ; « visible par » décide qui la voit dans « Mon ShareOS »."
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"Les apps web fonctionnent sur leur propre port ($1 / $2 pour HTTPS) – séparées de cette interface, ainsi une app ne peut pas utiliser votre connexion. Qui connaît l'adresse peut ouvrir une app web sur le réseau ; « visible par » décide qui la voit dans « Mon ShareOS »."
+		],
+		[
+			"^Stand (.+)$",
+			"état au $1"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · visible par $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · VISIBLE PAR"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"Retirer $1 ?"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 installée."
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 installée (app personnelle)."
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 en téléchargement …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 en vérification …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 en installation …"
+		],
+		[
+			"^Update (.+)$",
+			"Mettre à jour $1"
+		],
+		[
+			"^Store: (.*)$",
+			"Boutique : $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"Apps : $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"Retirer : $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"Sources : $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"Paquet : $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"Ensuite, $1 démarre. Les paquets supplémentaires d'Alt-F manquent alors – flashez le même fichier une fois de plus dans la page firmware d'Alt-F. Retour à ShareOS : flashez le .bin ShareOS dans Alt-F, le système et les réglages sont toujours là."
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"Installer $1 ?"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"Le noyau et le système de démarrage sont remplacés et vérifiés. N'éteignez pas le boîtier pendant l'écriture."
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 est dans la flash. Redémarrer maintenant ?"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 démarre – son interface sera bientôt sur $2 (port 80)."
+		],
+		[
+			"^(.+) startet$",
+			"$1 démarre"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"Installer : $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"Fichier de firmware : $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 peut maintenant être débranché."
+		],
+		[
+			"^(.+) formatieren$",
+			"Formater $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"Effacer $1 ?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – nom (lettres, chiffres, espaces, - et _) et système de fichiers :"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"Tout le contenu de $1 est effacé. Ensuite, c'est un disque $2 « $3 »."
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) est entièrement effacé et reconfiguré comme volume « $4 » ($5)."
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"Espace des apps sur « $1 » (s'il n'en existe pas déjà un)."
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"DATE ET HEURE ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"Heure : $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"Synchronisation : $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"Heure : $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (miroir (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (disque unique)"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"en cours",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"arrêté",
+			"g"
+		],
+		[
+			" frei von ",
+			" libres sur",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" sur",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" utilisés",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"jours de fonctionnement",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"contient :",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"membre RAID de",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"membre RAID",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"Disque ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"Baie ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"Synchronisation initiale",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"Reconstruction",
+			"g"
+		],
+		[
+			"Prüfung",
+			"Vérification",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · encore $1",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"Miroir (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"Disque unique",
+			""
+		],
+		[
+			" umgelagert, ",
+			" réalloués,",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" en attente",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"EN COURS",
+			"g"
+		],
+		[
+			" und ",
+			" et",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"j $1 h",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – ne pas éteindre.",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"Échec de la vérification :",
+			""
+		],
+		[
+			"^Kanal: ",
+			"Canal :",
+			""
+		],
+		[
+			"^Dienste: ",
+			"Services :",
+			""
+		],
+		[
+			"^Speicher: ",
+			"Stockage :",
+			""
+		],
+		[
+			"^Download: ",
+			"Téléchargement :",
+			""
+		],
+		[
+			"^Installieren: ",
+			"Installer :",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"Configurer :",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"Formater :",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"Certificat :",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS :",
+			""
+		],
+		[
+			"^Sprache: ",
+			"Langue :",
+			""
+		],
+		[
+			"^Logo: ",
+			"Logo :",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"moitié",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"Ventilateur :",
+			""
+		],
+		[
+			"^Hardware: ",
+			"Matériel :",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"groupe",
+			"g"
+		]
+	]
+}

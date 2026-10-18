@@ -1,4 +1,12 @@
 [
 	{ "code": "en", "name": "English" },
-	{ "code": "de", "name": "Deutsch" }
+	{ "code": "de", "name": "Deutsch" },
+	{ "code": "zh", "name": "中文" },
+	{ "code": "hi", "name": "हिन्दी" },
+	{ "code": "es", "name": "Español" },
+	{ "code": "fr", "name": "Français" },
+	{ "code": "ar", "name": "العربية", "dir": "rtl" },
+	{ "code": "bn", "name": "বাংলা" },
+	{ "code": "pt", "name": "Português" },
+	{ "code": "ru", "name": "Русский" }
 ]

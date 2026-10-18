@@ -1,0 +1,1072 @@
+# Français
+E0	APERÇU
+E1	STOCKAGE
+E2	PARTAGES
+E3	SERVICES
+E4	APPS
+E5	CLOUD
+E6	PAPERLESS
+E7	SYSTÈME
+E8	NOUVEAU
+E9	EN LIGNE
+E10	HORS LIGNE
+E11	Se déconnecter
+E12	Basculer clair/sombre
+E13	Menu principal
+E14	Système
+E15	disponible
+E16	L'interface ShareOS nécessite JavaScript.
+E17	Administration – veuillez vous connecter.
+E18	UTILISATEUR
+E19	MOT DE PASSE
+E20	Rester connecté (7 jours)
+E21	Se connecter
+E22	Utilisateur ou mot de passe incorrect.
+E23	Boîtier injoignable.
+E24	Session expirée – veuillez vous reconnecter.
+E25	en direct · toutes les 5 s
+E26	CHARGE
+E27	contrôle de carte actif
+E28	pas de données MCU
+E29	VENTILATEUR
+E30	TEMP
+E31	arrêt
+E32	moitié
+E33	plein
+E34	pas de lien
+E35	10 dernières min
+E36	Passerelle · DNS
+E37	collecte des mesures …
+E38	Firmware
+E39	Démarré depuis
+E40	Flash (UBI)
+E41	Réseau (RAM)
+E42	Les réglages sont conservés
+E43	Les modifications sont perdues au redémarrage
+E44	Temps de fonctionnement
+E45	depuis le dernier démarrage
+E46	Services
+E47	en cours
+E48	Flash libre
+E49	pour réglages et paquets
+E50	Disques
+E51	détectés
+E52	aucun branché
+E53	tout gérer
+E54	Mise à jour disponible
+E55	Chargement des données système …
+E56	Chargement des services …
+E57	Chargement des disques …
+E58	Aucun disque dur ni stockage USB détecté. ShareOS fonctionne entièrement depuis la flash interne – les disques apparaissent ici dès qu'ils sont branchés.
+E59	modèle inconnu
+E60	démarrer, arrêter, redémarrer
+E61	Redémarrer
+E62	Arrêter
+E63	Démarrer
+E64	SSH / SFTP
+E65	Interface web
+E66	Heure (NTP)
+E67	Planificateur
+E68	API (rpcd)
+E69	Bus système (ubus)
+E70	Journal système
+E71	Contrôle de carte
+E72	règle l'horloge, garde l'horloge MCU à l'heure
+E73	interface pour cette page web
+E74	messages entre les services
+E75	syslogd, en RAM
+E76	ventilateur, température, boutons, horloge MCU
+E77	Cette partie n'est pas encore construite. Prévu :
+E78	PARTAGES, UTILISATEURS ET GROUPES
+E79	APPS ET PAQUETS
+E80	STOCKAGE CLOUD
+E81	PAPERLESS-NGX
+E82	Partages par dossier avec interrupteurs pour SMB, NFS, FTP et DLNA
+E83	Utilisateurs et groupes avec droits par partage
+E84	Monter des lecteurs réseau (CIFS/NFS)
+E85	Tâches de sauvegarde (rsync)
+E86	Source de paquets (flux opkg) sur GitHub
+E87	Catalogue par catégories, installer/supprimer avec une file d'attente
+E88	Les paquets vont dans réglages et paquets (flash) ou sur le disque
+E89	Comptes via rclone : Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP
+E90	Tâches de synchronisation : copier, miroir, bidirectionnel
+E91	Chiffrement (crypt), bande passante et planification
+E92	Dossier d'entrée sur le NAS → envoi via l'API REST de Paperless (jeton)
+E93	État du transfert via /api/tasks/
+E94	Étiquettes et correspondant par dossier, export de sauvegarde vers le NAS
+E95	VOLUMES
+E96	DISQUES
+E97	RÉGLAGES
+E98	MISE EN VEILLE
+E99	RÉINSTALLER
+E100	ARRÊTER LES DISQUES APRÈS
+E101	jamais
+E102	10 minutes
+E103	20 minutes
+E104	30 minutes
+E105	1 heure
+E106	2 heures
+E107	Swap
+E108	Espace des apps
+E109	pas encore
+E110	aucun actif
+E111	pas encore
+E112	Économise l'énergie et l'usure. Les disques redémarrent au prochain accès (quelques secondes).
+E113	L'assistant efface les disques choisis et les configure à nouveau. Un disque seul peut aussi être formaté directement sous « Disques ».
+E114	Lancer l'assistant
+E115	Configurer le stockage
+E116	FLASH INTERNE
+E117	128 Mo NAND · UBI
+E118	ZONE
+E119	MONTÉ
+E120	UTILISÉ
+E121	Réglages et paquets
+E122	Système (lecture seule)
+E123	RAM (tmp)
+E124	Démonter
+E125	Monter
+E126	Retirer
+E127	Lire SMART
+E128	Effacer et formater
+E129	Miroir (RAID 1)
+E130	Disque unique
+E131	SMART pas encore lu
+E132	en veille (SMART au réveil)
+E133	pas de données SMART
+E134	SMART OK
+E135	AVERTISSEMENT SMART
+E136	SMART EN ÉCHEC
+E137	vide
+E138	pas de système de fichiers
+E139	non monté
+E140	système de fichiers introuvable
+E141	en attente
+E142	Les paquets et données des apps sont dans .shareos
+E143	Aucun stockage configuré. L'assistant configure les disques en quelques étapes – en miroir (les deux disques ont les mêmes données) ou en disques séparés.
+E144	CONFIGURER LE STOCKAGE · ASSISTANT
+E145	Annuler
+E146	Disques
+E147	Structure
+E148	Nom
+E149	Confirmer
+E150	Retour
+E151	Suivant
+E152	Configurer
+E153	Quels disques faut-il configurer ?
+E154	Tout le contenu de ces disques sera effacé.
+E155	Miroir (RAID 1) – recommandé
+E156	Deux disques séparés
+E157	SWAP PAR DISQUE
+E158	1 Go – recommandé
+E159	aucun
+E160	Le boîtier n'a que 256 Mo de RAM. Le swap sur les disques absorbe les pics de charge (partages, synchronisation cloud, installation de paquets). C'est une petite partition au début de chaque disque ; le reste devient le volume.
+E161	NOM DU MIROIR
+E162	VOLUME
+E163	DISQUES
+E164	TAILLE
+E165	STRUCTURE
+E166	Minuscules, chiffres, - et _ (16 caractères max.). Le volume apparaît sous
+E167	 ; les partages se créent ensuite.
+E168	Effacer et configurer les disques ?
+E169	Effacer et configurer
+E170	Configuration lancée.
+E171	Formatage lancé.
+E172	Nom du nouveau volume (a–z, 0–9, - et _, 16 caractères max.) :
+E173	Choisissez au moins un disque.
+E174	Deux disques au maximum.
+E175	Nom invalide : seulement a–z, 0–9, - et _, 16 caractères max.
+E176	Les noms doivent être différents.
+E177	Nom invalide.
+E178	Mise en veille enregistrée.
+E179	FIRMWARE
+E180	GÉNÉRAL
+E181	ALIMENTATION ET RÉINITIALISATION
+E182	JOURNAUX
+E183	APPARENCE
+E184	À PROPOS
+E185	MISE À JOUR DU FIRMWARE
+E186	Installé
+E187	Noyau, initramfs et système
+E188	pas encore vérifié
+E189	à jour
+E190	pas encore de version pour cet appareil
+E191	aucune
+E192	CANAL DE MISE À JOUR
+E193	Stable (versions)
+E194	Bêta (aussi les préversions)
+E195	Vérifier maintenant
+E196	Vérification …
+E197	VERSIONS
+E198	depuis GitHub
+E199	VERSION
+E200	DATE
+E201	CANAL
+E202	STABLE
+E203	BÊTA
+E204	installée
+E205	Télécharger
+E206	Notes ↗
+E207	COMMENT SE PASSE UNE MISE À JOUR
+E208	Télécharger le paquet depuis GitHub et le vérifier (SHA-256, appareil, tailles)
+E209	Écrire noyau et initramfs dans la flash et les relire
+E210	Préparer le nouveau système
+E211	Redémarrage : l'initramfs installe le système, puis ShareOS redémarre
+E212	Les réglages et paquets installés sont conservés. En cas d'interruption, l'installation reprend au démarrage suivant.
+E213	Téléchargement
+E214	Vérification
+E215	Prêt
+E216	Écriture
+E217	Abandonner
+E218	Erreur :
+E219	Dernière mise à jour :
+E220	Redémarrage nécessaire
+E221	Redémarrer maintenant
+E222	Vérifié : SHA-256, sommes de toutes les parties, fait pour cet appareil. Les réglages et paquets sont conservés.
+E223	ShareOS est à jour.
+E224	Mise à jour téléchargée et vérifiée.
+E225	Mise à jour écrite – veuillez redémarrer.
+E226	Installer la mise à jour ?
+E227	Installer
+E228	NOM DE L'APPAREIL
+E229	NOM D'HÔTE
+E230	Enregistrer
+E231	NOUVEAU MOT DE PASSE
+E232	RÉPÉTER
+E233	Changer le mot de passe
+E234	Lettres, chiffres et tirets. Effet immédiat ; le serveur DHCP le voit au prochain renouvellement.
+E235	Vaut pour l'interface web et SSH. Au moins 6 caractères.
+E236	Nom d'hôte enregistré.
+E237	Mot de passe changé.
+E238	Les mots de passe ne correspondent pas.
+E239	ALIMENTATION
+E240	Éteindre
+E241	À l'arrêt, ShareOS s'arrête et le contrôle de carte coupe le courant. Rallumer avec le bouton d'alimentation.
+E242	RÉINITIALISATION D'USINE
+E243	efface les réglages
+E244	Rétablir les réglages d'usine
+E245	Supprime tous les réglages et paquets installés de la flash et redémarre. Le système et la version du firmware restent. Le mot de passe redevient ensuite
+E246	Redémarrer ?
+E247	Redémarrer
+E248	Le boîtier redémarre. Cette page se reconnecte d'elle-même (environ 1–2 minutes).
+E249	Éteindre ?
+E250	ShareOS s'arrête et le boîtier s'éteint. Rallumer sur l'appareil.
+E251	Réglages d'usine ?
+E252	Réinitialiser
+E253	Tous les réglages et paquets installés sont effacés, puis le boîtier redémarre. Le mot de passe redevient « shareos ».
+E254	Redémarrage
+E255	ShareOS redémarre
+E256	Le boîtier s'éteint
+E257	Vous pouvez fermer cette fenêtre.
+E258	Le service redémarre
+E259	attente du boîtier
+E260	Réglages d'usine
+E261	JOURNAL
+E262	Source
+E263	Système (syslog)
+E264	Noyau (dmesg)
+E265	Actualiser
+E266	chargement …
+E267	(vide)
+E268	ce navigateur seulement
+E269	Thème clair
+E270	Lignes de balayage
+E271	LOGO
+E272	vaut pour tout le monde
+E273	Afficher le logo ShareOS (désactivé : texte seul)
+E274	LANGUE
+E275	Couleur d'accent verte
+E276	Couleur d'accent rouge
+E277	Couleur d'accent bleue
+E278	Couleur d'accent blanche
+E279	Version
+E280	Étape
+E281	Appareil
+E282	Nom du firmware
+E283	PROJET
+E284	ShareOS est un firmware libre pour les boîtiers NAS D-Link, dérivé d'Alt-F. Basé sur buildroot, Linux et BusyBox ; fonctionnement inspiré d'OpenWrt (UCI, ubus, rpcd, ucode). Licence GPLv2.
+E285	Configuration en cours
+E286	N'éteignez pas le boîtier.
+E287	La configuration a échoué :
+E288	HTTPS
+E289	CONNEXION
+E290	cette page : HTTPS
+E291	cette page : HTTP
+E292	HTTPS sur le port 443
+E293	Rediriger les requêtes HTTP vers HTTPS
+E294	Après un changement, le serveur web redémarre ; la page est brièvement injoignable.
+E295	CERTIFICAT
+E296	autosigné
+E297	certificat personnel
+E298	Pas encore de certificat – il est créé automatiquement quand HTTPS est activé.
+E299	Délivré à
+E300	Émetteur
+E301	Valable du
+E302	Valable jusqu'au
+E303	Noms
+E304	Les navigateurs avertissent une fois pour les certificats autosignés. La connexion est quand même chiffrée ; pour une page sans avertissement, importez votre propre certificat (p. ex. de votre AC intranet ou de Let's Encrypt).
+E305	Nouveau certificat autosigné
+E306	IMPORTER UN CERTIFICAT PERSONNEL
+E307	CERTIFICAT (PEM, INTERMÉDIAIRES BIENVENUS)
+E308	CLÉ PRIVÉE (PEM, SANS MOT DE PASSE)
+E309	Avant utilisation, le boîtier vérifie que certificat et clé vont ensemble. La clé ne quitte jamais le boîtier.
+E310	Utiliser le certificat
+E311	Certificat installé.
+E312	Certificat créé.
+E313	Nouveau certificat autosigné ?
+E314	Créer
+E315	Un nouveau certificat pour le nom et l'IP actuels est créé et remplace l'ancien. Les navigateurs afficheront à nouveau un avertissement une fois.
+E316	Enregistré – le serveur web redémarre.
+E317	Chargement …
+E318	LANGUE DE L'INTERFACE
+E319	Autres langues : un fichier dans
+E320	– voir docs/TRANSLATING.md.
+E321	ARRÊT EN DESSOUS DE (°C, 0 = JAMAIS)
+E322	PLEIN À PARTIR DE (°C)
+E323	RETOUR À MOITIÉ EN DESSOUS DE (°C)
+E324	Tout se règle plus tard sous Système. Le mot de passe reste « shareos » tant que vous ne le changez pas.
+E326	Reprendre d'Alt-F
+E327	Aussi les versions de test, avec les nouveautés plus tôt.
+E328	Ce boîtier a des réglages de
+E330	Équilibré
+E331	Utilisateur
+E332	Partages
+E333	NFS
+E334	Les utilisateurs et partages sont conservés et proposés dans la partie « Partages ». Les données Alt-F dans la flash restent intactes.
+E335	Bêta
+E336	Stable
+E337	Ensuite, vous pouvez configurer tout de suite les disques durs.
+E338	Tout le monde connaît le mot de passe par défaut
+E339	– choisissez-en un maintenant. Il vaut pour l'interface web et SSH.
+E340	Le boîtier règle le ventilateur en trois paliers (arrêt, moitié, plein) selon la température de la carte. Les changements s'appliquent en quelques secondes.
+E341	La LED USB orange indique le mode de secours et les mises à jour au démarrage et n'est pas réglable.
+E342	PREMIÈRE CONFIGURATION
+E343	Valeurs personnalisées
+E344	Première configuration terminée.
+E345	Relancer la première configuration
+E346	Passer la première configuration ?
+E347	Terminé
+E348	Terminé et configurer le stockage
+E349	Nom de l'appareil
+E350	Reprendre nom, fuseau horaire et ventilateur
+E351	Battement (ShareOS en marche)
+E352	Frais
+E353	Silencieux
+E354	LED
+E355	VENTILATEUR ET LED
+E356	Ventilateur
+E357	Laisser vide pour changer le mot de passe plus tard.
+E358	Ventilateur toujours en marche, plein à partir de 45 °C
+E359	Ventilateur toujours en marche, plein à partir de 50 °C
+E360	Ventilateur arrêté sous 40 °C, plein à partir de 55 °C
+E361	Nom et heure
+E362	Seulement les versions finales – recommandé.
+E363	LED DES DISQUES (ROUGES)
+E364	LED D'ALIMENTATION
+E365	LED D'ÉTAT (BLEUE)
+E366	Mot de passe
+E367	Afficher les accès disque
+E368	Langue
+E369	Choisir soi-même les températures
+E370	Le boîtier apparaît sous ce nom sur le réseau. L'horloge se règle seule par NTP.
+E371	Canal de mise à jour
+E372	Mises à jour
+E373	Les mises à jour viennent de GitHub et s'installent sous Système → Firmware.
+E374	Bienvenue dans ShareOS. Le boîtier se configure en quelques étapes ; tout peut être modifié plus tard sous
+E375	.
+E376	FUSEAU HORAIRE
+E377	Fuseau horaire
+E378	clignote
+E379	allumée
+E380	effet immédiat
+E381	sera modifié
+E382	reste (modifier plus tard)
+E383	oui
+E384	non
+E385	Passer
+E386	Ventilateur enregistré.
+E387	LED enregistrée.
+E388	Nom d'appareil invalide.
+E389	Le mot de passe doit comporter au moins 6 caractères.
+E390	Nouvelle vérification du paquet …
+E391	Préparation du système pour le redémarrage …
+E392	Système de démarrage : effacement de la flash …
+E393	Écriture du système de démarrage …
+E394	Vérification du système de démarrage …
+E395	Noyau : effacement de la flash …
+E396	Écriture du noyau …
+E397	Vérification du noyau …
+E398	Démarrage …
+E399	ne pas éteindre
+E400	, cela prend environ 1–2 minutes.
+E401	Vérification du paquet …
+E402	SHA-256 et contenu, environ une demi-minute.
+E403	– le nouveau système est installé au prochain démarrage (environ 1 minute, n'éteignez pas le boîtier).
+E404	RÉSEAU
+E405	ADRESSE
+E406	ACTUEL
+E407	COULEUR D'ACCENT
+E408	AU DÉMARRAGE
+E409	DESCRIPTION
+E410	SERVICE
+E411	CLAIR OU SOMBRE
+E412	HTTPS ET CERTIFICAT
+E413	MAINTENANT
+E414	MESURE
+E415	VALEUR
+E416	REMARQUE
+E417	TYPE
+E418	MODÈLE
+E419	SANTÉ
+E420	CONTENU
+E421	ADRESSE IP
+E422	MASQUE DE SOUS-RÉSEAU
+E423	SERVEURS DNS (SÉPARÉS PAR DES VIRGULES)
+E424	Automatique (DHCP) – par le routeur
+E425	Adresse statique
+E426	statique
+E427	Sombre
+E428	Clair
+E429	Comme le système d'exploitation (automatique)
+E430	Vert
+E431	Rouge
+E432	Bleu
+E433	Blanc
+E434	Le logo et l'icône du navigateur prennent la couleur d'accent. Le réglage vaut pour tout le monde, y compris la page de connexion.
+E435	Lignes de balayage (ce navigateur seulement)
+E436	Appliquer
+E437	connecté
+E438	pas d'adresse
+E439	modifier
+E440	Connexion
+E441	S'applique au prochain démarrage. Les services en cours se démarrent et s'arrêtent sous « État ». Contrôle de l'appareil, bus système, API et interface web démarrent toujours, sinon le boîtier ne serait plus utilisable.
+E442	quels services démarrent à la mise sous tension
+E443	démarrer
+E444	toujours
+E445	Sans ce service, le boîtier n'est plus utilisable
+E446	Vue en tuiles
+E447	Vue en tableau
+E448	De nouveaux réglages réseau attendent une confirmation
+E449	Garder
+E450	La dernière modification n'a pas été confirmée ; les réglages réseau précédents sont de nouveau actifs.
+E451	Nouveaux réglages réseau confirmés.
+E452	Modifier le réseau ?
+E453	Changement de réseau
+E454	Redémarrage du réseau
+E455	Pas de connexion – le boîtier devrait avoir rétabli les anciens réglages. Rechargez la page.
+E456	un disque manque
+E457	OK
+E458	Synchronisation en attente
+E459	ÉTAT
+E460	DÉMARRAGE AUTOMATIQUE
+E461	GROUPES
+E462	Administrateur
+E463	Partages uniquement
+E464	lecture et écriture
+E465	lecture seule
+E466	pas d'accès
+E467	illimité
+E468	Les partages ont besoin d'un volume – configurez-le d'abord sous
+E469	.
+E470	Aucun partage pour l'instant. Un partage rend un dossier d'un volume accessible sur le réseau – depuis Windows, macOS et Linux.
+E471	Créer un partage
+E472	Nouveau partage
+E473	PARTAGE
+E474	DOSSIER
+E475	ACCÈS
+E476	volume manquant
+E477	personne pour l'instant
+E478	SMB (WINDOWS, MACOS, LINUX)
+E479	Proposer des partages SMB
+E480	GROUPE DE TRAVAIL
+E481	Le service SMB démarre automatiquement dès qu'il existe un partage. Les dossiers personnels apparaissent sous
+E482	NFS (LINUX, PROXMOX)
+E483	Proposer des partages NFS
+E484	NFS n'a pas de comptes utilisateurs : les ordinateurs ou réseaux indiqués obtiennent l'accès. Les fichiers sont enregistrés sous
+E485	. Monter p. ex. avec
+E486	aucun protocole
+E487	INVITÉ
+E488	Modifier
+E489	Supprimer
+E490	Créer
+E491	NOUVEAU PARTAGE
+E492	NOM
+E493	DOSSIER SUR LE VOLUME
+E494	comme le nom
+E495	ACCÈS PAR SMB
+E496	Partager par SMB (Windows, macOS, Linux)
+E497	Les invités peuvent lire sans mot de passe
+E498	UTILISATEUR / GROUPE
+E499	DROIT
+E500	Pas encore d'utilisateurs – créez-les sous
+E501	, ou autorisez l'accès invité.
+E502	ACCÈS PAR NFS
+E503	Partager par NFS
+E504	Les clients NFS peuvent écrire
+E505	CLIENTS NFS (IP OU RÉSEAU, SÉPARÉS PAR DES VIRGULES)
+E506	Le dossier est créé s'il manque. Supprimer un partage conserve le dossier et ses fichiers.
+E507	pas de limite
+E508	de
+E509	Pas encore d'utilisateurs. Un seul compte sert partout : pour les partages, l'interface web et plus tard les apps et la synchronisation cloud.
+E510	Créer un utilisateur
+E511	Importer depuis Alt-F
+E512	Nouvel utilisateur
+E513	RÔLE
+E514	DOSSIER PERSONNEL
+E515	pas de dossier personnel
+E516	Rôles :
+E517	– tout, y compris SSH.
+E518	– espace personnel « Mon ShareOS » dans l'interface web.
+E519	– accès aux partages, pas de connexion web. Le compte
+E520	est toujours administrateur.
+E521	· sans web
+E522	NOUVEL UTILISATEUR
+E523	NOM D'UTILISATEUR
+E524	NOM COMPLET
+E525	LIMITE DE STOCKAGE PAR VOLUME (GO, 0 = ILLIMITÉ)
+E526	Peut se connecter à l'interface web (« Mon ShareOS »)
+E527	Nom d'utilisateur : minuscules, chiffres et _, commençant par une lettre. Le mot de passe sert pour les partages et – selon le rôle – pour l'interface web.
+E528	GROUPE
+E529	MEMBRES
+E530	Les groupes réunissent des utilisateurs, p. ex. « famille » ou « médias ». Les droits de partage peuvent alors être donnés à tout le groupe.
+E531	Nouveau groupe
+E532	Les membres se règlent sur l'utilisateur (Utilisateurs → Modifier).
+E533	MON SHAREOS
+E534	Rien d'enregistré pour l'instant.
+E535	Dossier personnel
+E536	Aucun dossier personnel configuré.
+E537	CHANGER LE MOT DE PASSE
+E538	MOT DE PASSE ACTUEL
+E539	Sert pour les partages et cette interface.
+E540	MES PARTAGES
+E541	Aucun partage ne vous a encore été attribué.
+E542	APPS ET CLOUD
+E543	prévu
+E544	Les apps qui vous sont ouvertes et vos propres tâches de synchronisation cloud apparaîtront ici plus tard.
+E545	Mon ShareOS
+E546	Indiquez au moins un client (IP ou réseau) pour NFS.
+E547	Enregistré.
+E548	Le partage disparaît du réseau. Le dossier et tous ses fichiers restent sur le volume.
+E549	Importer les utilisateurs d'Alt-F ?
+E550	Les utilisateurs et groupes des réglages Alt-F conservés sont créés (rôle « Partages uniquement »). Les mots de passe sont repris là où Alt-F les avait enregistrés.
+E551	Aucun nouvel utilisateur trouvé.
+E552	Nom du groupe (a–z, 0–9 et _, commençant par une lettre) :
+E553	Les membres restent, mais perdent les droits donnés par ce groupe.
+E554	Définir
+E555	Nouveau mot de passe (au moins 6 caractères). Sert pour les partages et – selon le rôle – pour l'interface web.
+E556	Veuillez vous reconnecter.
+E557	Le dossier personnel est conservé.
+E558	Comptes utilisateurs
+E559	SAUVEGARDER ET RESTAURER LES RÉGLAGES
+E560	SAUVEGARDER
+E561	Fichier JSON
+E562	MOT DE PASSE DE CHIFFREMENT (FACULTATIF)
+E563	vide = non chiffré
+E564	Contient tous les réglages, les utilisateurs avec leurs mots de passe (sous forme de hachage), les partages, le réseau et le certificat HTTPS avec sa clé. Sans mot de passe, le fichier est lisible – gardez-le en lieu sûr. Avec mot de passe : AES-256, le mot de passe est nécessaire pour restaurer.
+E565	Télécharger la sauvegarde
+E566	RESTAURER
+E567	FICHIER DE SAUVEGARDE
+E568	MOT DE PASSE (SI CHIFFRÉ)
+E569	Créée le
+E570	Certificat
+E571	La restauration remplace les réglages, utilisateurs et partages actuels. Un redémarrage est ensuite nécessaire. Les données des volumes ne sont pas touchées.
+E572	Restaurer
+E573	Restaurer les réglages ?
+E574	Les réglages, utilisateurs et partages actuels sont remplacés par la sauvegarde.
+E575	Restauré
+E576	Les réglages sont restaurés. Redémarrer maintenant pour que tout s'applique ?
+E577	Sauvegarde chiffrée téléchargée.
+E578	Sauvegarde téléchargée.
+E579	La sauvegarde est chiffrée – veuillez saisir le mot de passe.
+E580	ADRESSE PAPERLESS
+E581	VÉRIFIER TOUTES LES
+E582	APRÈS L'ENVOI
+E583	Supprimer le fichier
+E584	conserver (.paperless/done)
+E585	Envoyer automatiquement les dossiers d'entrée
+E586	Envoyer maintenant
+E587	FONCTIONNEMENT
+E588	Créez dans Paperless un jeton API pour chaque boîte d'entrée (Profil → Jeton API). Les documents appartiennent alors à cet utilisateur Paperless.
+E589	Déposez des fichiers (PDF, images, Office) dans le dossier d'entrée – depuis un PC ou directement depuis le scanner.
+E590	ShareOS les envoie via l'API Paperless et indique si Paperless les a acceptés.
+E591	Les boîtes personnelles sont dans le dossier personnel (
+E592	) ; les utilisateurs peuvent aussi saisir eux-mêmes leur jeton sous « Mon ShareOS ». Les boîtes partagées utilisent un partage, p. ex. pour un scanner.
+E593	BOÎTES D'ENTRÉE
+E594	accepté
+E595	en traitement
+E596	Erreur
+E597	Journal
+E598	rien en attente
+E599	Nouvelle boîte d'entrée
+E600	NOUVELLE BOÎTE D'ENTRÉE
+E601	personnelle (dossier « Paperless » dans le dossier personnel)
+E602	partagée (dossier d'un partage)
+E603	JETON API
+E604	active
+E605	Tester la connexion
+E606	depuis Paperless : Profil → Jeton API
+E607	JETON API (VIDE = CONSERVER)
+E608	ÉTIQUETTES POUR LES NOUVEAUX DOCUMENTS
+E609	Fermer
+E610	HEURE
+E611	FICHIER
+E612	MESSAGE
+E613	Plus rien ne sera envoyé. Le dossier et ses fichiers sont conservés.
+E614	BOÎTE
+E615	EN ATTENTE
+E616	DERNIER
+E617	partagée
+E618	Paperless → Profil → Jeton API
+E619	Boîte Paperless enregistrée.
+E620	Transfert lancé.
+E621	MA BOÎTE D'ENTRÉE
+E622	MON JETON API PAPERLESS
+E623	Envoyer les fichiers de ma boîte
+E624	Dossier d'entrée
+E625	ENVOYÉS RÉCEMMENT
+E626	Rien d'envoyé pour l'instant. Déposez des fichiers dans le dossier d'entrée – ils arrivent dans Paperless en quelques minutes.
+E627	COMPTES
+E628	Tester
+E629	Ajouter un compte
+E630	REMARQUES
+E631	Les identifiants restent chiffrés sur le boîtier. Pour Google Drive, OneDrive ou Dropbox, exécutez
+E632	sur un PC et collez ici la section obtenue. Les tâches utilisent peu de mémoire (2 transferts à la fois) ; une limite de bande passante comme
+E633	garde le réseau libre.
+E634	TÂCHES
+E635	Lancer maintenant
+E636	Nouvelle tâche
+E637	NOUVEAU COMPTE CLOUD
+E638	SFTP (serveur SSH)
+E639	autre – coller une configuration rclone
+E640	ADRESSE (URL WEBDAV)
+E641	FOURNISSEUR
+E642	MOT DE PASSE / MOT DE PASSE D'APP
+E643	Ajouter
+E644	ENDPOINT (VIDE POUR AWS)
+E645	SECTION DE RCLONE.CONF (COMMENCE PAR [NOM])
+E646	Les identifiants sont supprimés. Les tâches qui utilisent ce compte ne fonctionnent plus. Rien n'est supprimé dans le cloud.
+E647	NOUVELLE TÂCHE
+E648	DOSSIER SUR LE NAS
+E649	COMPTE CLOUD
+E650	DOSSIER DANS LE CLOUD
+E651	SENS
+E652	Envoi – copier vers le cloud, rien n'est supprimé
+E653	Réception – copier vers le NAS, rien n'est supprimé
+E654	Miroir vers le cloud – supprime dans le cloud ce qui manque ici
+E655	Miroir depuis le cloud – supprime ici ce qui manque dans le cloud
+E656	PLANIFICATION
+E657	manuel seulement
+E658	toutes les heures
+E659	tous les jours à 2:30
+E660	le dimanche à 3:00
+E661	heure personnalisée (cron)
+E662	HEURE CRON (MIN HEURE JOUR MOIS JOUR_SEMAINE)
+E663	BANDE PASSANTE (VIDE = ILLIMITÉE)
+E664	Planification active
+E665	Le miroir supprime côté cible ce qui manque côté source – pour de simples sauvegardes, choisissez « Envoi ».
+E666	La tâche ne s'exécutera plus. Les fichiers sur le NAS et dans le cloud restent tels quels.
+E667	TÂCHE
+E668	DE → VERS
+E669	Miroir ?
+E670	Compris
+E671	Arrêtée.
+E672	Le miroir depuis le cloud supprime sur le NAS les fichiers absents du cloud.
+E673	Le miroir vers le cloud supprime dans le cloud les fichiers absents du NAS.
+E674	MON CLOUD
+E675	comptes et tâches personnels
+E676	Les identifiants restent chiffrés sur le boîtier, dans votre dossier personnel. Pour Google Drive, OneDrive ou Dropbox, exécutez
+E677	garde le réseau libre. Ce que vous téléchargez compte dans votre limite de stockage.
+E678	Peut créer ses propres tâches de synchronisation cloud (nécessite un dossier personnel)
+E679	APP ET WIDGETS
+E680	INSTALLER COMME APP
+E681	via le menu du navigateur
+E682	fonctionne comme app
+E683	prêt
+E684	HTTPS seulement
+E685	Cette interface fonctionne comme app installée.
+E686	Le navigateur peut installer ShareOS comme app avec sa propre icône.
+E687	Dans le menu du navigateur, choisissez
+E688	« Installer l'app »
+E689	ou
+E690	« Ajouter à l'écran d'accueil »
+E691	. Avec un certificat autosigné, les navigateurs ne proposent pas la vraie installation.
+E692	Les navigateurs n'installent des apps web que par
+E693	HTTPS avec un certificat de confiance
+E694	(p. ex. Let's Encrypt, à installer sous SYSTÈME → RÉSEAU). En http://, le menu de Chrome propose seulement
+E695	– cela crée une icône de favori.
+E696	Sous Android : appui long sur l'icône de l'app pour ouvrir les raccourcis
+E697	Aperçu, Stockage, Partages, Firmware
+E698	. Chrome ne propose pas de vrais widgets d'écran d'accueil pour les apps web – utilisez plutôt l'état pour apps de widgets à droite.
+E699	Installer comme app
+E700	ÉTAT POUR LES WIDGETS
+E701	Activer l'adresse d'état
+E702	ADRESSE (À GARDER SECRÈTE)
+E703	Copier
+E704	Nouvelle clé
+E705	Ouvrir ↗
+E706	Renvoie une courte réponse JSON sans connexion : nom, version, temps de fonctionnement, charge, température, occupation des volumes, état RAID et avertissements (
+E707	). Prévu pour des apps de widgets comme
+E708	(Android), Home Assistant ou vos propres scripts. Qui connaît l'adresse voit ces valeurs – personne ne peut rien modifier avec.
+E709	Adresse d'état activée.
+E710	Adresse d'état désactivée.
+E711	Créer une nouvelle clé ?
+E712	Créer
+E713	Nouvelle clé créée.
+E714	L'ancienne adresse ne fonctionne plus – les widgets ont besoin de la nouvelle.
+E715	Copié.
+E716	Veuillez sélectionner et copier l'adresse vous-même.
+E717	ShareOS est installé comme app.
+E718	· Mon ShareOS
+E719	FICHIERS
+E720	Nouveau dossier
+E721	Envoyer
+E722	Renommer
+E723	Déplacer
+E724	Cachés
+E725	MODIFIÉ
+E726	Vous pouvez aussi simplement glisser des fichiers ici.
+E727	Chemin
+E728	Dossier parent
+E729	Tout sélectionner
+E730	Déplacer vers
+E731	Copier vers
+E732	Nom du nouveau dossier :
+E733	Ce dossier est vide.
+E734	LIMITE DE STOCKAGE (GO)
+E735	Explorateur de fichiers pour le dossier personnel dans l'interface web
+E736	Nom d'utilisateur : minuscules, chiffres et _, commençant par une lettre. La limite de stockage vaut par volume, 0 = illimité. Le mot de passe sert pour les partages et – selon le rôle – pour l'interface web.
+E737	rien que pour vous
+E738	Comme pour tout le monde
+E739	Vaut seulement pour votre connexion, sur tous les appareils. Le logo et l'icône du navigateur prennent la couleur d'accent.
+E740	Remplacer le fichier ?
+E741	Remplacer
+E742	ignoré
+E743	terminé
+E744	Connexion perdue
+E745	Supprimé.
+E746	Déplacé.
+E747	Apparence remise à celle de tout le monde.
+E748	Aucun volume monté – configurez-en d'abord un sous STOCKAGE.
+E749	Il n'y a pas de dossier personnel.
+E750	Seules les 2000 premières entrées sont affichées.
+E751	Nom d'hôte enregistré. Le certificat HTTPS a été réémis pour le nouveau nom – le navigateur demandera encore une fois.
+E752	INSTALLÉES
+E753	BOUTIQUE
+E754	SOURCES
+E755	APPS INSTALLÉES
+E756	Aucune app installée pour l'instant. La
+E757	boutique
+E758	propose des apps à installer – ou envoyez votre propre paquet (.sapp).
+E759	Apps
+E760	BOUTIQUE D'APPS
+E761	Bêta (aussi les préversions)
+E762	Actualiser maintenant
+E763	INSTALLER UN PAQUET
+E764	FICHIER DE PAQUET
+E765	Pour vos propres apps (construites avec
+E766	depuis le dépôt d'apps). Les paquets envoyés comptent comme « personnels / non vérifiés ».
+E767	Envoyer et installer
+E768	APPS DISPONIBLES
+E769	APP
+E770	ÉDITEUR
+E771	Outils
+E772	Médias
+E773	Bureautique
+E774	Réseau
+E775	Téléchargement
+E776	Synchronisation
+E777	téléchargement …
+E778	de la boutique
+E779	personnelle / non vérifiée
+E780	personnelle
+E781	VISIBLE PAR
+E782	tous les utilisateurs
+E783	administrateurs seulement
+E784	Tous les utilisateurs avec accès web
+E785	Les administrateurs voient toutes les apps. La sélection décide qui voit l'app dans « Mon ShareOS ».
+E786	L'app est supprimée. Les données qu'elle a enregistrées dans le navigateur y restent.
+E787	SOURCES D'APPS
+E788	AUTRE SOURCE (ADRESSE DU CATALOGUE)
+E789	Une source est un catalogue d'apps (
+E790	) au format du dépôt
+E791	. Apps personnelles : utilisez le dépôt comme modèle, son GitHub Action construit paquets et catalogue. N'ajoutez que des sources de confiance.
+E792	Retirer la source ?
+E793	Les apps de cette source n'apparaissent plus dans la boutique. Les apps installées restent.
+E794	MES APPS
+E795	Boutique actualisée.
+E796	Retiré.
+E797	Chargement du catalogue …
+E798	Aucune app trouvée – vérifiez la connexion internet et les sources.
+E799	Aucun utilisateur avec accès web – créez-en un sous Partages → Utilisateurs.
+E800	nécessite un ShareOS plus récent
+E801	pas encore chargé
+E802	Les apps web fonctionnent sur leur propre port (8081 / 8444 pour HTTPS) – séparées de cette interface, ainsi une app ne peut pas utiliser votre connexion. Qui connaît l'adresse peut ouvrir une app web sur le réseau ; « visible par » décide qui la voit dans « Mon ShareOS ».
+E803	Installation terminée
+E804	(100 %) – redémarrez maintenant.
+E805	INSTALLER UN FICHIER DE FIRMWARE
+E806	Envoyer et vérifier
+E807	Type
+E808	autre firmware
+E809	Installer
+E810	Écriture du firmware
+E811	Noyau et système de démarrage – patientez, n'éteignez pas
+E812	Écrit
+E813	Taille
+E814	ext4 – recommandé
+E815	exFAT – recommandé
+E816	Tout : droits par utilisateur, limite de stockage, dossiers personnels, apps.
+E817	Droits par utilisateur, dossiers personnels, apps ; pas de limite de stockage par utilisateur. Demande plus de mémoire.
+E818	Lisible aussi sous Windows et macOS. Pas de droits par utilisateur (qui peut écrire dans un partage peut tout y modifier), pas de limite de stockage, pas de dossiers personnels, pas d'apps.
+E819	Lisible aussi sous Windows. Pas de droits par utilisateur, pas de limite de stockage, pas de dossiers personnels, pas d'apps.
+E820	Windows, macOS, Linux, téléviseurs ; fichiers de plus de 4 Go.
+E821	Pour les appareils anciens (autoradio, appareil photo) ; fichiers de 4 Go au plus.
+E822	Pour les ordinateurs Windows.
+E823	Pour Linux et les sauvegardes avec droits.
+E824	SYSTÈME DE FICHIERS
+E825	Retirer en toute sécurité
+E826	Formater
+E827	Nom du nouveau volume (a–z, 0–9, - et _, 16 caractères au plus) et système de fichiers :
+E828	HEURE DU BOÎTIER
+E829	Synchronisation de l'heure
+E830	depuis internet (NTP)
+E831	NTP activé mais pas en cours
+E832	à la main
+E833	Dernière synchronisation
+E834	pas encore
+E835	Horloge à pile
+E836	est réglée après chaque synchronisation
+E837	Synchroniser maintenant
+E838	FUSEAU HORAIRE ET SERVEURS DE TEMPS
+E839	Obtenir l'heure automatiquement depuis internet (NTP)
+E840	SERVEURS DE TEMPS (UN PAR LIGNE, 5 AU PLUS)
+E841	Dans un réseau domestique, le routeur peut aussi servir de serveur de temps, p. ex.
+E842	. Le fuseau horaire s'applique aux journaux, aux planifications et à l'affichage.
+E843	RÉGLER L'HORLOGE À LA MAIN
+E844	Tant que NTP est activé, le boîtier remet l'horloge à l'heure d'internet à la prochaine synchronisation. Pour un boîtier sans internet, désactivez NTP ci-dessus.
+E845	L'horloge continue ensuite ; l'horloge à pile du boîtier est réglée aussi.
+E846	Reprendre l'heure de cet appareil
+E847	Régler l'heure
+E848	Heure réglée.
+E849	Heure synchronisée.
+E850	Heure invalide.
+E851	Un firmware au format D-Link, p. ex. pour le
+E852	retour à Alt-F
+E853	. Le noyau et le système de démarrage sont écrits ; le système et les réglages de ShareOS restent dans la flash.
+P0	Pas de swap, pas d'espace des apps (paquets et données d'apps nécessitent ext4 ou Btrfs).
+P1	$1 de swap par disque, pas d'espace des apps (paquets et données d'apps nécessitent ext4 ou Btrfs).
+P2	Restaurer : $1
+P3	Sauvegarde : $1
+P4	Sauvegarde : $1
+P5	$1 créé
+P6	PARTAGE $1
+P7	UTILISATEUR $1
+P8	Groupe $1
+P9	Droit pour $1
+P10	sur $1
+P11	Limite $1 par volume
+P12	Invités (l)$1
+P13	Partage « $1 » enregistré.
+P14	Retirer le partage « $1 » ?
+P15	Partage « $1 » retiré.
+P16	Utilisateur « $1 » créé.
+P17	Utilisateur « $1 » enregistré.
+P18	Supprimer l'utilisateur « $1 » ?
+P19	Utilisateur « $1 » supprimé.
+P20	Le compte est supprimé ; ses droits de partage disparaissent.$1
+P21	Groupe « $1 » créé.
+P22	Supprimer le groupe « $1 » ?
+P23	Groupe « $1 » supprimé.
+P24	Mot de passe de $1
+P25	Mot de passe de $1 changé.
+P26	Importés : $1
+P27	Ignorés : $1
+P28	Partages : $1
+P29	Partage : $1
+P30	Utilisateur : $1
+P31	Mot de passe : $1
+P32	Alt-F : $1
+P33	Le changement prend effet immédiatement. Le boîtier attend ensuite $1 secondes une confirmation depuis la nouvelle adresse – sans réponse, il rétablit les réglages précédents. Vous ne pouvez donc pas vous enfermer dehors.
+P34	– sans confirmation, le boîtier revient aux anciens dans $1 s.
+P35	Le boîtier obtient son adresse du routeur. Il peut ensuite être joignable à une autre adresse (à chercher dans le routeur). Si le changement n'est pas confirmé sur le boîtier dans les $1 secondes, les réglages précédents s'appliquent à nouveau.
+P36	Le boîtier passe à $1. Cette page ouvre alors la nouvelle adresse et confirme le changement. Si cela ne fonctionne pas, les réglages précédents s'appliquent à nouveau après $2 secondes.
+P37	Les réglages réseau sont appliqués et confirmés par cette page. Si cela ne fonctionne pas, les réglages précédents s'appliquent à nouveau après $1 secondes.
+P38	nouvelle adresse $1
+P39	attente du boîtier ($1 s) – injoignable ? Cherchez la nouvelle adresse dans le routeur et connectez-vous là.
+P40	attente du boîtier ($1 s)
+P41	$1 : démarre au lancement
+P42	$1 : ne démarre plus au lancement
+P43	Réseau : $1
+P44	Apparence : $1
+P45	($1 %) –
+P46	Canal $1
+P47	Mise à jour $1 disponible
+P48	Mise à jour $1 disponible.
+P49	MISE À JOUR $1
+P50	depuis $1
+P51	$1 configuré(s)
+P52	$1 détecté(s)
+P53	prévu · phase $1
+P54	Dernière · Bêta
+P55	Dernière · Stable
+P56	CHANGEMENTS DANS $1
+P57	ACCÈS · $1
+P58	NOM POUR $1 ($2)
+P59	PROGRESSION · $1
+P60	Source : versions GitHub · $1
+P61	installée avec succès ($1)
+P62	Formater $1
+P63	$1 sera entièrement effacé. C'est irréversible.
+P64	Un clic sur « Configurer » efface entièrement $1. La synchronisation initiale se fait ensuite en arrière-plan (plusieurs heures pour de gros disques) ; le volume est utilisable tout de suite.
+P65	Un clic sur « Configurer » efface entièrement $1.
+P66	$1 de swap par disque, espace des apps sur « $2 » (s'il n'en existe pas déjà un).
+P67	Pas de swap, espace des apps sur « $1 » (s'il n'en existe pas déjà un).
+P68	Les deux disques ont les mêmes données. Si l'un tombe en panne, rien n'est perdu. Utilisable : $1.
+P69	Deux fois plus de place ($1), mais pas de redondance – chaque disque est un volume à part.
+P70	Le disque devient un volume de $1. Pour la redondance, ajoutez plus tard un second disque en miroir.
+P71	$1 : les deux disques actifs ($2)
+P72	$1 : un disque manque ($2)
+P73	Retirer « $1 » ?
+P74	Effacer $1 ?
+P75	$1 sera entièrement effacé et configuré comme volume « $2 ».
+P76	ShareOS $1 va être écrit dans la flash. Un redémarrage est ensuite nécessaire, pendant lequel le nouveau système s'installe. N'éteignez pas le boîtier pendant l'écriture.
+P77	$1 sur $2
+P78	Installer $1
+P79	Charge $1$2
+P80	RÉSEAU · $1
+P81	$1 : monté
+P82	$1 : démonté
+P83	$1 : retiré
+P84	$1 : démarré
+P85	$1 : arrêté
+P86	$1 : redémarré
+P87	($1).
+P88	plein à partir de $1 °C
+P89	maintenant : $1
+P90	dernier $1
+P91	$1 fichier(s) en attente
+P92	boîte personnelle de $1 · jeton $2
+P93	boîte partagée · jeton $1
+P94	personnelle : $1
+P95	BOÎTE $1
+P96	JOURNAL · $1
+P97	Connexion OK – $1 documents dans Paperless.
+P98	Retirer la boîte « $1 » ?
+P99	$1 : connexion OK ($2 dossiers).
+P100	Retirer le compte « $1 » ?
+P101	Retirer la tâche « $1 » ?
+P102	Partage $1
+P103	Partage $1 → $2
+P104	$1 → Dossier personnel
+P105	cron : $1 · par $2
+P106	par $1
+P107	Erreur · $1
+P108	en cours depuis $1
+P109	Tâche : $1
+P110	Compte : $1
+P111	Boîte : $1
+P112	Ventilateur : $1
+P113	Services : $1
+P114	Configuration : $1
+P115	Formater : $1
+P116	Installer : $1
+P117	Veille : $1
+P118	Stockage : $1
+P119	Langue : $1
+P120	Canal : $1
+P121	Certificat : $1
+P122	Échec de la vérification : $1
+P123	$1 libre
+P124	sélectionner $1
+P125	télécharger $1
+P126	$1 sélectionné(s).
+P127	Nouveau nom pour « $1 » :
+P128	$1 élément(s). Dossier cible sous forme de chemin dans « $2 », p. ex. Photos/2026 (vide = premier niveau).
+P129	Supprimer $1 élément(s) ?
+P130	$1 – dossiers avec leur contenu. C'est irréversible.
+P131	« $1 » existe déjà dans ce dossier.
+P132	$1 fichier(s) envoyé(s).
+P133	$1 fichier(s) non envoyé(s).
+P134	Comme pour tout le monde ($1)
+P135	Téléchargement : $1
+P136	Dossier : $1
+P137	Renommer : $1
+P138	Supprimer : $1
+P139	Déplacer : $1
+P140	Copier : $1
+P141	Fichiers : $1
+P142	Les apps web fonctionnent sur leur propre port ($1) – séparées de cette interface, ainsi une app ne peut pas utiliser votre connexion. Qui connaît l'adresse peut ouvrir une app web sur le réseau ; « visible par » décide qui la voit dans « Mon ShareOS ».
+P143	Les apps web fonctionnent sur leur propre port ($1 / $2 pour HTTPS) – séparées de cette interface, ainsi une app ne peut pas utiliser votre connexion. Qui connaît l'adresse peut ouvrir une app web sur le réseau ; « visible par » décide qui la voit dans « Mon ShareOS ».
+P144	état au $1
+P145	$1 · visible par $2
+P146	$1 · VISIBLE PAR
+P147	Retirer $1 ?
+P148	$1 $2 installée.
+P149	$1 $2 installée (app personnelle).
+P150	$1 en téléchargement …
+P151	$1 en vérification …
+P152	$1 en installation …
+P153	Mettre à jour $1
+P154	Boutique : $1
+P155	Apps : $1
+P156	Retirer : $1
+P157	Sources : $1
+P158	Paquet : $1
+P159	Ensuite, $1 démarre. Les paquets supplémentaires d'Alt-F manquent alors – flashez le même fichier une fois de plus dans la page firmware d'Alt-F. Retour à ShareOS : flashez le .bin ShareOS dans Alt-F, le système et les réglages sont toujours là.
+P160	Installer $1 ?
+P161	Le noyau et le système de démarrage sont remplacés et vérifiés. N'éteignez pas le boîtier pendant l'écriture.
+P162	$1 est dans la flash. Redémarrer maintenant ?
+P163	$1 démarre – son interface sera bientôt sur $2 (port 80).
+P164	$1 démarre
+P165	Installer : $1
+P166	Fichier de firmware : $1
+P167	$1 peut maintenant être débranché.
+P168	Formater $1
+P169	Effacer $1 ?
+P170	$1 – nom (lettres, chiffres, espaces, - et _) et système de fichiers :
+P171	Tout le contenu de $1 est effacé. Ensuite, c'est un disque $2 « $3 ».
+P172	$1 ($2, $3) est entièrement effacé et reconfiguré comme volume « $4 » ($5).
+P173	Espace des apps sur « $1 » (s'il n'en existe pas déjà un).
+P174	DATE ET HEURE ($1)
+P175	Heure : $1
+P176	Synchronisation : $1
+P177	Heure : $1
+P178	$1 (miroir (RAID 1))
+P179	$1 (disque unique)
+W0	en cours
+W1	arrêté
+W2	 libres sur
+W3	 sur
+W4	 utilisés
+W5	jours de fonctionnement
+W6	contient :
+W7	membre RAID de
+W8	membre RAID
+W9	Disque ·
+W10	Baie ·
+W11	Synchronisation initiale
+W12	Reconstruction
+W13	Vérification
+W14	 · encore $1
+W15	Miroir (RAID 1)
+W16	Disque unique
+W17	 réalloués,
+W18	 en attente
+W19	EN COURS
+W20	 et
+W21	j $1 h
+W22	 – ne pas éteindre.
+W23	Échec de la vérification :
+W24	Canal :
+W25	Services :
+W26	Stockage :
+W27	Téléchargement :
+W28	Installer :
+W29	Configurer :
+W30	Formater :
+W31	Certificat :
+W32	HTTPS :
+W33	Langue :
+W34	Logo :
+W35	moitié
+W36	Ventilateur :
+W37	Matériel :
+W38	groupe

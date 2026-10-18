@@ -1,0 +1,1780 @@
+{
+	"language": "ar",
+	"name": "العربية",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "نظرة عامة",
+		"SPEICHER": "التخزين",
+		"FREIGABEN": "المشاركات",
+		"DIENSTE": "الخدمات",
+		"APPS": "التطبيقات",
+		"CLOUD": "السحابة",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "النظام",
+		"NEU": "جديد",
+		"ONLINE": "متصل",
+		"OFFLINE": "غير متصل",
+		"Abmelden": "تسجيل الخروج",
+		"Hell/Dunkel umschalten": "تبديل الفاتح/الداكن",
+		"Hauptmenü": "القائمة الرئيسية",
+		"System": "النظام",
+		"verfügbar": "متاح",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "تحتاج واجهة ShareOS إلى JavaScript.",
+		"Verwaltung – bitte anmelden.": "الإدارة – يرجى تسجيل الدخول.",
+		"BENUTZER": "المستخدم",
+		"PASSWORT": "كلمة المرور",
+		"Angemeldet bleiben (7 Tage)": "البقاء متصلاً (7 أيام)",
+		"Anmelden": "تسجيل الدخول",
+		"Benutzer oder Passwort falsch.": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+		"Box nicht erreichbar.": "تعذر الوصول إلى الجهاز.",
+		"Sitzung abgelaufen – bitte neu anmelden.": "انتهت الجلسة – يرجى تسجيل الدخول من جديد.",
+		"live · alle 5 s": "مباشر · كل 5 ث",
+		"AUSLASTUNG": "الحمل",
+		"Gerätesteuerung aktiv": "التحكم باللوحة نشط",
+		"keine MCU-Daten": "لا توجد بيانات من MCU",
+		"LÜFTER": "المروحة",
+		"TEMP": "الحرارة",
+		"aus": "متوقفة",
+		"halb": "نصف",
+		"voll": "كاملة",
+		"kein Link": "لا يوجد اتصال",
+		"letzte 10 min": "آخر 10 دقائق",
+		"Gateway · DNS": "البوابة · DNS",
+		"sammle Messwerte …": "جارٍ جمع القياسات …",
+		"Firmware": "البرنامج الثابت",
+		"Start aus": "بدأ التشغيل من",
+		"Flash (UBI)": "الفلاش (UBI)",
+		"Netzwerk (RAM)": "الشبكة (RAM)",
+		"Einstellungen bleiben erhalten": "الإعدادات تُحفظ",
+		"Änderungen gehen beim Neustart verloren": "تضيع التغييرات عند إعادة التشغيل",
+		"Laufzeit": "مدة التشغيل",
+		"seit dem letzten Start": "منذ آخر تشغيل",
+		"Dienste": "الخدمات",
+		"laufen": "تعمل",
+		"Flash frei": "الفلاش المتاح",
+		"für Einstellungen & Pakete": "للإعدادات والحزم",
+		"Laufwerke": "الأقراص",
+		"erkannt": "مكتشفة",
+		"keine eingesteckt": "لا يوجد قرص موصول",
+		"alle verwalten": "إدارة الكل",
+		"Update verfügbar": "يتوفر تحديث",
+		"Lade Systemdaten …": "جارٍ تحميل بيانات النظام …",
+		"Lade Dienste …": "جارٍ تحميل الخدمات …",
+		"Lade Laufwerke …": "جارٍ تحميل الأقراص …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "لم يُكتشف أي قرص صلب أو تخزين USB. يعمل ShareOS بالكامل من الفلاش الداخلي – تظهر الأقراص هنا فور توصيلها.",
+		"unbekanntes Modell": "طراز غير معروف",
+		"Start, Stopp, Neustart": "تشغيل، إيقاف، إعادة تشغيل",
+		"Neustart": "إعادة التشغيل",
+		"Stopp": "إيقاف",
+		"Starten": "تشغيل",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "واجهة الويب",
+		"Zeit (NTP)": "الوقت (NTP)",
+		"Zeitplaner": "المجدول",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "ناقل النظام (ubus)",
+		"Systemprotokoll": "سجل النظام",
+		"Gerätesteuerung": "التحكم باللوحة",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "يضبط الساعة ويبقي ساعة MCU متزامنة",
+		"Schnittstelle für diese Oberfläche": "واجهة لصفحة الويب هذه",
+		"Nachrichten zwischen den Diensten": "رسائل بين الخدمات",
+		"syslogd, im RAM": "syslogd، في الذاكرة",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "المروحة والحرارة والأزرار وساعة MCU",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "هذا القسم لم يُبنَ بعد. المخطط:",
+		"FREIGABEN, BENUTZER & GRUPPEN": "المشاركات والمستخدمون والمجموعات",
+		"APPS & PAKETE": "التطبيقات والحزم",
+		"CLOUD-SPEICHER": "التخزين السحابي",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "مشاركات لكل مجلد مع مفاتيح لـ SMB وNFS وFTP وDLNA",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "مستخدمون ومجموعات مع صلاحيات لكل مشاركة",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "ربط أقراص الشبكة (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "مهام النسخ الاحتياطي (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "مصدر الحزم (opkg feed) على GitHub",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "كتالوج بفئات، تثبيت/إزالة عبر قائمة انتظار",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "تذهب الحزم إلى الإعدادات والحزم (الفلاش) أو إلى القرص",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "حسابات عبر rclone: Nextcloud/WebDAV وGoogle Drive وOneDrive وDropbox وS3 وSFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "مهام المزامنة: نسخ، نسخ مطابق، في الاتجاهين",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "التشفير (crypt) وعرض النطاق والجدولة",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "مجلد وارد على NAS ← رفع عبر واجهة REST الخاصة بـ Paperless (رمز)",
+		"Status der Übertragungen über /api/tasks/": "حالة النقل عبر /api/tasks/",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "وسوم ومراسل لكل مجلد، تصدير نسخة احتياطية إلى NAS",
+		"VOLUMES": "وحدات التخزين",
+		"LAUFWERKE": "الأقراص",
+		"EINSTELLUNGEN": "الإعدادات",
+		"RUHEZUSTAND": "السكون",
+		"NEU EINRICHTEN": "إعداد من جديد",
+		"PLATTEN ABSCHALTEN NACH": "إيقاف الأقراص بعد",
+		"nie": "أبدًا",
+		"10 Minuten": "10 دقائق",
+		"20 Minuten": "20 دقيقة",
+		"30 Minuten": "30 دقيقة",
+		"1 Stunde": "ساعة واحدة",
+		"2 Stunden": "ساعتان",
+		"Swap": "Swap",
+		"Apps-Bereich": "منطقة التطبيقات",
+		"noch keiner": "لا شيء بعد",
+		"keiner aktiv": "لا شيء نشط",
+		"noch keine": "لا شيء بعد",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "يوفر الطاقة ويقلل الاهتراء. تعود الأقراص للدوران عند الوصول التالي (بضع ثوانٍ).",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "يمسح المعالج الأقراص المختارة ويعيد إعدادها. يمكن أيضًا تهيئة قرص منفرد مباشرة من «الأقراص».",
+		"Assistent starten": "تشغيل المعالج",
+		"Speicher einrichten": "إعداد التخزين",
+		"INTERNER FLASH": "الفلاش الداخلي",
+		"128 MB NAND · UBI": "128 ميغابايت NAND · UBI",
+		"BEREICH": "المنطقة",
+		"EINGEHÄNGT": "نقطة الربط",
+		"BELEGT": "المستخدم",
+		"Einstellungen & Pakete": "الإعدادات والحزم",
+		"System (nur lesbar)": "النظام (للقراءة فقط)",
+		"Arbeitsspeicher (tmp)": "الذاكرة (tmp)",
+		"Aushängen": "فصل",
+		"Einhängen": "ربط",
+		"Entfernen": "إزالة",
+		"SMART lesen": "قراءة SMART",
+		"Löschen & formatieren": "مسح وتهيئة",
+		"Spiegel (RAID 1)": "نسخ مطابق (RAID 1)",
+		"Einzelnes Laufwerk": "قرص منفرد",
+		"SMART noch nicht gelesen": "لم تُقرأ SMART بعد",
+		"schläft (SMART beim nächsten Aufwachen)": "في وضع السكون (SMART عند الاستيقاظ)",
+		"no SMART data": "لا توجد بيانات SMART",
+		"SMART OK": "SMART سليم",
+		"SMART WARNUNG": "تحذير SMART",
+		"SMART FEHLER": "فشل SMART",
+		"leer": "فارغ",
+		"ohne Dateisystem": "لا يوجد نظام ملفات",
+		"nicht eingehängt": "غير مربوط",
+		"Dateisystem nicht gefunden": "لم يُعثر على نظام الملفات",
+		"wartet": "في الانتظار",
+		"Pakete und App-Daten liegen in .shareos": "الحزم وبيانات التطبيقات موجودة في .shareos",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "لم يُعدّ أي تخزين بعد. يُعد المعالج الأقراص في خطوات قليلة – كنسخ مطابق (القرصان يحملان البيانات نفسها) أو كأقراص منفصلة.",
+		"SPEICHER EINRICHTEN · ASSISTENT": "إعداد التخزين · المعالج",
+		"Abbrechen": "إلغاء",
+		"Platten": "الأقراص",
+		"Aufbau": "البنية",
+		"Name": "الاسم",
+		"Bestätigen": "التأكيد",
+		"Zurück": "رجوع",
+		"Weiter": "التالي",
+		"Einrichten": "إعداد",
+		"Welche Platten sollen eingerichtet werden?": "ما الأقراص التي يجب إعدادها؟",
+		"Alles auf diesen Platten wird gelöscht.": "سيُمسح كل شيء على هذه الأقراص.",
+		"Spiegel (RAID 1) – empfohlen": "نسخ مطابق (RAID 1) – موصى به",
+		"Zwei getrennte Laufwerke": "قرصان منفصلان",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "Swap لكل قرص",
+		"1 GB – empfohlen": "1 غيغابايت – موصى به",
+		"keiner": "لا شيء",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "يحتوي الجهاز على 256 ميغابايت من الذاكرة فقط. يمتص الـ Swap على الأقراص ذروات الحمل (المشاركات، المزامنة السحابية، تثبيت الحزم). وهو قسم صغير في بداية كل قرص؛ والباقي يصبح وحدة التخزين.",
+		"NAME DES SPIEGELS": "اسم النسخ المطابق",
+		"LAUFWERK": "وحدة التخزين",
+		"PLATTEN": "الأقراص",
+		"GRÖSSE": "الحجم",
+		"AUFBAU": "البنية",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "أحرف صغيرة وأرقام و- و_ (16 حرفًا كحد أقصى). تظهر وحدة التخزين باسم",
+		"; Freigaben legst du später darauf an.": "؛ وتُنشأ المشاركات عليها لاحقًا.",
+		"Platten löschen und einrichten?": "مسح الأقراص وإعدادها؟",
+		"Löschen & einrichten": "مسح وإعداد",
+		"Einrichtung gestartet.": "بدأ الإعداد.",
+		"Formatieren gestartet.": "بدأت التهيئة.",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "اسم وحدة التخزين الجديدة (a–z و0–9 و- و_، 16 حرفًا كحد أقصى):",
+		"Bitte mindestens eine Platte auswählen.": "يرجى اختيار قرص واحد على الأقل.",
+		"Höchstens zwei Platten.": "قرصان كحد أقصى.",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "اسم غير صالح: فقط a–z و0–9 و- و_، 16 حرفًا كحد أقصى.",
+		"Die Namen müssen verschieden sein.": "يجب أن تكون الأسماء مختلفة.",
+		"Ungültiger Name.": "اسم غير صالح.",
+		"Ruhezustand gespeichert.": "حُفظ إعداد السكون.",
+		"FIRMWARE": "البرنامج الثابت",
+		"ALLGEMEIN": "عام",
+		"ENERGIE & RESET": "الطاقة وإعادة الضبط",
+		"PROTOKOLLE": "السجلات",
+		"DARSTELLUNG": "المظهر",
+		"ÜBER": "حول",
+		"FIRMWARE-UPDATE": "تحديث البرنامج الثابت",
+		"Installiert": "المثبت",
+		"Kernel, Startsystem und System": "النواة وinitramfs والنظام",
+		"noch nicht geprüft": "لم يُفحص بعد",
+		"aktuell": "محدّث",
+		"noch kein Release für dieses Gerät": "لا يوجد إصدار لهذا الجهاز بعد",
+		"keine": "لا شيء",
+		"UPDATE-KANAL": "قناة التحديث",
+		"Stabil (Releases)": "مستقرة (إصدارات)",
+		"Beta (auch Pre-Releases)": "تجريبية (مع الإصدارات الأولية)",
+		"Jetzt prüfen": "التحقق الآن",
+		"Prüfe …": "جارٍ التحقق …",
+		"VERSIONEN": "الإصدارات",
+		"von GitHub": "من GitHub",
+		"VERSION": "الإصدار",
+		"DATUM": "التاريخ",
+		"KANAL": "القناة",
+		"STABIL": "مستقر",
+		"BETA": "تجريبي",
+		"installiert": "مثبت",
+		"Laden": "تنزيل",
+		"Notes ↗": "ملاحظات ↗",
+		"SO LÄUFT EIN UPDATE": "كيف يجري التحديث",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "تنزيل الحزمة من GitHub وفحصها (SHA-256، الجهاز، الأحجام)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "كتابة النواة وinitramfs في الفلاش وقراءتهما للتحقق",
+		"Neues System bereitlegen": "تجهيز النظام الجديد",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "إعادة التشغيل: يثبت initramfs النظام، ثم يعمل ShareOS من جديد",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "تبقى الإعدادات والحزم المثبتة. إذا انقطعت العملية، يُعاد التثبيت عند التشغيل التالي.",
+		"Herunterladen": "التنزيل",
+		"Prüfen": "التحقق",
+		"Bereit": "جاهز",
+		"Schreiben": "الكتابة",
+		"Verwerfen": "تجاهل",
+		"Fehler:": "خطأ:",
+		"Letztes Update:": "آخر تحديث:",
+		"Neustart nötig": "تلزم إعادة التشغيل",
+		"Jetzt neu starten": "إعادة التشغيل الآن",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "تم التحقق: SHA-256، مجاميع جميع الأجزاء، مصنوع لهذا الجهاز. تبقى الإعدادات والحزم.",
+		"ShareOS ist aktuell.": "ShareOS محدّث.",
+		"Update geladen und geprüft.": "نُزّل التحديث وتم التحقق منه.",
+		"Update geschrieben – bitte neu starten.": "كُتب التحديث – يرجى إعادة التشغيل.",
+		"Update installieren?": "تثبيت التحديث؟",
+		"Installieren": "تثبيت",
+		"GERÄTENAME": "اسم الجهاز",
+		"HOSTNAME": "اسم المضيف",
+		"Speichern": "حفظ",
+		"NEUES PASSWORT": "كلمة مرور جديدة",
+		"WIEDERHOLEN": "التكرار",
+		"Passwort ändern": "تغيير كلمة المرور",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "أحرف وأرقام وشرطة. يسري فورًا؛ ويراه خادم DHCP عند التجديد التالي.",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "تسري على واجهة الويب وSSH. 6 أحرف على الأقل.",
+		"Hostname gespeichert.": "حُفظ اسم المضيف.",
+		"Passwort geändert.": "تم تغيير كلمة المرور.",
+		"Die Passwörter stimmen nicht überein.": "كلمتا المرور غير متطابقتين.",
+		"ENERGIE": "الطاقة",
+		"Ausschalten": "إيقاف التشغيل",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "عند الإيقاف يتوقف ShareOS ويقطع التحكم باللوحة التيار. التشغيل بزر الطاقة.",
+		"WERKSEINSTELLUNGEN": "إعادة ضبط المصنع",
+		"löscht Einstellungen": "تمسح الإعدادات",
+		"Auf Werkseinstellungen zurücksetzen": "استعادة إعدادات المصنع",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "تحذف جميع الإعدادات والحزم المثبتة من الفلاش وتعيد التشغيل. يبقى النظام وإصدار البرنامج الثابت. بعدها تعود كلمة المرور إلى",
+		"Neu starten?": "إعادة التشغيل؟",
+		"Neu starten": "إعادة التشغيل",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "يعاد تشغيل الجهاز. تتصل هذه الصفحة من جديد تلقائيًا (نحو 1–2 دقيقة).",
+		"Ausschalten?": "إيقاف التشغيل؟",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "يتوقف ShareOS وينطفئ الجهاز. أعد تشغيله من الجهاز نفسه.",
+		"Werkseinstellungen?": "إعدادات المصنع؟",
+		"Zurücksetzen": "إعادة الضبط",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "تُمسح جميع الإعدادات والحزم المثبتة، ثم يعاد تشغيل الجهاز. بعدها تعود كلمة المرور إلى «shareos».",
+		"Neustart läuft": "جارٍ إعادة التشغيل",
+		"ShareOS startet neu": "يعاد تشغيل ShareOS",
+		"Box wird ausgeschaltet": "الجهاز يتوقف",
+		"Du kannst dieses Fenster schließen.": "يمكنك إغلاق هذه النافذة.",
+		"Dienst wird neu gestartet": "الخدمة يعاد تشغيلها",
+		"warte auf die Box": "في انتظار الجهاز",
+		"Werkseinstellungen": "إعدادات المصنع",
+		"PROTOKOLL": "السجل",
+		"Quelle": "المصدر",
+		"System (syslog)": "النظام (syslog)",
+		"Kernel (dmesg)": "النواة (dmesg)",
+		"Aktualisieren": "تحديث",
+		"lade …": "جارٍ التحميل …",
+		"(leer)": "(فارغ)",
+		"nur in diesem Browser": "هذا المتصفح فقط",
+		"Helles Design": "السمة الفاتحة",
+		"Scanlines": "خطوط المسح",
+		"LOGO": "الشعار",
+		"gilt für alle": "يسري على الجميع",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "إظهار شعار ShareOS (معطل: نص فقط)",
+		"SPRACHE": "اللغة",
+		"Akzentfarbe Grün": "لون التمييز أخضر",
+		"Akzentfarbe Rot": "لون التمييز أحمر",
+		"Akzentfarbe Blau": "لون التمييز أزرق",
+		"Akzentfarbe Weiß": "لون التمييز أبيض",
+		"Version": "الإصدار",
+		"Stufe": "المرحلة",
+		"Gerät": "الجهاز",
+		"Firmware-Name": "اسم البرنامج الثابت",
+		"PROJEKT": "المشروع",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS برنامج ثابت حر لأجهزة NAS من D-Link، مشتق من Alt-F. مبني على buildroot وLinux وBusyBox؛ ويعمل على نمط OpenWrt (UCI وubus وrpcd وucode). الترخيص GPLv2.",
+		"Einrichtung läuft": "الإعداد جارٍ",
+		"Box nicht ausschalten.": "لا تطفئ الجهاز.",
+		"Einrichtung fehlgeschlagen:": "فشل الإعداد:",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "الاتصال",
+		"diese Seite: HTTPS": "هذه الصفحة: HTTPS",
+		"diese Seite: HTTP": "هذه الصفحة: HTTP",
+		"HTTPS auf Port 443": "HTTPS على المنفذ 443",
+		"HTTP-Aufrufe auf HTTPS umleiten": "تحويل طلبات HTTP إلى HTTPS",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "بعد التغيير يعاد تشغيل خادم الويب؛ ولا يمكن الوصول إلى الصفحة لحظة.",
+		"ZERTIFIKAT": "الشهادة",
+		"selbstsigniert": "موقعة ذاتيًا",
+		"eigenes Zertifikat": "شهادة خاصة",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "لا توجد شهادة بعد – تُنشأ تلقائيًا عند تفعيل HTTPS.",
+		"Ausgestellt für": "صادرة لـ",
+		"Aussteller": "الجهة المصدرة",
+		"Gültig ab": "صالحة من",
+		"Gültig bis": "صالحة حتى",
+		"Namen": "الأسماء",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "تحذر المتصفحات مرة واحدة من الشهادات الموقعة ذاتيًا. الاتصال مشفر على أي حال؛ ولصفحة بلا تحذير ارفع شهادتك الخاصة (مثلاً من سلطة الشبكة الداخلية أو Let's Encrypt).",
+		"Neues selbstsigniertes Zertifikat": "شهادة جديدة موقعة ذاتيًا",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "رفع شهادة خاصة",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "الشهادة (PEM، مع الشهادات الوسيطة إن وجدت)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "المفتاح الخاص (PEM، بلا كلمة مرور)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "قبل الاستخدام يتحقق الجهاز من أن الشهادة والمفتاح متطابقان. لا يغادر المفتاح الجهاز أبدًا.",
+		"Zertifikat übernehmen": "استخدام الشهادة",
+		"Zertifikat übernommen.": "ثُبتت الشهادة.",
+		"Zertifikat erstellt.": "أُنشئت الشهادة.",
+		"Neues selbstsigniertes Zertifikat?": "شهادة جديدة موقعة ذاتيًا؟",
+		"Erstellen": "إنشاء",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "تُنشأ شهادة جديدة للاسم وعنوان IP الحاليين وتحل محل القديمة. ستعرض المتصفحات تحذيرًا مرة أخرى.",
+		"Gespeichert – der Webserver startet neu.": "تم الحفظ – خادم الويب يعاد تشغيله.",
+		"Lade …": "جارٍ التحميل …",
+		"SPRACHE DER OBERFLÄCHE": "لغة الواجهة",
+		"Weitere Sprachen: eine Datei in": "لغات أخرى: ملف واحد في",
+		"– siehe docs/TRANSLATING.md.": "– راجع docs/TRANSLATING.md.",
+		"AUS UNTER (°C, 0 = NIE)": "متوقفة دون (°م، 0 = أبدًا)",
+		"VOLL AB (°C)": "كاملة من (°م)",
+		"ZURÜCK AUF HALB UNTER (°C)": "العودة إلى النصف دون (°م)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "يمكن ضبط كل شيء لاحقًا من «النظام». تبقى كلمة المرور «shareos» حتى تغيّرها.",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "النقل من Alt-F",
+		"Auch Testversionen, mit neuen Funktionen früher.": "الإصدارات التجريبية أيضًا، مع الميزات الجديدة مبكرًا.",
+		"Auf dieser Box wurden Einstellungen von": "يحتوي هذا الجهاز على إعدادات من",
+		"gefunden": "",
+		"Ausgewogen": "متوازن",
+		"Benutzer": "المستخدم",
+		"Freigaben": "المشاركات",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "يُحتفظ بالمستخدمين والمشاركات وتُعرض في قسم «المشاركات». تبقى بيانات Alt-F في الفلاش دون تغيير.",
+		"Beta": "تجريبية",
+		"Stabil": "مستقرة",
+		"Danach kannst du gleich die Festplatten einrichten.": "بعدها يمكنك إعداد الأقراص الصلبة مباشرة.",
+		"Das Standardpasswort": "كلمة المرور الافتراضية يعرفها الجميع",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– عيّن الآن كلمة مرور خاصة. تسري على واجهة الويب وSSH.",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "يتحكم الجهاز بالمروحة على ثلاث درجات (متوقفة، نصف، كاملة) حسب حرارة اللوحة. تسري التغييرات خلال ثوانٍ.",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "يبين مصباح USB البرتقالي وضع الإنقاذ والتحديثات عند التشغيل ولا يمكن ضبطه.",
+		"ERSTEINRICHTUNG": "الإعداد الأول",
+		"Eigene Werte": "قيم خاصة",
+		"Ersteinrichtung abgeschlossen.": "اكتمل الإعداد الأول.",
+		"Ersteinrichtung erneut starten": "تشغيل الإعداد الأول من جديد",
+		"Ersteinrichtung überspringen?": "تخطي الإعداد الأول؟",
+		"Fertig": "تم",
+		"Fertig & Speicher einrichten": "تم وإعداد التخزين",
+		"Gerätename": "اسم الجهاز",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "نقل الاسم والمنطقة الزمنية والمروحة",
+		"Herzschlag (ShareOS läuft)": "نبض (ShareOS يعمل)",
+		"Kühl": "بارد",
+		"Leise": "هادئ",
+		"LEDS": "المصابيح",
+		"LÜFTER & LEDS": "المروحة والمصابيح",
+		"Lüfter": "المروحة",
+		"Leer lassen, um das Passwort später zu ändern.": "اتركه فارغًا لتغيير كلمة المرور لاحقًا.",
+		"Lüfter läuft immer, voll ab 45 °C": "المروحة تعمل دائمًا، كاملة من 45 °م",
+		"Lüfter läuft immer, voll ab 50 °C": "المروحة تعمل دائمًا، كاملة من 50 °م",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "المروحة تتوقف دون 40 °م، كاملة من 55 °م",
+		"Name & Zeit": "الاسم والوقت",
+		"Nur fertige Versionen – empfohlen.": "الإصدارات النهائية فقط – موصى به.",
+		"PLATTEN-LEDS (ROT)": "مصابيح الأقراص (حمراء)",
+		"POWER-LED": "مصباح الطاقة",
+		"STATUS-LED (BLAU)": "مصباح الحالة (أزرق)",
+		"Passwort": "كلمة المرور",
+		"Plattenzugriffe anzeigen": "إظهار نشاط الأقراص",
+		"Sprache": "اللغة",
+		"Temperaturen selbst festlegen": "تحديد درجات الحرارة بنفسك",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "يظهر الجهاز في الشبكة بهذا الاسم. تضبط الساعة نفسها عبر NTP.",
+		"Update-Kanal": "قناة التحديث",
+		"Updates": "التحديثات",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "تأتي التحديثات من GitHub وتُثبت من النظام ← البرنامج الثابت.",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "مرحبًا بك في ShareOS. يُعد الجهاز في خطوات قليلة؛ ويمكن تغيير كل شيء لاحقًا من",
+		"ändern.": ".",
+		"ZEITZONE": "المنطقة الزمنية",
+		"Zeitzone": "المنطقة الزمنية",
+		"blinkt": "وامض",
+		"an": "مضاء",
+		"sofort aktiv": "يسري فورًا",
+		"wird geändert": "سيتغير",
+		"bleibt (später ändern)": "يبقى (يُغيّر لاحقًا)",
+		"ja": "نعم",
+		"nein": "لا",
+		"Überspringen": "تخطي",
+		"Lüfter gespeichert.": "حُفظت المروحة.",
+		"LED gespeichert.": "حُفظ المصباح.",
+		"Ungültiger Gerätename.": "اسم جهاز غير صالح.",
+		"Das Passwort braucht mindestens 6 Zeichen.": "تحتاج كلمة المرور إلى 6 أحرف على الأقل.",
+		"Paket wird erneut geprüft …": "إعادة فحص الحزمة …",
+		"System wird für den Neustart bereitgelegt …": "تجهيز النظام لإعادة التشغيل …",
+		"Startsystem: Flash wird gelöscht …": "نظام الإقلاع: مسح الفلاش …",
+		"Startsystem wird geschrieben …": "كتابة نظام الإقلاع …",
+		"Startsystem wird geprüft …": "التحقق من نظام الإقلاع …",
+		"Kernel: Flash wird gelöscht …": "النواة: مسح الفلاش …",
+		"Kernel wird geschrieben …": "كتابة النواة …",
+		"Kernel wird geprüft …": "التحقق من النواة …",
+		"Wird gestartet …": "جارٍ البدء …",
+		"nicht ausschalten": "لا تطفئ الجهاز",
+		", das dauert etwa 1–2 Minuten.": "، يستغرق ذلك نحو 1–2 دقيقة.",
+		"Paket wird geprüft …": "فحص الحزمة …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 والمحتوى، نحو نصف دقيقة.",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– يُثبت النظام الجديد عند التشغيل التالي (نحو دقيقة، لا تطفئ الجهاز).",
+		"NETZWERK": "الشبكة",
+		"ADRESSE": "العنوان",
+		"AKTUELL": "الحالي",
+		"AKZENTFARBE": "لون التمييز",
+		"BEIM START": "عند التشغيل",
+		"BESCHREIBUNG": "الوصف",
+		"DIENST": "الخدمة",
+		"HELL ODER DUNKEL": "فاتح أو داكن",
+		"HTTPS & ZERTIFIKAT": "HTTPS والشهادة",
+		"JETZT": "الآن",
+		"KENNZAHL": "القياس",
+		"WERT": "القيمة",
+		"HINWEIS": "ملاحظة",
+		"ART": "النوع",
+		"MODELL": "الطراز",
+		"ZUSTAND": "الحالة الصحية",
+		"INHALT": "المحتوى",
+		"IP-ADRESSE": "عنوان IP",
+		"SUBNETZMASKE": "قناع الشبكة الفرعية",
+		"DNS-SERVER (KOMMA-GETRENNT)": "خوادم DNS (مفصولة بفواصل)",
+		"Automatisch (DHCP) – vom Router": "تلقائي (DHCP) – من الموجّه",
+		"Feste Adresse": "عنوان ثابت",
+		"statisch": "ثابت",
+		"Dunkel": "داكن",
+		"Hell": "فاتح",
+		"Wie das Betriebssystem (automatisch)": "مثل نظام التشغيل (تلقائي)",
+		"Grün": "أخضر",
+		"Rot": "أحمر",
+		"Blau": "أزرق",
+		"Weiß": "أبيض",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "يأخذ الشعار وأيقونة المتصفح لون التمييز. الإعداد يسري على الجميع، بما في ذلك صفحة تسجيل الدخول.",
+		"Scanlines (nur in diesem Browser)": "خطوط المسح (هذا المتصفح فقط)",
+		"Übernehmen": "تطبيق",
+		"verbunden": "متصل",
+		"keine Adresse": "لا يوجد عنوان",
+		"ändern": "تغيير",
+		"Verbindung": "الاتصال",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "يسري من التشغيل التالي. تُشغّل الخدمات العاملة وتُوقف من «الحالة». التحكم بالجهاز وناقل النظام وAPI وواجهة الويب تعمل دائمًا، وإلا تعذر تشغيل الجهاز.",
+		"welche Dienste beim Einschalten starten": "الخدمات التي تعمل عند تشغيل الجهاز",
+		"starten": "تشغيل",
+		"immer": "دائمًا",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "بدون هذه الخدمة لا يمكن تشغيل الجهاز",
+		"Kachelansicht": "عرض المربعات",
+		"Tabellenansicht": "عرض الجدول",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "إعدادات شبكة جديدة بانتظار التأكيد",
+		"Behalten": "الإبقاء",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "لم يُؤكد التغيير الأخير؛ إعدادات الشبكة السابقة نشطة من جديد.",
+		"Neue Netzwerkeinstellungen bestätigt.": "أُكدت إعدادات الشبكة الجديدة.",
+		"Netzwerk ändern?": "تغيير الشبكة؟",
+		"Netzwerk wird umgestellt": "جارٍ تبديل الشبكة",
+		"Netzwerk wird neu gestartet": "جارٍ إعادة تشغيل الشبكة",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "لا يوجد اتصال – يُفترض أن الجهاز استعاد الإعدادات القديمة. أعد تحميل الصفحة.",
+		"eine Platte fehlt": "أحد القرصين مفقود",
+		"in Ordnung": "موافق",
+		"Sync wartet": "المزامنة في الانتظار",
+		"STATUS": "الحالة",
+		"AUTOSTART": "التشغيل التلقائي",
+		"GRUPPEN": "المجموعات",
+		"Administrator": "مسؤول",
+		"Nur Freigaben": "المشاركات فقط",
+		"lesen & schreiben": "قراءة وكتابة",
+		"nur lesen": "قراءة فقط",
+		"kein Zugriff": "بلا وصول",
+		"unbegrenzt": "غير محدود",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "تحتاج المشاركات إلى وحدة تخزين – أعدّها أولاً من",
+		"einrichten.": ".",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "لا توجد مشاركات بعد. تجعل المشاركة مجلدًا على وحدة تخزين متاحًا في الشبكة – من Windows وmacOS وLinux.",
+		"Freigabe anlegen": "إنشاء مشاركة",
+		"Neue Freigabe": "مشاركة جديدة",
+		"FREIGABE": "المشاركة",
+		"ORDNER": "المجلد",
+		"ZUGRIFF": "الوصول",
+		"Laufwerk fehlt": "وحدة التخزين مفقودة",
+		"noch niemand": "لا أحد بعد",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS وMACOS وLINUX)",
+		"SMB-Freigaben anbieten": "تقديم مشاركات SMB",
+		"ARBEITSGRUPPE": "مجموعة العمل",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "تبدأ خدمة SMB تلقائيًا بمجرد وجود مشاركة. تظهر المجلدات الشخصية باسم",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX وPROXMOX)",
+		"NFS-Freigaben anbieten": "تقديم مشاركات NFS",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "لا يحتوي NFS على حسابات مستخدمين: الحواسيب أو الشبكات المذكورة تحصل على الوصول. تُحفظ الملفات باسم",
+		"gespeichert. Einbinden z. B. mit": ". للربط مثلاً:",
+		"kein Protokoll": "بلا بروتوكول",
+		"GAST": "ضيف",
+		"Bearbeiten": "تعديل",
+		"Löschen": "حذف",
+		"Anlegen": "إنشاء",
+		"NEUE FREIGABE": "مشاركة جديدة",
+		"NAME": "الاسم",
+		"ORDNER AUF DEM LAUFWERK": "المجلد على وحدة التخزين",
+		"wie der Name": "مثل الاسم",
+		"ZUGRIFF ÜBER SMB": "الوصول عبر SMB",
+		"Über SMB freigeben (Windows, macOS, Linux)": "المشاركة عبر SMB (Windows وmacOS وLinux)",
+		"Gäste dürfen ohne Passwort lesen": "يمكن للضيوف القراءة بلا كلمة مرور",
+		"BENUTZER / GRUPPE": "المستخدم / المجموعة",
+		"RECHT": "الصلاحية",
+		"Noch keine Benutzer – unter": "لا يوجد مستخدمون بعد – أنشئهم من",
+		"anlegen, oder Gastzugang erlauben.": "، أو اسمح بوصول الضيوف.",
+		"ZUGRIFF ÜBER NFS": "الوصول عبر NFS",
+		"Über NFS freigeben": "المشاركة عبر NFS",
+		"NFS-Clients dürfen schreiben": "يمكن لعملاء NFS الكتابة",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "عملاء NFS (IP أو شبكة، مفصولة بفواصل)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "يُنشأ المجلد إذا لم يكن موجودًا. إزالة المشاركة تُبقي المجلد وملفاته.",
+		"kein Limit": "بلا حد",
+		"von": "من",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "لا يوجد مستخدمون بعد. حساب واحد يعمل في كل مكان: للمشاركات وواجهة الويب ولاحقًا للتطبيقات والمزامنة السحابية.",
+		"Benutzer anlegen": "إنشاء مستخدم",
+		"Von Alt-F übernehmen": "استيراد من Alt-F",
+		"Neuer Benutzer": "مستخدم جديد",
+		"ROLLE": "الدور",
+		"PERSÖNLICHER ORDNER": "المجلد الشخصي",
+		"kein persönlicher Ordner": "بلا مجلد شخصي",
+		"Rollen:": "الأدوار:",
+		"– alles, auch SSH.": "– كل شيء، بما في ذلك SSH.",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– منطقة خاصة «ShareOS الخاص بي» في واجهة الويب.",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– الوصول إلى المشاركات، دون دخول الويب. الحساب",
+		"bleibt immer Administrator.": "مسؤول دائمًا.",
+		"· ohne Web": "· بلا ويب",
+		"NEUER BENUTZER": "مستخدم جديد",
+		"BENUTZERNAME": "اسم المستخدم",
+		"VOLLER NAME": "الاسم الكامل",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "حد التخزين لكل وحدة (غيغابايت، 0 = غير محدود)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "يمكنه تسجيل الدخول إلى واجهة الويب («ShareOS الخاص بي»)",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "اسم المستخدم: أحرف صغيرة وأرقام و_، يبدأ بحرف. كلمة المرور للمشاركات و– حسب الدور – لواجهة الويب.",
+		"GRUPPE": "المجموعة",
+		"MITGLIEDER": "الأعضاء",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "تجمع المجموعات المستخدمين، مثل «العائلة» أو «الوسائط». ويمكن عندها منح صلاحيات المشاركة للمجموعة كلها.",
+		"Neue Gruppe": "مجموعة جديدة",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "يُحدد الأعضاء من المستخدم (المستخدمون ← تعديل).",
+		"MEIN SHAREOS": "SHAREOS الخاص بي",
+		"Noch nichts gespeichert.": "لم يُحفظ شيء بعد.",
+		"Persönlicher Ordner": "المجلد الشخصي",
+		"Kein persönlicher Ordner eingerichtet.": "لم يُعدّ مجلد شخصي.",
+		"PASSWORT ÄNDERN": "تغيير كلمة المرور",
+		"AKTUELLES PASSWORT": "كلمة المرور الحالية",
+		"Gilt für die Freigaben und diese Oberfläche.": "تُستخدم للمشاركات ولهذه الواجهة.",
+		"MEINE FREIGABEN": "مشاركاتي",
+		"Dir wurde noch keine Freigabe zugewiesen.": "لم تُخصص لك أي مشاركة بعد.",
+		"APPS & CLOUD": "التطبيقات والسحابة",
+		"geplant": "مخطط",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "ستظهر هنا لاحقًا التطبيقات المتاحة لك ومهام المزامنة السحابية الخاصة بك.",
+		"Mein ShareOS": "ShareOS الخاص بي",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "أدخل عميلاً واحدًا على الأقل (IP أو شبكة) لـ NFS.",
+		"Gespeichert.": "تم الحفظ.",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "تختفي المشاركة من الشبكة. يبقى المجلد وجميع ملفاته على وحدة التخزين.",
+		"Benutzer von Alt-F übernehmen?": "استيراد المستخدمين من Alt-F؟",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "يُنشأ المستخدمون والمجموعات من إعدادات Alt-F المحفوظة (دور «المشاركات فقط»). تُنقل كلمات المرور حيث حفظها Alt-F.",
+		"Keine neuen Benutzer gefunden.": "لم يُعثر على مستخدمين جدد.",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "اسم المجموعة (a–z و0–9 و_، يبدأ بحرف):",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "يبقى الأعضاء، لكنهم يفقدون الصلاحيات الممنوحة عبر هذه المجموعة.",
+		"Setzen": "تعيين",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "كلمة مرور جديدة (6 أحرف على الأقل). للمشاركات و– حسب الدور – لواجهة الويب.",
+		"Bitte neu anmelden.": "يرجى تسجيل الدخول من جديد.",
+		"Der persönliche Ordner bleibt erhalten.": "يُحتفظ بالمجلد الشخصي.",
+		"Benutzerkonten": "حسابات المستخدمين",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "نسخ الإعدادات احتياطيًا واستعادتها",
+		"SICHERN": "نسخ احتياطي",
+		"JSON-Datei": "ملف JSON",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "كلمة مرور للتشفير (اختيارية)",
+		"leer = unverschlüsselt": "فارغ = بلا تشفير",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "يحتوي على كل الإعدادات والمستخدمين مع كلمات مرورهم (كقيم تجزئة) والمشاركات والشبكة وشهادة HTTPS مع مفتاحها. بدون كلمة مرور يكون الملف مقروءًا – احفظه في مكان آمن. مع كلمة مرور: AES-256، وتلزم كلمة المرور للاستعادة.",
+		"Sicherung herunterladen": "تنزيل النسخة الاحتياطية",
+		"WIEDERHERSTELLEN": "استعادة",
+		"SICHERUNGSDATEI": "ملف النسخة الاحتياطية",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "كلمة المرور (إن كان مشفرًا)",
+		"Erstellt": "أُنشئت",
+		"Zertifikat": "الشهادة",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "تستبدل الاستعادة الإعدادات والمستخدمين والمشاركات الحالية. تلزم إعادة التشغيل بعدها. لا تُمس البيانات على وحدات التخزين.",
+		"Wiederherstellen": "استعادة",
+		"Einstellungen wiederherstellen?": "استعادة الإعدادات؟",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "تُستبدل الإعدادات والمستخدمون والمشاركات الحالية بالنسخة الاحتياطية.",
+		"Wiederhergestellt": "تمت الاستعادة",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "استُعيدت الإعدادات. إعادة التشغيل الآن ليسري كل شيء؟",
+		"Verschlüsselte Sicherung heruntergeladen.": "نُزّلت النسخة الاحتياطية المشفرة.",
+		"Sicherung heruntergeladen.": "نُزّلت النسخة الاحتياطية.",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "النسخة الاحتياطية مشفرة – يرجى إدخال كلمة المرور.",
+		"ADRESSE VON PAPERLESS": "عنوان PAPERLESS",
+		"PRÜFEN ALLE": "التحقق كل",
+		"NACH DEM HOCHLADEN": "بعد الرفع",
+		"Datei löschen": "حذف الملف",
+		"aufheben (.paperless/done)": "الإبقاء (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "إرسال مجلدات الوارد تلقائيًا",
+		"Jetzt übertragen": "إرسال الآن",
+		"SO FUNKTIONIERT ES": "طريقة العمل",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "أنشئ في Paperless رمز API لكل صندوق وارد (الملف الشخصي ← رمز API). تصبح المستندات ملكًا لمستخدم Paperless هذا.",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "ضع الملفات (PDF، صور، Office) في مجلد الوارد – من حاسوب أو مباشرة من الماسح الضوئي.",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "يرفعها ShareOS عبر واجهة Paperless ويبين ما إذا قبلها Paperless.",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "صناديق الوارد الشخصية موجودة في المجلد الشخصي (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": ")؛ ويمكن للمستخدمين أيضًا إدخال رمزهم بأنفسهم في «ShareOS الخاص بي». تستخدم صناديق الوارد المشتركة مشاركة، مثلاً لماسح ضوئي.",
+		"EINGÄNGE": "صناديق الوارد",
+		"übernommen": "مقبول",
+		"wird verarbeitet": "قيد المعالجة",
+		"Fehler": "خطأ",
+		"Protokoll": "السجل",
+		"nichts wartend": "لا شيء في الانتظار",
+		"Neuer Eingang": "صندوق وارد جديد",
+		"NEUER EINGANG": "صندوق وارد جديد",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "شخصي (مجلد «Paperless» في المجلد الشخصي)",
+		"gemeinsam (Ordner einer Freigabe)": "مشترك (مجلد في مشاركة)",
+		"API-TOKEN": "رمز API",
+		"aktiv": "نشط",
+		"Verbindung prüfen": "اختبار الاتصال",
+		"aus Paperless: Profil → API-Token": "من Paperless: الملف الشخصي ← رمز API",
+		"API-TOKEN (LEER = BEHALTEN)": "رمز API (فارغ = إبقاء)",
+		"TAGS FÜR NEUE DOKUMENTE": "وسوم للمستندات الجديدة",
+		"Schließen": "إغلاق",
+		"ZEIT": "الوقت",
+		"DATEI": "الملف",
+		"MELDUNG": "الرسالة",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "لن يُرسل شيء بعد الآن. يُحتفظ بالمجلد وملفاته.",
+		"EINGANG": "صندوق الوارد",
+		"WARTEND": "في الانتظار",
+		"ZULETZT": "الأخير",
+		"gemeinsam": "مشترك",
+		"Paperless → Profil → API-Token": "Paperless ← الملف الشخصي ← رمز API",
+		"Paperless-Eingang gespeichert.": "حُفظ صندوق وارد Paperless.",
+		"Übertragung gestartet.": "بدأ النقل.",
+		"MEIN EINGANG": "صندوق الوارد الخاص بي",
+		"MEIN API-TOKEN AUS PAPERLESS": "رمز API الخاص بي من PAPERLESS",
+		"Dateien aus meinem Eingang übertragen": "إرسال الملفات من صندوقي",
+		"Eingangsordner": "مجلد الوارد",
+		"ZULETZT ÜBERTRAGEN": "المرسلة مؤخرًا",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "لم يُرسل شيء بعد. ضع ملفات في مجلد الوارد – تصل إلى Paperless خلال دقائق.",
+		"KONTEN": "الحسابات",
+		"Testen": "اختبار",
+		"Konto hinzufügen": "إضافة حساب",
+		"HINWEISE": "ملاحظات",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "تبقى بيانات الدخول مشفرة على الجهاز. لـ Google Drive أو OneDrive أو Dropbox شغّل",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "على حاسوب والصق القسم الناتج هنا. تستهلك المهام ذاكرة قليلة (نقلان في وقت واحد)؛ وحد لعرض النطاق مثل",
+		"hält das Netz frei.": "يبقي الشبكة متاحة.",
+		"AUFTRÄGE": "المهام",
+		"Jetzt starten": "البدء الآن",
+		"Neuer Auftrag": "مهمة جديدة",
+		"NEUES CLOUD-KONTO": "حساب سحابي جديد",
+		"SFTP (SSH-Server)": "SFTP (خادم SSH)",
+		"andere – rclone-Konfiguration einfügen": "أخرى – لصق إعداد rclone",
+		"ADRESSE (WEBDAV-URL)": "العنوان (رابط WEBDAV)",
+		"ANBIETER": "المزوّد",
+		"PASSWORT / APP-PASSWORT": "كلمة المرور / كلمة مرور التطبيق",
+		"Hinzufügen": "إضافة",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (فارغ لـ AWS)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "قسم من RCLONE.CONF (يبدأ بـ [الاسم])",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "تُحذف بيانات الدخول. تتوقف المهام التي تستخدم هذا الحساب. لا يُحذف شيء في السحابة.",
+		"NEUER AUFTRAG": "مهمة جديدة",
+		"ORDNER AUF DEM NAS": "المجلد على NAS",
+		"CLOUD-KONTO": "الحساب السحابي",
+		"ORDNER IN DER CLOUD": "المجلد في السحابة",
+		"RICHTUNG": "الاتجاه",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "رفع – نسخ إلى السحابة، لا يُحذف شيء",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "تنزيل – نسخ إلى NAS، لا يُحذف شيء",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "نسخ مطابق إلى السحابة – يحذف من السحابة ما ليس هنا",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "نسخ مطابق من السحابة – يحذف هنا ما ليس في السحابة",
+		"ZEITPLAN": "الجدولة",
+		"nur von Hand": "يدويًا فقط",
+		"stündlich": "كل ساعة",
+		"täglich um 2:30": "يوميًا الساعة 2:30",
+		"sonntags um 3:00": "أيام الأحد الساعة 3:00",
+		"eigene Zeit (cron)": "وقت مخصص (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "وقت CRON (دقيقة ساعة يوم شهر يوم_الأسبوع)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "عرض النطاق (فارغ = غير محدود)",
+		"Zeitplan aktiv": "الجدولة نشطة",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "يحذف النسخ المطابق في جهة الهدف ما ليس في المصدر – للنسخ الاحتياطي العادي اختر «رفع».",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "لن تعمل المهمة بعد الآن. تبقى الملفات على NAS وفي السحابة كما هي.",
+		"AUFTRAG": "المهمة",
+		"VON → NACH": "من ← إلى",
+		"Spiegeln?": "نسخ مطابق؟",
+		"Verstanden": "مفهوم",
+		"Gestoppt.": "توقفت.",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "النسخ المطابق من السحابة يحذف من NAS الملفات غير الموجودة في السحابة.",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "النسخ المطابق إلى السحابة يحذف من السحابة الملفات غير الموجودة على NAS.",
+		"MEINE CLOUD": "سحابتي",
+		"eigene Konten und Aufträge": "حسابات ومهام خاصة",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "تبقى بيانات الدخول مشفرة على الجهاز في مجلدك الشخصي. لـ Google Drive أو OneDrive أو Dropbox شغّل",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": "يبقي الشبكة متاحة. ما تنزّله يُحسب ضمن حد التخزين الخاص بك.",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "يمكنه إنشاء مهام مزامنة سحابية خاصة (يحتاج مجلدًا شخصيًا)",
+		"APP & WIDGETS": "التطبيق والأدوات",
+		"ALS APP INSTALLIEREN": "التثبيت كتطبيق",
+		"über das Browsermenü": "عبر قائمة المتصفح",
+		"läuft als App": "يعمل كتطبيق",
+		"bereit": "جاهز",
+		"nur über HTTPS": "HTTPS فقط",
+		"Diese Oberfläche läuft gerade als installierte App.": "تعمل هذه الواجهة كتطبيق مثبت.",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "يمكن للمتصفح تثبيت ShareOS كتطبيق بأيقونة خاصة.",
+		"Im Browsermenü": "في قائمة المتصفح اختر",
+		"„App installieren“": "«تثبيت التطبيق»",
+		"bzw.": "أو",
+		"„Zum Startbildschirm hinzufügen“": "«الإضافة إلى الشاشة الرئيسية»",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": ". مع شهادة موقعة ذاتيًا لا تعرض المتصفحات التثبيت الحقيقي.",
+		"Browser installieren Web-Apps nur über": "تثبت المتصفحات تطبيقات الويب فقط عبر",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "HTTPS بشهادة موثوقة",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(مثل Let's Encrypt، تُثبت من النظام ← الشبكة). عبر http:// لا تعرض قائمة Chrome إلا",
+		"– das legt ein Lesezeichen-Symbol an.": "– وهذا ينشئ أيقونة إشارة مرجعية.",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "على Android: اضغط مطولاً على أيقونة التطبيق لفتح الاختصارات",
+		"Übersicht, Speicher, Freigaben, Firmware": "نظرة عامة، التخزين، المشاركات، البرنامج الثابت",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": ". لا يقدم Chrome أدوات حقيقية للشاشة الرئيسية لتطبيقات الويب – استخدم بدلاً منها عنوان الحالة لتطبيقات الأدوات على اليمين.",
+		"Als App installieren": "التثبيت كتطبيق",
+		"STATUS FÜR WIDGETS": "الحالة للأدوات",
+		"Status-Adresse einschalten": "تفعيل عنوان الحالة",
+		"ADRESSE (GEHEIM HALTEN)": "العنوان (احتفظ به سرًا)",
+		"Kopieren": "نسخ",
+		"Neuer Schlüssel": "مفتاح جديد",
+		"Öffnen ↗": "فتح ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "يعيد إجابة JSON قصيرة دون تسجيل دخول: الاسم والإصدار ومدة التشغيل والحمل والحرارة وإشغال وحدات التخزين وحالة RAID والتحذيرات (",
+		"). Gedacht für Widget-Apps wie": "). مخصص لتطبيقات الأدوات مثل",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android) أو Home Assistant أو سكربتاتك الخاصة. من يعرف العنوان يرى هذه القيم – ولا يمكن لأحد تغيير شيء به.",
+		"Status-Adresse eingeschaltet.": "فُعّل عنوان الحالة.",
+		"Status-Adresse ausgeschaltet.": "عُطّل عنوان الحالة.",
+		"Neuen Schlüssel erzeugen?": "إنشاء مفتاح جديد؟",
+		"Erzeugen": "إنشاء",
+		"Neuer Schlüssel erzeugt.": "أُنشئ مفتاح جديد.",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "يتوقف العنوان القديم عن العمل – تحتاج الأدوات إلى العنوان الجديد.",
+		"Kopiert.": "تم النسخ.",
+		"Bitte die Adresse selbst markieren und kopieren.": "يرجى تحديد العنوان ونسخه بنفسك.",
+		"ShareOS ist als App installiert.": "ShareOS مثبت كتطبيق.",
+		"· Mein ShareOS": "· ShareOS الخاص بي",
+		"DATEIEN": "الملفات",
+		"Neuer Ordner": "مجلد جديد",
+		"Hochladen": "رفع",
+		"Umbenennen": "إعادة التسمية",
+		"Verschieben": "نقل",
+		"Versteckte": "المخفية",
+		"GEÄNDERT": "آخر تعديل",
+		"Dateien lassen sich auch einfach hierher ziehen.": "يمكنك أيضًا سحب الملفات إلى هنا ببساطة.",
+		"Pfad": "المسار",
+		"Ordner nach oben": "المجلد الأعلى",
+		"Alle auswählen": "تحديد الكل",
+		"Verschieben nach": "نقل إلى",
+		"Kopieren nach": "نسخ إلى",
+		"Name des neuen Ordners:": "اسم المجلد الجديد:",
+		"Dieser Ordner ist leer.": "هذا المجلد فارغ.",
+		"SPEICHERLIMIT (GB)": "حد التخزين (غيغابايت)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "مستعرض ملفات للمجلد الشخصي في واجهة الويب",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "اسم المستخدم: أحرف صغيرة وأرقام و_، يبدأ بحرف. يسري حد التخزين لكل وحدة، 0 = غير محدود. كلمة المرور للمشاركات و– حسب الدور – لواجهة الويب.",
+		"nur für dich": "لك وحدك",
+		"Wie für alle": "كما للجميع",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "يسري على تسجيل دخولك فقط، على كل الأجهزة. يأخذ الشعار وأيقونة المتصفح لون التمييز.",
+		"Datei ersetzen?": "استبدال الملف؟",
+		"Ersetzen": "استبدال",
+		"übersprungen": "تم تخطيه",
+		"fertig": "تم",
+		"Verbindung unterbrochen": "انقطع الاتصال",
+		"Gelöscht.": "تم الحذف.",
+		"Verschoben.": "تم النقل.",
+		"Darstellung wie für alle.": "أعيد المظهر إلى مظهر الجميع.",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "لا توجد وحدة تخزين مربوطة – أعدّ واحدة أولاً من التخزين.",
+		"Kein persönlicher Ordner vorhanden.": "لا يوجد مجلد شخصي.",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "تُعرض أول 2000 عنصر فقط.",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "حُفظ اسم المضيف. أُعيد إصدار شهادة HTTPS للاسم الجديد – سيسأل المتصفح مرة أخرى.",
+		"INSTALLIERT": "المثبتة",
+		"STORE": "المتجر",
+		"QUELLEN": "المصادر",
+		"INSTALLIERTE APPS": "التطبيقات المثبتة",
+		"Noch keine App installiert. Im": "لا يوجد تطبيق مثبت بعد. في",
+		"Store": "المتجر",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "تطبيقات للتثبيت – أو ارفع حزمتك الخاصة (.sapp).",
+		"Apps": "التطبيقات",
+		"APP-STORE": "متجر التطبيقات",
+		"Beta (auch Vorabversionen)": "تجريبية (مع الإصدارات الأولية)",
+		"Jetzt aktualisieren": "التحديث الآن",
+		"PAKET INSTALLIEREN": "تثبيت حزمة",
+		"PAKETDATEI": "ملف الحزمة",
+		"Für eigene Apps (gebaut mit": "لتطبيقاتك الخاصة (المبنية باستخدام",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "من مستودع التطبيقات). تُعد الحزم المرفوعة «خاصة / غير موثقة».",
+		"Hochladen & installieren": "رفع وتثبيت",
+		"VERFÜGBARE APPS": "التطبيقات المتاحة",
+		"APP": "التطبيق",
+		"HERAUSGEBER": "الناشر",
+		"Werkzeuge": "أدوات",
+		"Medien": "وسائط",
+		"Büro": "مكتب",
+		"Netzwerk": "شبكة",
+		"Download": "تنزيل",
+		"Sync": "مزامنة",
+		"wird geladen …": "جارٍ التنزيل …",
+		"aus dem Store": "من المتجر",
+		"eigene / ungeprüft": "خاص / غير موثق",
+		"eigene": "خاص",
+		"SICHTBAR FÜR": "مرئي لـ",
+		"alle Benutzer": "كل المستخدمين",
+		"nur Administratoren": "المسؤولون فقط",
+		"Alle Benutzer mit Web-Zugang": "كل المستخدمين الذين لديهم وصول للويب",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "يرى المسؤولون كل التطبيقات. يحدد الاختيار من يرى التطبيق في «ShareOS الخاص بي».",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "يُحذف التطبيق. تبقى البيانات التي حفظها في المتصفح هناك.",
+		"APP-QUELLEN": "مصادر التطبيقات",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "مصدر آخر (عنوان الكتالوج)",
+		"Eine Quelle ist ein App-Katalog (": "المصدر كتالوج تطبيقات (",
+		") im Format des Repos": ") بتنسيق المستودع",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": ". التطبيقات الخاصة: استخدم المستودع كقالب، ويبني GitHub Action الخاص به الحزم والكتالوج. أضف فقط مصادر تثق بها.",
+		"Quelle entfernen?": "إزالة المصدر؟",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "لن تظهر تطبيقات هذا المصدر في المتجر بعد الآن. تبقى التطبيقات المثبتة.",
+		"MEINE APPS": "تطبيقاتي",
+		"Store aktualisiert.": "حُدّث المتجر.",
+		"Entfernt.": "تمت الإزالة.",
+		"Lade den Katalog …": "جارٍ تحميل الكتالوج …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "لم يُعثر على تطبيقات – تحقق من الاتصال بالإنترنت والمصادر.",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "لا يوجد مستخدم لديه وصول للويب – أنشئ واحدًا من المشاركات ← المستخدمون.",
+		"braucht neuere ShareOS": "يحتاج إلى ShareOS أحدث",
+		"noch nicht geladen": "لم يُحمّل بعد",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "تعمل تطبيقات الويب على منفذ خاص (8081 / 8444 لـ HTTPS) – منفصلة عن هذه الواجهة، فلا يستطيع أي تطبيق استخدام تسجيل دخولك. من يعرف العنوان يمكنه فتح تطبيق ويب في الشبكة؛ و«مرئي لـ» يحدد من يراه في «ShareOS الخاص بي».",
+		"Installation abgeschlossen": "اكتمل التثبيت",
+		"(100 %) – jetzt neu starten.": "(100 %) – أعد التشغيل الآن.",
+		"FIRMWARE-DATEI EINSPIELEN": "تثبيت ملف برنامج ثابت",
+		"Hochladen & prüfen": "رفع وفحص",
+		"Art": "النوع",
+		"andere Firmware": "برنامج ثابت آخر",
+		"Einspielen": "تثبيت",
+		"Firmware wird geschrieben": "جارٍ كتابة البرنامج الثابت",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "النواة ونظام الإقلاع – يرجى الانتظار وعدم إطفاء الجهاز",
+		"Geschrieben": "تمت الكتابة",
+		"Größe": "الحجم",
+		"ext4 – empfohlen": "ext4 – موصى به",
+		"exFAT – empfohlen": "exFAT – موصى به",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "كل شيء: صلاحيات لكل مستخدم، حد تخزين، مجلدات شخصية، تطبيقات.",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "صلاحيات لكل مستخدم، مجلدات شخصية، تطبيقات؛ بلا حد تخزين لكل مستخدم. يحتاج ذاكرة أكثر.",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "مقروء أيضًا في Windows وmacOS. بلا صلاحيات لكل مستخدم (من يستطيع الكتابة في مشاركة يستطيع تغيير كل شيء فيها)، بلا حد تخزين، بلا مجلدات شخصية، بلا تطبيقات.",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "مقروء أيضًا في Windows. بلا صلاحيات لكل مستخدم، بلا حد تخزين، بلا مجلدات شخصية، بلا تطبيقات.",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows وmacOS وLinux وأجهزة التلفاز؛ ملفات أكبر من 4 غيغابايت.",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "للأجهزة القديمة (راديو السيارة، الكاميرا)؛ ملفات حتى 4 غيغابايت.",
+		"Für Windows-Rechner.": "لحواسيب Windows.",
+		"Für Linux und Sicherungen mit Rechten.": "لـ Linux والنسخ الاحتياطية مع الصلاحيات.",
+		"DATEISYSTEM": "نظام الملفات",
+		"Sicher entfernen": "إزالة آمنة",
+		"Formatieren": "تهيئة",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "اسم وحدة التخزين الجديدة (a–z و0–9 و- و_، 16 حرفًا كحد أقصى) ونظام الملفات:",
+		"UHRZEIT DER BOX": "وقت الجهاز",
+		"Zeitabgleich": "مزامنة الوقت",
+		"aus dem Internet (NTP)": "من الإنترنت (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP مفعّل لكنه لا يعمل",
+		"von Hand": "يدويًا",
+		"Zuletzt abgeglichen": "آخر مزامنة",
+		"noch nicht": "ليس بعد",
+		"Batterie-Uhr": "ساعة البطارية",
+		"wird nach jedem Abgleich gestellt": "تُضبط بعد كل مزامنة",
+		"Jetzt abgleichen": "المزامنة الآن",
+		"ZEITZONE & ZEITSERVER": "المنطقة الزمنية وخوادم الوقت",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "جلب الوقت من الإنترنت تلقائيًا (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "خوادم الوقت (واحد في كل سطر، 5 كحد أقصى)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "في الشبكة المنزلية يمكن أن يكون الموجّه خادم الوقت أيضًا، مثل",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": ". تسري المنطقة الزمنية على السجلات والجداول والعرض.",
+		"UHRZEIT VON HAND STELLEN": "ضبط الساعة يدويًا",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "ما دام NTP مفعّلاً، يعيد الجهاز ضبط الساعة من الإنترنت عند المزامنة التالية. لجهاز بلا إنترنت عطّل NTP في الأعلى.",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "تستمر الساعة من هناك؛ وتُضبط ساعة البطارية في الجهاز أيضًا.",
+		"Uhrzeit dieses Geräts übernehmen": "أخذ وقت هذا الجهاز",
+		"Uhrzeit setzen": "ضبط الوقت",
+		"Uhrzeit gesetzt.": "ضُبط الوقت.",
+		"Uhrzeit abgeglichen.": "تمت مزامنة الوقت.",
+		"Ungültige Uhrzeit.": "وقت غير صالح.",
+		"Eine Firmware im D-Link-Format, z. B. für den": "برنامج ثابت بتنسيق D-Link، مثلاً من أجل",
+		"Wechsel zurück zu Alt-F": "العودة إلى Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". تُكتب النواة ونظام الإقلاع؛ ويبقى نظام ShareOS وإعداداته في الفلاش."
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"بلا Swap، بلا منطقة تطبيقات (تحتاج الحزم وبيانات التطبيقات إلى ext4 أو Btrfs)."
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"$1 Swap لكل قرص، بلا منطقة تطبيقات (تحتاج الحزم وبيانات التطبيقات إلى ext4 أو Btrfs)."
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"الاستعادة: $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"النسخ الاحتياطي: $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"النسخ الاحتياطي: $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"أُنشئ $1"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"المشاركة $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"المستخدم $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"المجموعة $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"صلاحية $1"
+		],
+		[
+			"^auf (\\S+)$",
+			"على $1"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"حد $1 لكل وحدة"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"الضيوف (ق)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"حُفظت المشاركة «$1»."
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"إزالة المشاركة «$1»؟"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"أُزيلت المشاركة «$1»."
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"أُنشئ المستخدم «$1»."
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"حُفظ المستخدم «$1»."
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"حذف المستخدم «$1»؟"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"حُذف المستخدم «$1»."
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"يُحذف الحساب؛ وتسقط صلاحياته على المشاركات.$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"أُنشئت المجموعة «$1»."
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"حذف المجموعة «$1»؟"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"حُذفت المجموعة «$1»."
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"كلمة مرور $1"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"تم تغيير كلمة مرور $1."
+		],
+		[
+			"^Übernommen: (.+)$",
+			"المستورد: $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"المتخطى: $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"المشاركات: $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"المشاركة: $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"المستخدم: $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"كلمة المرور: $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F: $1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"يسري التغيير فورًا. ثم ينتظر الجهاز $1 ثانية تأكيدًا من العنوان الجديد – فإن لم يصل، يستعيد الإعدادات السابقة. هكذا لا يمكنك أن تحبس نفسك خارجًا."
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– دون تأكيد يعود الجهاز إلى الإعدادات القديمة خلال $1 ث."
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"يحصل الجهاز على عنوانه من الموجّه. بعدها قد يكون متاحًا على عنوان آخر (ابحث عنه في الموجّه). إذا لم يُؤكد التغيير على الجهاز خلال $1 ثانية، تعود الإعدادات السابقة."
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"ينتقل الجهاز إلى $1. تفتح هذه الصفحة بعدها العنوان الجديد وتؤكد التغيير. إذا لم ينجح ذلك، تعود الإعدادات السابقة بعد $2 ثانية."
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"تطبّق هذه الصفحة إعدادات الشبكة وتؤكدها. إذا لم ينجح ذلك، تعود الإعدادات السابقة بعد $1 ثانية."
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"العنوان الجديد $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"في انتظار الجهاز ($1 ث) – لا يمكن الوصول؟ ابحث عن العنوان الجديد في الموجّه وسجّل الدخول هناك."
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"في انتظار الجهاز ($1 ث)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1: يعمل عند التشغيل"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1: لم يعد يعمل عند التشغيل"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"الشبكة: $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"المظهر: $1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"القناة $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"يتوفر التحديث $1"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"يتوفر التحديث $1."
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"التحديث $1"
+		],
+		[
+			"^seit (.+)$",
+			"منذ $1"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"المُعدّة: $1"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"المكتشفة: $1"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"مخطط · المرحلة $1"
+		],
+		[
+			"^Neueste · Beta$",
+			"الأحدث · تجريبي"
+		],
+		[
+			"^Neueste · Stabil$",
+			"الأحدث · مستقر"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"التغييرات في $1"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"الوصول · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"الاسم لـ $1 ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"التقدم · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"المصدر: إصدارات GitHub · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"ثُبت بنجاح ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"تهيئة $1"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"سيُمسح $1 بالكامل. لا يمكن التراجع عن ذلك."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"النقر على «إعداد» يمسح $1 بالكامل. تجري المزامنة الأولى بعدها في الخلفية (عدة ساعات للأقراص الكبيرة)؛ ويمكن استخدام وحدة التخزين فورًا."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"النقر على «إعداد» يمسح $1 بالكامل."
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"$1 Swap لكل قرص، منطقة التطبيقات على «$2» (إن لم توجد واحدة)."
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"بلا Swap، منطقة التطبيقات على «$1» (إن لم توجد واحدة)."
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"يحمل القرصان البيانات نفسها. إذا تعطل أحدهما لا يضيع شيء. المساحة القابلة للاستخدام: $1."
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"ضعف المساحة ($1)، لكن بلا تكرار – كل قرص وحدة تخزين مستقلة."
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"يصبح القرص وحدة تخزين بحجم $1. للتكرار أضف لاحقًا قرصًا ثانيًا كنسخ مطابق."
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1: القرصان نشطان ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1: أحد القرصين مفقود ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"إزالة «$1»؟"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"مسح $1؟"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"سيُمسح $1 بالكامل ويُعد كوحدة تخزين «$2»."
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"سيُكتب ShareOS $1 في الفلاش. بعدها تلزم إعادة التشغيل، يُثبت خلالها النظام الجديد. لا تطفئ الجهاز أثناء الكتابة."
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$1 من $2"
+		],
+		[
+			"^(.+) installieren$",
+			"تثبيت $1"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"الحمل $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"الشبكة · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1: مربوط"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1: مفصول"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1: أُزيل"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1: بدأ"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1: توقف"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1: أعيد تشغيله"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)."
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"كاملة من $1 °م"
+		],
+		[
+			"^jetzt: (.+)$",
+			"الآن: $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"الأخير $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"ملفات في الانتظار: $1"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"صندوق وارد شخصي لـ $1 · الرمز $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"صندوق وارد مشترك · الرمز $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"شخصي: $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"صندوق الوارد $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"السجل · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"الاتصال سليم – $1 مستند في Paperless."
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"إزالة صندوق الوارد «$1»؟"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1: الاتصال سليم ($2 مجلد)."
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"إزالة الحساب «$1»؟"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"إزالة المهمة «$1»؟"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"المشاركة $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"المشاركة $1 ← $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 ← المجلد الشخصي"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron: $1 · من $2"
+		],
+		[
+			"^von (\\S+)$",
+			"من $1"
+		],
+		[
+			"^Fehler · (.+)$",
+			"خطأ · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"يعمل منذ $1"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"المهمة: $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"الحساب: $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"صندوق الوارد: $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"المروحة: $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"الخدمات: $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"الإعداد: $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"التهيئة: $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"التثبيت: $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"السكون: $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"التخزين: $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"اللغة: $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"القناة: $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"الشهادة: $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"فشل الفحص: $1"
+		],
+		[
+			"^(.+) frei$",
+			"متاح $1"
+		],
+		[
+			"^(.+) auswählen$",
+			"تحديد $1"
+		],
+		[
+			"^(.+) herunterladen$",
+			"تنزيل $1"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"المحدد: $1."
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"اسم جديد لـ «$1»:"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"العناصر: $1. المجلد الهدف كمسار في «$2»، مثل Photos/2026 (فارغ = المستوى الأعلى)."
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"حذف العناصر ($1)؟"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – المجلدات مع محتواها. لا يمكن التراجع عن ذلك."
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"«$1» موجود بالفعل في هذا المجلد."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"الملفات المرفوعة: $1."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"الملفات غير المرفوعة: $1."
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"كما للجميع ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"التنزيل: $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"المجلد: $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"إعادة التسمية: $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"الحذف: $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"النقل: $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"النسخ: $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"الملفات: $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"تعمل تطبيقات الويب على منفذ خاص ($1) – منفصلة عن هذه الواجهة، فلا يستطيع أي تطبيق استخدام تسجيل دخولك. من يعرف العنوان يمكنه فتح تطبيق ويب في الشبكة؛ و«مرئي لـ» يحدد من يراه في «ShareOS الخاص بي»."
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"تعمل تطبيقات الويب على منفذ خاص ($1 / $2 لـ HTTPS) – منفصلة عن هذه الواجهة، فلا يستطيع أي تطبيق استخدام تسجيل دخولك. من يعرف العنوان يمكنه فتح تطبيق ويب في الشبكة؛ و«مرئي لـ» يحدد من يراه في «ShareOS الخاص بي»."
+		],
+		[
+			"^Stand (.+)$",
+			"بتاريخ $1"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · مرئي لـ $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · مرئي لـ"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"إزالة $1؟"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"ثُبت $1 $2."
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"ثُبت $1 $2 (تطبيق خاص)."
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"جارٍ تنزيل $1 …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"جارٍ التحقق من $1 …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"جارٍ تثبيت $1 …"
+		],
+		[
+			"^Update (.+)$",
+			"تحديث $1"
+		],
+		[
+			"^Store: (.*)$",
+			"المتجر: $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"التطبيقات: $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"الإزالة: $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"المصادر: $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"الحزمة: $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"بعدها يبدأ $1. تكون حزم Alt-F الإضافية مفقودة – اكتب الملف نفسه مرة أخرى من صفحة البرنامج الثابت في Alt-F. للعودة إلى ShareOS: اكتب ملف .bin الخاص بـ ShareOS في Alt-F، فالنظام والإعدادات ما زالت موجودة."
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"تثبيت $1؟"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"تُستبدل النواة ونظام الإقلاع ويُتحقق منهما. لا تطفئ الجهاز أثناء الكتابة."
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 موجود في الفلاش. إعادة التشغيل الآن؟"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 يبدأ – ستكون واجهته قريبًا على $2 (المنفذ 80)."
+		],
+		[
+			"^(.+) startet$",
+			"$1 يبدأ"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"التثبيت: $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"ملف البرنامج الثابت: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"يمكن الآن فصل $1."
+		],
+		[
+			"^(.+) formatieren$",
+			"تهيئة $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"مسح $1؟"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – الاسم (أحرف، أرقام، مسافات، - و_) ونظام الملفات:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"يُمسح كل شيء على $1. بعدها يصبح قرص $2 باسم «$3»."
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"يُمسح $1 ($2، $3) بالكامل ويُعد من جديد كوحدة تخزين «$4» ($5)."
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"منطقة التطبيقات على «$1» (إن لم توجد واحدة)."
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"التاريخ والوقت ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"الوقت: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"المزامنة: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"الوقت: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (نسخ مطابق (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (قرص منفرد)"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"يعمل",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"متوقف",
+			"g"
+		],
+		[
+			" frei von ",
+			" متاح من",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" من",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" مستخدم",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"يوم تشغيل",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"يحتوي:",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"عضو RAID في",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"عضو RAID",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"قرص ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"فتحة ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"المزامنة الأولى",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"الاستعادة",
+			"g"
+		],
+		[
+			"Prüfung",
+			"الفحص",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · متبقٍ $1",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"نسخ مطابق (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"قرص منفرد",
+			""
+		],
+		[
+			" umgelagert, ",
+			" أعيد تخصيصه،",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" معلق",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"يعمل",
+			"g"
+		],
+		[
+			" und ",
+			" و",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"ي $1 س",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – لا تطفئ الجهاز.",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"فشل الفحص:",
+			""
+		],
+		[
+			"^Kanal: ",
+			"القناة:",
+			""
+		],
+		[
+			"^Dienste: ",
+			"الخدمات:",
+			""
+		],
+		[
+			"^Speicher: ",
+			"التخزين:",
+			""
+		],
+		[
+			"^Download: ",
+			"التنزيل:",
+			""
+		],
+		[
+			"^Installieren: ",
+			"التثبيت:",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"الإعداد:",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"التهيئة:",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"الشهادة:",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS:",
+			""
+		],
+		[
+			"^Sprache: ",
+			"اللغة:",
+			""
+		],
+		[
+			"^Logo: ",
+			"الشعار:",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"نصف",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"المروحة:",
+			""
+		],
+		[
+			"^Hardware: ",
+			"العتاد:",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"مجموعة",
+			"g"
+		]
+	]
+}

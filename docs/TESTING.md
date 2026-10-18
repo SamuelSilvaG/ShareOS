@@ -216,6 +216,11 @@ their permissions.
 - **Format** (on a USB drive): choose a name and a file system – **exFAT** (recommended), **FAT32**, **NTFS** or **ext4**. The stick gets one partition (MBR) so every computer, camera and TV can read it.
 - The disks in the bays are never mounted automatically; the USB functions do not touch them.
 
+## 14. Time and languages
+
+- **System → Time:** the box's clock runs live in its time zone. Change the time zone, switch NTP off and on, enter own time servers (e.g. `fritz.box`), *Sync now*. With NTP off the clock can be set by hand or taken from the browser. Logs then show the local time.
+- **System → Appearance → Language:** 10 languages (English, German, Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian). Arabic switches the page to right to left. Translations other than German/English are machine-made – please report mistakes.
+
 ## Back to Alt-F
 
 1. Have the Alt-F `.bin` for the DNS-320L ready (e.g. `Alt-F-1.0-DNS-320L-rev-A.bin`).

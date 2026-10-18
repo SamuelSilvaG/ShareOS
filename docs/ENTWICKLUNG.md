@@ -93,6 +93,8 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 13:34 | Frage: Lässt sich ShareOS über eine alte D-Link- oder Alt-F-Firmware flashen? Jan: „Ja gerne, kompatible bin über Oberfläche, Subsystem-Installation über USB-Stick.“ Die ShareOS-`.bin` installiert beim ersten Start das System selbst – vom USB-Stick oder von GitHub –, und unter System → Firmware lässt sich eine Alt-F-`.bin` einspielen, um zurückzuwechseln. Getestet im Emulator mit nachgebautem Flash, beschädigten und fremden Paketen. |
 | 15:02 | Jan meldet: Meldungen wie „Letztes Update: erfolgreich installiert“ und „Einrichtung fehlgeschlagen: wipefs sdc failed“ lassen sich nicht schließen. Sie bekommen ein **x**, die Box vergisst sie danach; die Fehlermeldung beim Löschen einer Platte nennt jetzt den Grund. |
 | 15:10 | Jan: USB-Sticks sicher entfernen, und beim Formatieren soll das **Dateisystem** wählbar sein – für Sticks und Platten. Für die Platten wählt er ext4, Btrfs, exFAT und NTFS, für USB exFAT, FAT32, NTFS und ext4. USB-Laufwerke werden beim Einstecken eingehängt und haben „Sicher entfernen“ und „Formatieren“. |
+| 16:20 | Jan testet `beta.6`: Der APPS-Bereich wirft Admins raus – die Funktionen fehlten in den Zugriffsregeln; ein neuer CI-Check prüft jetzt, dass jede Funktion abgedeckt ist. Das Protokoll stand in UTC (musl schreibt UTC-Zeitstempel), jetzt in Ortszeit. |
+| 16:30 | Jan wünscht **Zeiteinstellungen unter System** und die **10 häufigsten Sprachen**. Neue Seite System → Zeit (Zeitzone, NTP mit eigenen Servern, Uhr von Hand) und acht neue Sprachen von Claude übersetzt, Arabisch mit Rechts-nach-links-Layout. |
 
 ## Bemerkenswerte Problemlösungen
 

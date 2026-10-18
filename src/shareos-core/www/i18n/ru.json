@@ -1,0 +1,1780 @@
+{
+	"language": "ru",
+	"name": "Русский",
+	"source": "de",
+	"exact": {
+		"ÜBERSICHT": "ОБЗОР",
+		"SPEICHER": "ХРАНИЛИЩЕ",
+		"FREIGABEN": "ОБЩИЕ ПАПКИ",
+		"DIENSTE": "СЛУЖБЫ",
+		"APPS": "ПРИЛОЖЕНИЯ",
+		"CLOUD": "ОБЛАКО",
+		"PAPERLESS": "PAPERLESS",
+		"SYSTEM": "СИСТЕМА",
+		"NEU": "НОВОЕ",
+		"ONLINE": "В СЕТИ",
+		"OFFLINE": "НЕ В СЕТИ",
+		"Abmelden": "Выйти",
+		"Hell/Dunkel umschalten": "Светлая/тёмная тема",
+		"Hauptmenü": "Главное меню",
+		"System": "Система",
+		"verfügbar": "доступно",
+		"Die ShareOS-Oberfläche braucht JavaScript.": "Для интерфейса ShareOS нужен JavaScript.",
+		"Verwaltung – bitte anmelden.": "Администрирование – войдите в систему.",
+		"BENUTZER": "ПОЛЬЗОВАТЕЛЬ",
+		"PASSWORT": "ПАРОЛЬ",
+		"Angemeldet bleiben (7 Tage)": "Оставаться в системе (7 дней)",
+		"Anmelden": "Войти",
+		"Benutzer oder Passwort falsch.": "Неверный пользователь или пароль.",
+		"Box nicht erreichbar.": "Устройство недоступно.",
+		"Sitzung abgelaufen – bitte neu anmelden.": "Сеанс истёк – войдите снова.",
+		"live · alle 5 s": "в реальном времени · каждые 5 с",
+		"AUSLASTUNG": "НАГРУЗКА",
+		"Gerätesteuerung aktiv": "управление платой активно",
+		"keine MCU-Daten": "нет данных MCU",
+		"LÜFTER": "ВЕНТИЛЯТОР",
+		"TEMP": "ТЕМП.",
+		"aus": "выкл.",
+		"halb": "половина",
+		"voll": "полная",
+		"kein Link": "нет связи",
+		"letzte 10 min": "последние 10 мин",
+		"Gateway · DNS": "Шлюз · DNS",
+		"sammle Messwerte …": "сбор данных …",
+		"Firmware": "Прошивка",
+		"Start aus": "Загружено из",
+		"Flash (UBI)": "Flash (UBI)",
+		"Netzwerk (RAM)": "Сеть (RAM)",
+		"Einstellungen bleiben erhalten": "Настройки сохраняются",
+		"Änderungen gehen beim Neustart verloren": "Изменения теряются при перезагрузке",
+		"Laufzeit": "Время работы",
+		"seit dem letzten Start": "с последней загрузки",
+		"Dienste": "Службы",
+		"laufen": "работают",
+		"Flash frei": "Свободно во flash",
+		"für Einstellungen & Pakete": "для настроек и пакетов",
+		"Laufwerke": "Накопители",
+		"erkannt": "обнаружено",
+		"keine eingesteckt": "не подключены",
+		"alle verwalten": "управлять всеми",
+		"Update verfügbar": "Доступно обновление",
+		"Lade Systemdaten …": "Загрузка данных системы …",
+		"Lade Dienste …": "Загрузка служб …",
+		"Lade Laufwerke …": "Загрузка накопителей …",
+		"Keine Festplatte und kein USB-Speicher erkannt. ShareOS läuft vollständig aus dem internen Flash – Laufwerke erscheinen hier, sobald sie eingesteckt sind.": "Жёсткие диски и USB-накопители не обнаружены. ShareOS работает полностью из встроенной flash-памяти – накопители появятся здесь сразу после подключения.",
+		"unbekanntes Modell": "неизвестная модель",
+		"Start, Stopp, Neustart": "запуск, остановка, перезапуск",
+		"Neustart": "Перезапустить",
+		"Stopp": "Остановить",
+		"Starten": "Запустить",
+		"SSH / SFTP": "SSH / SFTP",
+		"Weboberfläche": "Веб-интерфейс",
+		"Zeit (NTP)": "Время (NTP)",
+		"Zeitplaner": "Планировщик",
+		"API (rpcd)": "API (rpcd)",
+		"Systembus (ubus)": "Системная шина (ubus)",
+		"Systemprotokoll": "Системный журнал",
+		"Gerätesteuerung": "Управление платой",
+		"stellt die Uhr, gleicht die MCU-Uhr ab": "устанавливает время, синхронизирует часы MCU",
+		"Schnittstelle für diese Oberfläche": "интерфейс для этой веб-страницы",
+		"Nachrichten zwischen den Diensten": "сообщения между службами",
+		"syslogd, im RAM": "syslogd, в RAM",
+		"Lüfter, Temperatur, Taster, MCU-Uhr": "вентилятор, температура, кнопки, часы MCU",
+		"Dieser Bereich ist noch nicht gebaut. Geplant:": "Этот раздел ещё не готов. Планируется:",
+		"FREIGABEN, BENUTZER & GRUPPEN": "ОБЩИЕ ПАПКИ, ПОЛЬЗОВАТЕЛИ И ГРУППЫ",
+		"APPS & PAKETE": "ПРИЛОЖЕНИЯ И ПАКЕТЫ",
+		"CLOUD-SPEICHER": "ОБЛАЧНОЕ ХРАНИЛИЩЕ",
+		"PAPERLESS-NGX": "PAPERLESS-NGX",
+		"Freigaben je Ordner mit Schaltern für SMB, NFS, FTP und DLNA": "Общие папки с переключателями для SMB, NFS, FTP и DLNA",
+		"Benutzer & Gruppen mit Rechten pro Freigabe": "Пользователи и группы с правами на каждую папку",
+		"Netzlaufwerke einbinden (CIFS/NFS)": "Подключение сетевых дисков (CIFS/NFS)",
+		"Backup-Jobs (rsync)": "Задания резервного копирования (rsync)",
+		"Paketquelle (opkg-Feed) über GitHub": "Источник пакетов (фид opkg) на GitHub",
+		"Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange": "Каталог с категориями, установка/удаление через очередь",
+		"Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte": "Пакеты ставятся в настройки и пакеты (flash) или на диск",
+		"Konten über rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP": "Учётные записи через rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP",
+		"Sync-Jobs: kopieren, spiegeln, bidirektional": "Задания синхронизации: копирование, зеркало, в обе стороны",
+		"Verschlüsselung (crypt), Bandbreite und Zeitplan": "Шифрование (crypt), ограничение скорости и расписание",
+		"Eingangsordner auf dem NAS → Upload über die Paperless-REST-API (Token)": "Папка входящих на NAS → загрузка через REST API Paperless (токен)",
+		"Status der Übertragungen über /api/tasks/": "Состояние передачи через /api/tasks/",
+		"Tags und Korrespondent je Ordner, Export-Backup aufs NAS": "Теги и корреспондент для каждой папки, экспорт резервной копии на NAS",
+		"VOLUMES": "ТОМА",
+		"LAUFWERKE": "НАКОПИТЕЛИ",
+		"EINSTELLUNGEN": "НАСТРОЙКИ",
+		"RUHEZUSTAND": "ОСТАНОВ ДИСКОВ",
+		"NEU EINRICHTEN": "НАСТРОИТЬ ЗАНОВО",
+		"PLATTEN ABSCHALTEN NACH": "ОСТАНАВЛИВАТЬ ДИСКИ ЧЕРЕЗ",
+		"nie": "никогда",
+		"10 Minuten": "10 минут",
+		"20 Minuten": "20 минут",
+		"30 Minuten": "30 минут",
+		"1 Stunde": "1 час",
+		"2 Stunden": "2 часа",
+		"Swap": "Swap",
+		"Apps-Bereich": "Область приложений",
+		"noch keiner": "пока нет",
+		"keiner aktiv": "нет активных",
+		"noch keine": "пока нет",
+		"Spart Strom und schont die Platten. Beim ersten Zugriff laufen sie wieder an (einige Sekunden).": "Экономит энергию и ресурс. Диски раскручиваются при следующем обращении (несколько секунд).",
+		"Der Assistent löscht die ausgewählten Platten und richtet sie neu ein. Einzelne Platten lassen sich auch direkt an der Platte unter „Laufwerke“ formatieren.": "Мастер стирает выбранные диски и настраивает их заново. Отдельные диски можно также отформатировать прямо в разделе «Накопители».",
+		"Assistent starten": "Запустить мастер",
+		"Speicher einrichten": "Настроить хранилище",
+		"INTERNER FLASH": "ВСТРОЕННАЯ FLASH",
+		"128 MB NAND · UBI": "128 МБ NAND · UBI",
+		"BEREICH": "ОБЛАСТЬ",
+		"EINGEHÄNGT": "СМОНТИРОВАНО",
+		"BELEGT": "ЗАНЯТО",
+		"Einstellungen & Pakete": "Настройки и пакеты",
+		"System (nur lesbar)": "Система (только чтение)",
+		"Arbeitsspeicher (tmp)": "RAM (tmp)",
+		"Aushängen": "Отмонтировать",
+		"Einhängen": "Смонтировать",
+		"Entfernen": "Удалить",
+		"SMART lesen": "Прочитать SMART",
+		"Löschen & formatieren": "Стереть и отформатировать",
+		"Spiegel (RAID 1)": "Зеркало (RAID 1)",
+		"Einzelnes Laufwerk": "Отдельный диск",
+		"SMART noch nicht gelesen": "SMART ещё не прочитан",
+		"schläft (SMART beim nächsten Aufwachen)": "в режиме сна (SMART при пробуждении)",
+		"no SMART data": "нет данных SMART",
+		"SMART OK": "SMART в норме",
+		"SMART WARNUNG": "ПРЕДУПРЕЖДЕНИЕ SMART",
+		"SMART FEHLER": "ОШИБКА SMART",
+		"leer": "пусто",
+		"ohne Dateisystem": "нет файловой системы",
+		"nicht eingehängt": "не смонтирован",
+		"Dateisystem nicht gefunden": "файловая система не найдена",
+		"wartet": "ожидание",
+		"Pakete und App-Daten liegen in .shareos": "Пакеты и данные приложений лежат в .shareos",
+		"Noch kein Speicher eingerichtet. Der Assistent richtet die Platten in wenigen Schritten ein – als Spiegel (beide Platten mit denselben Daten) oder als getrennte Laufwerke.": "Хранилище ещё не настроено. Мастер настроит диски за несколько шагов – как зеркало (оба диска хранят одни и те же данные) или как отдельные тома.",
+		"SPEICHER EINRICHTEN · ASSISTENT": "НАСТРОЙКА ХРАНИЛИЩА · МАСТЕР",
+		"Abbrechen": "Отмена",
+		"Platten": "Диски",
+		"Aufbau": "Схема",
+		"Name": "Имя",
+		"Bestätigen": "Подтверждение",
+		"Zurück": "Назад",
+		"Weiter": "Далее",
+		"Einrichten": "Настроить",
+		"Welche Platten sollen eingerichtet werden?": "Какие диски настроить?",
+		"Alles auf diesen Platten wird gelöscht.": "Всё на этих дисках будет стёрто.",
+		"Spiegel (RAID 1) – empfohlen": "Зеркало (RAID 1) – рекомендуется",
+		"Zwei getrennte Laufwerke": "Два отдельных тома",
+		"AUSLAGERUNGSSPEICHER (SWAP) JE PLATTE": "SWAP НА ДИСК",
+		"1 GB – empfohlen": "1 ГБ – рекомендуется",
+		"keiner": "нет",
+		"Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.": "У устройства всего 256 МБ RAM. Swap на дисках сглаживает пики нагрузки (общие папки, синхронизация с облаком, установка пакетов). Это небольшой раздел в начале каждого диска; остальное становится томом.",
+		"NAME DES SPIEGELS": "ИМЯ ЗЕРКАЛА",
+		"LAUFWERK": "ТОМ",
+		"PLATTEN": "ДИСКИ",
+		"GRÖSSE": "РАЗМЕР",
+		"AUFBAU": "СХЕМА",
+		"Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als": "Строчные буквы, цифры, - и _ (не более 16 символов). Том появится как",
+		"; Freigaben legst du später darauf an.": "; общие папки создаются потом.",
+		"Platten löschen und einrichten?": "Стереть и настроить диски?",
+		"Löschen & einrichten": "Стереть и настроить",
+		"Einrichtung gestartet.": "Настройка запущена.",
+		"Formatieren gestartet.": "Форматирование запущено.",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen):": "Имя нового тома (a–z, 0–9, - и _, не более 16 символов):",
+		"Bitte mindestens eine Platte auswählen.": "Выберите хотя бы один диск.",
+		"Höchstens zwei Platten.": "Не более двух дисков.",
+		"Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.": "Недопустимое имя: только a–z, 0–9, - и _, не более 16 символов.",
+		"Die Namen müssen verschieden sein.": "Имена должны различаться.",
+		"Ungültiger Name.": "Недопустимое имя.",
+		"Ruhezustand gespeichert.": "Останов дисков сохранён.",
+		"FIRMWARE": "ПРОШИВКА",
+		"ALLGEMEIN": "ОБЩЕЕ",
+		"ENERGIE & RESET": "ПИТАНИЕ И СБРОС",
+		"PROTOKOLLE": "ЖУРНАЛЫ",
+		"DARSTELLUNG": "ОФОРМЛЕНИЕ",
+		"ÜBER": "О СИСТЕМЕ",
+		"FIRMWARE-UPDATE": "ОБНОВЛЕНИЕ ПРОШИВКИ",
+		"Installiert": "Установлено",
+		"Kernel, Startsystem und System": "Ядро, initramfs и система",
+		"noch nicht geprüft": "ещё не проверено",
+		"aktuell": "актуально",
+		"noch kein Release für dieses Gerät": "для этого устройства пока нет выпуска",
+		"keine": "нет",
+		"UPDATE-KANAL": "КАНАЛ ОБНОВЛЕНИЙ",
+		"Stabil (Releases)": "Стабильный (выпуски)",
+		"Beta (auch Pre-Releases)": "Бета (включая предварительные выпуски)",
+		"Jetzt prüfen": "Проверить сейчас",
+		"Prüfe …": "Проверка …",
+		"VERSIONEN": "ВЕРСИИ",
+		"von GitHub": "с GitHub",
+		"VERSION": "ВЕРСИЯ",
+		"DATUM": "ДАТА",
+		"KANAL": "КАНАЛ",
+		"STABIL": "СТАБИЛЬНЫЙ",
+		"BETA": "БЕТА",
+		"installiert": "установлена",
+		"Laden": "Скачать",
+		"Notes ↗": "Заметки ↗",
+		"SO LÄUFT EIN UPDATE": "КАК ПРОХОДИТ ОБНОВЛЕНИЕ",
+		"Paket von GitHub laden und prüfen (SHA-256, Gerät, Größen)": "Скачать пакет с GitHub и проверить его (SHA-256, устройство, размеры)",
+		"Kernel und Startsystem in den Flash schreiben und zurücklesen": "Записать ядро и initramfs во flash и прочитать обратно",
+		"Neues System bereitlegen": "Подготовить новую систему",
+		"Neustart: das Startsystem installiert das System, dann startet ShareOS neu": "Перезагрузка: initramfs устанавливает систему, затем ShareOS запускается снова",
+		"Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.": "Настройки и установленные пакеты сохраняются. При прерывании установка повторяется при следующей загрузке.",
+		"Herunterladen": "Загрузка",
+		"Prüfen": "Проверка",
+		"Bereit": "Готово",
+		"Schreiben": "Запись",
+		"Verwerfen": "Отбросить",
+		"Fehler:": "Ошибка:",
+		"Letztes Update:": "Последнее обновление:",
+		"Neustart nötig": "Нужна перезагрузка",
+		"Jetzt neu starten": "Перезагрузить сейчас",
+		"Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Проверено: SHA-256, контрольные суммы всех частей, сделано для этого устройства. Настройки и пакеты сохраняются.",
+		"ShareOS ist aktuell.": "ShareOS обновлена.",
+		"Update geladen und geprüft.": "Обновление скачано и проверено.",
+		"Update geschrieben – bitte neu starten.": "Обновление записано – перезагрузите устройство.",
+		"Update installieren?": "Установить обновление?",
+		"Installieren": "Установить",
+		"GERÄTENAME": "ИМЯ УСТРОЙСТВА",
+		"HOSTNAME": "ИМЯ ХОСТА",
+		"Speichern": "Сохранить",
+		"NEUES PASSWORT": "НОВЫЙ ПАРОЛЬ",
+		"WIEDERHOLEN": "ПОВТОР",
+		"Passwort ändern": "Сменить пароль",
+		"Buchstaben, Ziffern und Bindestrich. Gilt sofort, der DHCP-Server sieht ihn bei der nächsten Verlängerung.": "Буквы, цифры и дефис. Действует сразу; DHCP-сервер увидит его при следующем продлении аренды.",
+		"Gilt für die Weboberfläche und SSH. Mindestens 6 Zeichen.": "Действует для веб-интерфейса и SSH. Не менее 6 символов.",
+		"Hostname gespeichert.": "Имя хоста сохранено.",
+		"Passwort geändert.": "Пароль изменён.",
+		"Die Passwörter stimmen nicht überein.": "Пароли не совпадают.",
+		"ENERGIE": "ПИТАНИЕ",
+		"Ausschalten": "Выключить",
+		"Beim Ausschalten fährt ShareOS herunter und die Gerätesteuerung schaltet den Strom ab. Einschalten über den Power-Taster.": "При выключении ShareOS завершает работу, а управление платой отключает питание. Включение – кнопкой питания.",
+		"WERKSEINSTELLUNGEN": "СБРОС К ЗАВОДСКИМ НАСТРОЙКАМ",
+		"löscht Einstellungen": "стирает настройки",
+		"Auf Werkseinstellungen zurücksetzen": "Сбросить к заводским настройкам",
+		"Entfernt alle Einstellungen und installierten Pakete aus dem Flash und startet neu. Das System selbst und die Firmware-Version bleiben. Danach gilt wieder das Passwort": "Удаляет из flash все настройки и установленные пакеты и перезагружает устройство. Система и версия прошивки остаются. После этого пароль снова",
+		"Neu starten?": "Перезагрузить?",
+		"Neu starten": "Перезагрузить",
+		"Die Box startet neu. Die Seite verbindet sich danach von selbst wieder (ca. 1–2 Minuten).": "Устройство перезагружается. Страница подключится сама (примерно 1–2 минуты).",
+		"Ausschalten?": "Выключить?",
+		"ShareOS fährt herunter und die Box schaltet sich aus. Einschalten danach nur am Gerät.": "ShareOS завершает работу, устройство выключается. Включить снова можно на самом устройстве.",
+		"Werkseinstellungen?": "Сбросить к заводским настройкам?",
+		"Zurücksetzen": "Сбросить",
+		"Alle Einstellungen und installierten Pakete werden gelöscht, danach startet die Box neu. Das Passwort ist dann wieder „shareos“.": "Все настройки и установленные пакеты стираются, затем устройство перезагружается. После этого пароль снова «shareos».",
+		"Neustart läuft": "Перезагрузка",
+		"ShareOS startet neu": "ShareOS перезапускается",
+		"Box wird ausgeschaltet": "Устройство выключается",
+		"Du kannst dieses Fenster schließen.": "Это окно можно закрыть.",
+		"Dienst wird neu gestartet": "Служба перезапускается",
+		"warte auf die Box": "ожидание устройства",
+		"Werkseinstellungen": "Заводские настройки",
+		"PROTOKOLL": "ЖУРНАЛ",
+		"Quelle": "Источник",
+		"System (syslog)": "Система (syslog)",
+		"Kernel (dmesg)": "Ядро (dmesg)",
+		"Aktualisieren": "Обновить",
+		"lade …": "загрузка …",
+		"(leer)": "(пусто)",
+		"nur in diesem Browser": "только в этом браузере",
+		"Helles Design": "Светлая тема",
+		"Scanlines": "Строки развёртки",
+		"LOGO": "ЛОГОТИП",
+		"gilt für alle": "для всех",
+		"ShareOS-Logo anzeigen (aus: nur Schriftzug)": "Показывать логотип ShareOS (выкл.: только текст)",
+		"SPRACHE": "ЯЗЫК",
+		"Akzentfarbe Grün": "Акцентный цвет зелёный",
+		"Akzentfarbe Rot": "Акцентный цвет красный",
+		"Akzentfarbe Blau": "Акцентный цвет синий",
+		"Akzentfarbe Weiß": "Акцентный цвет белый",
+		"Version": "Версия",
+		"Stufe": "Стадия",
+		"Gerät": "Устройство",
+		"Firmware-Name": "Имя прошивки",
+		"PROJEKT": "ПРОЕКТ",
+		"ShareOS ist eine freie Firmware für D-Link-NAS, hervorgegangen aus Alt-F. Basis: buildroot, Linux, BusyBox; Bedienkonzept nach OpenWrt (UCI, ubus, rpcd, ucode). Lizenz GPLv2.": "ShareOS – свободная прошивка для NAS-устройств D-Link, основанная на Alt-F. Построена на buildroot, Linux и BusyBox; устроена по образцу OpenWrt (UCI, ubus, rpcd, ucode). Лицензия GPLv2.",
+		"Einrichtung läuft": "Идёт настройка",
+		"Box nicht ausschalten.": "Не выключайте устройство.",
+		"Einrichtung fehlgeschlagen:": "Настройка не удалась:",
+		"HTTPS": "HTTPS",
+		"VERBINDUNG": "ПОДКЛЮЧЕНИЕ",
+		"diese Seite: HTTPS": "эта страница: HTTPS",
+		"diese Seite: HTTP": "эта страница: HTTP",
+		"HTTPS auf Port 443": "HTTPS на порту 443",
+		"HTTP-Aufrufe auf HTTPS umleiten": "Перенаправлять запросы HTTP на HTTPS",
+		"Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.": "После изменения веб-сервер перезапускается; страница ненадолго недоступна.",
+		"ZERTIFIKAT": "СЕРТИФИКАТ",
+		"selbstsigniert": "самоподписанный",
+		"eigenes Zertifikat": "собственный сертификат",
+		"Noch kein Zertifikat – es wird beim Einschalten von HTTPS automatisch erstellt.": "Сертификата пока нет – он создаётся автоматически при включении HTTPS.",
+		"Ausgestellt für": "Выдан для",
+		"Aussteller": "Издатель",
+		"Gültig ab": "Действует с",
+		"Gültig bis": "Действует до",
+		"Namen": "Имена",
+		"Browser warnen bei selbstsignierten Zertifikaten einmalig. Die Verbindung ist trotzdem verschlüsselt; für eine Seite ohne Warnung ein eigenes Zertifikat hinterlegen (z. B. von der eigenen Intranet-CA oder Let's Encrypt).": "Браузеры один раз предупреждают о самоподписанных сертификатах. Соединение всё равно зашифровано; для страницы без предупреждения загрузите свой сертификат (например, от CA вашей интрасети или Let's Encrypt).",
+		"Neues selbstsigniertes Zertifikat": "Новый самоподписанный сертификат",
+		"EIGENES ZERTIFIKAT HINTERLEGEN": "ЗАГРУЗИТЬ СВОЙ СЕРТИФИКАТ",
+		"ZERTIFIKAT (PEM, GERNE MIT ZWISCHENZERTIFIKATEN)": "СЕРТИФИКАТ (PEM, МОЖНО С ПРОМЕЖУТОЧНЫМИ)",
+		"PRIVATER SCHLÜSSEL (PEM, OHNE PASSWORT)": "ЗАКРЫТЫЙ КЛЮЧ (PEM, БЕЗ ПАРОЛЯ)",
+		"Vor dem Übernehmen wird geprüft, ob Zertifikat und Schlüssel zusammenpassen. Der Schlüssel verlässt die Box nicht.": "Перед использованием устройство проверяет, что сертификат и ключ подходят друг к другу. Ключ никогда не покидает устройство.",
+		"Zertifikat übernehmen": "Использовать сертификат",
+		"Zertifikat übernommen.": "Сертификат установлен.",
+		"Zertifikat erstellt.": "Сертификат создан.",
+		"Neues selbstsigniertes Zertifikat?": "Новый самоподписанный сертификат?",
+		"Erstellen": "Создать",
+		"Ein neues Zertifikat für den aktuellen Namen und die aktuelle IP wird erstellt und ersetzt das bisherige. Browser zeigen danach einmalig wieder eine Warnung.": "Создаётся новый сертификат для текущего имени и IP, он заменяет старый. Браузеры снова один раз покажут предупреждение.",
+		"Gespeichert – der Webserver startet neu.": "Сохранено – веб-сервер перезапускается.",
+		"Lade …": "Загрузка …",
+		"SPRACHE DER OBERFLÄCHE": "ЯЗЫК ИНТЕРФЕЙСА",
+		"Weitere Sprachen: eine Datei in": "Другие языки: один файл в",
+		"– siehe docs/TRANSLATING.md.": "– см. docs/TRANSLATING.md.",
+		"AUS UNTER (°C, 0 = NIE)": "ВЫКЛ. НИЖЕ (°C, 0 = НИКОГДА)",
+		"VOLL AB (°C)": "ПОЛНАЯ ОТ (°C)",
+		"ZURÜCK AUF HALB UNTER (°C)": "СНОВА ПОЛОВИНА НИЖЕ (°C)",
+		"Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.": "Всё можно настроить позже в разделе «Система». Пароль остаётся «shareos», пока вы его не смените.",
+		"Alt-F": "Alt-F",
+		"Alt-F übernehmen": "Перенести из Alt-F",
+		"Auch Testversionen, mit neuen Funktionen früher.": "Также тестовые версии, с новыми функциями раньше.",
+		"Auf dieser Box wurden Einstellungen von": "На этом устройстве есть настройки из",
+		"gefunden": "",
+		"Ausgewogen": "Сбалансированный",
+		"Benutzer": "Пользователь",
+		"Freigaben": "Общие папки",
+		"NFS": "NFS",
+		"Benutzer und Freigaben werden aufbewahrt und mit dem Bereich „Freigaben“ angeboten. Die Alt-F-Daten im Flash bleiben unverändert.": "Пользователи и общие папки сохраняются и предлагаются в разделе «Общие папки». Данные Alt-F во flash не затрагиваются.",
+		"Beta": "Бета",
+		"Stabil": "Стабильный",
+		"Danach kannst du gleich die Festplatten einrichten.": "Затем можно сразу настроить жёсткие диски.",
+		"Das Standardpasswort": "Пароль по умолчанию известен всем",
+		"kennt jeder – bitte jetzt ein eigenes setzen. Es gilt für die Weboberfläche und SSH.": "– задайте сейчас свой. Он действует для веб-интерфейса и SSH.",
+		"Die Box regelt den Lüfter in drei Stufen (aus, halb, voll) nach der Temperatur der Gerätesteuerung. Änderungen gelten nach wenigen Sekunden.": "Устройство управляет вентилятором в три ступени (выкл., половина, полная) по температуре платы. Изменения вступают в силу за несколько секунд.",
+		"Die orange USB-LED zeigt den Rettungsmodus und Updates beim Start an und ist nicht einstellbar.": "Оранжевый USB-светодиод показывает режим восстановления и обновления при загрузке, его нельзя настроить.",
+		"ERSTEINRICHTUNG": "ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА",
+		"Eigene Werte": "Свои значения",
+		"Ersteinrichtung abgeschlossen.": "Первоначальная настройка завершена.",
+		"Ersteinrichtung erneut starten": "Запустить первоначальную настройку снова",
+		"Ersteinrichtung überspringen?": "Пропустить первоначальную настройку?",
+		"Fertig": "Готово",
+		"Fertig & Speicher einrichten": "Готово и настроить хранилище",
+		"Gerätename": "Имя устройства",
+		"Gerätename, Zeitzone und Lüfter übernehmen": "Перенести имя, часовой пояс и вентилятор",
+		"Herzschlag (ShareOS läuft)": "Пульс (ShareOS работает)",
+		"Kühl": "Прохладно",
+		"Leise": "Тихо",
+		"LEDS": "СВЕТОДИОДЫ",
+		"LÜFTER & LEDS": "ВЕНТИЛЯТОР И СВЕТОДИОДЫ",
+		"Lüfter": "Вентилятор",
+		"Leer lassen, um das Passwort später zu ändern.": "Оставьте пустым, чтобы сменить пароль позже.",
+		"Lüfter läuft immer, voll ab 45 °C": "Вентилятор работает всегда, полная от 45 °C",
+		"Lüfter läuft immer, voll ab 50 °C": "Вентилятор работает всегда, полная от 50 °C",
+		"Lüfter steht unter 40 °C, voll ab 55 °C": "Вентилятор стоит ниже 40 °C, полная от 55 °C",
+		"Name & Zeit": "Имя и время",
+		"Nur fertige Versionen – empfohlen.": "Только готовые версии – рекомендуется.",
+		"PLATTEN-LEDS (ROT)": "СВЕТОДИОДЫ ДИСКОВ (КРАСНЫЕ)",
+		"POWER-LED": "СВЕТОДИОД ПИТАНИЯ",
+		"STATUS-LED (BLAU)": "СВЕТОДИОД СОСТОЯНИЯ (СИНИЙ)",
+		"Passwort": "Пароль",
+		"Plattenzugriffe anzeigen": "Показывать обращения к дискам",
+		"Sprache": "Язык",
+		"Temperaturen selbst festlegen": "Задать температуры самому",
+		"Unter diesem Namen erscheint die Box im Netzwerk. Die Uhr stellt sich per NTP selbst.": "Под этим именем устройство видно в сети. Время устанавливается само по NTP.",
+		"Update-Kanal": "Канал обновлений",
+		"Updates": "Обновления",
+		"Updates kommen von GitHub und werden unter System → Firmware installiert.": "Обновления приходят с GitHub и устанавливаются в разделе «Система → Прошивка».",
+		"Willkommen bei ShareOS. In wenigen Schritten ist die Box eingerichtet; alles lässt sich später unter": "Добро пожаловать в ShareOS. Устройство настраивается за несколько шагов; всё можно изменить позже в разделе",
+		"ändern.": ".",
+		"ZEITZONE": "ЧАСОВОЙ ПОЯС",
+		"Zeitzone": "Часовой пояс",
+		"blinkt": "мигает",
+		"an": "вкл.",
+		"sofort aktiv": "действует сразу",
+		"wird geändert": "будет изменено",
+		"bleibt (später ändern)": "остаётся (изменить позже)",
+		"ja": "да",
+		"nein": "нет",
+		"Überspringen": "Пропустить",
+		"Lüfter gespeichert.": "Вентилятор сохранён.",
+		"LED gespeichert.": "Светодиод сохранён.",
+		"Ungültiger Gerätename.": "Недопустимое имя устройства.",
+		"Das Passwort braucht mindestens 6 Zeichen.": "Пароль должен содержать не менее 6 символов.",
+		"Paket wird erneut geprüft …": "Повторная проверка пакета …",
+		"System wird für den Neustart bereitgelegt …": "Подготовка системы к перезагрузке …",
+		"Startsystem: Flash wird gelöscht …": "Загрузочная система: стирание flash …",
+		"Startsystem wird geschrieben …": "Запись загрузочной системы …",
+		"Startsystem wird geprüft …": "Проверка загрузочной системы …",
+		"Kernel: Flash wird gelöscht …": "Ядро: стирание flash …",
+		"Kernel wird geschrieben …": "Запись ядра …",
+		"Kernel wird geprüft …": "Проверка ядра …",
+		"Wird gestartet …": "Запуск …",
+		"nicht ausschalten": "не выключайте",
+		", das dauert etwa 1–2 Minuten.": ", это занимает около 1–2 минут.",
+		"Paket wird geprüft …": "Проверка пакета …",
+		"SHA-256 und Inhalt, dauert etwa eine halbe Minute.": "SHA-256 и содержимое, около полуминуты.",
+		"– das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).": "– новая система устанавливается при следующем запуске (около 1 минуты, не выключайте устройство).",
+		"NETZWERK": "СЕТЬ",
+		"ADRESSE": "АДРЕС",
+		"AKTUELL": "ТЕКУЩЕЕ",
+		"AKZENTFARBE": "АКЦЕНТНЫЙ ЦВЕТ",
+		"BEIM START": "ПРИ ЗАГРУЗКЕ",
+		"BESCHREIBUNG": "ОПИСАНИЕ",
+		"DIENST": "СЛУЖБА",
+		"HELL ODER DUNKEL": "СВЕТЛАЯ ИЛИ ТЁМНАЯ",
+		"HTTPS & ZERTIFIKAT": "HTTPS И СЕРТИФИКАТ",
+		"JETZT": "СЕЙЧАС",
+		"KENNZAHL": "ПАРАМЕТР",
+		"WERT": "ЗНАЧЕНИЕ",
+		"HINWEIS": "ПРИМЕЧАНИЕ",
+		"ART": "ТИП",
+		"MODELL": "МОДЕЛЬ",
+		"ZUSTAND": "СОСТОЯНИЕ",
+		"INHALT": "СОДЕРЖИМОЕ",
+		"IP-ADRESSE": "IP-АДРЕС",
+		"SUBNETZMASKE": "МАСКА ПОДСЕТИ",
+		"DNS-SERVER (KOMMA-GETRENNT)": "DNS-СЕРВЕРЫ (ЧЕРЕЗ ЗАПЯТУЮ)",
+		"Automatisch (DHCP) – vom Router": "Автоматически (DHCP) – от маршрутизатора",
+		"Feste Adresse": "Статический адрес",
+		"statisch": "статический",
+		"Dunkel": "Тёмная",
+		"Hell": "Светлая",
+		"Wie das Betriebssystem (automatisch)": "Как в операционной системе (автоматически)",
+		"Grün": "Зелёный",
+		"Rot": "Красный",
+		"Blau": "Синий",
+		"Weiß": "Белый",
+		"Logo und Browser-Symbol nehmen die Akzentfarbe an. Die Einstellung gilt für alle, auch für die Anmeldeseite.": "Логотип и значок браузера принимают акцентный цвет. Настройка действует для всех, включая страницу входа.",
+		"Scanlines (nur in diesem Browser)": "Строки развёртки (только в этом браузере)",
+		"Übernehmen": "Применить",
+		"verbunden": "подключено",
+		"keine Adresse": "нет адреса",
+		"ändern": "изменить",
+		"Verbindung": "Подключение",
+		"Gilt ab dem nächsten Start. Laufende Dienste startest und stoppst du unter „Status“. Gerätesteuerung, Systembus, API und Weboberfläche starten immer, sonst wäre die Box nicht mehr bedienbar.": "Действует со следующего запуска. Работающие службы запускаются и останавливаются в разделе «Состояние». Управление устройством, системная шина, API и веб-интерфейс запускаются всегда, иначе устройством нельзя было бы управлять.",
+		"welche Dienste beim Einschalten starten": "какие службы запускаются при включении устройства",
+		"starten": "запускать",
+		"immer": "всегда",
+		"Ohne diesen Dienst ist die Box nicht bedienbar": "Без этой службы устройством нельзя управлять",
+		"Kachelansicht": "Плитки",
+		"Tabellenansicht": "Таблица",
+		"Neue Netzwerkeinstellungen warten auf Bestätigung": "Новые сетевые настройки ждут подтверждения",
+		"Behalten": "Оставить",
+		"Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.": "Последнее изменение не подтверждено; снова действуют прежние сетевые настройки.",
+		"Neue Netzwerkeinstellungen bestätigt.": "Новые сетевые настройки подтверждены.",
+		"Netzwerk ändern?": "Изменить сеть?",
+		"Netzwerk wird umgestellt": "Переключение сети",
+		"Netzwerk wird neu gestartet": "Перезапуск сети",
+		"Keine Verbindung – die Box sollte die alten Einstellungen wiederhergestellt haben. Seite neu laden.": "Нет связи – устройство должно было вернуть прежние настройки. Обновите страницу.",
+		"eine Platte fehlt": "нет одного диска",
+		"in Ordnung": "OK",
+		"Sync wartet": "Синхронизация ожидает",
+		"STATUS": "СОСТОЯНИЕ",
+		"AUTOSTART": "АВТОЗАПУСК",
+		"GRUPPEN": "ГРУППЫ",
+		"Administrator": "Администратор",
+		"Nur Freigaben": "Только общие папки",
+		"lesen & schreiben": "чтение и запись",
+		"nur lesen": "только чтение",
+		"kein Zugriff": "нет доступа",
+		"unbegrenzt": "без ограничений",
+		"Für Freigaben wird ein Laufwerk gebraucht – zuerst unter": "Общим папкам нужен том – сначала настройте его в разделе",
+		"einrichten.": ".",
+		"Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.": "Общих папок пока нет. Общая папка делает папку тома доступной в сети – из Windows, macOS и Linux.",
+		"Freigabe anlegen": "Создать общую папку",
+		"Neue Freigabe": "Новая общая папка",
+		"FREIGABE": "ОБЩАЯ ПАПКА",
+		"ORDNER": "ПАПКА",
+		"ZUGRIFF": "ДОСТУП",
+		"Laufwerk fehlt": "том отсутствует",
+		"noch niemand": "пока никого",
+		"SMB (WINDOWS, MACOS, LINUX)": "SMB (WINDOWS, MACOS, LINUX)",
+		"SMB-Freigaben anbieten": "Предоставлять общие папки по SMB",
+		"ARBEITSGRUPPE": "РАБОЧАЯ ГРУППА",
+		"Der SMB-Dienst startet automatisch, sobald es eine Freigabe gibt. Persönliche Ordner erscheinen als": "Служба SMB запускается автоматически, как только появляется общая папка. Личные папки видны как",
+		"NFS (LINUX, PROXMOX)": "NFS (LINUX, PROXMOX)",
+		"NFS-Freigaben anbieten": "Предоставлять общие папки по NFS",
+		"NFS kennt keine Benutzer: Zugriff bekommen die eingetragenen Rechner oder Netze. Dateien werden als": "У NFS нет учётных записей: доступ получают указанные компьютеры или сети. Файлы сохраняются как",
+		"gespeichert. Einbinden z. B. mit": ". Подключение, например, командой",
+		"kein Protokoll": "нет протокола",
+		"GAST": "ГОСТЬ",
+		"Bearbeiten": "Изменить",
+		"Löschen": "Удалить",
+		"Anlegen": "Создать",
+		"NEUE FREIGABE": "НОВАЯ ОБЩАЯ ПАПКА",
+		"NAME": "ИМЯ",
+		"ORDNER AUF DEM LAUFWERK": "ПАПКА НА ТОМЕ",
+		"wie der Name": "как имя",
+		"ZUGRIFF ÜBER SMB": "ДОСТУП ПО SMB",
+		"Über SMB freigeben (Windows, macOS, Linux)": "Открыть по SMB (Windows, macOS, Linux)",
+		"Gäste dürfen ohne Passwort lesen": "Гости могут читать без пароля",
+		"BENUTZER / GRUPPE": "ПОЛЬЗОВАТЕЛЬ / ГРУППА",
+		"RECHT": "ПРАВО",
+		"Noch keine Benutzer – unter": "Пользователей пока нет – создайте их в разделе",
+		"anlegen, oder Gastzugang erlauben.": "или разрешите гостевой доступ.",
+		"ZUGRIFF ÜBER NFS": "ДОСТУП ПО NFS",
+		"Über NFS freigeben": "Открыть по NFS",
+		"NFS-Clients dürfen schreiben": "Клиенты NFS могут записывать",
+		"NFS-CLIENTS (IP ODER NETZ, KOMMA-GETRENNT)": "КЛИЕНТЫ NFS (IP ИЛИ СЕТЬ, ЧЕРЕЗ ЗАПЯТУЮ)",
+		"Der Ordner wird angelegt, falls er fehlt. Beim Entfernen einer Freigabe bleiben Ordner und Dateien erhalten.": "Папка создаётся, если её нет. При удалении общей папки сама папка и файлы сохраняются.",
+		"kein Limit": "без ограничения",
+		"von": "из",
+		"Noch keine Benutzer. Ein Konto gilt überall: für Freigaben, die Weboberfläche und später für Apps und Cloud-Sync.": "Пользователей пока нет. Одна учётная запись подходит для всего: для общих папок, веб-интерфейса, а позже для приложений и синхронизации с облаком.",
+		"Benutzer anlegen": "Создать пользователя",
+		"Von Alt-F übernehmen": "Импорт из Alt-F",
+		"Neuer Benutzer": "Новый пользователь",
+		"ROLLE": "РОЛЬ",
+		"PERSÖNLICHER ORDNER": "ЛИЧНАЯ ПАПКА",
+		"kein persönlicher Ordner": "без личной папки",
+		"Rollen:": "Роли:",
+		"– alles, auch SSH.": "– всё, включая SSH.",
+		"– eigener Bereich „Mein ShareOS“ in der Weboberfläche.": "– собственный раздел «Мой ShareOS» в веб-интерфейсе.",
+		"– Zugriff auf Freigaben, keine Anmeldung an der Oberfläche. Das Konto": "– доступ к общим папкам, без входа в веб-интерфейс. Учётная запись",
+		"bleibt immer Administrator.": "всегда администратор.",
+		"· ohne Web": "· без веба",
+		"NEUER BENUTZER": "НОВЫЙ ПОЛЬЗОВАТЕЛЬ",
+		"BENUTZERNAME": "ИМЯ ПОЛЬЗОВАТЕЛЯ",
+		"VOLLER NAME": "ПОЛНОЕ ИМЯ",
+		"SPEICHERLIMIT JE LAUFWERK (GB, 0 = UNBEGRENZT)": "ЛИМИТ МЕСТА НА ТОМ (ГБ, 0 = БЕЗ ОГРАНИЧЕНИЯ)",
+		"Darf sich an der Weboberfläche anmelden („Mein ShareOS“)": "Может входить в веб-интерфейс («Мой ShareOS»)",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Имя пользователя: строчные буквы, цифры и _, начинается с буквы. Пароль используется для общих папок и – в зависимости от роли – для веб-интерфейса.",
+		"GRUPPE": "ГРУППА",
+		"MITGLIEDER": "УЧАСТНИКИ",
+		"Gruppen fassen Benutzer zusammen, z. B. „familie“ oder „medien“. Rechte an Freigaben lassen sich dann für die ganze Gruppe vergeben.": "Группы объединяют пользователей, например «семья» или «медиа». Права на общие папки можно выдавать всей группе.",
+		"Neue Gruppe": "Новая группа",
+		"Mitglieder legst du beim Benutzer fest (Benutzer → Bearbeiten).": "Участники задаются у пользователя (Пользователи → Изменить).",
+		"MEIN SHAREOS": "МОЙ SHAREOS",
+		"Noch nichts gespeichert.": "Пока ничего не сохранено.",
+		"Persönlicher Ordner": "Личная папка",
+		"Kein persönlicher Ordner eingerichtet.": "Личная папка не настроена.",
+		"PASSWORT ÄNDERN": "СМЕНА ПАРОЛЯ",
+		"AKTUELLES PASSWORT": "ТЕКУЩИЙ ПАРОЛЬ",
+		"Gilt für die Freigaben und diese Oberfläche.": "Используется для общих папок и этого интерфейса.",
+		"MEINE FREIGABEN": "МОИ ОБЩИЕ ПАПКИ",
+		"Dir wurde noch keine Freigabe zugewiesen.": "Вам пока не назначено ни одной общей папки.",
+		"APPS & CLOUD": "ПРИЛОЖЕНИЯ И ОБЛАКО",
+		"geplant": "запланировано",
+		"Hier erscheinen später die Apps, die für dich freigegeben sind, und deine eigenen Cloud-Sync-Aufträge.": "Здесь позже появятся разрешённые вам приложения и ваши задания синхронизации с облаком.",
+		"Mein ShareOS": "Мой ShareOS",
+		"Für NFS mindestens einen Client (IP oder Netz) eintragen.": "Укажите хотя бы одного клиента (IP или сеть) для NFS.",
+		"Gespeichert.": "Сохранено.",
+		"Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.": "Общая папка исчезает из сети. Папка и все файлы в ней остаются на томе.",
+		"Benutzer von Alt-F übernehmen?": "Импортировать пользователей из Alt-F?",
+		"Benutzer und Gruppen aus den gesicherten Alt-F-Einstellungen werden angelegt (Rolle „Nur Freigaben“). Passwörter werden übernommen, wo Alt-F sie gespeichert hat.": "Создаются пользователи и группы из сохранённых настроек Alt-F (роль «Только общие папки»). Пароли переносятся, если Alt-F их сохранял.",
+		"Keine neuen Benutzer gefunden.": "Новых пользователей не найдено.",
+		"Name der Gruppe (a–z, 0–9 und _, beginnt mit einem Buchstaben):": "Имя группы (a–z, 0–9 и _, начинается с буквы):",
+		"Die Mitglieder bleiben bestehen, verlieren aber die Rechte, die über diese Gruppe vergeben wurden.": "Участники остаются, но теряют права, выданные через эту группу.",
+		"Setzen": "Задать",
+		"Neues Passwort (mindestens 6 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Новый пароль (не менее 6 символов). Используется для общих папок и – в зависимости от роли – для веб-интерфейса.",
+		"Bitte neu anmelden.": "Войдите снова.",
+		"Der persönliche Ordner bleibt erhalten.": "Личная папка сохраняется.",
+		"Benutzerkonten": "Учётные записи",
+		"EINSTELLUNGEN SICHERN & WIEDERHERSTELLEN": "РЕЗЕРВНАЯ КОПИЯ И ВОССТАНОВЛЕНИЕ НАСТРОЕК",
+		"SICHERN": "СОЗДАТЬ КОПИЮ",
+		"JSON-Datei": "Файл JSON",
+		"PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)": "ПАРОЛЬ ДЛЯ ШИФРОВАНИЯ (НЕОБЯЗАТЕЛЬНО)",
+		"leer = unverschlüsselt": "пусто = без шифрования",
+		"Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Содержит все настройки, пользователей с паролями (в виде хешей), общие папки, сеть и сертификат HTTPS вместе с ключом. Без пароля файл читается – храните его в надёжном месте. С паролем: AES-256, пароль нужен для восстановления.",
+		"Sicherung herunterladen": "Скачать копию",
+		"WIEDERHERSTELLEN": "ВОССТАНОВИТЬ",
+		"SICHERUNGSDATEI": "ФАЙЛ КОПИИ",
+		"PASSWORT (FALLS VERSCHLÜSSELT)": "ПАРОЛЬ (ЕСЛИ ЗАШИФРОВАНО)",
+		"Erstellt": "Создана",
+		"Zertifikat": "Сертификат",
+		"Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.": "Восстановление заменяет текущие настройки, пользователей и общие папки. После этого нужна перезагрузка. Данные на томах не затрагиваются.",
+		"Wiederherstellen": "Восстановить",
+		"Einstellungen wiederherstellen?": "Восстановить настройки?",
+		"Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.": "Текущие настройки, пользователи и общие папки заменяются копией.",
+		"Wiederhergestellt": "Восстановлено",
+		"Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?": "Настройки восстановлены. Перезагрузить сейчас, чтобы всё вступило в силу?",
+		"Verschlüsselte Sicherung heruntergeladen.": "Зашифрованная копия скачана.",
+		"Sicherung heruntergeladen.": "Копия скачана.",
+		"Die Sicherung ist verschlüsselt – bitte das Passwort eingeben.": "Копия зашифрована – введите пароль.",
+		"ADRESSE VON PAPERLESS": "АДРЕС PAPERLESS",
+		"PRÜFEN ALLE": "ПРОВЕРЯТЬ КАЖДЫЕ",
+		"NACH DEM HOCHLADEN": "ПОСЛЕ ЗАГРУЗКИ",
+		"Datei löschen": "Удалить файл",
+		"aufheben (.paperless/done)": "оставить (.paperless/done)",
+		"Eingangsordner automatisch übertragen": "Отправлять папки входящих автоматически",
+		"Jetzt übertragen": "Отправить сейчас",
+		"SO FUNKTIONIERT ES": "КАК ЭТО РАБОТАЕТ",
+		"Für jeden Eingang ein API-Token in Paperless anlegen (Profil → API-Token). Die Dokumente gehören dann diesem Paperless-Benutzer.": "Создайте в Paperless токен API для каждой папки входящих (Профиль → Токен API). Документы тогда принадлежат этому пользователю Paperless.",
+		"Dateien (PDF, Bilder, Office) in den Eingangsordner legen – vom PC oder direkt vom Scanner.": "Положите файлы (PDF, изображения, Office) в папку входящих – с ПК или прямо со сканера.",
+		"ShareOS lädt sie über die Paperless-API hoch und zeigt, ob Paperless sie übernommen hat.": "ShareOS загружает их через API Paperless и показывает, принял ли их Paperless.",
+		"Persönliche Eingänge liegen im persönlichen Ordner (": "Личные папки входящих находятся в личной папке (",
+		"); Benutzer können ihr Token auch selbst unter „Mein ShareOS“ eintragen. Gemeinsame Eingänge nutzen eine Freigabe, z. B. für einen Scanner.": "); пользователи могут также сами ввести свой токен в «Мой ShareOS». Общие папки входящих используют общую папку, например для сканера.",
+		"EINGÄNGE": "ПАПКИ ВХОДЯЩИХ",
+		"übernommen": "принято",
+		"wird verarbeitet": "в обработке",
+		"Fehler": "Ошибка",
+		"Protokoll": "Журнал",
+		"nichts wartend": "ничего не ждёт",
+		"Neuer Eingang": "Новая папка входящих",
+		"NEUER EINGANG": "НОВАЯ ПАПКА ВХОДЯЩИХ",
+		"persönlich (Ordner „Paperless“ im persönlichen Ordner)": "личная (папка «Paperless» в личной папке)",
+		"gemeinsam (Ordner einer Freigabe)": "общая (папка в общей папке)",
+		"API-TOKEN": "ТОКЕН API",
+		"aktiv": "активна",
+		"Verbindung prüfen": "Проверить соединение",
+		"aus Paperless: Profil → API-Token": "из Paperless: Профиль → Токен API",
+		"API-TOKEN (LEER = BEHALTEN)": "ТОКЕН API (ПУСТО = ОСТАВИТЬ)",
+		"TAGS FÜR NEUE DOKUMENTE": "ТЕГИ ДЛЯ НОВЫХ ДОКУМЕНТОВ",
+		"Schließen": "Закрыть",
+		"ZEIT": "ВРЕМЯ",
+		"DATEI": "ФАЙЛ",
+		"MELDUNG": "СООБЩЕНИЕ",
+		"Es wird nichts mehr übertragen. Der Ordner und die Dateien darin bleiben erhalten.": "Больше ничего отправляться не будет. Папка и файлы в ней сохраняются.",
+		"EINGANG": "ПАПКА ВХОДЯЩИХ",
+		"WARTEND": "ОЖИДАЕТ",
+		"ZULETZT": "ПОСЛЕДНЕЕ",
+		"gemeinsam": "общая",
+		"Paperless → Profil → API-Token": "Paperless → Профиль → Токен API",
+		"Paperless-Eingang gespeichert.": "Папка входящих Paperless сохранена.",
+		"Übertragung gestartet.": "Передача запущена.",
+		"MEIN EINGANG": "МОИ ВХОДЯЩИЕ",
+		"MEIN API-TOKEN AUS PAPERLESS": "МОЙ ТОКЕН API PAPERLESS",
+		"Dateien aus meinem Eingang übertragen": "Отправлять файлы из моих входящих",
+		"Eingangsordner": "Папка входящих",
+		"ZULETZT ÜBERTRAGEN": "НЕДАВНО ОТПРАВЛЕНО",
+		"Noch nichts übertragen. Dateien in den Eingangsordner legen – sie landen nach wenigen Minuten in Paperless.": "Пока ничего не отправлено. Положите файлы в папку входящих – они попадут в Paperless через несколько минут.",
+		"KONTEN": "УЧЁТНЫЕ ЗАПИСИ",
+		"Testen": "Проверить",
+		"Konto hinzufügen": "Добавить учётную запись",
+		"HINWEISE": "ПРИМЕЧАНИЯ",
+		"Zugangsdaten bleiben verschlüsselt auf der Box. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Учётные данные хранятся на устройстве в зашифрованном виде. Для Google Drive, OneDrive или Dropbox выполните",
+		"ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "на ПК и вставьте сюда полученный раздел. Задания расходуют мало памяти (2 передачи одновременно); ограничение скорости, например",
+		"hält das Netz frei.": ", не загружает сеть.",
+		"AUFTRÄGE": "ЗАДАНИЯ",
+		"Jetzt starten": "Запустить сейчас",
+		"Neuer Auftrag": "Новое задание",
+		"NEUES CLOUD-KONTO": "НОВАЯ ОБЛАЧНАЯ УЧЁТНАЯ ЗАПИСЬ",
+		"SFTP (SSH-Server)": "SFTP (SSH-сервер)",
+		"andere – rclone-Konfiguration einfügen": "другое – вставить конфигурацию rclone",
+		"ADRESSE (WEBDAV-URL)": "АДРЕС (URL WEBDAV)",
+		"ANBIETER": "ПРОВАЙДЕР",
+		"PASSWORT / APP-PASSWORT": "ПАРОЛЬ / ПАРОЛЬ ПРИЛОЖЕНИЯ",
+		"Hinzufügen": "Добавить",
+		"ENDPUNKT (LEER BEI AWS)": "ENDPOINT (ПУСТО ДЛЯ AWS)",
+		"ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])": "РАЗДЕЛ ИЗ RCLONE.CONF (НАЧИНАЕТСЯ С [ИМЯ])",
+		"Die Zugangsdaten werden gelöscht. Aufträge mit diesem Konto laufen dann nicht mehr. In der Cloud wird nichts gelöscht.": "Учётные данные удаляются. Задания с этой учётной записью перестают работать. В облаке ничего не удаляется.",
+		"NEUER AUFTRAG": "НОВОЕ ЗАДАНИЕ",
+		"ORDNER AUF DEM NAS": "ПАПКА НА NAS",
+		"CLOUD-KONTO": "ОБЛАЧНАЯ УЧЁТНАЯ ЗАПИСЬ",
+		"ORDNER IN DER CLOUD": "ПАПКА В ОБЛАКЕ",
+		"RICHTUNG": "НАПРАВЛЕНИЕ",
+		"Hochladen – Kopie in die Cloud, nichts wird gelöscht": "Выгрузка – копировать в облако, ничего не удаляется",
+		"Herunterladen – Kopie aufs NAS, nichts wird gelöscht": "Загрузка – копировать на NAS, ничего не удаляется",
+		"Spiegeln zur Cloud – löscht in der Cloud, was hier fehlt": "Зеркало в облако – удаляет в облаке то, чего нет здесь",
+		"Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt": "Зеркало из облака – удаляет здесь то, чего нет в облаке",
+		"ZEITPLAN": "РАСПИСАНИЕ",
+		"nur von Hand": "только вручную",
+		"stündlich": "каждый час",
+		"täglich um 2:30": "ежедневно в 2:30",
+		"sonntags um 3:00": "по воскресеньям в 3:00",
+		"eigene Zeit (cron)": "своё время (cron)",
+		"CRON-ZEIT (MIN STD TAG MON WOTAG)": "ВРЕМЯ CRON (МИН ЧАС ДЕНЬ МЕС ДЕНЬ_НЕД)",
+		"BANDBREITE (LEER = UNBEGRENZT)": "СКОРОСТЬ (ПУСТО = БЕЗ ОГРАНИЧЕНИЯ)",
+		"Zeitplan aktiv": "Расписание активно",
+		"Beim Spiegeln wird auf der Zielseite gelöscht, was auf der Quellseite fehlt – für reine Sicherungen „Hochladen“ wählen.": "Зеркало удаляет на стороне назначения то, чего нет в источнике – для обычных резервных копий выберите «Выгрузка».",
+		"Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.": "Задание больше не будет выполняться. Файлы на NAS и в облаке остаются как есть.",
+		"AUFTRAG": "ЗАДАНИЕ",
+		"VON → NACH": "ОТКУДА → КУДА",
+		"Spiegeln?": "Зеркало?",
+		"Verstanden": "Понятно",
+		"Gestoppt.": "Остановлено.",
+		"Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.": "Зеркало из облака удаляет на NAS файлы, которых нет в облаке.",
+		"Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.": "Зеркало в облако удаляет в облаке файлы, которых нет на NAS.",
+		"MEINE CLOUD": "МОЁ ОБЛАКО",
+		"eigene Konten und Aufträge": "свои учётные записи и задания",
+		"Zugangsdaten bleiben verschlüsselt auf der Box in deinem persönlichen Ordner. Für Google Drive, OneDrive oder Dropbox auf dem PC": "Учётные данные хранятся на устройстве в зашифрованном виде в вашей личной папке. Для Google Drive, OneDrive или Dropbox выполните",
+		"hält das Netz frei. Was du herunterlädst, zählt zu deinem Speicherlimit.": ", не загружает сеть. Скачанное учитывается в вашем лимите места.",
+		"Darf eigene Cloud-Sync-Aufträge anlegen (braucht persönlichen Ordner)": "Может создавать свои задания синхронизации с облаком (нужна личная папка)",
+		"APP & WIDGETS": "ПРИЛОЖЕНИЕ И ВИДЖЕТЫ",
+		"ALS APP INSTALLIEREN": "УСТАНОВИТЬ КАК ПРИЛОЖЕНИЕ",
+		"über das Browsermenü": "через меню браузера",
+		"läuft als App": "работает как приложение",
+		"bereit": "готово",
+		"nur über HTTPS": "только HTTPS",
+		"Diese Oberfläche läuft gerade als installierte App.": "Этот интерфейс работает как установленное приложение.",
+		"Der Browser kann ShareOS als App mit eigenem Symbol installieren.": "Браузер может установить ShareOS как приложение со своим значком.",
+		"Im Browsermenü": "В меню браузера выберите",
+		"„App installieren“": "«Установить приложение»",
+		"bzw.": "или",
+		"„Zum Startbildschirm hinzufügen“": "«Добавить на главный экран»",
+		"wählen. Mit einem selbst signierten Zertifikat bieten Browser die echte Installation nicht an.": ". С самоподписанным сертификатом браузеры не предлагают настоящую установку.",
+		"Browser installieren Web-Apps nur über": "Браузеры устанавливают веб-приложения только по",
+		"HTTPS mit einem vertrauenswürdigen Zertifikat": "HTTPS с доверенным сертификатом",
+		"(z. B. Let's Encrypt, unter SYSTEM → NETZWERK einspielen). Über http:// bietet Chrome im Menü nur": "(например Let's Encrypt, установить в разделе СИСТЕМА → СЕТЬ). По http:// меню Chrome предлагает только",
+		"– das legt ein Lesezeichen-Symbol an.": "– это создаёт значок-закладку.",
+		"Auf Android: das App-Symbol lange drücken öffnet die Kurzbefehle": "В Android: долгое нажатие на значок приложения открывает ярлыки",
+		"Übersicht, Speicher, Freigaben, Firmware": "Обзор, Хранилище, Общие папки, Прошивка",
+		". Echte Startbildschirm-Widgets bietet Chrome für Web-Apps nicht – dafür gibt es rechts den Status für Widget-Apps.": ". Chrome не предлагает настоящих виджетов главного экрана для веб-приложений – используйте вместо этого статус для приложений-виджетов справа.",
+		"Als App installieren": "Установить как приложение",
+		"STATUS FÜR WIDGETS": "СТАТУС ДЛЯ ВИДЖЕТОВ",
+		"Status-Adresse einschalten": "Включить адрес статуса",
+		"ADRESSE (GEHEIM HALTEN)": "АДРЕС (ДЕРЖИТЕ В СЕКРЕТЕ)",
+		"Kopieren": "Копировать",
+		"Neuer Schlüssel": "Новый ключ",
+		"Öffnen ↗": "Открыть ↗",
+		"Liefert eine kurze JSON-Antwort ohne Anmeldung: Name, Version, Laufzeit, Last, Temperatur, Belegung der Laufwerke, RAID-Zustand und Warnungen (": "Возвращает короткий ответ JSON без входа: имя, версию, время работы, нагрузку, температуру, заполненность томов, состояние RAID и предупреждения (",
+		"). Gedacht für Widget-Apps wie": "). Для приложений-виджетов, таких как",
+		"(Android), Home Assistant oder eigene Skripte. Wer die Adresse kennt, sieht diese Werte – ändern kann damit niemand etwas.": "(Android), Home Assistant или собственных скриптов. Кто знает адрес, видит эти значения – изменить с его помощью ничего нельзя.",
+		"Status-Adresse eingeschaltet.": "Адрес статуса включён.",
+		"Status-Adresse ausgeschaltet.": "Адрес статуса выключен.",
+		"Neuen Schlüssel erzeugen?": "Создать новый ключ?",
+		"Erzeugen": "Создать",
+		"Neuer Schlüssel erzeugt.": "Новый ключ создан.",
+		"Die bisherige Adresse funktioniert danach nicht mehr – Widgets müssen die neue bekommen.": "Старый адрес перестаёт работать – виджетам нужен новый.",
+		"Kopiert.": "Скопировано.",
+		"Bitte die Adresse selbst markieren und kopieren.": "Выделите и скопируйте адрес вручную.",
+		"ShareOS ist als App installiert.": "ShareOS установлена как приложение.",
+		"· Mein ShareOS": "· Мой ShareOS",
+		"DATEIEN": "ФАЙЛЫ",
+		"Neuer Ordner": "Новая папка",
+		"Hochladen": "Загрузить",
+		"Umbenennen": "Переименовать",
+		"Verschieben": "Переместить",
+		"Versteckte": "Скрытые",
+		"GEÄNDERT": "ИЗМЕНЕНО",
+		"Dateien lassen sich auch einfach hierher ziehen.": "Файлы можно просто перетащить сюда.",
+		"Pfad": "Путь",
+		"Ordner nach oben": "На уровень вверх",
+		"Alle auswählen": "Выбрать все",
+		"Verschieben nach": "Переместить в",
+		"Kopieren nach": "Копировать в",
+		"Name des neuen Ordners:": "Имя новой папки:",
+		"Dieser Ordner ist leer.": "Эта папка пуста.",
+		"SPEICHERLIMIT (GB)": "ЛИМИТ МЕСТА (ГБ)",
+		"Dateibrowser für den persönlichen Ordner in der Weboberfläche": "Файловый менеджер для личной папки в веб-интерфейсе",
+		"Benutzername: Kleinbuchstaben, Ziffern und _, beginnt mit einem Buchstaben. Das Speicherlimit gilt je Laufwerk, 0 = unbegrenzt. Das Passwort gilt für Freigaben und – je nach Rolle – für die Weboberfläche.": "Имя пользователя: строчные буквы, цифры и _, начинается с буквы. Лимит места действует на каждый том, 0 = без ограничения. Пароль используется для общих папок и – в зависимости от роли – для веб-интерфейса.",
+		"nur für dich": "только для вас",
+		"Wie für alle": "Как у всех",
+		"Gilt nur für deine Anmeldung, auf jedem Gerät. Logo und Browser-Symbol nehmen die Akzentfarbe an.": "Действует только для вашего входа, на всех устройствах. Логотип и значок браузера принимают акцентный цвет.",
+		"Datei ersetzen?": "Заменить файл?",
+		"Ersetzen": "Заменить",
+		"übersprungen": "пропущено",
+		"fertig": "готово",
+		"Verbindung unterbrochen": "Связь потеряна",
+		"Gelöscht.": "Удалено.",
+		"Verschoben.": "Перемещено.",
+		"Darstellung wie für alle.": "Оформление сброшено к общему.",
+		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "Ни один том не смонтирован – сначала настройте его в разделе ХРАНИЛИЩЕ.",
+		"Kein persönlicher Ordner vorhanden.": "Личной папки нет.",
+		"Es werden nur die ersten 2000 Einträge gezeigt.": "Показаны только первые 2000 записей.",
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "Имя хоста сохранено. Сертификат HTTPS выпущен заново для нового имени – браузер спросит ещё раз.",
+		"INSTALLIERT": "УСТАНОВЛЕННЫЕ",
+		"STORE": "МАГАЗИН",
+		"QUELLEN": "ИСТОЧНИКИ",
+		"INSTALLIERTE APPS": "УСТАНОВЛЕННЫЕ ПРИЛОЖЕНИЯ",
+		"Noch keine App installiert. Im": "Пока не установлено ни одного приложения. В",
+		"Store": "магазине",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "есть приложения для установки – или загрузите свой пакет (.sapp).",
+		"Apps": "Приложения",
+		"APP-STORE": "МАГАЗИН ПРИЛОЖЕНИЙ",
+		"Beta (auch Vorabversionen)": "Бета (включая предварительные выпуски)",
+		"Jetzt aktualisieren": "Обновить сейчас",
+		"PAKET INSTALLIEREN": "УСТАНОВИТЬ ПАКЕТ",
+		"PAKETDATEI": "ФАЙЛ ПАКЕТА",
+		"Für eigene Apps (gebaut mit": "Для своих приложений (собранных с помощью",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "из репозитория приложений). Загруженные пакеты считаются «своими / непроверенными».",
+		"Hochladen & installieren": "Загрузить и установить",
+		"VERFÜGBARE APPS": "ДОСТУПНЫЕ ПРИЛОЖЕНИЯ",
+		"APP": "ПРИЛОЖЕНИЕ",
+		"HERAUSGEBER": "ИЗДАТЕЛЬ",
+		"Werkzeuge": "Инструменты",
+		"Medien": "Медиа",
+		"Büro": "Офис",
+		"Netzwerk": "Сеть",
+		"Download": "Загрузки",
+		"Sync": "Синхронизация",
+		"wird geladen …": "загрузка …",
+		"aus dem Store": "из магазина",
+		"eigene / ungeprüft": "своё / непроверенное",
+		"eigene": "своё",
+		"SICHTBAR FÜR": "ВИДНО",
+		"alle Benutzer": "всем пользователям",
+		"nur Administratoren": "только администраторам",
+		"Alle Benutzer mit Web-Zugang": "Всем пользователям с веб-доступом",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "Администраторы видят все приложения. Выбор определяет, кто видит приложение в «Мой ShareOS».",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "Приложение удаляется. Данные, сохранённые им в браузере, остаются там.",
+		"APP-QUELLEN": "ИСТОЧНИКИ ПРИЛОЖЕНИЙ",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "ДРУГОЙ ИСТОЧНИК (АДРЕС КАТАЛОГА)",
+		"Eine Quelle ist ein App-Katalog (": "Источник – это каталог приложений (",
+		") im Format des Repos": ") в формате репозитория",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": ". Свои приложения: возьмите репозиторий за шаблон, его GitHub Action собирает пакеты и каталог. Добавляйте только источники, которым доверяете.",
+		"Quelle entfernen?": "Удалить источник?",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "Приложения из этого источника больше не показываются в магазине. Установленные приложения остаются.",
+		"MEINE APPS": "МОИ ПРИЛОЖЕНИЯ",
+		"Store aktualisiert.": "Магазин обновлён.",
+		"Entfernt.": "Удалено.",
+		"Lade den Katalog …": "Загрузка каталога …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "Приложения не найдены – проверьте подключение к интернету и источники.",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "Нет пользователей с веб-доступом – создайте их в разделе «Общие папки → Пользователи».",
+		"braucht neuere ShareOS": "нужна более новая ShareOS",
+		"noch nicht geladen": "ещё не загружено",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Веб-приложения работают на своём порту (8081 / 8444 для HTTPS) – отдельно от этого интерфейса, поэтому приложение не может воспользоваться вашим входом. Кто знает адрес, может открыть веб-приложение в сети; «видно» определяет, кто видит его в «Мой ShareOS».",
+		"Installation abgeschlossen": "Установка завершена",
+		"(100 %) – jetzt neu starten.": "(100 %) – перезагрузите сейчас.",
+		"FIRMWARE-DATEI EINSPIELEN": "УСТАНОВИТЬ ФАЙЛ ПРОШИВКИ",
+		"Hochladen & prüfen": "Загрузить и проверить",
+		"Art": "Тип",
+		"andere Firmware": "другая прошивка",
+		"Einspielen": "Установить",
+		"Firmware wird geschrieben": "Запись прошивки",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "Ядро и загрузочная система – подождите, не выключайте",
+		"Geschrieben": "Записано",
+		"Größe": "Размер",
+		"ext4 – empfohlen": "ext4 – рекомендуется",
+		"exFAT – empfohlen": "exFAT – рекомендуется",
+		"Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.": "Всё: права для каждого пользователя, лимит места, личные папки, приложения.",
+		"Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.": "Права для каждого пользователя, личные папки, приложения; без лимита места на пользователя. Требует больше памяти.",
+		"Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Читается также в Windows и macOS. Нет прав для отдельных пользователей (кто может писать в общую папку, может менять в ней всё), нет лимита места, личных папок и приложений.",
+		"Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Читается также в Windows. Нет прав для отдельных пользователей, лимита места, личных папок и приложений.",
+		"Windows, macOS, Linux, Fernseher; Dateien über 4 GB.": "Windows, macOS, Linux, телевизоры; файлы больше 4 ГБ.",
+		"Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.": "Для старых устройств (автомагнитола, фотоаппарат); файлы не больше 4 ГБ.",
+		"Für Windows-Rechner.": "Для компьютеров с Windows.",
+		"Für Linux und Sicherungen mit Rechten.": "Для Linux и резервных копий с правами.",
+		"DATEISYSTEM": "ФАЙЛОВАЯ СИСТЕМА",
+		"Sicher entfernen": "Безопасно извлечь",
+		"Formatieren": "Форматировать",
+		"Name des neuen Laufwerks (a–z, 0–9, - und _, max. 16 Zeichen) und Dateisystem:": "Имя нового тома (a–z, 0–9, - и _, не более 16 символов) и файловая система:",
+		"UHRZEIT DER BOX": "ВРЕМЯ НА УСТРОЙСТВЕ",
+		"Zeitabgleich": "Синхронизация времени",
+		"aus dem Internet (NTP)": "из интернета (NTP)",
+		"NTP eingeschaltet, läuft aber nicht": "NTP включён, но не работает",
+		"von Hand": "вручную",
+		"Zuletzt abgeglichen": "Последняя синхронизация",
+		"noch nicht": "ещё нет",
+		"Batterie-Uhr": "Часы на батарейке",
+		"wird nach jedem Abgleich gestellt": "устанавливаются после каждой синхронизации",
+		"Jetzt abgleichen": "Синхронизировать сейчас",
+		"ZEITZONE & ZEITSERVER": "ЧАСОВОЙ ПОЯС И СЕРВЕРЫ ВРЕМЕНИ",
+		"Uhrzeit automatisch aus dem Internet holen (NTP)": "Получать время из интернета автоматически (NTP)",
+		"ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)": "СЕРВЕРЫ ВРЕМЕНИ (ПО ОДНОМУ В СТРОКЕ, НЕ БОЛЕЕ 5)",
+		"Im Heimnetz kann auch der Router Zeitserver sein, z. B.": "В домашней сети сервером времени может быть и маршрутизатор, например",
+		". Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.": ". Часовой пояс действует для журналов, расписаний и отображения.",
+		"UHRZEIT VON HAND STELLEN": "УСТАНОВИТЬ ВРЕМЯ ВРУЧНУЮ",
+		"Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.": "Пока NTP включён, устройство при следующей синхронизации снова выставит время по интернету. Для устройства без интернета выключите NTP выше.",
+		"Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.": "Дальше часы идут сами; часы на батарейке тоже устанавливаются.",
+		"Uhrzeit dieses Geräts übernehmen": "Взять время этого устройства",
+		"Uhrzeit setzen": "Установить время",
+		"Uhrzeit gesetzt.": "Время установлено.",
+		"Uhrzeit abgeglichen.": "Время синхронизировано.",
+		"Ungültige Uhrzeit.": "Недопустимое время.",
+		"Eine Firmware im D-Link-Format, z. B. für den": "Прошивка в формате D-Link, например для",
+		"Wechsel zurück zu Alt-F": "возврата к Alt-F",
+		". Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Записываются ядро и загрузочная система; система и настройки ShareOS остаются во flash."
+	},
+	"patterns": [
+		[
+			"^Kein Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"Без swap, без области приложений (пакетам и данным приложений нужна ext4 или Btrfs)."
+		],
+		[
+			"^Je Platte (.+) Swap, kein Apps-Bereich \\(Pakete und App-Daten brauchen ext4 oder Btrfs\\)\\.$",
+			"$1 swap на диск, без области приложений (пакетам и данным приложений нужна ext4 или Btrfs)."
+		],
+		[
+			"^Wiederherstellen: (.*)$",
+			"Восстановление: $1"
+		],
+		[
+			"^Sicherung: (.*)$",
+			"Копия: $1"
+		],
+		[
+			"^Sichern: (.*)$",
+			"Копия: $1"
+		],
+		[
+			"^(\\d+) angelegt$",
+			"$1 создано"
+		],
+		[
+			"^FREIGABE (.+)$",
+			"ОБЩАЯ ПАПКА $1"
+		],
+		[
+			"^BENUTZER (.+)$",
+			"ПОЛЬЗОВАТЕЛЬ $1"
+		],
+		[
+			"^Gruppe (\\S+)$",
+			"Группа $1"
+		],
+		[
+			"^Recht für (.+)$",
+			"Право для $1"
+		],
+		[
+			"^auf (\\S+)$",
+			"на $1"
+		],
+		[
+			"^Limit (.+) je Laufwerk$",
+			"Лимит $1 на том"
+		],
+		[
+			"^Gäste \\(r\\)(.*)$",
+			"Гости (ч)$1"
+		],
+		[
+			"^Freigabe „(.+)“ gespeichert\\.$",
+			"Общая папка «$1» сохранена."
+		],
+		[
+			"^Freigabe „(.+)“ entfernen\\?$",
+			"Удалить общую папку «$1»?"
+		],
+		[
+			"^Freigabe „(.+)“ entfernt\\.$",
+			"Общая папка «$1» удалена."
+		],
+		[
+			"^Benutzer „(.+)“ angelegt\\.$",
+			"Пользователь «$1» создан."
+		],
+		[
+			"^Benutzer „(.+)“ gespeichert\\.$",
+			"Пользователь «$1» сохранён."
+		],
+		[
+			"^Benutzer „(.+)“ löschen\\?$",
+			"Удалить пользователя «$1»?"
+		],
+		[
+			"^Benutzer „(.+)“ gelöscht\\.$",
+			"Пользователь «$1» удалён."
+		],
+		[
+			"^Das Konto wird entfernt; Rechte an Freigaben entfallen\\.( Der persönliche Ordner bleibt erhalten\\.)?$",
+			"Учётная запись удаляется; её права на общие папки пропадают.$1"
+		],
+		[
+			"^Gruppe „(.+)“ angelegt\\.$",
+			"Группа «$1» создана."
+		],
+		[
+			"^Gruppe „(.+)“ löschen\\?$",
+			"Удалить группу «$1»?"
+		],
+		[
+			"^Gruppe „(.+)“ gelöscht\\.$",
+			"Группа «$1» удалена."
+		],
+		[
+			"^Passwort für (\\S+)$",
+			"Пароль для $1"
+		],
+		[
+			"^Passwort von (\\S+) geändert\\.$",
+			"Пароль $1 изменён."
+		],
+		[
+			"^Übernommen: (.+)$",
+			"Импортировано: $1"
+		],
+		[
+			"^Übersprungen: (.+)$",
+			"Пропущено: $1"
+		],
+		[
+			"^Freigaben: (.*)$",
+			"Общие папки: $1"
+		],
+		[
+			"^Freigabe: (.*)$",
+			"Общая папка: $1"
+		],
+		[
+			"^Benutzer: (.*)$",
+			"Пользователь: $1"
+		],
+		[
+			"^Passwort: (.*)$",
+			"Пароль: $1"
+		],
+		[
+			"^Alt-F: (.*)$",
+			"Alt-F: $1"
+		],
+		[
+			"^Die Änderung gilt sofort\\. Die Box wartet dann (\\d+) Sekunden auf eine Bestätigung von der neuen Adresse – kommt keine, stellt sie die bisherigen Einstellungen wieder her\\. So sperrst du dich nicht aus\\.$",
+			"Изменение вступает в силу сразу. Затем устройство $1 секунд ждёт подтверждения с нового адреса – если его нет, возвращаются прежние настройки. Так вы не потеряете доступ."
+		],
+		[
+			"^– ohne Bestätigung kehrt die Box in (\\d+) s zu den alten zurück\\.$",
+			"– без подтверждения устройство вернётся к прежним через $1 с."
+		],
+		[
+			"^Die Box holt sich ihre Adresse vom Router\\. Sie ist danach eventuell unter einer anderen Adresse erreichbar \\(im Router nachsehen\\)\\. Wird die Änderung nicht innerhalb von (\\d+) Sekunden von der Box aus bestätigt, gelten wieder die bisherigen Einstellungen\\.$",
+			"Устройство получает адрес от маршрутизатора. После этого оно может быть доступно по другому адресу (посмотрите в маршрутизаторе). Если изменение не подтверждено на устройстве в течение $1 секунд, снова действуют прежние настройки."
+		],
+		[
+			"^Die Box wechselt auf (\\S+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Устройство переходит на $1. Затем эта страница откроет новый адрес и подтвердит изменение. Если это не получится, через $2 секунд снова будут действовать прежние настройки."
+		],
+		[
+			"^Die Netzwerkeinstellungen werden übernommen und von dieser Seite bestätigt\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Сетевые настройки применяются и подтверждаются этой страницей. Если это не получится, через $1 секунд снова будут действовать прежние настройки."
+		],
+		[
+			"^neue Adresse (\\S+)$",
+			"новый адрес $1"
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\) – nicht erreichbar\\? Neue Adresse im Router nachsehen und dort anmelden\\.$",
+			"ожидание устройства ($1 с) – недоступно? Найдите новый адрес в маршрутизаторе и войдите там."
+		],
+		[
+			"^warte auf die Box \\((\\d+) s\\)$",
+			"ожидание устройства ($1 с)"
+		],
+		[
+			"^(\\S+): startet beim Einschalten$",
+			"$1: запускается при включении"
+		],
+		[
+			"^(\\S+): startet nicht mehr beim Einschalten$",
+			"$1: больше не запускается при включении"
+		],
+		[
+			"^Netzwerk: (.*)$",
+			"Сеть: $1"
+		],
+		[
+			"^Darstellung: (.*)$",
+			"Оформление: $1"
+		],
+		[
+			"^\\((\\d+) %\\) – Box$",
+			"($1 %) –"
+		],
+		[
+			"^Kanal (\\S+)$",
+			"Канал $1"
+		],
+		[
+			"^Update (\\S+) verfügbar$",
+			"Доступно обновление $1"
+		],
+		[
+			"^Update (\\S+) verfügbar\\.$",
+			"Доступно обновление $1."
+		],
+		[
+			"^UPDATE (\\S+)$",
+			"ОБНОВЛЕНИЕ $1"
+		],
+		[
+			"^seit (.+)$",
+			"уже $1"
+		],
+		[
+			"^(\\d+) eingerichtet$",
+			"настроено: $1"
+		],
+		[
+			"^(\\d+) erkannt$",
+			"обнаружено: $1"
+		],
+		[
+			"^geplant · Phase (\\d)$",
+			"запланировано · этап $1"
+		],
+		[
+			"^Neueste · Beta$",
+			"Последняя · Бета"
+		],
+		[
+			"^Neueste · Stabil$",
+			"Последняя · Стабильная"
+		],
+		[
+			"^ÄNDERUNGEN IN (.+)$",
+			"ИЗМЕНЕНИЯ В $1"
+		],
+		[
+			"^ZUGANG · (.+)$",
+			"ДОСТУП · $1"
+		],
+		[
+			"^NAME FÜR (\\S+) \\((.+)\\)$",
+			"ИМЯ ДЛЯ $1 ($2)"
+		],
+		[
+			"^ABLAUF · (.*)$",
+			"ХОД · $1"
+		],
+		[
+			"^Quelle: GitHub Releases · (.+)$",
+			"Источник: выпуски GitHub · $1"
+		],
+		[
+			"^erfolgreich installiert \\((.+)\\)$",
+			"успешно установлена ($1)"
+		],
+		[
+			"^(\\S+) formatieren$",
+			"Форматировать $1"
+		],
+		[
+			"^(.+) werden vollständig gelöscht\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 будет полностью стёрт. Это нельзя отменить."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\. Die Erst-Synchronisierung.*$",
+			"Нажатие «Настроить» полностью стирает $1. Первичная синхронизация затем идёт в фоне (на больших дисках несколько часов); томом можно пользоваться сразу."
+		],
+		[
+			"^Beim Klick auf „Einrichten“ werden (.+) vollständig gelöscht\\.$",
+			"Нажатие «Настроить» полностью стирает $1."
+		],
+		[
+			"^Je Platte (.+) Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"$1 swap на диск, область приложений на «$2» (если её ещё нет)."
+		],
+		[
+			"^Kein Swap, Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"Без swap, область приложений на «$1» (если её ещё нет)."
+		],
+		[
+			"^Beide Platten enthalten dieselben Daten\\. Fällt eine aus, ist nichts verloren\\. Nutzbar: (.+)\\.$",
+			"Оба диска хранят одни и те же данные. Если один выйдет из строя, ничего не потеряется. Доступно: $1."
+		],
+		[
+			"^Doppelter Platz \\((.+)\\), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk\\.$",
+			"Вдвое больше места ($1), но без резервирования – каждый диск отдельный том."
+		],
+		[
+			"^Die Platte wird ein Laufwerk mit (.+)\\. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten\\.$",
+			"Диск станет томом на $1. Для резервирования позже добавьте второй диск как зеркало."
+		],
+		[
+			"^(\\S+): beide Platten aktiv \\((.+)\\)$",
+			"$1: оба диска активны ($2)"
+		],
+		[
+			"^(\\S+): eine Platte fehlt \\((.+)\\)$",
+			"$1: нет одного диска ($2)"
+		],
+		[
+			"^„(.+)“ entfernen\\?$",
+			"Удалить «$1»?"
+		],
+		[
+			"^(\\S+) löschen\\?$",
+			"Стереть $1?"
+		],
+		[
+			"^(.+) wird vollständig gelöscht und als Laufwerk „(.+)“ neu eingerichtet\\.$",
+			"$1 будет полностью стёрт и настроен как том «$2»."
+		],
+		[
+			"^ShareOS (\\S+) wird in den Flash geschrieben\\. .*$",
+			"ShareOS $1 будет записана во flash. Затем нужна перезагрузка, во время которой устанавливается новая система. Не выключайте устройство во время записи."
+		],
+		[
+			"^(\\S+) von (\\S+ \\S+)$",
+			"$1 из $2"
+		],
+		[
+			"^(.+) installieren$",
+			"Установить $1"
+		],
+		[
+			"^Last ([0-9.]+ [0-9.]+ [0-9.]+)( ·)?$",
+			"Нагрузка $1$2"
+		],
+		[
+			"^NETZWERK · (.+)$",
+			"СЕТЬ · $1"
+		],
+		[
+			"^(\\S+): eingehängt$",
+			"$1: смонтирован"
+		],
+		[
+			"^(\\S+): ausgehängt$",
+			"$1: отмонтирован"
+		],
+		[
+			"^(\\S+): entfernt$",
+			"$1: удалён"
+		],
+		[
+			"^(\\S+): gestartet$",
+			"$1: запущена"
+		],
+		[
+			"^(\\S+): gestoppt$",
+			"$1: остановлена"
+		],
+		[
+			"^(\\S+): neu gestartet$",
+			"$1: перезапущена"
+		],
+		[
+			"^gefunden \\((.+)\\)\\.$",
+			"($1)."
+		],
+		[
+			"^voll ab (\\d+) °C$",
+			"полная от $1 °C"
+		],
+		[
+			"^jetzt: (.+)$",
+			"сейчас: $1"
+		],
+		[
+			"^zuletzt (.+)$",
+			"последнее $1"
+		],
+		[
+			"^(\\d+) Datei\\(en\\) warten$",
+			"ожидает файлов: $1"
+		],
+		[
+			"^persönlicher Eingang von (\\S+) · Token (.+)$",
+			"личная папка входящих $1 · токен $2"
+		],
+		[
+			"^gemeinsamer Eingang · Token (.+)$",
+			"общая папка входящих · токен $1"
+		],
+		[
+			"^persönlich: (.+)$",
+			"личная: $1"
+		],
+		[
+			"^EINGANG (.+)$",
+			"ВХОДЯЩИЕ $1"
+		],
+		[
+			"^PROTOKOLL · (.+)$",
+			"ЖУРНАЛ · $1"
+		],
+		[
+			"^Verbindung in Ordnung – (\\S+) Dokumente in Paperless\\.$",
+			"Соединение в порядке – $1 документов в Paperless."
+		],
+		[
+			"^Eingang „(.+)“ entfernen\\?$",
+			"Удалить папку входящих «$1»?"
+		],
+		[
+			"^(.+): Verbindung in Ordnung \\((\\d+) Ordner\\)\\.$",
+			"$1: соединение в порядке (папок: $2)."
+		],
+		[
+			"^Konto „(.+)“ entfernen\\?$",
+			"Удалить учётную запись «$1»?"
+		],
+		[
+			"^Auftrag „(.+)“ entfernen\\?$",
+			"Удалить задание «$1»?"
+		],
+		[
+			"^Freigabe (\\S+)$",
+			"Общая папка $1"
+		],
+		[
+			"^Freigabe (\\S+) → (.+)$",
+			"Общая папка $1 → $2"
+		],
+		[
+			"^(.+) → Persönlicher Ordner$",
+			"$1 → Личная папка"
+		],
+		[
+			"^cron: (.+) · von (\\S+)$",
+			"cron: $1 · от $2"
+		],
+		[
+			"^von (\\S+)$",
+			"от $1"
+		],
+		[
+			"^Fehler · (.+)$",
+			"Ошибка · $1"
+		],
+		[
+			"^läuft seit (.+)$",
+			"работает с $1"
+		],
+		[
+			"^Auftrag: (.*)$",
+			"Задание: $1"
+		],
+		[
+			"^Konto: (.*)$",
+			"Учётная запись: $1"
+		],
+		[
+			"^Eingang: (.*)$",
+			"Входящие: $1"
+		],
+		[
+			"^Lüfter: (.*)$",
+			"Вентилятор: $1"
+		],
+		[
+			"^Dienste: (.*)$",
+			"Службы: $1"
+		],
+		[
+			"^Einrichten: (.*)$",
+			"Настройка: $1"
+		],
+		[
+			"^Formatieren: (.*)$",
+			"Форматирование: $1"
+		],
+		[
+			"^Installieren: (.*)$",
+			"Установка: $1"
+		],
+		[
+			"^Ruhezustand: (.*)$",
+			"Останов дисков: $1"
+		],
+		[
+			"^Speicher: (.*)$",
+			"Хранилище: $1"
+		],
+		[
+			"^Sprache: (.*)$",
+			"Язык: $1"
+		],
+		[
+			"^Kanal: (.*)$",
+			"Канал: $1"
+		],
+		[
+			"^Zertifikat: (.*)$",
+			"Сертификат: $1"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.*)$",
+			"Проверка не удалась: $1"
+		],
+		[
+			"^(.+) frei$",
+			"свободно $1"
+		],
+		[
+			"^(.+) auswählen$",
+			"выбрать $1"
+		],
+		[
+			"^(.+) herunterladen$",
+			"скачать $1"
+		],
+		[
+			"^(\\d+) ausgewählt\\.$",
+			"Выбрано: $1."
+		],
+		[
+			"^Neuer Name für „(.+)“:$",
+			"Новое имя для «$1»:"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge\\. Zielordner als Pfad in „(.+)“, z\\. B\\. Fotos/2026 \\(leer = oberste Ebene\\)\\.$",
+			"Элементов: $1. Папка назначения как путь в «$2», например Фото/2026 (пусто = верхний уровень)."
+		],
+		[
+			"^(\\d+) Eintrag/Einträge löschen\\?$",
+			"Удалить элементы ($1)?"
+		],
+		[
+			"^(.+) – Ordner samt Inhalt\\. Das lässt sich nicht rückgängig machen\\.$",
+			"$1 – папки вместе с содержимым. Это нельзя отменить."
+		],
+		[
+			"^„(.+)“ gibt es in diesem Ordner schon\\.$",
+			"«$1» уже есть в этой папке."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) hochgeladen\\.$",
+			"Загружено файлов: $1."
+		],
+		[
+			"^(\\d+) Datei\\(en\\) nicht hochgeladen\\.$",
+			"Не загружено файлов: $1."
+		],
+		[
+			"^Wie für alle \\((.+)\\)$",
+			"Как у всех ($1)"
+		],
+		[
+			"^Herunterladen: (.*)$",
+			"Скачивание: $1"
+		],
+		[
+			"^Ordner: (.*)$",
+			"Папка: $1"
+		],
+		[
+			"^Umbenennen: (.*)$",
+			"Переименование: $1"
+		],
+		[
+			"^Löschen: (.*)$",
+			"Удаление: $1"
+		],
+		[
+			"^Verschieben: (.*)$",
+			"Перемещение: $1"
+		],
+		[
+			"^Kopieren: (.*)$",
+			"Копирование: $1"
+		],
+		[
+			"^Dateien: (.*)$",
+			"Файлы: $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"Веб-приложения работают на своём порту ($1) – отдельно от этого интерфейса, поэтому приложение не может воспользоваться вашим входом. Кто знает адрес, может открыть веб-приложение в сети; «видно» определяет, кто видит его в «Мой ShareOS»."
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"Веб-приложения работают на своём порту ($1 / $2 для HTTPS) – отдельно от этого интерфейса, поэтому приложение не может воспользоваться вашим входом. Кто знает адрес, может открыть веб-приложение в сети; «видно» определяет, кто видит его в «Мой ShareOS»."
+		],
+		[
+			"^Stand (.+)$",
+			"по состоянию на $1"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · видно: $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · ВИДНО"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"Удалить $1?"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 установлено."
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 установлено (своё приложение)."
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 загружается …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 проверяется …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 устанавливается …"
+		],
+		[
+			"^Update (.+)$",
+			"Обновить $1"
+		],
+		[
+			"^Store: (.*)$",
+			"Магазин: $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"Приложения: $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"Удаление: $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"Источники: $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"Пакет: $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"Затем запустится $1. Дополнительных пакетов Alt-F тогда не будет – прошейте тот же файл ещё раз на странице прошивки Alt-F. Назад к ShareOS: прошейте .bin ShareOS в Alt-F, система и настройки сохранились."
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"Установить $1?"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"Ядро и загрузочная система заменяются и проверяются. Не выключайте устройство во время записи."
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 во flash. Перезагрузить сейчас?"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 запускается – его интерфейс скоро будет по адресу $2 (порт 80)."
+		],
+		[
+			"^(.+) startet$",
+			"$1 запускается"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"Установка: $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"Файл прошивки: $1"
+		],
+		[
+			"^(.+) kann jetzt abgezogen werden\\.$",
+			"$1 теперь можно отключить."
+		],
+		[
+			"^(.+) formatieren$",
+			"Форматировать $1"
+		],
+		[
+			"^(.+) löschen\\?$",
+			"Стереть $1?"
+		],
+		[
+			"^(.+) – Name \\(Buchstaben, Ziffern, Leerzeichen, - und _\\) und Dateisystem:$",
+			"$1 – имя (буквы, цифры, пробелы, - и _) и файловая система:"
+		],
+		[
+			"^Alles auf (.+) wird gelöscht\\. Danach ist es ein (.+)-Laufwerk „(.+)“\\.$",
+			"Всё на $1 будет стёрто. Затем это будет накопитель $2 «$3»."
+		],
+		[
+			"^(.+) \\((.*), (.+)\\) wird vollständig gelöscht und als Laufwerk „(.+)“ \\((.+)\\) neu eingerichtet\\.$",
+			"$1 ($2, $3) полностью стирается и настраивается заново как том «$4» ($5)."
+		],
+		[
+			"^Apps-Bereich auf „(.+)“ \\(falls noch keiner besteht\\)\\.$",
+			"Область приложений на «$1» (если её ещё нет)."
+		],
+		[
+			"^DATUM UND UHRZEIT \\((.+)\\)$",
+			"ДАТА И ВРЕМЯ ($1)"
+		],
+		[
+			"^Zeit: (.*)$",
+			"Время: $1"
+		],
+		[
+			"^Abgleich: (.*)$",
+			"Синхронизация: $1"
+		],
+		[
+			"^Uhrzeit: (.*)$",
+			"Время: $1"
+		],
+		[
+			"^(.+) \\(Spiegel \\(RAID 1\\)\\)$",
+			"$1 (зеркало (RAID 1))"
+		],
+		[
+			"^(.+) \\(Einzelnes Laufwerk\\)$",
+			"$1 (отдельный диск)"
+		]
+	],
+	"words": [
+		[
+			"\\bläuft\\b",
+			"работает",
+			"g"
+		],
+		[
+			"\\bgestoppt\\b",
+			"остановлена",
+			"g"
+		],
+		[
+			" frei von ",
+			" свободно из",
+			"g"
+		],
+		[
+			" von (?=\\d)",
+			" из",
+			"g"
+		],
+		[
+			" belegt\\b",
+			" занято",
+			"g"
+		],
+		[
+			"\\bTage Laufzeit\\b",
+			"дней работы",
+			"g"
+		],
+		[
+			"^enthält: ",
+			"содержит:",
+			""
+		],
+		[
+			"RAID-Mitglied von",
+			"участник RAID",
+			"g"
+		],
+		[
+			"RAID-Mitglied",
+			"участник RAID",
+			"g"
+		],
+		[
+			"^Festplatte · ",
+			"Диск ·",
+			""
+		],
+		[
+			"^Schacht · ",
+			"Отсек ·",
+			""
+		],
+		[
+			"Erst-Synchronisierung",
+			"Первичная синхронизация",
+			"g"
+		],
+		[
+			"Wiederherstellung",
+			"Восстановление",
+			"g"
+		],
+		[
+			"Prüfung",
+			"Проверка",
+			"g"
+		],
+		[
+			" · noch (.+)$",
+			" · осталось $1",
+			""
+		],
+		[
+			"^Spiegel \\(RAID 1\\)",
+			"Зеркало (RAID 1)",
+			""
+		],
+		[
+			"^Einzelnes Laufwerk",
+			"Отдельный диск",
+			""
+		],
+		[
+			" umgelagert, ",
+			" переназначено,",
+			"g"
+		],
+		[
+			" schwebend\\b",
+			" ожидает",
+			"g"
+		],
+		[
+			"\\bLÄUFT\\b",
+			"РАБОТАЕТ",
+			"g"
+		],
+		[
+			" und ",
+			" и",
+			"g"
+		],
+		[
+			"\\bT (\\d+) h\\b",
+			"д $1 ч",
+			"g"
+		],
+		[
+			" – nicht ausschalten\\.",
+			" – не выключайте.",
+			""
+		],
+		[
+			"^Prüfen fehlgeschlagen: ",
+			"Проверка не удалась:",
+			""
+		],
+		[
+			"^Kanal: ",
+			"Канал:",
+			""
+		],
+		[
+			"^Dienste: ",
+			"Службы:",
+			""
+		],
+		[
+			"^Speicher: ",
+			"Хранилище:",
+			""
+		],
+		[
+			"^Download: ",
+			"Скачивание:",
+			""
+		],
+		[
+			"^Installieren: ",
+			"Установка:",
+			""
+		],
+		[
+			"^Einrichten: ",
+			"Настройка:",
+			""
+		],
+		[
+			"^Formatieren: ",
+			"Форматирование:",
+			""
+		],
+		[
+			"^Zertifikat: ",
+			"Сертификат:",
+			""
+		],
+		[
+			"^HTTPS: ",
+			"HTTPS:",
+			""
+		],
+		[
+			"^Sprache: ",
+			"Язык:",
+			""
+		],
+		[
+			"^Logo: ",
+			"Логотип:",
+			""
+		],
+		[
+			"\\bhalb\\b",
+			"половина",
+			"g"
+		],
+		[
+			"^Lüfter: ",
+			"Вентилятор:",
+			""
+		],
+		[
+			"^Hardware: ",
+			"Оборудование:",
+			""
+		],
+		[
+			"\\bGruppe\\b",
+			"группа",
+			"g"
+		]
+	]
+}

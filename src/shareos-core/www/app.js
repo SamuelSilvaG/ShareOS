@@ -14,7 +14,9 @@
 // the first paint already matches
 let LANG = (() => { try { return localStorage.getItem('shareos.lang') || 'en'; } catch (e) { return 'en'; } })();
 let LOC = 'en-GB';
-const LOCALES = { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL', pl: 'pl-PL' };
+const LOCALES = { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL', pl: 'pl-PL', pt: 'pt-BR', ru: 'ru-RU', zh: 'zh-CN', hi: 'hi-IN', bn: 'bn-BD', ar: 'ar-EG' };
+// languages written right to left
+const RTL = { ar: 1, he: 1, fa: 1, ur: 1 };
 
 /* ---------- helpers --------------------------------------------------------- */
 
@@ -1742,7 +1744,7 @@ const SYS = {
 				</div>
 				<form class="panel" id="f-bin" style="margin-top:16px">
 					<div class="ph"><span class="pt">FIRMWARE-DATEI EINSPIELEN</span><span class="tag ml">.bin</span></div>
-					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. um <b>zurück zu Alt-F</b> zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
+					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. für den <b>Wechsel zurück zu Alt-F</b>. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
 					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>DATEI</span><input type="file" name="file" accept=".bin" required></label></div>
 					<div id="bin-info"></div>
 					<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Hochladen & prüfen</button></div>
@@ -3517,6 +3519,7 @@ if ('serviceWorker' in navigator && window.isSecureContext)
 	LANG = await loadUiSettings();
 	LOC = LOCALES[LANG] || LANG;
 	document.documentElement.lang = LANG;
+	document.documentElement.dir = RTL[LANG] ? 'rtl' : 'ltr';
 	if (await i18nLoad(LANG)) i18nStart($('#app'));
 	i18nLanguages().then((l) => { S.languages = l; });
 	applyTheme();

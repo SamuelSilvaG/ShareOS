@@ -1,0 +1,1072 @@
+# Português (Brasil)
+E0	VISÃO GERAL
+E1	ARMAZENAMENTO
+E2	COMPARTILHAMENTOS
+E3	SERVIÇOS
+E4	APPS
+E5	NUVEM
+E6	PAPERLESS
+E7	SISTEMA
+E8	NOVO
+E9	ONLINE
+E10	OFFLINE
+E11	Sair
+E12	Alternar claro/escuro
+E13	Menu principal
+E14	Sistema
+E15	disponível
+E16	A interface do ShareOS precisa de JavaScript.
+E17	Administração – faça login.
+E18	USUÁRIO
+E19	SENHA
+E20	Manter conectado (7 dias)
+E21	Entrar
+E22	Usuário ou senha incorretos.
+E23	Caixa inacessível.
+E24	Sessão expirada – faça login novamente.
+E25	ao vivo · a cada 5 s
+E26	CARGA
+E27	controle da placa ativo
+E28	sem dados da MCU
+E29	VENTOINHA
+E30	TEMP
+E31	desligada
+E32	metade
+E33	máxima
+E34	sem link
+E35	últimos 10 min
+E36	Gateway · DNS
+E37	coletando amostras …
+E38	Firmware
+E39	Iniciado a partir de
+E40	Flash (UBI)
+E41	Rede (RAM)
+E42	As configurações são mantidas
+E43	As alterações se perdem ao reiniciar
+E44	Tempo ligado
+E45	desde a última inicialização
+E46	Serviços
+E47	em execução
+E48	Flash livre
+E49	para configurações e pacotes
+E50	Unidades
+E51	detectadas
+E52	nenhuma conectada
+E53	gerenciar todas
+E54	Atualização disponível
+E55	Carregando dados do sistema …
+E56	Carregando serviços …
+E57	Carregando unidades …
+E58	Nenhum disco rígido ou armazenamento USB detectado. O ShareOS roda inteiramente na flash interna – as unidades aparecem aqui assim que forem conectadas.
+E59	modelo desconhecido
+E60	iniciar, parar, reiniciar
+E61	Reiniciar
+E62	Parar
+E63	Iniciar
+E64	SSH / SFTP
+E65	Interface web
+E66	Hora (NTP)
+E67	Agendador
+E68	API (rpcd)
+E69	Barramento do sistema (ubus)
+E70	Log do sistema
+E71	Controle da placa
+E72	acerta o relógio e mantém o relógio da MCU sincronizado
+E73	interface para esta página
+E74	mensagens entre os serviços
+E75	syslogd, na RAM
+E76	ventoinha, temperatura, botões, relógio da MCU
+E77	Esta área ainda não foi construída. Planejado:
+E78	COMPARTILHAMENTOS, USUÁRIOS E GRUPOS
+E79	APPS E PACOTES
+E80	ARMAZENAMENTO EM NUVEM
+E81	PAPERLESS-NGX
+E82	Compartilhamentos por pasta com chaves para SMB, NFS, FTP e DLNA
+E83	Usuários e grupos com permissões por compartilhamento
+E84	Montar unidades de rede (CIFS/NFS)
+E85	Tarefas de backup (rsync)
+E86	Fonte de pacotes (feed opkg) no GitHub
+E87	Catálogo com categorias, instalar/remover com fila
+E88	Os pacotes vão para configurações e pacotes (flash) ou para o disco
+E89	Contas via rclone: Nextcloud/WebDAV, Google Drive, OneDrive, Dropbox, S3, SFTP
+E90	Tarefas de sincronização: copiar, espelhar, bidirecional
+E91	Criptografia (crypt), largura de banda e agenda
+E92	Pasta de entrada no NAS → envio pela API REST do Paperless (token)
+E93	Status da transferência via /api/tasks/
+E94	Tags e correspondente por pasta, exportar backup para o NAS
+E95	VOLUMES
+E96	UNIDADES
+E97	CONFIGURAÇÕES
+E98	REPOUSO
+E99	CONFIGURAR DE NOVO
+E100	DESLIGAR OS DISCOS APÓS
+E101	nunca
+E102	10 minutos
+E103	20 minutos
+E104	30 minutos
+E105	1 hora
+E106	2 horas
+E107	Swap
+E108	Área de apps
+E109	nenhum ainda
+E110	nenhum ativo
+E111	nenhuma ainda
+E112	Economiza energia e desgaste. Os discos voltam a girar no próximo acesso (alguns segundos).
+E113	O assistente apaga os discos selecionados e os configura de novo. Discos individuais também podem ser formatados diretamente em "Unidades".
+E114	Iniciar assistente
+E115	Configurar armazenamento
+E116	FLASH INTERNA
+E117	128 MB NAND · UBI
+E118	ÁREA
+E119	MONTADO
+E120	USADO
+E121	Configurações e pacotes
+E122	Sistema (somente leitura)
+E123	RAM (tmp)
+E124	Desmontar
+E125	Montar
+E126	Remover
+E127	Ler SMART
+E128	Apagar e formatar
+E129	Espelho (RAID 1)
+E130	Unidade única
+E131	SMART ainda não lido
+E132	em repouso (SMART ao acordar)
+E133	sem dados SMART
+E134	SMART OK
+E135	ALERTA SMART
+E136	SMART FALHOU
+E137	vazio
+E138	sem sistema de arquivos
+E139	não montado
+E140	sistema de arquivos não encontrado
+E141	aguardando
+E142	Pacotes e dados de apps ficam em .shareos
+E143	Nenhum armazenamento configurado ainda. O assistente configura os discos em poucos passos – como espelho (os dois discos guardam os mesmos dados) ou como unidades separadas.
+E144	CONFIGURAR ARMAZENAMENTO · ASSISTENTE
+E145	Cancelar
+E146	Discos
+E147	Estrutura
+E148	Nome
+E149	Confirmar
+E150	Voltar
+E151	Avançar
+E152	Configurar
+E153	Quais discos devem ser configurados?
+E154	Tudo nesses discos será apagado.
+E155	Espelho (RAID 1) – recomendado
+E156	Duas unidades separadas
+E157	SWAP POR DISCO
+E158	1 GB – recomendado
+E159	nenhum
+E160	A caixa tem só 256 MB de RAM. O swap nos discos absorve picos de carga (compartilhamentos, sincronização com a nuvem, instalação de pacotes). É uma pequena partição no início de cada disco; o resto vira a unidade.
+E161	NOME DO ESPELHO
+E162	UNIDADE
+E163	DISCOS
+E164	TAMANHO
+E165	ESTRUTURA
+E166	Letras minúsculas, dígitos, - e _ (máx. 16 caracteres). A unidade aparece como
+E167	; os compartilhamentos são criados depois.
+E168	Apagar e configurar os discos?
+E169	Apagar e configurar
+E170	Configuração iniciada.
+E171	Formatação iniciada.
+E172	Nome da nova unidade (a–z, 0–9, - e _, máx. 16 caracteres):
+E173	Selecione pelo menos um disco.
+E174	No máximo dois discos.
+E175	Nome inválido: apenas a–z, 0–9, - e _, máx. 16 caracteres.
+E176	Os nomes devem ser diferentes.
+E177	Nome inválido.
+E178	Repouso salvo.
+E179	FIRMWARE
+E180	GERAL
+E181	ENERGIA E REDEFINIÇÃO
+E182	LOGS
+E183	APARÊNCIA
+E184	SOBRE
+E185	ATUALIZAÇÃO DE FIRMWARE
+E186	Instalado
+E187	Kernel, initramfs e sistema
+E188	ainda não verificado
+E189	atualizado
+E190	ainda não há versão para este aparelho
+E191	nenhuma
+E192	CANAL DE ATUALIZAÇÃO
+E193	Estável (versões)
+E194	Beta (também pré-lançamentos)
+E195	Verificar agora
+E196	Verificando …
+E197	VERSÕES
+E198	do GitHub
+E199	VERSÃO
+E200	DATA
+E201	CANAL
+E202	ESTÁVEL
+E203	BETA
+E204	instalada
+E205	Baixar
+E206	Notas ↗
+E207	COMO FUNCIONA UMA ATUALIZAÇÃO
+E208	Baixar o pacote do GitHub e verificá-lo (SHA-256, aparelho, tamanhos)
+E209	Gravar kernel e initramfs na flash e lê-los de volta
+E210	Preparar o novo sistema
+E211	Reiniciar: o initramfs instala o sistema e o ShareOS inicia de novo
+E212	As configurações e os pacotes instalados são mantidos. Se interrompida, a instalação é repetida na próxima inicialização.
+E213	Download
+E214	Verificação
+E215	Pronto
+E216	Gravação
+E217	Descartar
+E218	Erro:
+E219	Última atualização:
+E220	Reinício necessário
+E221	Reiniciar agora
+E222	Verificado: SHA-256, somas de todas as partes, feito para este aparelho. Configurações e pacotes são mantidos.
+E223	O ShareOS está atualizado.
+E224	Atualização baixada e verificada.
+E225	Atualização gravada – reinicie.
+E226	Instalar a atualização?
+E227	Instalar
+E228	NOME DO APARELHO
+E229	NOME DO HOST
+E230	Salvar
+E231	NOVA SENHA
+E232	REPETIR
+E233	Alterar senha
+E234	Letras, dígitos e hífen. Vale na hora; o servidor DHCP o vê na próxima renovação.
+E235	Vale para a interface web e o SSH. Pelo menos 6 caracteres.
+E236	Nome do host salvo.
+E237	Senha alterada.
+E238	As senhas não coincidem.
+E239	ENERGIA
+E240	Desligar
+E241	Ao desligar, o ShareOS é encerrado e o controle da placa corta a energia. Ligue com o botão de energia.
+E242	REDEFINIÇÃO DE FÁBRICA
+E243	apaga as configurações
+E244	Restaurar configurações de fábrica
+E245	Remove todas as configurações e pacotes instalados da flash e reinicia. O sistema e a versão do firmware permanecem. Depois, a senha volta a ser
+E246	Reiniciar?
+E247	Reiniciar
+E248	A caixa reinicia. Esta página se reconecta sozinha (cerca de 1–2 minutos).
+E249	Desligar?
+E250	O ShareOS é encerrado e a caixa desliga. Ligue de novo no aparelho.
+E251	Configurações de fábrica?
+E252	Redefinir
+E253	Todas as configurações e pacotes instalados são apagados e a caixa reinicia. Depois, a senha volta a ser "shareos".
+E254	Reiniciando
+E255	O ShareOS está reiniciando
+E256	A caixa está desligando
+E257	Você pode fechar esta janela.
+E258	O serviço está reiniciando
+E259	aguardando a caixa
+E260	Configurações de fábrica
+E261	LOG
+E262	Fonte
+E263	Sistema (syslog)
+E264	Kernel (dmesg)
+E265	Atualizar
+E266	carregando …
+E267	(vazio)
+E268	só neste navegador
+E269	Tema claro
+E270	Linhas de varredura
+E271	LOGO
+E272	vale para todos
+E273	Mostrar o logo do ShareOS (desligado: só texto)
+E274	IDIOMA
+E275	Cor de destaque verde
+E276	Cor de destaque vermelha
+E277	Cor de destaque azul
+E278	Cor de destaque branca
+E279	Versão
+E280	Estágio
+E281	Aparelho
+E282	Nome do firmware
+E283	PROJETO
+E284	O ShareOS é um firmware livre para caixas NAS da D-Link, derivado do Alt-F. Baseado em buildroot, Linux e BusyBox; operação no estilo do OpenWrt (UCI, ubus, rpcd, ucode). Licença GPLv2.
+E285	Configuração em andamento
+E286	Não desligue a caixa.
+E287	A configuração falhou:
+E288	HTTPS
+E289	CONEXÃO
+E290	esta página: HTTPS
+E291	esta página: HTTP
+E292	HTTPS na porta 443
+E293	Redirecionar requisições HTTP para HTTPS
+E294	Após uma alteração, o servidor web reinicia; a página fica inacessível por um instante.
+E295	CERTIFICADO
+E296	autoassinado
+E297	certificado próprio
+E298	Ainda não há certificado – ele é criado automaticamente ao ativar o HTTPS.
+E299	Emitido para
+E300	Emissor
+E301	Válido desde
+E302	Válido até
+E303	Nomes
+E304	Os navegadores avisam uma vez sobre certificados autoassinados. A conexão é criptografada mesmo assim; para uma página sem aviso, envie seu próprio certificado (por ex. da sua CA de intranet ou do Let's Encrypt).
+E305	Novo certificado autoassinado
+E306	ENVIAR CERTIFICADO PRÓPRIO
+E307	CERTIFICADO (PEM, COM INTERMEDIÁRIOS SE HOUVER)
+E308	CHAVE PRIVADA (PEM, SEM SENHA)
+E309	Antes de usar, a caixa verifica se certificado e chave combinam. A chave nunca sai da caixa.
+E310	Usar certificado
+E311	Certificado instalado.
+E312	Certificado criado.
+E313	Novo certificado autoassinado?
+E314	Criar
+E315	Um novo certificado para o nome e o IP atuais é criado e substitui o anterior. Os navegadores mostrarão um aviso mais uma vez.
+E316	Salvo – o servidor web está reiniciando.
+E317	Carregando …
+E318	IDIOMA DA INTERFACE
+E319	Mais idiomas: um arquivo em
+E320	– veja docs/TRANSLATING.md.
+E321	DESLIGADA ABAIXO DE (°C, 0 = NUNCA)
+E322	MÁXIMA A PARTIR DE (°C)
+E323	VOLTA À METADE ABAIXO DE (°C)
+E324	Tudo pode ser ajustado depois em Sistema. A senha continua "shareos" até você alterá-la.
+E326	Assumir do Alt-F
+E327	Também versões de teste, com novidades antes.
+E328	Esta caixa tem configurações de
+E330	Equilibrado
+E331	Usuário
+E332	Compartilhamentos
+E333	NFS
+E334	Usuários e compartilhamentos são mantidos e oferecidos na área "Compartilhamentos". Os dados do Alt-F na flash não são tocados.
+E335	Beta
+E336	Estável
+E337	Em seguida você pode configurar os discos rígidos.
+E338	Todo mundo conhece a senha padrão
+E339	– defina agora uma própria. Ela vale para a interface web e o SSH.
+E340	A caixa controla a ventoinha em três níveis (desligada, metade, máxima) conforme a temperatura da placa. As mudanças valem em segundos.
+E341	O LED USB laranja indica o modo de resgate e as atualizações na inicialização e não pode ser ajustado.
+E342	PRIMEIRA CONFIGURAÇÃO
+E343	Valores próprios
+E344	Primeira configuração concluída.
+E345	Executar a primeira configuração de novo
+E346	Pular a primeira configuração?
+E347	Concluir
+E348	Concluir e configurar armazenamento
+E349	Nome do aparelho
+E350	Assumir nome, fuso horário e ventoinha
+E351	Batimento (ShareOS em execução)
+E352	Fresco
+E353	Silencioso
+E354	LEDS
+E355	VENTOINHA E LEDS
+E356	Ventoinha
+E357	Deixe em branco para alterar a senha depois.
+E358	Ventoinha sempre ligada, máxima a partir de 45 °C
+E359	Ventoinha sempre ligada, máxima a partir de 50 °C
+E360	A ventoinha para abaixo de 40 °C, máxima a partir de 55 °C
+E361	Nome e hora
+E362	Só versões finais – recomendado.
+E363	LEDS DOS DISCOS (VERMELHOS)
+E364	LED DE ENERGIA
+E365	LED DE STATUS (AZUL)
+E366	Senha
+E367	Mostrar acessos ao disco
+E368	Idioma
+E369	Definir as temperaturas você mesmo
+E370	A caixa aparece na rede com este nome. O relógio se acerta sozinho via NTP.
+E371	Canal de atualização
+E372	Atualizações
+E373	As atualizações vêm do GitHub e são instaladas em Sistema → Firmware.
+E374	Bem-vindo ao ShareOS. A caixa é configurada em poucos passos; tudo pode ser mudado depois em
+E375	.
+E376	FUSO HORÁRIO
+E377	Fuso horário
+E378	piscando
+E379	ligado
+E380	vale na hora
+E381	será alterado
+E382	permanece (alterar depois)
+E383	sim
+E384	não
+E385	Pular
+E386	Ventoinha salva.
+E387	LED salvo.
+E388	Nome de aparelho inválido.
+E389	A senha precisa de pelo menos 6 caracteres.
+E390	Verificando o pacote de novo …
+E391	Preparando o sistema para o reinício …
+E392	Sistema de inicialização: apagando a flash …
+E393	Gravando o sistema de inicialização …
+E394	Verificando o sistema de inicialização …
+E395	Kernel: apagando a flash …
+E396	Gravando o kernel …
+E397	Verificando o kernel …
+E398	Iniciando …
+E399	não desligue
+E400	, isso leva cerca de 1–2 minutos.
+E401	Verificando o pacote …
+E402	SHA-256 e conteúdo, leva cerca de meio minuto.
+E403	– o novo sistema é instalado na próxima inicialização (cerca de 1 minuto, não desligue a caixa).
+E404	REDE
+E405	ENDEREÇO
+E406	ATUAL
+E407	COR DE DESTAQUE
+E408	NA INICIALIZAÇÃO
+E409	DESCRIÇÃO
+E410	SERVIÇO
+E411	CLARO OU ESCURO
+E412	HTTPS E CERTIFICADO
+E413	AGORA
+E414	MEDIDA
+E415	VALOR
+E416	OBSERVAÇÃO
+E417	TIPO
+E418	MODELO
+E419	SAÚDE
+E420	CONTEÚDO
+E421	ENDEREÇO IP
+E422	MÁSCARA DE SUB-REDE
+E423	SERVIDORES DNS (SEPARADOS POR VÍRGULA)
+E424	Automático (DHCP) – pelo roteador
+E425	Endereço estático
+E426	estático
+E427	Escuro
+E428	Claro
+E429	Igual ao sistema operacional (automático)
+E430	Verde
+E431	Vermelho
+E432	Azul
+E433	Branco
+E434	O logo e o ícone do navegador assumem a cor de destaque. A configuração vale para todos, inclusive a página de login.
+E435	Linhas de varredura (só neste navegador)
+E436	Aplicar
+E437	conectado
+E438	sem endereço
+E439	alterar
+E440	Conexão
+E441	Vale a partir da próxima inicialização. Serviços em execução são iniciados e parados em "Status". Controle do aparelho, barramento do sistema, API e interface web sempre iniciam; caso contrário, a caixa não poderia mais ser operada.
+E442	quais serviços iniciam quando a caixa é ligada
+E443	iniciar
+E444	sempre
+E445	Sem este serviço a caixa não pode ser operada
+E446	Visualização em blocos
+E447	Visualização em tabela
+E448	Novas configurações de rede aguardam confirmação
+E449	Manter
+E450	A última alteração não foi confirmada; as configurações de rede anteriores estão ativas de novo.
+E451	Novas configurações de rede confirmadas.
+E452	Alterar a rede?
+E453	Mudando a rede
+E454	Reiniciando a rede
+E455	Sem conexão – a caixa deve ter restaurado as configurações antigas. Recarregue a página.
+E456	falta um disco
+E457	OK
+E458	Sincronização aguardando
+E459	STATUS
+E460	INICIALIZAÇÃO AUTOMÁTICA
+E461	GRUPOS
+E462	Administrador
+E463	Só compartilhamentos
+E464	leitura e escrita
+E465	somente leitura
+E466	sem acesso
+E467	ilimitado
+E468	Compartilhamentos precisam de uma unidade – configure uma primeiro em
+E469	.
+E470	Nenhum compartilhamento ainda. Um compartilhamento torna uma pasta de uma unidade acessível na rede – no Windows, macOS e Linux.
+E471	Criar compartilhamento
+E472	Novo compartilhamento
+E473	COMPARTILHAMENTO
+E474	PASTA
+E475	ACESSO
+E476	unidade ausente
+E477	ninguém ainda
+E478	SMB (WINDOWS, MACOS, LINUX)
+E479	Oferecer compartilhamentos SMB
+E480	GRUPO DE TRABALHO
+E481	O serviço SMB inicia automaticamente assim que existir um compartilhamento. Pastas pessoais aparecem como
+E482	NFS (LINUX, PROXMOX)
+E483	Oferecer compartilhamentos NFS
+E484	O NFS não tem contas de usuário: os computadores ou redes informados recebem acesso. Os arquivos são gravados como
+E485	. Montar por ex. com
+E486	sem protocolo
+E487	CONVIDADO
+E488	Editar
+E489	Excluir
+E490	Criar
+E491	NOVO COMPARTILHAMENTO
+E492	NOME
+E493	PASTA NA UNIDADE
+E494	igual ao nome
+E495	ACESSO VIA SMB
+E496	Compartilhar via SMB (Windows, macOS, Linux)
+E497	Convidados podem ler sem senha
+E498	USUÁRIO / GRUPO
+E499	PERMISSÃO
+E500	Ainda não há usuários – crie-os em
+E501	ou permita acesso de convidados.
+E502	ACESSO VIA NFS
+E503	Compartilhar via NFS
+E504	Clientes NFS podem gravar
+E505	CLIENTES NFS (IP OU REDE, SEPARADOS POR VÍRGULA)
+E506	A pasta é criada se não existir. Remover um compartilhamento mantém a pasta e seus arquivos.
+E507	sem limite
+E508	de
+E509	Ainda não há usuários. Uma só conta serve para tudo: compartilhamentos, a interface web e, mais tarde, apps e sincronização com a nuvem.
+E510	Criar usuário
+E511	Importar do Alt-F
+E512	Novo usuário
+E513	FUNÇÃO
+E514	PASTA PESSOAL
+E515	sem pasta pessoal
+E516	Funções:
+E517	– tudo, inclusive SSH.
+E518	– área própria "Meu ShareOS" na interface web.
+E519	– acesso a compartilhamentos, sem login web. A conta
+E520	é sempre administrador.
+E521	· sem web
+E522	NOVO USUÁRIO
+E523	NOME DE USUÁRIO
+E524	NOME COMPLETO
+E525	LIMITE DE ARMAZENAMENTO POR UNIDADE (GB, 0 = ILIMITADO)
+E526	Pode fazer login na interface web ("Meu ShareOS")
+E527	Nome de usuário: letras minúsculas, dígitos e _, começando com letra. A senha serve para os compartilhamentos e – conforme a função – para a interface web.
+E528	GRUPO
+E529	MEMBROS
+E530	Grupos reúnem usuários, por ex. "família" ou "mídia". Assim as permissões podem ser dadas ao grupo inteiro.
+E531	Novo grupo
+E532	Os membros são definidos no usuário (Usuários → Editar).
+E533	MEU SHAREOS
+E534	Nada salvo ainda.
+E535	Pasta pessoal
+E536	Nenhuma pasta pessoal configurada.
+E537	ALTERAR SENHA
+E538	SENHA ATUAL
+E539	Serve para os compartilhamentos e esta interface.
+E540	MEUS COMPARTILHAMENTOS
+E541	Nenhum compartilhamento foi atribuído a você ainda.
+E542	APPS E NUVEM
+E543	planejado
+E544	Os apps liberados para você e suas próprias tarefas de sincronização com a nuvem aparecerão aqui mais tarde.
+E545	Meu ShareOS
+E546	Informe pelo menos um cliente (IP ou rede) para o NFS.
+E547	Salvo.
+E548	O compartilhamento some da rede. A pasta e todos os arquivos nela ficam na unidade.
+E549	Importar usuários do Alt-F?
+E550	Usuários e grupos das configurações mantidas do Alt-F são criados (função "Só compartilhamentos"). As senhas são assumidas quando o Alt-F as guardou.
+E551	Nenhum usuário novo encontrado.
+E552	Nome do grupo (a–z, 0–9 e _, começando com letra):
+E553	Os membros permanecem, mas perdem as permissões dadas por este grupo.
+E554	Definir
+E555	Nova senha (pelo menos 6 caracteres). Serve para os compartilhamentos e – conforme a função – para a interface web.
+E556	Faça login novamente.
+E557	A pasta pessoal é mantida.
+E558	Contas de usuário
+E559	FAZER BACKUP E RESTAURAR CONFIGURAÇÕES
+E560	FAZER BACKUP
+E561	Arquivo JSON
+E562	SENHA PARA CRIPTOGRAFAR (OPCIONAL)
+E563	vazio = sem criptografia
+E564	Contém todas as configurações, usuários com suas senhas (como hash), compartilhamentos, rede e o certificado HTTPS com sua chave. Sem senha o arquivo é legível – guarde-o em lugar seguro. Com senha: AES-256; a senha é necessária para restaurar.
+E565	Baixar backup
+E566	RESTAURAR
+E567	ARQUIVO DE BACKUP
+E568	SENHA (SE CRIPTOGRAFADO)
+E569	Criado em
+E570	Certificado
+E571	Restaurar substitui as configurações, usuários e compartilhamentos atuais. Depois é preciso reiniciar. Os dados nas unidades não são tocados.
+E572	Restaurar
+E573	Restaurar configurações?
+E574	As configurações, usuários e compartilhamentos atuais são substituídos pelo backup.
+E575	Restaurado
+E576	As configurações foram restauradas. Reiniciar agora para que tudo valha?
+E577	Backup criptografado baixado.
+E578	Backup baixado.
+E579	O backup está criptografado – informe a senha.
+E580	ENDEREÇO DO PAPERLESS
+E581	VERIFICAR A CADA
+E582	APÓS O ENVIO
+E583	Excluir arquivo
+E584	manter (.paperless/done)
+E585	Enviar as pastas de entrada automaticamente
+E586	Enviar agora
+E587	COMO FUNCIONA
+E588	Crie no Paperless um token de API para cada caixa de entrada (Perfil → Token de API). Os documentos passam a pertencer a esse usuário do Paperless.
+E589	Coloque arquivos (PDF, imagens, Office) na pasta de entrada – de um PC ou direto do scanner.
+E590	O ShareOS os envia pela API do Paperless e mostra se o Paperless os aceitou.
+E591	Caixas pessoais ficam na pasta pessoal (
+E592	); os usuários também podem informar o próprio token em "Meu ShareOS". Caixas compartilhadas usam um compartilhamento, por ex. para um scanner.
+E593	CAIXAS DE ENTRADA
+E594	aceito
+E595	processando
+E596	Erro
+E597	Log
+E598	nada aguardando
+E599	Nova caixa de entrada
+E600	NOVA CAIXA DE ENTRADA
+E601	pessoal (pasta "Paperless" na pasta pessoal)
+E602	compartilhada (pasta de um compartilhamento)
+E603	TOKEN DE API
+E604	ativa
+E605	Testar conexão
+E606	do Paperless: Perfil → Token de API
+E607	TOKEN DE API (VAZIO = MANTER)
+E608	TAGS PARA DOCUMENTOS NOVOS
+E609	Fechar
+E610	HORA
+E611	ARQUIVO
+E612	MENSAGEM
+E613	Nada mais será enviado. A pasta e seus arquivos são mantidos.
+E614	CAIXA
+E615	AGUARDANDO
+E616	ÚLTIMO
+E617	compartilhada
+E618	Paperless → Perfil → Token de API
+E619	Caixa do Paperless salva.
+E620	Transferência iniciada.
+E621	MINHA CAIXA DE ENTRADA
+E622	MEU TOKEN DE API DO PAPERLESS
+E623	Enviar arquivos da minha caixa
+E624	Pasta de entrada
+E625	ENVIADOS RECENTEMENTE
+E626	Nada enviado ainda. Coloque arquivos na pasta de entrada – eles chegam ao Paperless em poucos minutos.
+E627	CONTAS
+E628	Testar
+E629	Adicionar conta
+E630	OBSERVAÇÕES
+E631	As credenciais ficam criptografadas na caixa. Para Google Drive, OneDrive ou Dropbox execute
+E632	em um PC e cole aqui a seção resultante. As tarefas usam pouca memória (2 transferências por vez); um limite de banda como
+E633	mantém a rede livre.
+E634	TAREFAS
+E635	Iniciar agora
+E636	Nova tarefa
+E637	NOVA CONTA DE NUVEM
+E638	SFTP (servidor SSH)
+E639	outra – colar configuração do rclone
+E640	ENDEREÇO (URL WEBDAV)
+E641	PROVEDOR
+E642	SENHA / SENHA DE APP
+E643	Adicionar
+E644	ENDPOINT (VAZIO PARA AWS)
+E645	SEÇÃO DO RCLONE.CONF (COMEÇA COM [NOME])
+E646	As credenciais são apagadas. Tarefas que usam esta conta param de funcionar. Nada é apagado na nuvem.
+E647	NOVA TAREFA
+E648	PASTA NO NAS
+E649	CONTA DE NUVEM
+E650	PASTA NA NUVEM
+E651	DIREÇÃO
+E652	Enviar – copiar para a nuvem, nada é apagado
+E653	Baixar – copiar para o NAS, nada é apagado
+E654	Espelhar para a nuvem – apaga na nuvem o que falta aqui
+E655	Espelhar da nuvem – apaga aqui o que falta na nuvem
+E656	AGENDA
+E657	só manual
+E658	de hora em hora
+E659	diariamente às 2:30
+E660	aos domingos às 3:00
+E661	horário próprio (cron)
+E662	HORÁRIO CRON (MIN HORA DIA MÊS DIA_SEMANA)
+E663	LARGURA DE BANDA (VAZIO = ILIMITADA)
+E664	Agenda ativa
+E665	Espelhar apaga no destino o que falta na origem – para backups simples escolha "Enviar".
+E666	A tarefa não será mais executada. Os arquivos no NAS e na nuvem ficam como estão.
+E667	TAREFA
+E668	DE → PARA
+E669	Espelhar?
+E670	Entendi
+E671	Parada.
+E672	Espelhar da nuvem apaga arquivos no NAS que faltam na nuvem.
+E673	Espelhar para a nuvem apaga arquivos na nuvem que faltam no NAS.
+E674	MINHA NUVEM
+E675	contas e tarefas próprias
+E676	As credenciais ficam criptografadas na caixa, na sua pasta pessoal. Para Google Drive, OneDrive ou Dropbox execute
+E677	mantém a rede livre. O que você baixa conta no seu limite de armazenamento.
+E678	Pode criar tarefas próprias de sincronização com a nuvem (requer pasta pessoal)
+E679	APP E WIDGETS
+E680	INSTALAR COMO APP
+E681	pelo menu do navegador
+E682	rodando como app
+E683	pronto
+E684	só HTTPS
+E685	Esta interface está rodando como app instalado.
+E686	O navegador pode instalar o ShareOS como app com ícone próprio.
+E687	No menu do navegador escolha
+E688	"Instalar app"
+E689	ou
+E690	"Adicionar à tela inicial"
+E691	. Com certificado autoassinado os navegadores não oferecem a instalação real.
+E692	Os navegadores só instalam apps web via
+E693	HTTPS com certificado confiável
+E694	(por ex. Let's Encrypt, instale em SISTEMA → REDE). Via http:// o menu do Chrome só oferece
+E695	– isso cria um ícone de favorito.
+E696	No Android: toque e segure o ícone do app para abrir os atalhos
+E697	Visão geral, Armazenamento, Compartilhamentos, Firmware
+E698	. O Chrome não oferece widgets reais de tela inicial para apps web – use o status para apps de widget à direita.
+E699	Instalar como app
+E700	STATUS PARA WIDGETS
+E701	Ativar o endereço de status
+E702	ENDEREÇO (MANTENHA EM SEGREDO)
+E703	Copiar
+E704	Nova chave
+E705	Abrir ↗
+E706	Retorna uma resposta JSON curta sem login: nome, versão, tempo ligado, carga, temperatura, uso das unidades, estado do RAID e avisos (
+E707	). Feito para apps de widget como
+E708	(Android), Home Assistant ou seus próprios scripts. Quem conhece o endereço vê esses valores – ninguém pode alterar nada com ele.
+E709	Endereço de status ativado.
+E710	Endereço de status desativado.
+E711	Criar uma nova chave?
+E712	Criar
+E713	Nova chave criada.
+E714	O endereço antigo para de funcionar – os widgets precisam do novo.
+E715	Copiado.
+E716	Selecione e copie o endereço você mesmo.
+E717	O ShareOS está instalado como app.
+E718	· Meu ShareOS
+E719	ARQUIVOS
+E720	Nova pasta
+E721	Enviar
+E722	Renomear
+E723	Mover
+E724	Ocultos
+E725	MODIFICADO
+E726	Você também pode simplesmente arrastar arquivos para cá.
+E727	Caminho
+E728	Pasta acima
+E729	Selecionar tudo
+E730	Mover para
+E731	Copiar para
+E732	Nome da nova pasta:
+E733	Esta pasta está vazia.
+E734	LIMITE DE ARMAZENAMENTO (GB)
+E735	Navegador de arquivos para a pasta pessoal na interface web
+E736	Nome de usuário: letras minúsculas, dígitos e _, começando com letra. O limite de armazenamento vale por unidade, 0 = ilimitado. A senha serve para os compartilhamentos e – conforme a função – para a interface web.
+E737	só para você
+E738	Igual para todos
+E739	Vale só para o seu login, em todos os aparelhos. O logo e o ícone do navegador assumem a cor de destaque.
+E740	Substituir arquivo?
+E741	Substituir
+E742	ignorado
+E743	concluído
+E744	Conexão perdida
+E745	Excluído.
+E746	Movido.
+E747	Aparência voltou à de todos.
+E748	Nenhuma unidade montada – configure uma primeiro em ARMAZENAMENTO.
+E749	Não há pasta pessoal.
+E750	Só as primeiras 2000 entradas são mostradas.
+E751	Nome do host salvo. O certificado HTTPS foi reemitido para o novo nome – o navegador vai perguntar mais uma vez.
+E752	INSTALADOS
+E753	LOJA
+E754	FONTES
+E755	APPS INSTALADOS
+E756	Nenhum app instalado ainda. A
+E757	loja
+E758	tem apps para instalar – ou envie seu próprio pacote (.sapp).
+E759	Apps
+E760	LOJA DE APPS
+E761	Beta (também pré-lançamentos)
+E762	Atualizar agora
+E763	INSTALAR PACOTE
+E764	ARQUIVO DO PACOTE
+E765	Para seus próprios apps (criados com
+E766	do repositório de apps). Pacotes enviados contam como "próprios / não verificados".
+E767	Enviar e instalar
+E768	APPS DISPONÍVEIS
+E769	APP
+E770	EDITOR
+E771	Ferramentas
+E772	Mídia
+E773	Escritório
+E774	Rede
+E775	Download
+E776	Sincronização
+E777	baixando …
+E778	da loja
+E779	próprio / não verificado
+E780	próprio
+E781	VISÍVEL PARA
+E782	todos os usuários
+E783	só administradores
+E784	Todos os usuários com acesso web
+E785	Administradores veem todos os apps. A seleção decide quem vê o app em "Meu ShareOS".
+E786	O app é excluído. Os dados que ele guardou no navegador ficam lá.
+E787	FONTES DE APPS
+E788	OUTRA FONTE (ENDEREÇO DO CATÁLOGO)
+E789	Uma fonte é um catálogo de apps (
+E790	) no formato do repositório
+E791	. Apps próprios: use o repositório como modelo; seu GitHub Action cria pacotes e catálogo. Adicione só fontes em que você confia.
+E792	Remover fonte?
+E793	Os apps desta fonte não aparecem mais na loja. Os apps instalados permanecem.
+E794	MEUS APPS
+E795	Loja atualizada.
+E796	Removido.
+E797	Carregando o catálogo …
+E798	Nenhum app encontrado – verifique a conexão com a internet e as fontes.
+E799	Nenhum usuário com acesso web – crie um em Compartilhamentos → Usuários.
+E800	precisa de um ShareOS mais novo
+E801	ainda não carregado
+E802	Apps web rodam em porta própria (8081 / 8444 para HTTPS) – separados desta interface, assim um app não pode usar seu login. Quem conhece o endereço pode abrir um app web na rede; "visível para" decide quem o vê em "Meu ShareOS".
+E803	Instalação concluída
+E804	(100 %) – reinicie agora.
+E805	INSTALAR ARQUIVO DE FIRMWARE
+E806	Enviar e verificar
+E807	Tipo
+E808	outro firmware
+E809	Instalar
+E810	Gravando o firmware
+E811	Kernel e sistema de inicialização – aguarde, não desligue
+E812	Gravado
+E813	Tamanho
+E814	ext4 – recomendado
+E815	exFAT – recomendado
+E816	Tudo: permissões por usuário, limite de armazenamento, pastas pessoais, apps.
+E817	Permissões por usuário, pastas pessoais, apps; sem limite de armazenamento por usuário. Precisa de mais memória.
+E818	Legível também no Windows e macOS. Sem permissões por usuário (quem pode gravar num compartilhamento pode alterar tudo nele), sem limite de armazenamento, sem pastas pessoais, sem apps.
+E819	Legível também no Windows. Sem permissões por usuário, sem limite de armazenamento, sem pastas pessoais, sem apps.
+E820	Windows, macOS, Linux, TVs; arquivos acima de 4 GB.
+E821	Para aparelhos antigos (som de carro, câmera); arquivos de até 4 GB.
+E822	Para computadores com Windows.
+E823	Para Linux e backups com permissões.
+E824	SISTEMA DE ARQUIVOS
+E825	Remover com segurança
+E826	Formatar
+E827	Nome do novo volume (a–z, 0–9, - e _, no máximo 16 caracteres) e sistema de arquivos:
+E828	HORA DA CAIXA
+E829	Sincronização de hora
+E830	da internet (NTP)
+E831	NTP ativado, mas não está rodando
+E832	manualmente
+E833	Última sincronização
+E834	ainda não
+E835	Relógio de bateria
+E836	é acertado após cada sincronização
+E837	Sincronizar agora
+E838	FUSO HORÁRIO E SERVIDORES DE HORA
+E839	Obter a hora da internet automaticamente (NTP)
+E840	SERVIDORES DE HORA (UM POR LINHA, NO MÁXIMO 5)
+E841	Numa rede doméstica o roteador também pode ser o servidor de hora, por ex.
+E842	. O fuso horário vale para logs, agendas e a exibição.
+E843	ACERTAR O RELÓGIO MANUALMENTE
+E844	Enquanto o NTP estiver ativado, a caixa acerta o relógio de novo pela internet na próxima sincronização. Para uma caixa sem internet, desative o NTP acima.
+E845	O relógio continua a partir daí; o relógio de bateria da caixa também é acertado.
+E846	Usar a hora deste aparelho
+E847	Acertar hora
+E848	Hora acertada.
+E849	Hora sincronizada.
+E850	Hora inválida.
+E851	Um firmware no formato D-Link, por ex. para
+E852	voltar ao Alt-F
+E853	. São gravados o kernel e o sistema de inicialização; o sistema e as configurações do ShareOS ficam na flash.
+P0	Sem swap, sem área de apps (pacotes e dados de apps precisam de ext4 ou Btrfs).
+P1	$1 de swap por disco, sem área de apps (pacotes e dados de apps precisam de ext4 ou Btrfs).
+P2	Restaurar: $1
+P3	Backup: $1
+P4	Backup: $1
+P5	$1 criado
+P6	COMPARTILHAMENTO $1
+P7	USUÁRIO $1
+P8	Grupo $1
+P9	Permissão para $1
+P10	em $1
+P11	Limite de $1 por unidade
+P12	Convidados (l)$1
+P13	Compartilhamento "$1" salvo.
+P14	Remover o compartilhamento "$1"?
+P15	Compartilhamento "$1" removido.
+P16	Usuário "$1" criado.
+P17	Usuário "$1" salvo.
+P18	Excluir o usuário "$1"?
+P19	Usuário "$1" excluído.
+P20	A conta é removida; suas permissões de compartilhamento deixam de existir.$1
+P21	Grupo "$1" criado.
+P22	Excluir o grupo "$1"?
+P23	Grupo "$1" excluído.
+P24	Senha de $1
+P25	Senha de $1 alterada.
+P26	Importados: $1
+P27	Ignorados: $1
+P28	Compartilhamentos: $1
+P29	Compartilhamento: $1
+P30	Usuário: $1
+P31	Senha: $1
+P32	Alt-F: $1
+P33	A alteração vale na hora. Depois, a caixa espera $1 segundos por uma confirmação do novo endereço – se não vier, restaura as configurações anteriores. Assim você não fica trancado do lado de fora.
+P34	– sem confirmação a caixa volta às anteriores em $1 s.
+P35	A caixa obtém o endereço do roteador. Depois ela pode estar em outro endereço (procure no roteador). Se a alteração não for confirmada na caixa em $1 segundos, as configurações anteriores voltam a valer.
+P36	A caixa muda para $1. Esta página então abre o novo endereço e confirma a alteração. Se não funcionar, as configurações anteriores voltam a valer após $2 segundos.
+P37	As configurações de rede são aplicadas e confirmadas por esta página. Se não funcionar, as configurações anteriores voltam a valer após $1 segundos.
+P38	novo endereço $1
+P39	aguardando a caixa ($1 s) – inacessível? Procure o novo endereço no roteador e faça login lá.
+P40	aguardando a caixa ($1 s)
+P41	$1: inicia ao ligar
+P42	$1: não inicia mais ao ligar
+P43	Rede: $1
+P44	Aparência: $1
+P45	($1 %) –
+P46	Canal $1
+P47	Atualização $1 disponível
+P48	Atualização $1 disponível.
+P49	ATUALIZAÇÃO $1
+P50	há $1
+P51	$1 configurado(s)
+P52	$1 detectada(s)
+P53	planejado · fase $1
+P54	Mais recente · Beta
+P55	Mais recente · Estável
+P56	MUDANÇAS EM $1
+P57	ACESSO · $1
+P58	NOME PARA $1 ($2)
+P59	PROGRESSO · $1
+P60	Fonte: versões do GitHub · $1
+P61	instalada com sucesso ($1)
+P62	Formatar $1
+P63	$1 será apagado por completo. Não dá para desfazer.
+P64	Ao clicar em "Configurar", $1 é apagado por completo. A sincronização inicial roda depois em segundo plano (várias horas com discos grandes); a unidade pode ser usada na hora.
+P65	Ao clicar em "Configurar", $1 é apagado por completo.
+P66	$1 de swap por disco, área de apps em "$2" (se ainda não houver uma).
+P67	Sem swap, área de apps em "$1" (se ainda não houver uma).
+P68	Os dois discos guardam os mesmos dados. Se um falhar, nada se perde. Utilizável: $1.
+P69	O dobro do espaço ($1), mas sem redundância – cada disco é uma unidade própria.
+P70	O disco vira uma unidade de $1. Para ter redundância, adicione depois um segundo disco como espelho.
+P71	$1: os dois discos ativos ($2)
+P72	$1: falta um disco ($2)
+P73	Remover "$1"?
+P74	Apagar $1?
+P75	$1 será apagado por completo e configurado como unidade "$2".
+P76	O ShareOS $1 será gravado na flash. Depois é preciso reiniciar; durante o reinício o novo sistema é instalado. Não desligue a caixa durante a gravação.
+P77	$1 de $2
+P78	Instalar $1
+P79	Carga $1$2
+P80	REDE · $1
+P81	$1: montado
+P82	$1: desmontado
+P83	$1: removido
+P84	$1: iniciado
+P85	$1: parado
+P86	$1: reiniciado
+P87	($1).
+P88	máxima a partir de $1 °C
+P89	agora: $1
+P90	último $1
+P91	$1 arquivo(s) aguardando
+P92	caixa pessoal de $1 · token $2
+P93	caixa compartilhada · token $1
+P94	pessoal: $1
+P95	CAIXA $1
+P96	LOG · $1
+P97	Conexão OK – $1 documentos no Paperless.
+P98	Remover a caixa "$1"?
+P99	$1: conexão OK ($2 pastas).
+P100	Remover a conta "$1"?
+P101	Remover a tarefa "$1"?
+P102	Compartilhamento $1
+P103	Compartilhamento $1 → $2
+P104	$1 → Pasta pessoal
+P105	cron: $1 · por $2
+P106	por $1
+P107	Erro · $1
+P108	em execução desde $1
+P109	Tarefa: $1
+P110	Conta: $1
+P111	Caixa: $1
+P112	Ventoinha: $1
+P113	Serviços: $1
+P114	Configuração: $1
+P115	Formatar: $1
+P116	Instalar: $1
+P117	Repouso: $1
+P118	Armazenamento: $1
+P119	Idioma: $1
+P120	Canal: $1
+P121	Certificado: $1
+P122	Verificação falhou: $1
+P123	$1 livre
+P124	selecionar $1
+P125	baixar $1
+P126	$1 selecionado(s).
+P127	Novo nome para "$1":
+P128	$1 item(ns). Pasta de destino como caminho em "$2", por ex. Fotos/2026 (vazio = nível superior).
+P129	Excluir $1 item(ns)?
+P130	$1 – pastas com seu conteúdo. Não dá para desfazer.
+P131	"$1" já existe nesta pasta.
+P132	$1 arquivo(s) enviado(s).
+P133	$1 arquivo(s) não enviado(s).
+P134	Igual para todos ($1)
+P135	Download: $1
+P136	Pasta: $1
+P137	Renomear: $1
+P138	Excluir: $1
+P139	Mover: $1
+P140	Copiar: $1
+P141	Arquivos: $1
+P142	Apps web rodam em porta própria ($1) – separados desta interface, assim um app não pode usar seu login. Quem conhece o endereço pode abrir um app web na rede; "visível para" decide quem o vê em "Meu ShareOS".
+P143	Apps web rodam em porta própria ($1 / $2 para HTTPS) – separados desta interface, assim um app não pode usar seu login. Quem conhece o endereço pode abrir um app web na rede; "visível para" decide quem o vê em "Meu ShareOS".
+P144	posição de $1
+P145	$1 · visível para $2
+P146	$1 · VISÍVEL PARA
+P147	Remover $1?
+P148	$1 $2 instalado.
+P149	$1 $2 instalado (app próprio).
+P150	$1 baixando …
+P151	$1 sendo verificado …
+P152	$1 sendo instalado …
+P153	Atualizar $1
+P154	Loja: $1
+P155	Apps: $1
+P156	Remover: $1
+P157	Fontes: $1
+P158	Pacote: $1
+P159	Depois inicia o $1. Os pacotes extras do Alt-F ficam faltando – grave o mesmo arquivo mais uma vez na página de firmware do Alt-F. De volta ao ShareOS: grave o .bin do ShareOS no Alt-F; o sistema e as configurações continuam lá.
+P160	Instalar $1?
+P161	O kernel e o sistema de inicialização são substituídos e verificados. Não desligue a caixa durante a gravação.
+P162	$1 está na flash. Reiniciar agora?
+P163	$1 está iniciando – sua interface estará logo em $2 (porta 80).
+P164	$1 está iniciando
+P165	Instalar: $1
+P166	Arquivo de firmware: $1
+P167	$1 já pode ser desconectado.
+P168	Formatar $1
+P169	Apagar $1?
+P170	$1 – nome (letras, dígitos, espaços, - e _) e sistema de arquivos:
+P171	Tudo em $1 é apagado. Depois será uma unidade $2 "$3".
+P172	$1 ($2, $3) é apagado por completo e configurado de novo como volume "$4" ($5).
+P173	Área de apps em "$1" (se ainda não houver uma).
+P174	DATA E HORA ($1)
+P175	Hora: $1
+P176	Sincronização: $1
+P177	Hora: $1
+P178	$1 (espelho (RAID 1))
+P179	$1 (unidade única)
+W0	em execução
+W1	parado
+W2	 livres de
+W3	 de
+W4	 usados
+W5	dias ligado
+W6	contém:
+W7	membro RAID de
+W8	membro RAID
+W9	Disco ·
+W10	Baia ·
+W11	Sincronização inicial
+W12	Recuperação
+W13	Verificação
+W14	 · faltam $1
+W15	Espelho (RAID 1)
+W16	Unidade única
+W17	 realocados,
+W18	 pendentes
+W19	EM EXECUÇÃO
+W20	 e
+W21	d $1 h
+W22	 – não desligue.
+W23	Verificação falhou:
+W24	Canal:
+W25	Serviços:
+W26	Armazenamento:
+W27	Download:
+W28	Instalar:
+W29	Configurar:
+W30	Formatar:
+W31	Certificado:
+W32	HTTPS:
+W33	Idioma:
+W34	Logo:
+W35	metade
+W36	Ventoinha:
+W37	Hardware:
+W38	grupo
