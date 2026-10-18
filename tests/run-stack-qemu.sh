@@ -111,6 +111,12 @@ if [ "$CHECK" = "--check" ]; then
 	# every page of the web interface works with a web session (ACL)
 	t "apps: installed list with a web session" "$(rpc $SID shareos.apps installed)" "'result' in d and d['result'][0]==0"
 	t "apps: store settings with a web session" "$(rpc $SID shareos.apps store_get)" "'result' in d and d['result'][0]==0"
+	# time (never with NTP on here: ntpd in the chroot would set the host's clock)
+	t "time: clock, zone and servers readable" "$(rpc $SID shareos.time get)" "d['result'][1]['now']>1700000000 and d['result'][1]['servers']==['0.pool.ntp.org','1.pool.ntp.org','2.pool.ntp.org']"
+	t "time: bad server rejected" "$(rpc $SID shareos.time set '{"ntp":false,"servers":["bad name;x"]}')" "'invalid server' in d['result'][1]['error']"
+	t "time: NTP off, own servers stored" "$(rpc $SID shareos.time set '{"timezone":"Europe/Berlin","ntp":false,"servers":["fritz.box","192.168.178.1"]}')" "d['result'][1]['ntp']==False and d['result'][1]['servers']==['fritz.box','192.168.178.1'] and d['result'][1]['timezone']=='Europe/Berlin'"
+	t "time: unknown zone rejected" "$(rpc $SID shareos.time set '{"timezone":"Mars/Base"}')" "'time zone' in d['result'][1]['error']"
+	t "time: implausible manual time rejected" "$(rpc $SID shareos.time set_clock '{"time":1000}')" "'invalid time' in d['result'][1]['error']"
 	# messages that can be closed for good
 	chroot "$R" /bin/sh -c 'mkdir -p /overlay /tmp/shareos-storage /tmp/shareos-net; echo "ok 0.1.0" > /overlay/upgrade-result; printf "state=error\nerror=test\n" > /tmp/shareos-storage/job; echo rolledback > /tmp/shareos-net/result'
 	t "last update shown" "$(rpc $SID shareos.update status)" "d['result'][1]['last_upgrade']=='ok 0.1.0'"

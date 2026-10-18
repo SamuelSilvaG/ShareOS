@@ -85,6 +85,9 @@
 					"catalog",
 					"status",
 					"store_get"
+				],
+				"shareos.time": [
+					"get"
 				]
 			},
 			"uci": [
@@ -219,6 +222,11 @@
 					"remove",
 					"set",
 					"store_set"
+				],
+				"shareos.time": [
+					"set",
+					"sync",
+					"set_clock"
 				]
 			},
 			"uci": [

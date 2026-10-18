@@ -449,6 +449,18 @@ def call(obj, method, args):
         p = STATE['net_pending']
         return {**STATE['net'], 'timeout': 120, 'result': None,
                 'pending': {'until': int(p), 'left': max(0, int(p - time.time()))} if p else None}
+    if obj == 'shareos.time':
+        t = STATE.setdefault('time', {'timezone': 'Europe/Berlin', 'ntp': True, 'servers': ['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org'],
+                                      'last_sync': int(time.time()) - 1800, 'offset': 0})
+        if method == 'set':
+            for k in ('timezone', 'ntp', 'servers'):
+                if args.get(k) is not None: t[k] = args[k]
+        if method == 'sync':
+            t['last_sync'] = int(time.time())
+        if method == 'set_clock':
+            t['offset'] = int(args['time']) - int(time.time())
+        return {'now': int(time.time()) + t['offset'], 'timezone': t['timezone'], 'ntp': t['ntp'], 'servers': t['servers'],
+                'last_sync': t['last_sync'], 'ntp_running': t['ntp'], 'rtc': True}
     if obj == 'shareos.setup':
         if method == 'status':
             return {'done': STATE['setup_done'], 'hostname': 'shareos', 'timezone': 'Europe/Berlin', 'lang': STATE['lang'], 'channel': 'stable'}

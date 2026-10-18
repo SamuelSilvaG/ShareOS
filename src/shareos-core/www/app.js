@@ -152,7 +152,7 @@ const TABS = [
 	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
 	['apps', 'APPS', true], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['zeit', 'ZEIT'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
 const SHR_SUBS = [['freigaben', 'FREIGABEN'], ['dateien', 'DATEIEN'], ['benutzer', 'BENUTZER'], ['gruppen', 'GRUPPEN']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
@@ -1793,6 +1793,47 @@ const SYS = {
 		<div class="g2">${appPanel()}${widgetPanel()}</div>`;
 	},
 
+	zeit() {
+		const t = S.time;
+		if (!t) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const zones = S.zones || [t.timezone];
+		const last = t.last_sync ? new Date(t.last_sync * 1000).toLocaleString(LOC, { timeZone: tzSafe(t.timezone), dateStyle: 'short', timeStyle: 'short' }) : null;
+		return html`<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">UHRZEIT DER BOX</span><span class="tag ml">${t.timezone}</span></div>
+				<div id="clock-now" class="name" style="font-size:30px;letter-spacing:.04em;margin:6px 0 2px">${boxTime(t)}</div>
+				<div id="clock-date" class="mut" style="font-size:13px">${boxDate(t)}</div>
+				<dl class="kv" style="margin-top:14px">
+					<dt>Zeitabgleich</dt><dd>${t.ntp ? (t.ntp_running ? 'aus dem Internet (NTP)' : html`<span style="color:var(--amber)">NTP eingeschaltet, läuft aber nicht</span>`) : 'von Hand'}</dd>
+					<dt>Zuletzt abgeglichen</dt><dd>${last || (t.ntp ? 'noch nicht' : '–')}</dd>
+					${t.rtc ? html`<dt>Batterie-Uhr</dt><dd>wird nach jedem Abgleich gestellt</dd>` : ''}
+				</dl>
+				<div class="acts" style="margin-top:14px"><button class="btn" type="button" data-act="time-sync">${svg(I.reboot)}Jetzt abgleichen</button></div>
+			</div>
+			<form class="panel" id="f-time">
+				<div class="ph"><span class="pt">ZEITZONE & ZEITSERVER</span></div>
+				<div class="fields" style="grid-template-columns:1fr">
+					<label class="f"><span>ZEITZONE</span><select name="tz">${zones.map((z) => html`<option value="${z}"${z === t.timezone ? raw(' selected') : ''}>${z.replace(/_/g, ' ')}</option>`)}</select></label>
+					<label class="chk"><input type="checkbox" name="ntp"${t.ntp ? raw(' checked') : ''}><span>Uhrzeit automatisch aus dem Internet holen (NTP)</span></label>
+					<label class="f"><span>ZEITSERVER (EINER JE ZEILE, HÖCHSTENS 5)</span><textarea name="servers" rows="4" spellcheck="false">${t.servers.join('\n')}</textarea></label>
+				</div>
+				<p class="note">Im Heimnetz kann auch der Router Zeitserver sein, z. B. <code>fritz.box</code>. Die Zeitzone gilt für Protokolle, Zeitpläne und die Anzeige.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+			</form>
+		</div>
+		<form class="panel" id="f-clock" style="margin-top:16px">
+			<div class="ph"><span class="pt">UHRZEIT VON HAND STELLEN</span></div>
+			<div class="fields">
+				<label class="f"><span>DATUM UND UHRZEIT (${t.timezone})</span><input name="dt" type="datetime-local" step="1" value="${localInput(t)}" required></label>
+			</div>
+			<p class="note">${t.ntp ? 'Solange NTP eingeschaltet ist, stellt die Box die Uhr beim nächsten Abgleich wieder nach dem Internet. Für eine Box ohne Internet NTP oben ausschalten.' : 'Die Uhr läuft danach weiter; die Batterie-Uhr der Box wird mitgestellt.'}</p>
+			<div class="acts" style="margin-top:12px">
+				<button class="btn ghost" type="button" data-act="time-browser">Uhrzeit dieses Geräts übernehmen</button>
+				<button class="btn primary" type="submit">Uhrzeit setzen</button>
+			</div>
+		</form>`;
+	},
+
 	hardware() {
 		const h = S.hw;
 		if (!h) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
@@ -2003,6 +2044,28 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'protokolle') loadLog();
+		if (sub === 'zeit') {
+			if (!S.time) loadTime();
+			clearInterval(S.clockTimer);
+			S.clockTimer = setInterval(() => {
+				if (!$('#clock-now') || !S.time) { clearInterval(S.clockTimer); return; }
+				const t = { ...S.time, now: Math.floor(Date.now() / 1000) + S.timeOffset };
+				$('#clock-now').textContent = boxTime(t); $('#clock-date').textContent = boxDate(t);
+			}, 1000);
+			$('#f-time')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, servers = f.servers.value.split(/\s+/).map((x) => x.trim()).filter(Boolean);
+				try { setTime(await rpc('shareos.time', 'set', { timezone: f.tz.value, ntp: f.ntp.checked, servers })); toast('Gespeichert.'); renderMain(); }
+				catch (err) { toast('Zeit: ' + err.message, true); }
+			});
+			$('#f-clock')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const sec = fromLocalInput(e.target.dt.value, S.time.timezone);
+				if (sec == null) { toast('Ungültige Uhrzeit.', true); return; }
+				try { setTime(await rpc('shareos.time', 'set_clock', { time: sec })); toast('Uhrzeit gesetzt.'); renderMain(); }
+				catch (err) { toast('Uhrzeit: ' + err.message, true); }
+			});
+		}
 		if (sub === 'netzwerk') {
 			if (!S.net) loadNet();
 			$('#net-proto')?.addEventListener('change', (e) => { $('#net-static').hidden = e.target.value !== 'static'; });
@@ -2270,6 +2333,37 @@ const VIEWS_AFTER = {
 };
 
 
+
+// --- time page helpers: show the box's clock in the box's time zone ---
+function tzSafe(tz) { try { new Intl.DateTimeFormat('en', { timeZone: tz }); return tz; } catch (e) { return 'UTC'; } }
+function boxTime(t) { return new Date(t.now * 1000).toLocaleTimeString(LOC, { timeZone: tzSafe(t.timezone), hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+function boxDate(t) { return new Date(t.now * 1000).toLocaleDateString(LOC, { timeZone: tzSafe(t.timezone), weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+// "YYYY-MM-DDTHH:MM:SS" as the wall clock in time zone tz
+function localInput(t) {
+	const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: tzSafe(t.timezone), year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' })
+		.formatToParts(new Date(t.now * 1000)).map((x) => [x.type, x.value]));
+	return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}`;
+}
+// wall clock in tz -> seconds since 1970 (two rounds settle daylight saving)
+function fromLocalInput(v, tz) {
+	const m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)(?::(\d\d))?$/.exec(v || '');
+	if (!m) return null;
+	const want = Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0)) / 1000;
+	let guess = want;
+	for (let k = 0; k < 2; k++) {
+		const shown = localInput({ now: guess, timezone: tz }).match(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)$/);
+		guess += want - Date.UTC(+shown[1], shown[2] - 1, +shown[3], +shown[4], +shown[5], +shown[6]) / 1000;
+	}
+	return Math.round(guess);
+}
+function setTime(t) { S.time = t; S.timeOffset = t.now - Math.floor(Date.now() / 1000); }
+async function loadTime() {
+	try {
+		const [t, z] = await Promise.all([rpc('shareos.time', 'get'), S.zones ? null : rpc('shareos.setup', 'zones')]);
+		setTime(t); if (z) S.zones = z.zones;
+	} catch (e) { toast('Zeit: ' + e.message, true); }
+	if (S.route.tab === 'system' && S.route.sub === 'zeit') renderMain();
+}
 
 async function loadHw() {
 	try { S.hw = await rpc('shareos.hw', 'get'); } catch (e) { toast('Hardware: ' + e.message, true); }
@@ -2876,6 +2970,16 @@ const ACTIONS = {
 		renderMain();
 		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
 		catch (e) { S.updPending = null; toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
+	},
+
+	async 'time-sync'(el) {
+		el.disabled = true;
+		try { setTime(await rpc('shareos.time', 'sync')); toast('Uhrzeit abgeglichen.'); renderMain(); }
+		catch (e) { toast('Abgleich: ' + e.message, true); el.disabled = false; }
+	},
+	'time-browser'() {
+		const f = $('#f-clock');
+		if (f && S.time) f.dt.value = localInput({ now: Math.floor(Date.now() / 1000), timezone: S.time.timezone });
 	},
 
 	async 'upd-ack'() {
