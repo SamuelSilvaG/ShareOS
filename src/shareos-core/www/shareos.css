@@ -178,7 +178,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .ft b{color:var(--soft);font-weight:600}
 @media(max-width:640px){.sos{padding:24px 16px 56px}.brand{font-size:32px}.side{align-items:flex-start}.meta{text-align:left}.search kbd{display:none}}
 
-/* --- Ergänzungen für die echte Oberfläche ------------------------------- */
+/* --- additions for the real interface ------------------------------------ */
 html,body{margin:0;background:#06090d}
 body.light-bg{background:#f3f7f4}
 .sos [hidden]{display:none!important}

@@ -10,3 +10,4 @@
 - Never `rm -rf` a chroot that still has mounts below it (it would delete the host's /dev).
 - Apps live in the separate repository UniqueDroid/ShareOS-Apps.
 - New UI texts: add them to `i18n/en.json` and to every `tools/i18n/<code>.tsv` (new numbers at the end), then `tools/i18n/build-lang.py`; `tests/check-i18n.py` must pass.
+- Code is English: page names/URLs (`#/storage`, `#/system/time`), identifiers, comments. Only the visible UI texts are German (the source language of the translations).

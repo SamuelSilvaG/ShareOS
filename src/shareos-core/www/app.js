@@ -135,7 +135,7 @@ async function rpc(obj, method, args = {}, sid = S.sid) {
 const S = {
 	sid: store.get('sid'),
 	user: store.get('user') || 'root',
-	route: { tab: 'uebersicht', sub: '' },
+	route: { tab: 'overview', sub: '' },
 	info: null, prev: null,
 	cpu: null, rxRate: null, txRate: null,
 	rxHist: [], txHist: [],
@@ -151,15 +151,28 @@ const S = {
 };
 
 const TABS = [
-	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
+	['overview', 'ÜBERSICHT'], ['storage', 'SPEICHER'], ['shares', 'FREIGABEN'], ['services', 'DIENSTE'],
 	['apps', 'APPS', true], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['zeit', 'ZEIT'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['general', 'ALLGEMEIN'], ['time', 'ZEIT'], ['network', 'NETZWERK'], ['power', 'ENERGIE & RESET'], ['logs', 'PROTOKOLLE'], ['appearance', 'DARSTELLUNG'], ['about', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
-const SHR_SUBS = [['freigaben', 'FREIGABEN'], ['dateien', 'DATEIEN'], ['benutzer', 'BENUTZER'], ['gruppen', 'GRUPPEN']];
+const SHR_SUBS = [['shares', 'FREIGABEN'], ['files', 'DATEIEN'], ['users', 'BENUTZER'], ['groups', 'GRUPPEN']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
 // pages that moved: old link -> new place
-const SUB_MOVED = { hardware: 'energie', https: 'netzwerk' };
+const SUB_MOVED = { hardware: 'power', https: 'network' };
+// German page names of versions before 0.1.0-beta.8 (bookmarks, installed app shortcuts)
+const OLD_ROUTE = { uebersicht: 'overview', speicher: 'storage', freigaben: 'shares', dienste: 'services', allgemein: 'general',
+	zeit: 'time', netzwerk: 'network', energie: 'power', protokolle: 'logs', darstellung: 'appearance', ueber: 'about',
+	dateien: 'files', benutzer: 'users', gruppen: 'groups', installiert: 'installed', quellen: 'sources', mein: 'me' };
+function routeParts() {
+	const parts = location.hash.replace(/^#\/?/, '').split('/');
+	if (parts.some((p) => OLD_ROUTE[p])) {
+		const now = parts.map((p) => OLD_ROUTE[p] || p);
+		history.replaceState(null, '', '#/' + now.join('/'));
+		return now;
+	}
+	return parts;
+}
 
 // the logo is drawn in blue; these filters turn it into the other accent colours
 const LOGO_FILTER = {
@@ -364,7 +377,7 @@ async function tick() {
 		}
 		S.info = info;
 		renderHeader();
-		if (S.route.tab === 'uebersicht' && !S.fr) renderMain();
+		if (S.route.tab === 'overview' && !S.fr) renderMain();
 	} catch (e) {
 		if (e.code === 'offline') renderHeader(true);
 	}
@@ -481,19 +494,19 @@ function renderTabs() {
 }
 
 function parseRoute() {
-	const [tab, sub] = location.hash.replace(/^#\/?/, '').split('/');
-	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'uebersicht', sub: SUB_MOVED[sub] || sub || '' };
+	const [tab, sub] = routeParts();
+	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'overview', sub: SUB_MOVED[sub] || sub || '' };
 	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'firmware';
-	if (S.route.tab === 'dienste' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
-	if (S.route.tab === 'freigaben' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'freigaben';
-	if (S.route.tab === 'apps' && !APP_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'installiert';
+	if (S.route.tab === 'services' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
+	if (S.route.tab === 'shares' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'shares';
+	if (S.route.tab === 'apps' && !APP_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'installed';
 }
 
 function renderMain() {
 	const main = $('#main');
 	if (!main) return;
 	if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); return; }
-	const v = VIEWS[S.route.tab] || VIEWS.uebersicht;
+	const v = VIEWS[S.route.tab] || VIEWS.overview;
 	main.innerHTML = v().s;
 	VIEWS_AFTER[S.route.tab]?.();
 }
@@ -540,7 +553,7 @@ function diskCards(i, table = false) {
 const fsLabel = { '/overlay': 'Einstellungen & Pakete', '/rom': 'System (nur lesbar)', '/tmp': 'Arbeitsspeicher (tmp)' };
 
 const VIEWS = {
-	uebersicht() {
+	overview() {
 		const i = S.info;
 		if (!i) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Systemdaten …</span></div></div>`;
 		const m = i.memory || {}, used = (m.memtotal || 0) - (m.memavailable || 0);
@@ -592,28 +605,28 @@ const VIEWS = {
 			${diskCards(i, isTable('disks'))}
 		</section>
 		<section class="sec">
-			${secHead('services', 'DIENSTE', html`<a href="#/dienste">alle verwalten</a>`)}
+			${secHead('services', 'DIENSTE', html`<a href="#/services">alle verwalten</a>`)}
 			${serviceCards(false, isTable('services'))}
 		</section>`;
 	},
 
-	speicher: () => storageView(),
+	storage: () => storageView(),
 
-	freigaben() {
+	shares() {
 		const sub = S.route.sub;
 		return html`
-		<nav class="subtabs" aria-label="Freigaben">${SHR_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/freigaben/${id}">${label}</a>`)}</nav>
-		${sub === 'dateien' ? filesView() : !S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
-			: sub === 'benutzer' ? usersView() : sub === 'gruppen' ? groupsView() : sharesView()}`;
+		<nav class="subtabs" aria-label="Freigaben">${SHR_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/shares/${id}">${label}</a>`)}</nav>
+		${sub === 'files' ? filesView() : !S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
+			: sub === 'users' ? usersView() : sub === 'groups' ? groupsView() : sharesView()}`;
 	},
 	apps: () => appsView(),
 	cloud: () => cloudSection('admin'),
 	paperless: () => paperlessView(),
 
-	dienste() {
+	services() {
 		const sub = S.route.sub;
 		return html`
-		<nav class="subtabs" aria-label="Dienste">${SVC_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/dienste/${id}">${label}</a>`)}</nav>
+		<nav class="subtabs" aria-label="Dienste">${SVC_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/services/${id}">${label}</a>`)}</nav>
 		${sub === 'autostart' ? autostartView()
 			: html`<section class="sec">${secHead('services', 'DIENSTE', 'Start, Stopp, Neustart')}${serviceCards(true, isTable('services'))}</section>`}`;
 	},
@@ -673,7 +686,7 @@ function autostartView() {
 async function loadServices() {
 	try {
 		S.services = (await rpc('shareos.service', 'list')).services;
-		if (S.route.tab === 'dienste' || S.route.tab === 'uebersicht') renderMain();
+		if (S.route.tab === 'services' || S.route.tab === 'overview') renderMain();
 	} catch (e) { if (e.code !== 'auth') toast('Dienste: ' + e.message, true); }
 }
 
@@ -689,7 +702,7 @@ async function loadShareData() {
 		const [sh, acc, st] = await Promise.all([rpc('shareos.shares', 'list'), rpc('shareos.accounts', 'list'), rpc('shareos.storage', 'status')]);
 		S.shares = sh; S.acc = acc; S.vols = st.volumes || [];
 	} catch (e) { if (e.code !== 'auth') toast('Freigaben: ' + e.message, true); }
-	if (S.route.tab === 'freigaben' && !document.activeElement?.matches('input,select,textarea')) renderMain();
+	if (S.route.tab === 'shares' && !document.activeElement?.matches('input,select,textarea')) renderMain();
 }
 
 function accessOf(sh, tag) { return sh.rw.includes(tag) ? 'rw' : sh.ro.includes(tag) ? 'ro' : ''; }
@@ -708,7 +721,7 @@ function sharesView() {
 	${e ? shareEditor(e) : ''}
 	<section class="sec">
 		${secHead('shares', 'FREIGABEN', list.length ? list.length + ' eingerichtet' : 'noch keine')}
-		${!S.vols.length ? html`<div class="panel"><div class="empty">${svg(I.info)}<span>Für Freigaben wird ein Laufwerk gebraucht – zuerst unter <a href="#/speicher">Speicher</a> einrichten.</span></div></div>`
+		${!S.vols.length ? html`<div class="panel"><div class="empty">${svg(I.info)}<span>Für Freigaben wird ein Laufwerk gebraucht – zuerst unter <a href="#/storage">Speicher</a> einrichten.</span></div></div>`
 			: !list.length ? html`<div class="panel"><div class="empty">${svg(I.folder)}<div><span>Noch keine Freigabe. Eine Freigabe macht einen Ordner auf einem Laufwerk im Netzwerk erreichbar – unter Windows, macOS und Linux.</span>
 				<div class="acts" style="margin-top:12px">${e ? '' : html`<button class="btn primary" type="button" data-act="sh-new">Freigabe anlegen</button>`}</div></div></div></div>`
 			: isTable('shares') ? html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th>FREIGABE</th><th>ORDNER</th><th>PROTOKOLLE</th><th>ZUGRIFF</th><th></th></tr></thead>
@@ -777,7 +790,7 @@ function shareEditor(e) {
 		${rows.length ? html`<div class="tw" style="margin-top:12px"><table class="t" style="min-width:420px"><thead><tr><th>BENUTZER / GRUPPE</th><th style="width:220px">RECHT</th></tr></thead>
 			<tbody>${rows.map(([tag, label, icon]) => html`<tr><td><span style="display:inline-flex;gap:8px;align-items:center">${svg(icon)}${label}</span></td>
 				<td><select class="acl" data-tag="${tag}" aria-label="Recht für ${label}">${['', 'ro', 'rw'].map((v) => html`<option value="${v}"${accessOf(x, tag) === v ? raw(' selected') : ''}>${ACCESS_TXT[v]}</option>`)}</select></td></tr>`)}</tbody></table></div>`
-			: html`<p class="note">Noch keine Benutzer – unter <a href="#/freigaben/benutzer">Benutzer</a> anlegen, oder Gastzugang erlauben.</p>`}
+			: html`<p class="note">Noch keine Benutzer – unter <a href="#/shares/users">Benutzer</a> anlegen, oder Gastzugang erlauben.</p>`}
 		<div class="pt" style="margin:18px 0 8px">ZUGRIFF ÜBER NFS</div>
 		<div style="display:grid;gap:6px">
 			<label class="chk"><input type="checkbox" name="nfs"${x.nfs ? raw(' checked') : ''}>Über NFS freigeben</label>
@@ -1044,7 +1057,7 @@ function cloudSection(scope) {
 				${st.installing ? html`<div style="margin-top:12px;display:flex;gap:10px;align-items:center"><div class="spin" style="margin:0;width:18px;height:18px"></div><span>wird geladen und geprüft …</span></div>`
 				: html`<div class="acts" style="margin-top:12px"><button class="btn primary" type="button" data-act="cl-install" ${st.apps ? '' : 'disabled'}>rclone installieren</button></div>`}
 				${st.install_error ? html`<p class="note" style="color:var(--red)">Fehler: ${st.install_error}</p>` : ''}
-				${st.apps ? '' : html`<p class="note">Zuerst unter <a href="#/speicher">Speicher</a> ein Laufwerk einrichten.</p>`}`
+				${st.apps ? '' : html`<p class="note">Zuerst unter <a href="#/storage">Speicher</a> ein Laufwerk einrichten.</p>`}`
 			: html`<span>Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.</span>`}
 		</div></div></div></section>`;
 	}
@@ -1174,12 +1187,12 @@ function cloudAfter(scope) {
 /* ---------- "Mein ShareOS" for plain users ------------------------------------ */
 
 function userTabs() {
-	return [['mein', 'MEIN SHAREOS'], ...(S.me?.files ? [['dateien', 'DATEIEN']] : []), ['darstellung', 'DARSTELLUNG']];
+	return [['me', 'MEIN SHAREOS'], ...(S.me?.files ? [['files', 'DATEIEN']] : []), ['appearance', 'DARSTELLUNG']];
 }
 
 function parseUserRoute() {
-	const t = location.hash.replace(/^#\/?/, '').split('/')[0];
-	S.utab = userTabs().some((x) => x[0] === t) ? t : 'mein';
+	const t = routeParts()[0];
+	S.utab = userTabs().some((x) => x[0] === t) ? t : 'me';
 }
 
 function renderUserTabs() {
@@ -1266,8 +1279,8 @@ function myPaperless() {
 function renderUserMain() {
 	const main = $('#main');
 	if (!main) return;
-	if (S.utab === 'dateien' && S.me?.files) { main.innerHTML = filesView().s; return; }
-	if (S.utab === 'darstellung') {
+	if (S.utab === 'files' && S.me?.files) { main.innerHTML = filesView().s; return; }
+	if (S.utab === 'appearance') {
 		main.innerHTML = userLookView().s;
 		$('#opt-utheme').addEventListener('change', (e) => {
 			const v = e.target.value;
@@ -1649,9 +1662,9 @@ async function loadStorage() {
 	try {
 		S.storage = await rpc('shareos.storage', 'status');
 		if (S.wizAfterLoad) { S.wizAfterLoad = false; if (!S.storage.volumes.length && S.storage.disks.length) { ACTIONS['wiz-start'](); } }
-		if (S.route.tab === 'speicher' && !(S.wiz && S.wiz.step === 2) && !document.activeElement?.matches('select')) renderMain();
+		if (S.route.tab === 'storage' && !(S.wiz && S.wiz.step === 2) && !document.activeElement?.matches('select')) renderMain();
 		const busy = S.storage.job?.state === 'running' || Object.values(S.storage.arrays || {}).some((a) => a.sync);
-		if (S.route.tab === 'speicher') S.stTimer = setTimeout(loadStorage, busy ? 3000 : 15000);
+		if (S.route.tab === 'storage') S.stTimer = setTimeout(loadStorage, busy ? 3000 : 15000);
 	} catch (e) {
 		if (e.code !== 'auth') { toast('Speicher: ' + e.message, true); S.stTimer = setTimeout(loadStorage, 15000); }
 	}
@@ -1753,7 +1766,7 @@ const SYS = {
 		</div>`;
 	},
 
-	allgemein() {
+	general() {
 		const i = S.info || {};
 		return html`<div class="acts" style="margin-bottom:16px"><button class="btn ghost" type="button" data-act="fr-again">Ersteinrichtung erneut starten</button></div>
 		<div class="g2">
@@ -1795,7 +1808,7 @@ const SYS = {
 		<div class="g2">${appPanel()}${widgetPanel()}</div>`;
 	},
 
-	zeit() {
+	time() {
 		const t = S.time;
 		if (!t) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 		const zones = S.zones || [t.timezone];
@@ -1918,7 +1931,7 @@ const SYS = {
 		</form>`;
 	},
 
-	energie() {
+	power() {
 		return html`<h2 class="gh">ENERGIE & RESET</h2><div class="g2">
 			<div class="panel">
 				<div class="ph"><span class="pt">ENERGIE</span></div>
@@ -1936,7 +1949,7 @@ const SYS = {
 		${SYS.hardware()}`;
 	},
 
-	netzwerk() {
+	network() {
 		const n = S.net, i = S.info || {}, e = i.network?.eth0 || {};
 		if (!n) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 		const st = n.proto === 'static';
@@ -1971,7 +1984,7 @@ const SYS = {
 					<dt>DNS</dt><dd>${(e.dns || []).join(', ') || '–'}</dd>
 					<dt>MAC</dt><dd>${e.mac || '–'}</dd>
 					<dt>Verbindung</dt><dd>${e.speed ? e.speed + ' Mbit/s' : '–'}</dd>
-					<dt>Gerätename</dt><dd>${i.hostname || '–'} <a href="#/system/allgemein" style="font-size:12px">ändern</a></dd>
+					<dt>Gerätename</dt><dd>${i.hostname || '–'} <a href="#/system/general" style="font-size:12px">ändern</a></dd>
 				</dl>
 			</div>
 		</div>
@@ -1979,7 +1992,7 @@ const SYS = {
 		${SYS.https()}`;
 	},
 
-	protokolle() {
+	logs() {
 		return html`<div class="panel">
 			<div class="ph"><span class="pt">PROTOKOLL</span>
 				<div class="acts ml"><select id="log-src" class="btn sm ghost" aria-label="Quelle"><option value="system">System (syslog)</option><option value="kernel">Kernel (dmesg)</option></select>
@@ -1988,7 +2001,7 @@ const SYS = {
 		</div>`;
 	},
 
-	darstellung() {
+	appearance() {
 		const names = { green: 'Grün', red: 'Rot', blue: 'Blau', white: 'Weiß' };
 		return html`<div class="panel" style="max-width:560px">
 			<div class="ph"><span class="pt">DARSTELLUNG</span><span class="tag ml">gilt für alle</span></div>
@@ -2016,7 +2029,7 @@ const SYS = {
 		</div>`;
 	},
 
-	ueber() {
+	about() {
 		const i = S.info || {}, r = i.release || {};
 		return html`<div class="g2">
 			<div class="panel">
@@ -2045,8 +2058,8 @@ const VIEWS_AFTER = {
 	apps() { appsAfter(); },
 	system() {
 		const sub = S.route.sub;
-		if (sub === 'protokolle') loadLog();
-		if (sub === 'zeit') {
+		if (sub === 'logs') loadLog();
+		if (sub === 'time') {
 			if (!S.time) loadTime();
 			clearInterval(S.clockTimer);
 			S.clockTimer = setInterval(() => {
@@ -2068,12 +2081,12 @@ const VIEWS_AFTER = {
 				catch (err) { toast('Uhrzeit: ' + err.message, true); }
 			});
 		}
-		if (sub === 'netzwerk') {
+		if (sub === 'network') {
 			if (!S.net) loadNet();
 			$('#net-proto')?.addEventListener('change', (e) => { $('#net-static').hidden = e.target.value !== 'static'; });
 			$('#f-net')?.addEventListener('submit', netSubmit);
 		}
-		if (sub === 'energie') {
+		if (sub === 'power') {
 			if (!S.hw) loadHw();
 			document.querySelectorAll('#f-fan input[name=preset]').forEach((r) => r.addEventListener('change', () => { $('#fan-custom').hidden = r.value !== 'custom'; }));
 			$('#f-fan')?.addEventListener('submit', async (e) => {
@@ -2090,7 +2103,7 @@ const VIEWS_AFTER = {
 					catch (err) { toast('LED: ' + err.message, true); }
 				});
 		}
-		if (sub === 'netzwerk') {
+		if (sub === 'network') {
 			if (!S.web) loadWeb();
 			$('#opt-https')?.addEventListener('change', (e) => webSet({ https: e.target.checked }));
 			$('#opt-redirect')?.addEventListener('change', (e) => webSet({ redirect: e.target.checked }));
@@ -2145,7 +2158,7 @@ const VIEWS_AFTER = {
 				btn.disabled = false;
 			});
 		}
-		if (sub === 'allgemein') {
+		if (sub === 'general') {
 			if (!S.widget) loadWidget();
 			$('#app-install')?.addEventListener('click', async () => {
 				const ev = S.installEvt; if (!ev) return;
@@ -2224,7 +2237,7 @@ const VIEWS_AFTER = {
 				catch (err) { toast('Passwort: ' + err.message, true); }
 			});
 		}
-		if (sub === 'darstellung') {
+		if (sub === 'appearance') {
 			$('#opt-theme').addEventListener('change', (e) => { S.theme = e.target.value; applyTheme(); renderHeader(); renderMain(); saveLook({ theme: S.theme }); });
 			$('#opt-lang').addEventListener('change', async (e) => {
 				try {
@@ -2252,7 +2265,7 @@ const VIEWS_AFTER = {
 			});
 		}
 	},
-	speicher() {
+	storage() {
 		if (!S.stActive) loadStorage();
 		$('#spindown')?.addEventListener('change', async (e) => {
 			try { await rpc('shareos.storage', 'spindown', { minutes: +e.target.value }); toast('Ruhezustand gespeichert.'); }
@@ -2286,8 +2299,8 @@ const VIEWS_AFTER = {
 			catch (err) { toast('Eingang: ' + err.message, true); }
 		});
 	},
-	freigaben() {
-		if (S.route.sub === 'dateien') return;
+	shares() {
+		if (S.route.sub === 'files') return;
 		if (!S.shares || !S.acc) { loadShareData(); return; }
 		$('#opt-smb')?.addEventListener('change', (e) => shareGlobal({ smb: e.target.checked }));
 		$('#opt-nfs')?.addEventListener('change', (e) => shareGlobal({ nfs: e.target.checked }));
@@ -2318,7 +2331,7 @@ const VIEWS_AFTER = {
 			catch (err) { toast('Benutzer: ' + err.message, true); }
 		});
 	},
-	dienste() {
+	services() {
 		if (!S.services) loadServices();
 		document.querySelectorAll('.as-toggle').forEach((c) => c.addEventListener('change', async () => {
 			c.disabled = true;
@@ -2331,7 +2344,7 @@ const VIEWS_AFTER = {
 			c.disabled = false;
 		}));
 	},
-	uebersicht() { if (!S.services) loadServices(); }
+	overview() { if (!S.services) loadServices(); }
 };
 
 
@@ -2364,12 +2377,12 @@ async function loadTime() {
 		const [t, z] = await Promise.all([rpc('shareos.time', 'get'), S.zones ? null : rpc('shareos.setup', 'zones')]);
 		setTime(t); if (z) S.zones = z.zones;
 	} catch (e) { toast('Zeit: ' + e.message, true); }
-	if (S.route.tab === 'system' && S.route.sub === 'zeit') renderMain();
+	if (S.route.tab === 'system' && S.route.sub === 'time') renderMain();
 }
 
 async function loadHw() {
 	try { S.hw = await rpc('shareos.hw', 'get'); } catch (e) { toast('Hardware: ' + e.message, true); }
-	if (S.route.sub === 'energie') renderMain();
+	if (S.route.sub === 'power') renderMain();
 }
 
 /* ---------- network ------------------------------------------------------------- */
@@ -2381,7 +2394,7 @@ function prefixMask(p) {
 
 async function loadNet() {
 	try { S.net = await rpc('shareos.net', 'get'); } catch (e) { toast('Netzwerk: ' + e.message, true); }
-	if (S.route.sub === 'netzwerk') renderMain();
+	if (S.route.sub === 'network') renderMain();
 	if (S.net?.pending) { clearTimeout(S.netTimer); S.netTimer = setTimeout(() => { S.net = null; loadNet(); }, 5000); }
 }
 
@@ -2559,8 +2572,8 @@ function frEnd(next) {
 	S.fr = null;
 	try { sessionStorage.removeItem('shareos.frstep'); } catch (e) { }
 	S.info = null; tick();
-	if (next === 'storage') { S.wizAfterLoad = true; location.hash = '#/speicher'; }
-	else { location.hash = '#/uebersicht'; renderMain(); }
+	if (next === 'storage') { S.wizAfterLoad = true; location.hash = '#/storage'; }
+	else { location.hash = '#/overview'; renderMain(); }
 }
 
 /* ---------- app (PWA) & widget status ---------- */
@@ -2569,7 +2582,7 @@ function frEnd(next) {
 window.addEventListener('beforeinstallprompt', (e) => {
 	e.preventDefault();
 	S.installEvt = e;
-	if (S.route?.tab === 'system' && S.route.sub === 'allgemein') renderMain();
+	if (S.route?.tab === 'system' && S.route.sub === 'general') renderMain();
 });
 window.addEventListener('appinstalled', () => { S.installEvt = null; toast('ShareOS ist als App installiert.'); });
 
@@ -2606,7 +2619,7 @@ function widgetPanel() {
 
 async function loadWidget() {
 	try { S.widget = await rpc('shareos.widget', 'get'); } catch (e) { S.widget = { enabled: false, token: '' }; }
-	if (S.route.tab === 'system' && S.route.sub === 'allgemein') renderMain();
+	if (S.route.tab === 'system' && S.route.sub === 'general') renderMain();
 }
 
 async function widgetSet(a) {
@@ -2625,7 +2638,7 @@ async function copyText(t) {
 
 async function loadWeb() {
 	try { S.web = await rpc('shareos.web', 'get'); } catch (e) { toast('HTTPS: ' + e.message, true); }
-	if (S.route.sub === 'netzwerk') renderMain();
+	if (S.route.sub === 'network') renderMain();
 }
 
 // the web server restarts after HTTPS changes: wait for it, keep the page
@@ -2708,8 +2721,8 @@ const ACTIONS = {
 		S.theme = effTheme() === 'light' ? 'dark' : 'light';
 		if (isUser()) S.me.ui = { ...S.me.ui, theme: S.theme };
 		applyTheme(); renderHeader();
-		if (isUser()) { renderUserHeader(); if (S.utab === 'darstellung') renderUserMain(); }
-		else if (S.route.sub === 'darstellung') renderMain();
+		if (isUser()) { renderUserHeader(); if (S.utab === 'appearance') renderUserMain(); }
+		else if (S.route.sub === 'appearance') renderMain();
 		// plain users change it only for themselves (the look for everyone is an admin setting)
 		saveLook({ theme: S.theme });
 	},
@@ -3046,14 +3059,14 @@ window.addEventListener('hashchange', () => {
 	if (!S.sid || !$('#main')) return;
 	if (isUser()) {
 		parseUserRoute();
-		if (S.fb && S.utab === 'dateien') S.fb.roots = null;
+		if (S.fb && S.utab === 'files') S.fb.roots = null;
 		renderUserTabs(); renderUserMain(); window.scrollTo(0, 0);
 		return;
 	}
 	parseRoute();
-	if (S.route.tab !== 'speicher') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
-	if (S.route.tab !== 'freigaben') { S.shEdit = null; S.uEdit = null; }
-	if (S.fb && S.route.sub === 'dateien') S.fb.roots = null;   // volumes may have changed
+	if (S.route.tab !== 'storage') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
+	if (S.route.tab !== 'shares') { S.shEdit = null; S.uEdit = null; }
+	if (S.fb && S.route.sub === 'files') S.fb.roots = null;   // volumes may have changed
 	if (S.route.tab !== 'paperless') { S.plEdit = null; S.plLog = null; } else if (S.pl) loadPaperless();
 	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
 	else if (S.cloud?.scope === 'admin') loadCloud('admin');
@@ -3273,7 +3286,7 @@ for (const ev of ['dragover', 'dragleave', 'drop']) {
 
 /* ---------- APPS: installed apps, store, sources ----------------------------- */
 
-const APP_SUBS = [['installiert', 'INSTALLIERT'], ['store', 'STORE'], ['quellen', 'QUELLEN']];
+const APP_SUBS = [['installed', 'INSTALLIERT'], ['store', 'STORE'], ['sources', 'QUELLEN']];
 const APP_CAT = { tools: 'Werkzeuge', media: 'Medien', office: 'Büro', network: 'Netzwerk', system: 'System', download: 'Download', sync: 'Sync' };
 const txtOf = (d) => (d && typeof d === 'object' ? d[LANG] || d.de || d.en || '' : d || '');
 
@@ -3336,7 +3349,7 @@ function appsView() {
 	const nav = html`<nav class="subtabs" aria-label="Apps">${APP_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/apps/${id}">${label}</a>`)}</nav>`;
 	if (!A?.installed) return html`${nav}<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 	const job = A.job && JOB_TXT[A.job.state] ? html`<div class="banner" style="border-color:var(--dim)"><div class="spin" style="margin:0;width:20px;height:20px"></div><span><b>${A.job.id}</b> ${JOB_TXT[A.job.state]} …</span></div>` : '';
-	return html`${nav}${job}${sub === 'store' ? appStore() : sub === 'quellen' ? appSources() : appInstalled()}`;
+	return html`${nav}${job}${sub === 'store' ? appStore() : sub === 'sources' ? appSources() : appInstalled()}`;
 }
 
 function appUsersTxt(a) {
@@ -3447,7 +3460,7 @@ function appSources() {
 
 function appsAfter() {
 	if (!S.apps?.installed) { loadApps(); return; }
-	if (S.route.sub === 'installiert' && !S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; }).catch(() => {});
+	if (S.route.sub === 'installed' && !S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; }).catch(() => {});
 	$('#app-channel')?.addEventListener('change', async (e) => {
 		try { await rpc('shareos.apps', 'store_set', { channel: e.target.value }); S.apps.store.channel = e.target.value; refreshCatalog(true); }
 		catch (err) { toast('Store: ' + err.message, true); }
@@ -3527,7 +3540,7 @@ if ('serviceWorker' in navigator && window.isSecureContext)
 	if (m) {
 		S.sid = m[1];
 		store.set('sid', S.sid, false);
-		history.replaceState(null, '', '#/system/netzwerk');
+		history.replaceState(null, '', '#/system/network');
 	}
 	if (S.sid) {
 		try {

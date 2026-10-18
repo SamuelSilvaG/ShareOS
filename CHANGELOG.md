@@ -10,6 +10,7 @@ pre-releases for test devices only.
 - **USB sticks and disks:** mounted automatically at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), visible in the file browser for admins, **Safely remove** button, **Format** with exFAT, FAT32, NTFS or ext4. The disks in the bays are never touched by this.
 - Tools on board: mkfs for Btrfs, exFAT, FAT and NTFS.
 - **System → Time:** time zone, NTP on/off with own time servers (e.g. the router), *sync now*, set the clock by hand (or take the time of the browser); the battery clock of the box is set too.
+- Page addresses in English (`#/storage`, `#/shares/users`, `#/system/time` …); old German links and app shortcuts are redirected.
 - **10 languages:** English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese and Russian. Translations other than English/German by AI – corrections welcome.
 
 ## 0.1.0-beta.7
