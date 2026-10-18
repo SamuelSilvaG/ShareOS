@@ -880,7 +880,13 @@
 		"Öffnen": "فتح",
 		"In eigenem Fenster ↗": "في نافذة مستقلة ↗",
 		"In ShareOS anzeigen": "يُعرض داخل ShareOS",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "يمكن عرضه كصفحة داخل واجهة ShareOS (بدلاً من نافذة مستقلة)."
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "يمكن عرضه كصفحة داخل واجهة ShareOS (بدلاً من نافذة مستقلة).",
+		"RAID 0 – schnell": "RAID 0 – سريع",
+		"JBOD – voller Platz": "JBOD – المساحة كاملة",
+		"NAME DES LAUFWERKS": "اسم وحدة التخزين",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "نظام ملفات Linux أقدم (مثلاً المعروف من Alt-F): صلاحيات لكل مستخدم، مجلدات شخصية، تطبيقات؛ بلا حد للتخزين.",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "بلا سجل – فحص طويل بعد انقطاع الكهرباء. فقط إذا احتاجه جهاز قديم.",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "للأجهزة القديمة جداً. ملفات حتى 4 غيغابايت، بلا صلاحيات لكل مستخدم، بلا حد للتخزين، بلا مجلدات شخصية، بلا تطبيقات."
 	},
 	"patterns": [
 		[
@@ -1642,6 +1648,14 @@
 		[
 			"^Öffnen: (.+)$",
 			"فتح: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"يصبح القرصان وحدة تخزين واحدة وتوزَّع البيانات عليهما: أسرع، المساحة $1. إذا تعطل قرص يضيع كل شيء."
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"يصبح القرصان وحدة تخزين واحدة متتالية بسعة $1 (حتى مع أقراص مختلفة الحجم). إذا تعطل قرص يضيع كل شيء."
 		]
 	],
 	"words": [

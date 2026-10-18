@@ -880,7 +880,13 @@
 		"Öffnen": "Abrir",
 		"In eigenem Fenster ↗": "Em janela própria ↗",
 		"In ShareOS anzeigen": "Exibido no ShareOS",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Pode ser exibido como página dentro da interface do ShareOS (em vez de janela própria)."
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Pode ser exibido como página dentro da interface do ShareOS (em vez de janela própria).",
+		"RAID 0 – schnell": "RAID 0 – rápido",
+		"JBOD – voller Platz": "JBOD – espaço total",
+		"NAME DES LAUFWERKS": "NOME DO VOLUME",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Sistema de arquivos Linux mais antigo (ex.: do Alt-F): permissões por usuário, pastas pessoais, apps; sem limite de armazenamento.",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "Sem journal – verificação longa após queda de energia. Só se um aparelho antigo precisar.",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Para aparelhos muito antigos. Arquivos de até 4 GB, sem permissões por usuário, sem limite de armazenamento, sem pastas pessoais, sem apps."
 	},
 	"patterns": [
 		[
@@ -1642,6 +1648,14 @@
 		[
 			"^Öffnen: (.+)$",
 			"Abrir: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Os dois discos viram um volume, dados distribuídos entre eles: mais rápido, espaço $1. Se um disco falhar, tudo se perde."
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Os dois discos viram um volume, um após o outro, com $1 (também com discos de tamanhos diferentes). Se um disco falhar, tudo se perde."
 		]
 	],
 	"words": [

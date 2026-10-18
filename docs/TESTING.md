@@ -224,6 +224,9 @@ their permissions.
 - **Format** (on a USB drive): choose a name and a file system – **exFAT** (recommended), **FAT32**, **NTFS** or **ext4**. The stick gets one partition (MBR) so every computer, camera and TV can read it.
 - The disks in the bays are never mounted automatically; the USB functions do not touch them.
 
+- **Two disks:** besides "Mirror (RAID 1)" and "two separate volumes" the wizard offers **RAID 0** and **JBOD**; the summary shows the size (RAID 0: twice the smaller disk, JBOD: both together). `cat /proc/mdstat` shows `raid0` or `linear`.
+- File systems **ext3**, **ext2** and **FAT32** can be chosen for disks too (FAT32: files up to 4 GB).
+
 ## 14. Time and languages
 
 - **System → Time:** the box's clock runs live in its time zone. Change the time zone, switch NTP off and on, enter own time servers (e.g. `fritz.box`), *Sync now*. With NTP off the clock can be set by hand or taken from the browser. Logs then show the local time.

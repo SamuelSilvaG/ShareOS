@@ -880,7 +880,13 @@
 		"Öffnen": "Ouvrir",
 		"In eigenem Fenster ↗": "Dans sa propre fenêtre ↗",
 		"In ShareOS anzeigen": "Affichée dans ShareOS",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Peut être affichée comme une page dans l'interface ShareOS (au lieu de sa propre fenêtre)."
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Peut être affichée comme une page dans l'interface ShareOS (au lieu de sa propre fenêtre).",
+		"RAID 0 – schnell": "RAID 0 – rapide",
+		"JBOD – voller Platz": "JBOD – tout l'espace",
+		"NAME DES LAUFWERKS": "NOM DU VOLUME",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Ancien système de fichiers Linux (p. ex. connu d'Alt-F) : droits par utilisateur, dossiers personnels, apps ; pas de limite de stockage.",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "Sans journal – longue vérification après une coupure de courant. Seulement si un ancien appareil l'exige.",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Pour les très anciens appareils. Fichiers de 4 Go maximum, pas de droits par utilisateur, pas de limite de stockage, pas de dossiers personnels, pas d'apps."
 	},
 	"patterns": [
 		[
@@ -1642,6 +1648,14 @@
 		[
 			"^Öffnen: (.+)$",
 			"Ouvrir : $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Les deux disques forment un volume, les données sont réparties : plus rapide, espace $1. Si un disque tombe en panne, tout est perdu."
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Les deux disques forment un volume l'un après l'autre avec $1 (même de tailles différentes). Si un disque tombe en panne, tout est perdu."
 		]
 	],
 	"words": [

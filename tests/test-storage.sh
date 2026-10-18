@@ -108,6 +108,10 @@ check "status: volume daten mounted with size" "echo '$S' | python3 -c \"import 
 check "status: job and spindown reported" "echo '$S' | python3 -c \"import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['spindown']==30 and d['job']['state']=='done' else 1)\""
 E=$(run ubus call shareos.storage setup "'{\"layout\":\"mirror\",\"name\":\"x\",\"disks\":[\"sda\",\"sda\"],\"confirm\":true}'")
 check "rpc: mirror with the same disk twice rejected" "echo '$E' | grep -q 'two different disks'"
+E=$(run ubus call shareos.storage setup "'{\"layout\":\"stripe\",\"name\":\"x\",\"disks\":[\"sda\"],\"confirm\":true}'")
+check "rpc: RAID 0 with one disk rejected" "echo '$E' | grep -q 'two different disks'"
+E=$(run ubus call shareos.storage setup "'{\"layout\":\"raid5\",\"name\":\"x\",\"disks\":[\"sda\",\"sdb\"],\"confirm\":true}'")
+check "rpc: unknown layout rejected" "echo '$E' | grep -q 'unknown layout'"
 E=$(run ubus call shareos.storage setup "'{\"layout\":\"single\",\"volumes\":[{\"name\":\"x\",\"disk\":\"sda\"}]}'")
 check "rpc: setup needs confirm" "echo '$E' | grep -q confirm"
 E=$(run ubus call shareos.storage volume "'{\"name\":\"../etc\",\"action\":\"mount\"}'")
@@ -118,6 +122,11 @@ if [ -e /proc/mdstat ]; then
 	run shareos-storage setup mirror spiegel $A $B --swap=32 --yes >/dev/null
 	check "mirror setup" "run shareos-storage job | grep -q 'state=done' && mounted spiegel && grep -q md /proc/mdstat"
 	run shareos-storage shutdown >/dev/null
+	for l in stripe span; do
+		run shareos-storage setup $l gross $A $B --swap=0 --yes >/dev/null
+		check "$l setup (RAID 0 / JBOD)" "run shareos-storage job | grep -q 'state=done' && mounted gross && run uci get storage.gross.layout | grep -qx $l"
+		run shareos-storage shutdown >/dev/null
+	done
 else
 	echo "SKIP  mirror (no md driver on this host)"
 fi
@@ -126,7 +135,7 @@ fi
 # mkfs and the partition type are checked, the mount is expected to fail) ---
 hostfs() { grep -qw "$1" /proc/filesystems; }
 ptype() { run sfdisk -d /dev/$1 | sed -n "s/.*$2.*type=\([^,]*\).*/\1/p" | head -1; }
-for f in btrfs exfat ntfs; do
+for f in btrfs exfat ntfs ext3 ext2 vfat; do
 	run shareos-storage setup single "v$f=$B:$f" --swap=0 --yes >/dev/null
 	t=$(run blkid -s TYPE -o value /dev/${B}p1)
 	if hostfs "$([ $f = ntfs ] && echo ntfs3 || echo $f)"; then
@@ -135,6 +144,7 @@ for f in btrfs exfat ntfs; do
 		check "volume with $f: file system created (host cannot mount $f)" "[ '$t' = '$f' ] && run shareos-storage job | grep -q 'mounting v$f failed'"
 	fi
 done
+check "FAT32 volume label in upper case, 11 characters" "[ \"\$(run blkid -s LABEL -o value /dev/${B}p1)\" = VVFAT ]"
 check "exFAT/NTFS volumes get the Windows partition type" "ptype $B ${B}p1 | grep -qi EBD0A0A2"
 run shareos-storage setup single "bad=$B:fat" --yes >/dev/null
 check "unknown file system rejected" "run shareos-storage job | grep -q 'invalid file system'"

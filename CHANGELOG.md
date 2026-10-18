@@ -12,6 +12,7 @@ pre-releases for test devices only.
 - **Open files in apps:** the file browser shows "<App> ↗" next to files an installed app can open (e.g. Webpad for text files); a click on the name opens the file there, in a window of the app's size. The app gets a ticket for exactly this file and the user's rights, saving writes back (owner and rights of the file stay).
 - **App platform:** apps declare `window` (size) and `opens` (file types, view/edit) in `app.json`; the apps web server serves `/_shareos/theme.css` (look of ShareOS, light/dark, accent colour, title/menu/status bars like Notepad++, scroll bars) and `/_shareos/app.js` (menu bar, opened file, messages between apps). Apps get the user's look and follow changes.
 - New permission **`embed`**: apps that only have settings are shown inside the ShareOS interface instead of their own window.
+- **Storage:** the wizard also offers **RAID 0** (both disks as one fast volume) and **JBOD** (both disks one after the other, full space, also for different sizes) besides the mirror; both without redundancy, the wizard says so. File systems **ext3**, **ext2** and **FAT32** for the disks too.
 - Fix: after installing a certificate the apps web server (port 8081/8444) did not come back until the next restart.
 
 ## 0.1.0-beta.8

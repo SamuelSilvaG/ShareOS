@@ -1104,3 +1104,11 @@ E876	Se muestra en ShareOS
 E877	Puede mostrarse como página dentro de la interfaz de ShareOS (en lugar de en su propia ventana).
 P188	Abrir con $1
 P189	Abrir: $1
+E878	RAID 0 – rápido
+E879	JBOD – todo el espacio
+E880	NOMBRE DEL VOLUMEN
+E881	Sistema de archivos Linux más antiguo (p. ej. de Alt-F): permisos por usuario, carpetas personales, apps; sin límite de almacenamiento.
+E882	Sin journal – larga comprobación tras un corte de luz. Solo si un dispositivo antiguo lo necesita.
+E883	Para dispositivos muy antiguos. Archivos de hasta 4 GB, sin permisos por usuario, sin límite de almacenamiento, sin carpetas personales, sin apps.
+P190	Ambos discos forman un volumen, los datos se reparten entre ellos: más rápido, espacio $1. Si falla un disco, se pierde todo.
+P191	Ambos discos forman un volumen uno tras otro con $1 (también con discos de distinto tamaño). Si falla un disco, se pierde todo.

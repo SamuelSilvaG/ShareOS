@@ -880,7 +880,13 @@
 		"Öffnen": "खोलें",
 		"In eigenem Fenster ↗": "अलग विंडो में ↗",
 		"In ShareOS anzeigen": "ShareOS में दिखाया जाता है",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "ShareOS इंटरफ़ेस के अंदर एक पेज के रूप में दिखाया जा सकता है (अलग विंडो के बजाय)।"
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "ShareOS इंटरफ़ेस के अंदर एक पेज के रूप में दिखाया जा सकता है (अलग विंडो के बजाय)।",
+		"RAID 0 – schnell": "RAID 0 – तेज़",
+		"JBOD – voller Platz": "JBOD – पूरी जगह",
+		"NAME DES LAUFWERKS": "वॉल्यूम का नाम",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "पुराना Linux फ़ाइल सिस्टम (जैसे Alt-F से परिचित): प्रति उपयोगकर्ता अधिकार, निजी फ़ोल्डर, ऐप्स; कोई स्टोरेज सीमा नहीं।",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "जर्नल के बिना – बिजली जाने के बाद लंबी जाँच। केवल तभी जब किसी पुराने डिवाइस को इसकी ज़रूरत हो।",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "बहुत पुराने डिवाइसों के लिए। फ़ाइलें अधिकतम 4 GB, प्रति उपयोगकर्ता अधिकार नहीं, स्टोरेज सीमा नहीं, निजी फ़ोल्डर नहीं, ऐप्स नहीं।"
 	},
 	"patterns": [
 		[
@@ -1642,6 +1648,14 @@
 		[
 			"^Öffnen: (.+)$",
 			"खोलें: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"दोनों डिस्क एक वॉल्यूम बनती हैं, डेटा दोनों में बँटता है: तेज़, जगह $1। एक डिस्क खराब होने पर सब कुछ खो जाता है।"
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"दोनों डिस्क एक के बाद एक मिलकर $1 का वॉल्यूम बनती हैं (अलग आकार की डिस्क के साथ भी)। एक डिस्क खराब होने पर सब कुछ खो जाता है।"
 		]
 	],
 	"words": [

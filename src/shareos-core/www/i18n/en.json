@@ -880,7 +880,13 @@
 		"Öffnen": "Open",
 		"In eigenem Fenster ↗": "In its own window ↗",
 		"In ShareOS anzeigen": "Shown in ShareOS",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "May be shown as a page inside the ShareOS interface (instead of its own window)."
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "May be shown as a page inside the ShareOS interface (instead of its own window).",
+		"RAID 0 – schnell": "RAID 0 – fast",
+		"JBOD – voller Platz": "JBOD – full space",
+		"NAME DES LAUFWERKS": "NAME OF THE VOLUME",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Older Linux file system (e.g. known from Alt-F): permissions per user, personal folders, apps; no storage limit.",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "No journal – long check after a power cut. Only if an old device needs it.",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "For very old devices. Files up to 4 GB, no permissions per user, no storage limit, no personal folders, no apps."
 	},
 	"patterns": [
 		[
@@ -1642,6 +1648,14 @@
 		[
 			"^Öffnen: (.+)$",
 			"Open: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Both disks become one volume, data spread across them: faster, space $1. If one disk fails, everything is lost."
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Both disks become one volume one after the other with $1 (also with disks of different sizes). If one disk fails, everything is lost."
 		]
 	],
 	"words": [

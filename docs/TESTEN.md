@@ -227,6 +227,9 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Formatieren** (am USB-Laufwerk): Name und Dateisystem wählen – **exFAT** (empfohlen), **FAT32**, **NTFS** oder **ext4**. Der Stick bekommt eine Partition (MBR), damit ihn jeder Rechner, jede Kamera und jeder Fernseher liest.
 - Die Platten in den Schächten werden nie automatisch eingehängt; die USB-Funktionen fassen sie nicht an.
 
+- **Zwei Platten:** Neben „Spiegel (RAID 1)“ und „zwei getrennte Laufwerke“ bietet der Assistent **RAID 0** und **JBOD** an; die Zusammenfassung zeigt die Größe (RAID 0: doppelte kleinere Platte, JBOD: beide zusammen). `cat /proc/mdstat` zeigt `raid0` bzw. `linear`.
+- Dateisysteme **ext3**, **ext2** und **FAT32** sind auch für Platten wählbar (FAT32: Dateien höchstens 4 GB).
+
 ## 14. Zeit und Sprachen
 
 - **System → Zeit:** Die Uhr der Box läuft live in ihrer Zeitzone. Zeitzone ändern, NTP aus- und einschalten, eigene Zeitserver eintragen (z. B. `fritz.box`), *Jetzt abgleichen*. Mit NTP aus lässt sich die Uhr von Hand stellen oder die Zeit des Browsers übernehmen. Protokolle zeigen danach die Ortszeit.

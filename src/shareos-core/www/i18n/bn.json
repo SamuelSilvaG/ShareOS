@@ -880,7 +880,13 @@
 		"Öffnen": "খুলুন",
 		"In eigenem Fenster ↗": "নিজস্ব উইন্ডোতে ↗",
 		"In ShareOS anzeigen": "ShareOS-এ দেখানো হয়",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "ShareOS ইন্টারফেসের ভেতরে একটি পেজ হিসেবে দেখানো যেতে পারে (নিজস্ব উইন্ডোর বদলে)।"
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "ShareOS ইন্টারফেসের ভেতরে একটি পেজ হিসেবে দেখানো যেতে পারে (নিজস্ব উইন্ডোর বদলে)।",
+		"RAID 0 – schnell": "RAID 0 – দ্রুত",
+		"JBOD – voller Platz": "JBOD – পুরো জায়গা",
+		"NAME DES LAUFWERKS": "ভলিউমের নাম",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "পুরনো Linux ফাইল সিস্টেম (যেমন Alt-F থেকে পরিচিত): ব্যবহারকারী-ভিত্তিক অধিকার, ব্যক্তিগত ফোল্ডার, অ্যাপ; স্টোরেজ সীমা নেই।",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "জার্নাল ছাড়া – বিদ্যুৎ চলে গেলে দীর্ঘ যাচাই। শুধু কোনো পুরনো ডিভাইসের প্রয়োজন হলে।",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "খুব পুরনো ডিভাইসের জন্য। ফাইল সর্বোচ্চ 4 GB, ব্যবহারকারী-ভিত্তিক অধিকার নেই, স্টোরেজ সীমা নেই, ব্যক্তিগত ফোল্ডার নেই, অ্যাপ নেই।"
 	},
 	"patterns": [
 		[
@@ -1642,6 +1648,14 @@
 		[
 			"^Öffnen: (.+)$",
 			"খুলুন: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"দুটি ডিস্ক একটি ভলিউম হয়, ডেটা দুটিতে ভাগ হয়: দ্রুত, জায়গা $1। একটি ডিস্ক নষ্ট হলে সব হারিয়ে যায়।"
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"দুটি ডিস্ক একের পর এক মিলে $1-এর একটি ভলিউম হয় (ভিন্ন আকারের ডিস্কেও)। একটি ডিস্ক নষ্ট হলে সব হারিয়ে যায়।"
 		]
 	],
 	"words": [
