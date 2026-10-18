@@ -62,6 +62,7 @@ Version in brackets = first release with the feature.
 - First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP
 - HTTPS with a self-signed certificate that follows name and IP, own certificate possible
 - Reset button: access reset (5–10 s: network, root password, certificate) or factory reset (≥ 15 s), USB button removes USB drives (beta.9)
+- Messages: RAID, volumes, temperature, SMART, updates, failed cloud jobs and app tasks – in the interface, by e-mail (SMTP) and push (ntfy, Gotify, webhook) (beta.9)
 - Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256), messages that can be closed
 - Look: light/dark/system, accent colours, tiles or tables, per user
 - 10 languages: English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese, Russian (beta.7; more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
@@ -112,7 +113,6 @@ sample data via `tests/mock-ubus.py`.
 ## Roadmap
 
 - Hardware tests of the current betas, then a public beta
-- Notifications (ubus): disks, updates, cloud jobs – in the interface, by e-mail or push
 - Native apps in the same store (MiniDLNA, Transmission, Syncthing …)
 - More of the app platform: "open with" defaults per file type, a two-pane file manager (ShareCommander)
 - Storage: **LVM2**; RAID 5 only makes sense with three or more disks (the DNS-320L has two bays)

@@ -1119,3 +1119,46 @@ E887	Réparation lancée.
 P192	Réparer le miroir « $1 » ?
 P193	$1 ($2 · $3) est entièrement effacé et ajouté au miroir comme second disque. Les données sont ensuite copiées en arrière-plan (plusieurs heures pour les grands disques) ; le volume reste utilisable.
 P194	un disque manque ($1)
+E888	MESSAGES
+E889	1 MESSAGE
+E890	Tout marquer comme lu
+E891	Tout supprimer
+E892	RÉSOLU
+E893	ERREUR
+E894	AVERTISSEMENT
+E895	INFO
+E896	Lu
+E897	Aucun message – tout va bien.
+E898	Toutes les 10 minutes, le boîtier vérifie le RAID, les volumes (montés, remplissage), la température, les valeurs SMART et les mises à jour ; les tâches cloud, tâches d'apps et tâches de stockage en échec signalent tout de suite. Les messages répétés sont comptés et renvoyés au plus une fois par jour.
+E899	E-MAIL
+E900	Envoyer les messages par e-mail
+E901	SERVEUR MAIL (SMTP)
+E902	CHIFFREMENT
+E903	STARTTLS (port 587)
+E904	SSL/TLS (port 465)
+E905	aucun (port 25)
+E906	PORT (VIDE = PAR DÉFAUT)
+E907	EXPÉDITEUR
+E908	DESTINATAIRES (SÉPARÉS PAR DES VIRGULES)
+E909	ENVOYER
+E910	tout (info, avertissement, erreur)
+E911	avertissements et erreurs
+E912	erreurs seulement
+E913	PUSH
+E914	Envoyer les messages sur le téléphone
+E915	JETON D'ACCÈS (FACULTATIF)
+E916	Webhook (JSON)
+E917	ntfy : adresse avec sujet, p. ex.
+E918	(un serveur ntfy perso fonctionne aussi), abonnez-vous au même sujet dans l'app ntfy. Gotify : adresse du serveur et jeton de l'app.
+E919	LIMITES
+E920	TEMPÉRATURE À PARTIR DE (°C)
+E921	VOLUME PLEIN À PARTIR DE (%)
+E922	Message de test
+E923	Message de test envoyé.
+E924	Supprimer tous les messages ?
+E925	La liste est vidée. Si un problème persiste, le boîtier le signalera à la prochaine vérification.
+E926	•••••• (enregistré)
+P195	$1 MESSAGES
+P196	$1 non lus
+P197	Messages : $1
+P198	Test : $1

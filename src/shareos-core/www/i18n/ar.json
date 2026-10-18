@@ -890,7 +890,46 @@
 		"Spiegel reparieren": "إصلاح المرآة",
 		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "ضع قرصاً جديداً في الحجرة الفارغة، ثم «إصلاح المرآة».",
 		"Löschen & reparieren": "مسح وإصلاح",
-		"Reparatur gestartet.": "بدأ الإصلاح."
+		"Reparatur gestartet.": "بدأ الإصلاح.",
+		"MELDUNGEN": "الرسائل",
+		"1 MELDUNG": "رسالة واحدة",
+		"Alle als gelesen markieren": "تعليم الكل كمقروء",
+		"Alle löschen": "حذف الكل",
+		"ERLEDIGT": "تم الحل",
+		"FEHLER": "خطأ",
+		"WARNUNG": "تحذير",
+		"INFO": "معلومات",
+		"Gelesen": "مقروء",
+		"Keine Meldungen – alles in Ordnung.": "لا رسائل – كل شيء على ما يرام.",
+		"Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.": "يفحص الجهاز كل 10 دقائق RAID ووحدات التخزين (موصولة، الامتلاء) والحرارة وقيم SMART والتحديثات؛ وتُبلغ مهام السحابة ومهام التطبيقات ومهام التخزين الفاشلة فوراً. تُعد الرسائل المتكررة وتُرسل مجدداً مرة واحدة يومياً كحد أقصى.",
+		"E-MAIL": "البريد الإلكتروني",
+		"Meldungen per E-Mail schicken": "إرسال الرسائل بالبريد الإلكتروني",
+		"MAILSERVER (SMTP)": "خادم البريد (SMTP)",
+		"VERSCHLÜSSELUNG": "التشفير",
+		"STARTTLS (Port 587)": "STARTTLS (المنفذ 587)",
+		"SSL/TLS (Port 465)": "SSL/TLS (المنفذ 465)",
+		"keine (Port 25)": "بدون (المنفذ 25)",
+		"PORT (LEER = STANDARD)": "المنفذ (فارغ = الافتراضي)",
+		"ABSENDER": "المرسل",
+		"EMPFÄNGER (MEHRERE MIT KOMMA)": "المستلمون (افصل بفاصلة)",
+		"SCHICKEN": "إرسال",
+		"alles (Info, Warnung, Fehler)": "الكل (معلومات، تحذير، خطأ)",
+		"Warnungen und Fehler": "التحذيرات والأخطاء",
+		"nur Fehler": "الأخطاء فقط",
+		"PUSH": "إشعارات",
+		"Meldungen aufs Handy schicken": "إرسال الرسائل إلى الهاتف",
+		"ZUGANGSSCHLÜSSEL (OPTIONAL)": "رمز الوصول (اختياري)",
+		"Webhook (JSON)": "Webhook (JSON)",
+		"ntfy: Adresse mit Thema, z. B.": "ntfy: عنوان مع موضوع، مثلاً",
+		"(eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.": "(يعمل أيضاً خادم ntfy خاص)، اشترك في الموضوع نفسه في تطبيق ntfy. Gotify: عنوان الخادم ورمز التطبيق.",
+		"GRENZEN": "الحدود",
+		"TEMPERATUR AB (°C)": "الحرارة من (°م)",
+		"LAUFWERK VOLL AB (%)": "وحدة التخزين ممتلئة من (%)",
+		"Testnachricht": "رسالة تجريبية",
+		"Testnachricht verschickt.": "أُرسلت الرسالة التجريبية.",
+		"Alle Meldungen löschen?": "حذف كل الرسائل؟",
+		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "تُفرغ القائمة. إذا استمرت مشكلة فسيبلغ الجهاز عنها في الفحص التالي.",
+		"•••••• (gespeichert)": "•••••• (محفوظ)"
 	},
 	"patterns": [
 		[
@@ -1672,6 +1711,22 @@
 		[
 			"^eine Platte fehlt \\((.+)\\)$",
 			"قرص مفقود ($1)"
+		],
+		[
+			"^(\\d+) MELDUNGEN$",
+			"$1 رسائل"
+		],
+		[
+			"^(\\d+) ungelesen$",
+			"$1 غير مقروءة"
+		],
+		[
+			"^Meldungen: (.+)$",
+			"الرسائل: $1"
+		],
+		[
+			"^Test: (.+)$",
+			"اختبار: $1"
 		]
 	],
 	"words": [

@@ -381,6 +381,31 @@ def call(obj, method, args):
                 'window': {'width': 1000, 'height': 700}, 'port': 8081, 'https_port': 8444, 'https': False}
     if obj == 'shareos.files':
         return files_call(STATE['sessions'].get(SID, 'root'), method, args)
+    if obj == 'shareos.notify':
+        N = STATE.setdefault('notes', [
+            {'id': 'a1', 'key': 'raid-md0', 'level': 'error', 'source': 'storage', 'title_de': 'RAID md0 unvollständig', 'title_en': 'RAID md0 degraded',
+             'text_de': 'Eine Platte fehlt oder ist ausgefallen (U_). Neue Platte einsetzen und unter Speicher „Spiegel reparieren“ wählen.',
+             'text_en': 'A disk is missing or failed (U_). Put in a new disk and choose “Repair mirror” under Storage.', 'time': int(time.time()) - 3600, 'last': int(time.time()) - 600, 'count': 7, 'read': False, 'resolved': False},
+            {'id': 'a2', 'key': 'update-0.1.0-beta.9', 'level': 'info', 'source': 'update', 'title_de': 'Update verfügbar: 0.1.0-beta.9', 'title_en': 'Update available: 0.1.0-beta.9',
+             'text_de': 'Unter System → Firmware installieren.', 'text_en': 'Install it under System → Firmware.', 'time': int(time.time()) - 7200, 'last': int(time.time()) - 7200, 'count': 1, 'read': True, 'resolved': False},
+            {'id': 'a3', 'key': 'temp', 'level': 'warn', 'source': 'system', 'title_de': 'Box zu warm: 57 °C', 'title_en': 'Box too warm: 57 °C', 'text_de': '', 'text_en': '',
+             'time': int(time.time()) - 86400, 'last': int(time.time()) - 86000, 'count': 2, 'read': True, 'resolved': True}])
+        C = STATE.setdefault('notecfg', {'email': False, 'smtp_host': '', 'smtp_tls': 'starttls', 'smtp_port': '', 'smtp_user': '', 'mail_from': '', 'mail_to': '',
+                                          'email_level': 'warn', 'push': True, 'push_type': 'ntfy', 'push_url': 'https://ntfy.sh/skynet-nas', 'push_level': 'warn',
+                                          'temp_max': 55, 'disk_full': 90, 'has_pass': False, 'has_token': False})
+        if method == 'list':
+            return {'items': N, 'unread': len([x for x in N if not x['read'] and not x['resolved']])}
+        if method == 'read':
+            for x in N:
+                if args.get('id') in ('all', x['id']): x['read'] = True
+        if method == 'delete':
+            STATE['notes'] = [] if args.get('id') == 'all' else [x for x in N if x['id'] != args.get('id')]
+        if method == 'get':
+            return C
+        if method == 'set':
+            C.update({k: v for k, v in args.items() if k not in ('smtp_pass', 'push_token')})
+            return C
+        return {'ok': True}
     if obj == 'shareos.widget':
         if method == 'set':
             if args.get('enabled') is not None:

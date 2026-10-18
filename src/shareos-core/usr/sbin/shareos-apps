@@ -487,6 +487,15 @@ exit $rc`, shq(d), id, shq(APPS + '/' + id), shq(d), shq(d), uid, u,
 	writefile(base + '.json', sprintf('%J', st));
 	system('rmdir ' + shq(lock));
 	system(sprintf('logger -t shareos-apps "job %s/%s finished (exit %d, %d s)"', id, j, r.rc, st.duration));
+	if (!ROOT) {
+		let key = 'appjob-' + id + '-' + j;
+		if (r.rc != 0 || st.timeout)
+			system(sprintf('/usr/sbin/shareos-notify send warn apps %s %s %s %s %s >/dev/null 2>&1', shq(key),
+				shq('Aufgabe „' + j + '“ von ' + id + ' fehlgeschlagen'), shq('Task “' + j + '” of ' + id + ' failed'),
+				shq(st.timeout ? 'Zeitlimit überschritten.' : 'Exit-Code ' + r.rc + ' – siehe Protokoll unter APPS → Aufgaben.'),
+				shq(st.timeout ? 'Time limit exceeded.' : 'Exit code ' + r.rc + ' – see the log under APPS → Tasks.')));
+		else system('/usr/sbin/shareos-notify clear ' + shq(key) + ' >/dev/null 2>&1');
+	}
 	return out(st);
 }
 

@@ -243,6 +243,12 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - Aussehen: in ShareOS Hell/Dunkel oder die Akzentfarbe wechseln – eine offene App zieht mit.
 - Benutzer mit persönlichem Ordner können das genauso mit ihren Dateien.
 
+## 14b. Meldungen
+
+- **System → Meldungen**: E-Mail (Mailserver, STARTTLS/SSL, Benutzer, Passwort, Absender, Empfänger) und/oder Push (ntfy: `https://ntfy.sh/<thema>`, das Thema in der ntfy-App abonnieren; Gotify: Server und App-Token; Webhook). **Speichern**, dann **Testnachricht** – sie muss ankommen.
+- Eine Meldung auslösen: eine Platte des Spiegels ziehen (oder auf eine echte warten) – innerhalb von 10 Minuten erscheint „RAID md0 unvollständig“, oben steht „1 MELDUNG“, und sie wird verschickt. Nach der Reparatur erscheint sie als erledigt.
+- Von Hand prüfen: `shareos-notify check`, Liste: `shareos-notify list`.
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

@@ -64,3 +64,27 @@ config widget 'widget'
 	# apps); a new token is created when it is switched on in the web interface
 	option enabled '0'
 	option token ''
+
+config notify 'notify'
+	# messages of the box (RAID, full volumes, temperature, SMART, updates,
+	# failed cloud jobs and app tasks); always shown in the web interface
+	option email '0'
+	option smtp_host ''
+	# starttls (port 587), ssl (port 465) or none
+	option smtp_tls 'starttls'
+	option smtp_port ''
+	option smtp_user ''
+	option smtp_pass ''
+	option mail_from ''
+	option mail_to ''
+	# lowest level sent: info, warn or error
+	option email_level 'warn'
+	option push '0'
+	# ntfy (https://ntfy.sh/<topic>), gotify (server address) or webhook (JSON POST)
+	option push_type 'ntfy'
+	option push_url ''
+	option push_token ''
+	option push_level 'warn'
+	# limits for the checks
+	option temp_max '55'
+	option disk_full '90'

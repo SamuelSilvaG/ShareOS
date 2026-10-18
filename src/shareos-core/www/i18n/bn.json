@@ -890,7 +890,46 @@
 		"Spiegel reparieren": "মিরর মেরামত",
 		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "খালি বে-তে নতুন ডিস্ক লাগান, তারপর “মিরর মেরামত”।",
 		"Löschen & reparieren": "মুছে মেরামত",
-		"Reparatur gestartet.": "মেরামত শুরু হয়েছে।"
+		"Reparatur gestartet.": "মেরামত শুরু হয়েছে।",
+		"MELDUNGEN": "বার্তা",
+		"1 MELDUNG": "১টি বার্তা",
+		"Alle als gelesen markieren": "সব পঠিত হিসেবে চিহ্নিত করুন",
+		"Alle löschen": "সব মুছুন",
+		"ERLEDIGT": "সমাধান হয়েছে",
+		"FEHLER": "ত্রুটি",
+		"WARNUNG": "সতর্কতা",
+		"INFO": "তথ্য",
+		"Gelesen": "পঠিত",
+		"Keine Meldungen – alles in Ordnung.": "কোনো বার্তা নেই – সব ঠিক আছে।",
+		"Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.": "ডিভাইস প্রতি ১০ মিনিটে RAID, ভলিউম (মাউন্ট, ভরাট), তাপমাত্রা, SMART মান ও আপডেট যাচাই করে; ব্যর্থ ক্লাউড কাজ, অ্যাপ কাজ ও স্টোরেজ কাজ সঙ্গে সঙ্গে জানায়। একই বার্তা গোনা হয় এবং দিনে সর্বোচ্চ একবার আবার পাঠানো হয়।",
+		"E-MAIL": "ইমেল",
+		"Meldungen per E-Mail schicken": "বার্তা ইমেলে পাঠান",
+		"MAILSERVER (SMTP)": "মেইল সার্ভার (SMTP)",
+		"VERSCHLÜSSELUNG": "এনক্রিপশন",
+		"STARTTLS (Port 587)": "STARTTLS (পোর্ট 587)",
+		"SSL/TLS (Port 465)": "SSL/TLS (পোর্ট 465)",
+		"keine (Port 25)": "নেই (পোর্ট 25)",
+		"PORT (LEER = STANDARD)": "পোর্ট (খালি = ডিফল্ট)",
+		"ABSENDER": "প্রেরক",
+		"EMPFÄNGER (MEHRERE MIT KOMMA)": "প্রাপক (কমা দিয়ে আলাদা)",
+		"SCHICKEN": "পাঠান",
+		"alles (Info, Warnung, Fehler)": "সব (তথ্য, সতর্কতা, ত্রুটি)",
+		"Warnungen und Fehler": "সতর্কতা ও ত্রুটি",
+		"nur Fehler": "শুধু ত্রুটি",
+		"PUSH": "পুশ",
+		"Meldungen aufs Handy schicken": "বার্তা ফোনে পাঠান",
+		"ZUGANGSSCHLÜSSEL (OPTIONAL)": "অ্যাক্সেস টোকেন (ঐচ্ছিক)",
+		"Webhook (JSON)": "Webhook (JSON)",
+		"ntfy: Adresse mit Thema, z. B.": "ntfy: বিষয়সহ ঠিকানা, যেমন",
+		"(eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.": "(নিজের ntfy সার্ভারও চলে), ntfy অ্যাপে একই বিষয় সাবস্ক্রাইব করুন। Gotify: সার্ভার ঠিকানা ও অ্যাপ টোকেন।",
+		"GRENZEN": "সীমা",
+		"TEMPERATUR AB (°C)": "তাপমাত্রা থেকে (°C)",
+		"LAUFWERK VOLL AB (%)": "ভলিউম ভরা থেকে (%)",
+		"Testnachricht": "পরীক্ষামূলক বার্তা",
+		"Testnachricht verschickt.": "পরীক্ষামূলক বার্তা পাঠানো হয়েছে।",
+		"Alle Meldungen löschen?": "সব বার্তা মুছবেন?",
+		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "তালিকা খালি হবে। সমস্যা থেকে গেলে পরের যাচাইয়ে ডিভাইস আবার জানাবে।",
+		"•••••• (gespeichert)": "•••••• (সংরক্ষিত)"
 	},
 	"patterns": [
 		[
@@ -1672,6 +1711,22 @@
 		[
 			"^eine Platte fehlt \\((.+)\\)$",
 			"একটি ডিস্ক নেই ($1)"
+		],
+		[
+			"^(\\d+) MELDUNGEN$",
+			"$1টি বার্তা"
+		],
+		[
+			"^(\\d+) ungelesen$",
+			"$1টি অপঠিত"
+		],
+		[
+			"^Meldungen: (.+)$",
+			"বার্তা: $1"
+		],
+		[
+			"^Test: (.+)$",
+			"পরীক্ষা: $1"
 		]
 	],
 	"words": [

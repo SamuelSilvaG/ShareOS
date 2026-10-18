@@ -240,6 +240,12 @@ their permissions.
 - Look: switch light/dark or the accent colour in ShareOS – an open app follows.
 - Users with a personal folder can do the same with their files.
 
+## 14b. Messages
+
+- **System → Messages**: e-mail (mail server, STARTTLS/SSL, user, password, sender, recipients) and/or push (ntfy: `https://ntfy.sh/<topic>`, subscribe to the topic in the ntfy app; Gotify: server and app token; webhook). **Save**, then **Test message** – it must arrive.
+- Provoke a message: pull a disk of a mirror (or wait for a real one) – within 10 minutes "RAID md0 degraded" appears, the header shows "1 MESSAGE" and it is sent. After the repair it is shown as resolved.
+- Check by hand: `shareos-notify check`, list: `shareos-notify list`.
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:

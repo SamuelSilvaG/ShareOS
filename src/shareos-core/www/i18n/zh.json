@@ -890,7 +890,46 @@
 		"Spiegel reparieren": "修复镜像",
 		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "将新硬盘插入空闲盘位，然后点“修复镜像”。",
 		"Löschen & reparieren": "清除并修复",
-		"Reparatur gestartet.": "修复已开始。"
+		"Reparatur gestartet.": "修复已开始。",
+		"MELDUNGEN": "消息",
+		"1 MELDUNG": "1 条消息",
+		"Alle als gelesen markieren": "全部标为已读",
+		"Alle löschen": "全部删除",
+		"ERLEDIGT": "已解决",
+		"FEHLER": "错误",
+		"WARNUNG": "警告",
+		"INFO": "信息",
+		"Gelesen": "已读",
+		"Keine Meldungen – alles in Ordnung.": "没有消息 – 一切正常。",
+		"Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.": "设备每 10 分钟检查 RAID、卷（是否挂载、占用）、温度、SMART 值和更新；失败的云任务、应用任务和存储任务会立即报告。重复的消息会被计数，每天最多重新发送一次。",
+		"E-MAIL": "电子邮件",
+		"Meldungen per E-Mail schicken": "通过电子邮件发送消息",
+		"MAILSERVER (SMTP)": "邮件服务器 (SMTP)",
+		"VERSCHLÜSSELUNG": "加密",
+		"STARTTLS (Port 587)": "STARTTLS（端口 587）",
+		"SSL/TLS (Port 465)": "SSL/TLS（端口 465）",
+		"keine (Port 25)": "无（端口 25）",
+		"PORT (LEER = STANDARD)": "端口（留空 = 默认）",
+		"ABSENDER": "发件人",
+		"EMPFÄNGER (MEHRERE MIT KOMMA)": "收件人（多个用逗号分隔）",
+		"SCHICKEN": "发送",
+		"alles (Info, Warnung, Fehler)": "全部（信息、警告、错误）",
+		"Warnungen und Fehler": "警告和错误",
+		"nur Fehler": "仅错误",
+		"PUSH": "推送",
+		"Meldungen aufs Handy schicken": "发送消息到手机",
+		"ZUGANGSSCHLÜSSEL (OPTIONAL)": "访问令牌（可选）",
+		"Webhook (JSON)": "Webhook (JSON)",
+		"ntfy: Adresse mit Thema, z. B.": "ntfy：带主题的地址，例如",
+		"(eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.": "（也可以用自己的 ntfy 服务器），在 ntfy 应用中订阅同一主题。Gotify：服务器地址和应用令牌。",
+		"GRENZEN": "阈值",
+		"TEMPERATUR AB (°C)": "温度高于（°C）",
+		"LAUFWERK VOLL AB (%)": "卷占用高于（%）",
+		"Testnachricht": "测试消息",
+		"Testnachricht verschickt.": "测试消息已发送。",
+		"Alle Meldungen löschen?": "删除所有消息？",
+		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "列表将被清空。如果问题仍然存在，设备会在下次检查时再次报告。",
+		"•••••• (gespeichert)": "••••••（已保存）"
 	},
 	"patterns": [
 		[
@@ -1672,6 +1711,22 @@
 		[
 			"^eine Platte fehlt \\((.+)\\)$",
 			"缺少一块硬盘（$1）"
+		],
+		[
+			"^(\\d+) MELDUNGEN$",
+			"$1 条消息"
+		],
+		[
+			"^(\\d+) ungelesen$",
+			"$1 条未读"
+		],
+		[
+			"^Meldungen: (.+)$",
+			"消息：$1"
+		],
+		[
+			"^Test: (.+)$",
+			"测试：$1"
 		]
 	],
 	"words": [

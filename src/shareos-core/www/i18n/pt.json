@@ -890,7 +890,46 @@
 		"Spiegel reparieren": "Reparar espelho",
 		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "Coloque um disco novo na baia livre e depois «Reparar espelho».",
 		"Löschen & reparieren": "Apagar e reparar",
-		"Reparatur gestartet.": "Reparo iniciado."
+		"Reparatur gestartet.": "Reparo iniciado.",
+		"MELDUNGEN": "AVISOS",
+		"1 MELDUNG": "1 AVISO",
+		"Alle als gelesen markieren": "Marcar tudo como lido",
+		"Alle löschen": "Apagar tudo",
+		"ERLEDIGT": "RESOLVIDO",
+		"FEHLER": "ERRO",
+		"WARNUNG": "AVISO",
+		"INFO": "INFO",
+		"Gelesen": "Lido",
+		"Keine Meldungen – alles in Ordnung.": "Sem avisos – tudo em ordem.",
+		"Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.": "A cada 10 minutos a caixa verifica RAID, volumes (montados, ocupação), temperatura, valores SMART e atualizações; trabalhos de nuvem, tarefas de apps e trabalhos de armazenamento com falha avisam na hora. Avisos repetidos são contados e reenviados no máximo uma vez por dia.",
+		"E-MAIL": "E-MAIL",
+		"Meldungen per E-Mail schicken": "Enviar avisos por e-mail",
+		"MAILSERVER (SMTP)": "SERVIDOR DE E-MAIL (SMTP)",
+		"VERSCHLÜSSELUNG": "CRIPTOGRAFIA",
+		"STARTTLS (Port 587)": "STARTTLS (porta 587)",
+		"SSL/TLS (Port 465)": "SSL/TLS (porta 465)",
+		"keine (Port 25)": "nenhuma (porta 25)",
+		"PORT (LEER = STANDARD)": "PORTA (VAZIO = PADRÃO)",
+		"ABSENDER": "REMETENTE",
+		"EMPFÄNGER (MEHRERE MIT KOMMA)": "DESTINATÁRIOS (SEPARADOS POR VÍRGULA)",
+		"SCHICKEN": "ENVIAR",
+		"alles (Info, Warnung, Fehler)": "tudo (info, aviso, erro)",
+		"Warnungen und Fehler": "avisos e erros",
+		"nur Fehler": "só erros",
+		"PUSH": "PUSH",
+		"Meldungen aufs Handy schicken": "Enviar avisos para o celular",
+		"ZUGANGSSCHLÜSSEL (OPTIONAL)": "TOKEN DE ACESSO (OPCIONAL)",
+		"Webhook (JSON)": "Webhook (JSON)",
+		"ntfy: Adresse mit Thema, z. B.": "ntfy: endereço com tópico, ex.",
+		"(eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.": "(servidor ntfy próprio também funciona), assine o mesmo tópico no app ntfy. Gotify: endereço do servidor e token do app.",
+		"GRENZEN": "LIMITES",
+		"TEMPERATUR AB (°C)": "TEMPERATURA A PARTIR DE (°C)",
+		"LAUFWERK VOLL AB (%)": "VOLUME CHEIO A PARTIR DE (%)",
+		"Testnachricht": "Mensagem de teste",
+		"Testnachricht verschickt.": "Mensagem de teste enviada.",
+		"Alle Meldungen löschen?": "Apagar todos os avisos?",
+		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "A lista é esvaziada. Se um problema persistir, a caixa avisará de novo na próxima verificação.",
+		"•••••• (gespeichert)": "•••••• (salvo)"
 	},
 	"patterns": [
 		[
@@ -1672,6 +1711,22 @@
 		[
 			"^eine Platte fehlt \\((.+)\\)$",
 			"falta um disco ($1)"
+		],
+		[
+			"^(\\d+) MELDUNGEN$",
+			"$1 AVISOS"
+		],
+		[
+			"^(\\d+) ungelesen$",
+			"$1 não lidos"
+		],
+		[
+			"^Meldungen: (.+)$",
+			"Avisos: $1"
+		],
+		[
+			"^Test: (.+)$",
+			"Teste: $1"
 		]
 	],
 	"words": [

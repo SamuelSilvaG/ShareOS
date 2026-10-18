@@ -890,7 +890,46 @@
 		"Spiegel reparieren": "Réparer le miroir",
 		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "Insérez un nouveau disque dans la baie libre, puis « Réparer le miroir ».",
 		"Löschen & reparieren": "Effacer et réparer",
-		"Reparatur gestartet.": "Réparation lancée."
+		"Reparatur gestartet.": "Réparation lancée.",
+		"MELDUNGEN": "MESSAGES",
+		"1 MELDUNG": "1 MESSAGE",
+		"Alle als gelesen markieren": "Tout marquer comme lu",
+		"Alle löschen": "Tout supprimer",
+		"ERLEDIGT": "RÉSOLU",
+		"FEHLER": "ERREUR",
+		"WARNUNG": "AVERTISSEMENT",
+		"INFO": "INFO",
+		"Gelesen": "Lu",
+		"Keine Meldungen – alles in Ordnung.": "Aucun message – tout va bien.",
+		"Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.": "Toutes les 10 minutes, le boîtier vérifie le RAID, les volumes (montés, remplissage), la température, les valeurs SMART et les mises à jour ; les tâches cloud, tâches d'apps et tâches de stockage en échec signalent tout de suite. Les messages répétés sont comptés et renvoyés au plus une fois par jour.",
+		"E-MAIL": "E-MAIL",
+		"Meldungen per E-Mail schicken": "Envoyer les messages par e-mail",
+		"MAILSERVER (SMTP)": "SERVEUR MAIL (SMTP)",
+		"VERSCHLÜSSELUNG": "CHIFFREMENT",
+		"STARTTLS (Port 587)": "STARTTLS (port 587)",
+		"SSL/TLS (Port 465)": "SSL/TLS (port 465)",
+		"keine (Port 25)": "aucun (port 25)",
+		"PORT (LEER = STANDARD)": "PORT (VIDE = PAR DÉFAUT)",
+		"ABSENDER": "EXPÉDITEUR",
+		"EMPFÄNGER (MEHRERE MIT KOMMA)": "DESTINATAIRES (SÉPARÉS PAR DES VIRGULES)",
+		"SCHICKEN": "ENVOYER",
+		"alles (Info, Warnung, Fehler)": "tout (info, avertissement, erreur)",
+		"Warnungen und Fehler": "avertissements et erreurs",
+		"nur Fehler": "erreurs seulement",
+		"PUSH": "PUSH",
+		"Meldungen aufs Handy schicken": "Envoyer les messages sur le téléphone",
+		"ZUGANGSSCHLÜSSEL (OPTIONAL)": "JETON D'ACCÈS (FACULTATIF)",
+		"Webhook (JSON)": "Webhook (JSON)",
+		"ntfy: Adresse mit Thema, z. B.": "ntfy : adresse avec sujet, p. ex.",
+		"(eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.": "(un serveur ntfy perso fonctionne aussi), abonnez-vous au même sujet dans l'app ntfy. Gotify : adresse du serveur et jeton de l'app.",
+		"GRENZEN": "LIMITES",
+		"TEMPERATUR AB (°C)": "TEMPÉRATURE À PARTIR DE (°C)",
+		"LAUFWERK VOLL AB (%)": "VOLUME PLEIN À PARTIR DE (%)",
+		"Testnachricht": "Message de test",
+		"Testnachricht verschickt.": "Message de test envoyé.",
+		"Alle Meldungen löschen?": "Supprimer tous les messages ?",
+		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "La liste est vidée. Si un problème persiste, le boîtier le signalera à la prochaine vérification.",
+		"•••••• (gespeichert)": "•••••• (enregistré)"
 	},
 	"patterns": [
 		[
@@ -1672,6 +1711,22 @@
 		[
 			"^eine Platte fehlt \\((.+)\\)$",
 			"un disque manque ($1)"
+		],
+		[
+			"^(\\d+) MELDUNGEN$",
+			"$1 MESSAGES"
+		],
+		[
+			"^(\\d+) ungelesen$",
+			"$1 non lus"
+		],
+		[
+			"^Meldungen: (.+)$",
+			"Messages : $1"
+		],
+		[
+			"^Test: (.+)$",
+			"Test : $1"
 		]
 	],
 	"words": [
