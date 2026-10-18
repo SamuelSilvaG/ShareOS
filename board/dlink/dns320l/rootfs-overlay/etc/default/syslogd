@@ -1,0 +1,4 @@
+# -t: stamp messages with the local time of syslogd. musl's syslog() sends UTC
+# time stamps, so without it the log would be in UTC instead of the time zone
+# set on the box.
+SYSLOGD_ARGS="-t"

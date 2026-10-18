@@ -15,6 +15,8 @@ pre-releases for test devices only.
 - **Install without the serial console:** flash the ShareOS `.bin` from the Alt-F or D-Link firmware page. On the first start ShareOS installs its system by itself – from a USB stick with the `.sysupgrade.tar` (FAT32/exFAT/ext4) or from GitHub (checksum verified). Not yet tried on real hardware.
 - **Back to Alt-F from the web interface:** System → Firmware → *Install firmware file* writes another D-Link `.bin` (e.g. Alt-F); the file is checked (format, checksums, device, 3 MB limit) and read back after writing.
 - Tests for both paths (emulator and host).
+- Fix: the APPS area logged admins out ("session expired") – its functions were missing from the access rules. A new CI check makes sure every function is covered.
+- Fix: the system log used UTC instead of the time zone set on the box.
 - Messages such as "Last update: installed" or a failed disk setup can be closed with an **x**; the box forgets them.
 - Disk setup: a disk still held by a RAID or another firmware is named in the message; erasing retries once and reports the reason.
 
