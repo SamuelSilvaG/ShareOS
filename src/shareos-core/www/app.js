@@ -149,7 +149,7 @@ const S = {
 
 const TABS = [
 	['uebersicht', 'ÜBERSICHT'], ['speicher', 'SPEICHER'], ['freigaben', 'FREIGABEN'], ['dienste', 'DIENSTE'],
-	['apps', 'APPS'], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
+	['apps', 'APPS', true], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
 const SYS_SUBS = [['firmware', 'FIRMWARE'], ['allgemein', 'ALLGEMEIN'], ['netzwerk', 'NETZWERK'], ['energie', 'ENERGIE & RESET'], ['protokolle', 'PROTOKOLLE'], ['darstellung', 'DARSTELLUNG'], ['ueber', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
@@ -483,6 +483,7 @@ function parseRoute() {
 	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'firmware';
 	if (S.route.tab === 'dienste' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
 	if (S.route.tab === 'freigaben' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'freigaben';
+	if (S.route.tab === 'apps' && !APP_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'installiert';
 }
 
 function renderMain() {
@@ -602,7 +603,7 @@ const VIEWS = {
 		${sub === 'dateien' ? filesView() : !S.shares || !S.acc ? html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`
 			: sub === 'benutzer' ? usersView() : sub === 'gruppen' ? groupsView() : sharesView()}`;
 	},
-	apps: () => planned('Apps & Pakete', 'Phase 4', ['Paketquelle (opkg-Feed) über GitHub', 'Katalog mit Kategorien, Installieren/Entfernen mit Warteschlange', 'Pakete landen in den Einstellungen & Paketen (Flash) oder auf der Platte'], I.box),
+	apps: () => appsView(),
 	cloud: () => cloudSection('admin'),
 	paperless: () => paperlessView(),
 
@@ -1311,6 +1312,12 @@ function renderUserHome() {
 				<div class="ip">\\\\${host}\\${x.name}</div></div></div>`)}</div>`
 			: html`<div class="panel"><div class="empty">${svg(I.info)}<span>Dir wurde noch keine Freigabe zugewiesen.</span></div></div>`}
 	</section>
+	${(m.apps || []).length ? html`<section class="sec">
+		<h2 class="gh">MEINE APPS <span>${m.apps.length}</span></h2>
+		<div class="grid">${m.apps.map((a) => html`<a class="card applink" href="${appUrl(a, m.apps_server)}" target="_blank" rel="noopener">
+			<div class="icon">${appIcon(a, m.apps_server)}</div>
+			<div class="info"><div class="name">${a.name} ↗</div><div class="desc">${txtOf(a.description)}</div></div></a>`)}</div>
+	</section>` : ''}
 	${m.paperless ? myPaperless() : ''}
 	${m.cloud ? cloudSection('me') : ''}`.s;
 	if (m.paperless && !S.myPl) loadMyPaperless();
@@ -1928,6 +1935,7 @@ const SYS = {
 /* ---------- per-view setup after render ------------------------------------- */
 
 const VIEWS_AFTER = {
+	apps() { appsAfter(); },
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'protokolle') loadLog();
@@ -3027,6 +3035,243 @@ for (const ev of ['dragover', 'dragleave', 'drop']) {
 		if (ev === 'drop') fbUpload(e.dataTransfer.files);
 	});
 }
+
+/* ---------- APPS: installed apps, store, sources ----------------------------- */
+
+const APP_SUBS = [['installiert', 'INSTALLIERT'], ['store', 'STORE'], ['quellen', 'QUELLEN']];
+const APP_CAT = { tools: 'Werkzeuge', media: 'Medien', office: 'Büro', network: 'Netzwerk', system: 'System', download: 'Download', sync: 'Sync' };
+const txtOf = (d) => (d && typeof d === 'object' ? d[LANG] || d.de || d.en || '' : d || '');
+
+function appBase(srv) {
+	const s = srv || S.apps?.installed || {};
+	const https = location.protocol === 'https:' && s.https;
+	return `${https ? 'https' : 'http'}://${location.hostname}:${https ? s.https_port || 8444 : s.port || 8081}`;
+}
+const appUrl = (a, srv) => `${appBase(srv)}/${a.id}/${a.entry || 'index.html'}`;
+function appIcon(a, srv) {
+	const src = a.icon_url || (a.icon ? `${appBase(srv)}/${a.id}/${a.icon}` : '');
+	return src ? html`<img class="appicon" src="${src}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'appicon ph'}))">` : html`<span class="appicon ph"></span>`;
+}
+
+async function loadApps(what = ['installed', 'catalog', 'store']) {
+	S.apps = S.apps || {};
+	try {
+		const [inst, cat, st] = await Promise.all([
+			what.includes('installed') ? rpc('shareos.apps', 'installed') : S.apps.installed,
+			what.includes('catalog') ? rpc('shareos.apps', 'catalog', { refresh: false }) : S.apps.catalog,
+			what.includes('store') ? rpc('shareos.apps', 'store_get') : S.apps.store]);
+		Object.assign(S.apps, { installed: inst, catalog: cat, store: st });
+		// first visit: ask the catalog sources once
+		if (!S.apps.refreshed && !(cat?.time > 0)) { S.apps.refreshed = true; refreshCatalog(true); }
+	} catch (e) { toast('Apps: ' + e.message, true); }
+	if (S.route.tab === 'apps' && !document.activeElement?.matches('input,select,textarea')) renderMain();
+}
+
+async function refreshCatalog(quiet = false) {
+	S.apps.busy = true; if (S.route.tab === 'apps') renderMain();
+	try {
+		S.apps.catalog = await rpc('shareos.apps', 'catalog', { refresh: true });
+		if (!quiet) toast(S.apps.catalog.errors?.length ? 'Store: ' + S.apps.catalog.errors[0].error : 'Store aktualisiert.', !!S.apps.catalog.errors?.length);
+	} catch (e) { if (!quiet) toast('Store: ' + e.message, true); }
+	S.apps.busy = false;
+	if (S.route.tab === 'apps') renderMain();
+}
+
+async function pollAppJob() {
+	clearTimeout(S.appTimer);
+	try {
+		const j = await rpc('shareos.apps', 'status');
+		S.apps.job = j;
+		if (['downloading', 'verifying', 'installing'].includes(j.state)) { S.appTimer = setTimeout(pollAppJob, 1000); }
+		else {
+			if (j.state === 'done') toast(`${j.id} ${j.version} installiert.`);
+			else if (j.state === 'error') toast('Installieren: ' + (j.error || 'fehlgeschlagen'), true);
+			S.apps.job = null;
+			await loadApps(['installed', 'catalog']);
+			return;
+		}
+	} catch (e) { S.appTimer = setTimeout(pollAppJob, 2000); }
+	if (S.route.tab === 'apps') renderMain();
+}
+
+const JOB_TXT = { downloading: 'wird geladen', verifying: 'wird geprüft', installing: 'wird installiert' };
+
+function appsView() {
+	const sub = S.route.sub, A = S.apps;
+	const nav = html`<nav class="subtabs" aria-label="Apps">${APP_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/apps/${id}">${label}</a>`)}</nav>`;
+	if (!A?.installed) return html`${nav}<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	const job = A.job && JOB_TXT[A.job.state] ? html`<div class="banner" style="border-color:var(--dim)"><div class="spin" style="margin:0;width:20px;height:20px"></div><span><b>${A.job.id}</b> ${JOB_TXT[A.job.state]} …</span></div>` : '';
+	return html`${nav}${job}${sub === 'store' ? appStore() : sub === 'quellen' ? appSources() : appInstalled()}`;
+}
+
+function appUsersTxt(a) {
+	if (a.users.includes('*')) return 'alle Benutzer';
+	if (!a.users.length) return 'nur Administratoren';
+	return a.users.join(', ');
+}
+
+function appInstalled() {
+	const A = S.apps, list = A.installed.apps || [], cat = {};
+	for (const c of A.catalog?.apps || []) cat[c.id] = c;
+	if (A.edit) return appUsersEditor(A.edit);
+	const upd = (a) => cat[a.id]?.update_available ? cat[a.id] : null;
+	const t = isTable('apps');
+	return html`<section class="sec">${secHead('apps', 'INSTALLIERTE APPS', list.length ? `${list.length}` : '')}
+		${!list.length ? html`<div class="panel"><div class="empty">${svg(I.box)}<span>Noch keine App installiert. Im <a href="#/apps/store">Store</a> gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.</span></div></div>`
+		: t ? html`<div class="tw"><table class="t" style="min-width:720px"><thead><tr><th></th><th>APP</th><th>VERSION</th><th>HERAUSGEBER</th><th>SICHTBAR FÜR</th><th></th></tr></thead><tbody>
+			${list.map((a) => html`<tr><td style="width:44px">${appIcon(a)}</td><td><b>${a.name}</b>${a.verified ? '' : html` <span class="tag warn">eigene</span>`}<div class="mut" style="font-size:12px">${txtOf(a.description)}</div></td>
+				<td>${a.version}${upd(a) ? html` <span class="tag warn">→ ${upd(a).latest}</span>` : ''}</td><td class="mut">${a.publisher}</td><td class="mut">${appUsersTxt(a)}</td>
+				<td style="white-space:nowrap">${appActions(a, upd(a))}</td></tr>`)}</tbody></table></div>`
+		: html`<div class="grid">${list.map((a) => html`<div class="card">
+			<div class="icon">${appIcon(a)}</div>
+			<div class="info"><div class="name">${a.name} <span class="mut" style="font-size:12px">${a.version}</span></div>
+				<div class="desc">${txtOf(a.description)}</div>
+				<div class="desc" style="margin-top:6px"><span class="tag ${a.verified ? 'ok' : 'warn'}">${a.verified ? 'aus dem Store' : 'eigene / ungeprüft'}</span> ${upd(a) ? html`<span class="tag warn">Update ${upd(a).latest}</span>` : ''}</div>
+				<div class="ip">${a.publisher} · sichtbar für ${appUsersTxt(a)}</div>
+				<div class="acts" style="margin-top:10px">${appActions(a, upd(a))}</div></div></div>`)}</div>`}
+		<p class="note">Web-Apps laufen auf einem eigenen Port (${A.installed.port}${A.installed.https ? ' / ' + A.installed.https_port + ' für HTTPS' : ''}) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.</p>
+	</section>`;
+}
+
+function appActions(a, upd) {
+	const busy = !!(S.apps.job && JOB_TXT[S.apps.job.state]);
+	return html`<a class="btn sm" href="${appUrl(a)}" target="_blank" rel="noopener">Öffnen ↗</a>
+		${upd ? html`<button class="btn sm primary" type="button" data-act="app-install" data-id="${a.id}" data-v="${upd.latest}" ${busy ? 'disabled' : ''}>${svg(I.dl)}Aktualisieren</button>` : ''}
+		<button class="btn sm ghost" type="button" data-act="app-users" data-id="${a.id}">${svg(I.users)}Benutzer</button>
+		<button class="btn sm ghost" type="button" data-act="app-remove" data-id="${a.id}">${svg(I.trash)}Entfernen</button>`;
+}
+
+function appUsersEditor(id) {
+	const a = (S.apps.installed.apps || []).find((x) => x.id === id);
+	if (!a) { S.apps.edit = null; return ''; }
+	const acc = S.acc || { users: [], groups: [] };
+	const web = acc.users.filter((u) => u.role === 'user' && u.web);
+	const all = a.users.includes('*');
+	return html`<section class="sec"><form class="panel" id="f-appusers" style="border-color:var(--dim);box-shadow:var(--glow);max-width:720px">
+		<div class="ph"><span class="pt">${a.name.toUpperCase()} · SICHTBAR FÜR</span><button class="btn sm ghost ml" type="button" data-act="app-users-cancel">Abbrechen</button></div>
+		<label class="chk"><input type="checkbox" name="all"${all ? raw(' checked') : ''}>Alle Benutzer mit Web-Zugang</label>
+		<div id="app-users-list"${all ? raw(' hidden') : ''}>
+			${acc.groups.length ? html`<div class="pt" style="margin:14px 0 6px">GRUPPEN</div><div style="display:flex;flex-wrap:wrap;gap:6px 18px">${acc.groups.map((g) => html`<label class="chk"><input type="checkbox" class="app-u" value="@${g.name}"${a.users.includes('@' + g.name) ? raw(' checked') : ''}>${g.name}</label>`)}</div>` : ''}
+			<div class="pt" style="margin:14px 0 6px">BENUTZER</div>
+			${web.length ? html`<div style="display:flex;flex-wrap:wrap;gap:6px 18px">${web.map((u) => html`<label class="chk"><input type="checkbox" class="app-u" value="${u.name}"${a.users.includes(u.name) ? raw(' checked') : ''}>${u.fullname || u.name}</label>`)}</div>`
+				: html`<p class="note">Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.</p>`}
+		</div>
+		<p class="note">Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.</p>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
+}
+
+function appStore() {
+	const A = S.apps, c = A.catalog || { apps: [] }, ch = A.store?.channel || 'stable';
+	const busy = !!(A.job && JOB_TXT[A.job.state]);
+	const rows = [];
+	for (const a of c.apps || []) {
+		const v = a.versions[0];
+		rows.push(html`<tr><td style="width:44px">${appIcon(a)}</td>
+			<td><b>${a.name}</b>${a.category ? html` <span class="tag">${APP_CAT[a.category] || a.category}</span>` : ''}<div class="mut" style="font-size:12px;max-width:420px">${txtOf(a.description)}</div></td>
+			<td><b>${v.version}</b>${v.prerelease ? html` <span class="tag">BETA</span>` : ''}</td>
+			<td class="mut">${a.publisher}</td><td class="mut">${fmtDate(v.date)}</td><td class="mut">${fmtBytes(v.size)}</td>
+			<td style="white-space:nowrap">${a.installed && !a.update_available ? html`<span class="tag ok">installiert</span>`
+				: !a.compatible ? html`<span class="tag warn">braucht neuere ShareOS</span>`
+				: html`<button class="btn sm${a.installed ? ' primary' : ''}" type="button" data-act="app-install" data-id="${a.id}" data-v="${v.version}" ${busy ? 'disabled' : ''}>${svg(I.dl)}${a.installed ? 'Aktualisieren' : 'Installieren'}</button>`}
+				${v.notes_url ? html`<a class="btn sm ghost" href="${v.notes_url}" target="_blank" rel="noopener">Notes ↗</a>` : ''}</td></tr>`);
+	}
+	return html`<section class="sec">
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">APP-STORE</span><span class="tag ml">${c.time ? 'Stand ' + fmtTime(c.time) : 'noch nicht geladen'}</span></div>
+				<div class="fields"><label class="f"><span>KANAL</span><select id="app-channel">
+					<option value="stable"${ch === 'stable' ? raw(' selected') : ''}>Stabil (Releases)</option>
+					<option value="beta"${ch === 'beta' ? raw(' selected') : ''}>Beta (auch Vorabversionen)</option></select></label></div>
+				${(c.errors || []).map((e) => html`<p class="note" style="color:var(--amber)">${e.source}: ${e.error}</p>`)}
+				<div class="acts" style="margin-top:12px"><button class="btn" type="button" data-act="app-refresh" ${A.busy ? 'disabled' : ''}>${A.busy ? 'Lade …' : 'Jetzt aktualisieren'}</button></div>
+			</div>
+			<form class="panel" id="f-appupload">
+				<div class="ph"><span class="pt">PAKET INSTALLIEREN</span><span class="tag ml">.sapp</span></div>
+				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>PAKETDATEI</span><input type="file" name="file" accept=".sapp,application/gzip" required></label></div>
+				<p class="note">Für eigene Apps (gebaut mit <code>tools/build.py</code> aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.</p>
+				<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Hochladen & installieren</button></div>
+			</form>
+		</div>
+		<h2 class="gh" style="margin-top:22px">VERFÜGBARE APPS <span>${(c.apps || []).length}</span></h2>
+		${rows.length ? html`<div class="tw"><table class="t" style="min-width:820px"><thead><tr><th></th><th>APP</th><th>VERSION</th><th>HERAUSGEBER</th><th>DATUM</th><th>GRÖSSE</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+			: html`<div class="panel"><div class="empty">${svg(I.cloud)}<span>${A.busy ? 'Lade den Katalog …' : 'Keine Apps gefunden – Internetverbindung und Quellen prüfen.'}</span></div></div>`}
+	</section>`;
+}
+
+function appSources() {
+	const st = S.apps.store || { sources: [] };
+	return html`<section class="sec"><form class="panel" id="f-appsrc" style="max-width:820px">
+		<div class="ph"><span class="pt">APP-QUELLEN</span><span class="tag ml">${st.sources.length}</span></div>
+		<div style="display:grid;gap:8px">${st.sources.map((u, i) => html`<div class="acts" style="flex-wrap:nowrap"><input class="src-url" value="${u}" style="flex:1;min-height:36px;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:0 10px"><button class="btn sm ghost" type="button" data-act="app-src-del" data-i="${i}">Entfernen</button></div>`)}</div>
+		<div class="fields" style="grid-template-columns:1fr;margin-top:12px"><label class="f"><span>WEITERE QUELLE (KATALOG-ADRESSE)</span><input name="add" placeholder="https://github.com/<name>/<repo>/releases/download/catalog/index.json"></label></div>
+		<p class="note">Eine Quelle ist ein App-Katalog (<code>index.json</code>) im Format des Repos <a href="https://github.com/UniqueDroid/ShareOS-Apps" target="_blank" rel="noopener">ShareOS-Apps</a>. Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.</p>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
+}
+
+function appsAfter() {
+	if (!S.apps?.installed) { loadApps(); return; }
+	if (S.route.sub === 'installiert' && !S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; }).catch(() => {});
+	$('#app-channel')?.addEventListener('change', async (e) => {
+		try { await rpc('shareos.apps', 'store_set', { channel: e.target.value }); S.apps.store.channel = e.target.value; refreshCatalog(true); }
+		catch (err) { toast('Store: ' + err.message, true); }
+	});
+	$('#f-appusers input[name=all]')?.addEventListener('change', (e) => { $('#app-users-list').hidden = e.target.checked; });
+	$('#f-appusers')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target, users = f.all.checked ? ['*'] : [...f.querySelectorAll('.app-u:checked')].map((x) => x.value);
+		try { await rpc('shareos.apps', 'set', { id: S.apps.edit, users }); S.apps.edit = null; toast('Gespeichert.'); loadApps(['installed']); }
+		catch (err) { toast('Apps: ' + err.message, true); }
+	});
+	$('#f-appsrc')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target, sources = [...f.querySelectorAll('.src-url')].map((x) => x.value.trim()).filter(Boolean);
+		if (f.add.value.trim()) sources.push(f.add.value.trim());
+		try { await rpc('shareos.apps', 'store_set', { sources }); S.apps.store.sources = sources; toast('Gespeichert.'); refreshCatalog(true); renderMain(); }
+		catch (err) { toast('Quellen: ' + err.message, true); }
+	});
+	$('#f-appupload')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const file = e.target.file.files[0];
+		if (!file) return;
+		const btn = $('button[type=submit]', e.target); btn.disabled = true;
+		try {
+			const t = await rpc('shareos.apps', 'upload_ticket');
+			await fbSend(t.url, file, () => {});
+			const r = await rpc('shareos.apps', 'install_upload');
+			toast(`${r.id} ${r.version} installiert (eigene App).`);
+			e.target.reset();
+			await loadApps(['installed', 'catalog']);
+		} catch (err) { toast('Paket: ' + err.message, true); btn.disabled = false; }
+	});
+}
+
+Object.assign(ACTIONS, {
+	'app-refresh'() { refreshCatalog(); },
+	async 'app-install'(el) {
+		try {
+			await rpc('shareos.apps', 'install', { id: el.dataset.id, version: el.dataset.v });
+			S.apps.job = { state: 'downloading', id: el.dataset.id };
+			renderMain();
+			setTimeout(pollAppJob, 800);
+		} catch (e) { toast('Installieren: ' + e.message, true); }
+	},
+	async 'app-remove'(el) {
+		const a = (S.apps.installed.apps || []).find((x) => x.id === el.dataset.id);
+		if (!await confirmDlg(`${a?.name || el.dataset.id} entfernen?`, 'Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.', 'Entfernen', true)) return;
+		try { await rpc('shareos.apps', 'remove', { id: el.dataset.id }); toast('Entfernt.'); loadApps(['installed', 'catalog']); }
+		catch (e) { toast('Entfernen: ' + e.message, true); }
+	},
+	'app-users'(el) { S.apps.edit = el.dataset.id; if (!S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; renderMain(); }).catch(() => {}); renderMain(); window.scrollTo(0, 0); },
+	'app-users-cancel'() { S.apps.edit = null; renderMain(); },
+	async 'app-src-del'(el) {
+		const sources = S.apps.store.sources.filter((_, i) => i !== +el.dataset.i);
+		if (!await confirmDlg('Quelle entfernen?', 'Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.', 'Entfernen', true)) return;
+		try { await rpc('shareos.apps', 'store_set', { sources }); S.apps.store.sources = sources; refreshCatalog(true); renderMain(); }
+		catch (e) { toast('Quellen: ' + e.message, true); }
+	}
+});
 
 /* ---------- start ----------------------------------------------------------- */
 

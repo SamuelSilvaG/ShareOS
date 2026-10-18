@@ -155,6 +155,14 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Darstellung:** Benutzer mit Web-Zugang stellen unter **Darstellung** Hell/Dunkel und Akzentfarbe für sich ein. „Wie für alle“ nimmt wieder die Vorgabe des Admins.
 - Testidee: eine große Datei (z. B. 1 GB) hochladen und wieder herunterladen. Das darf nicht nach 60 s abbrechen.
 
+## 12. Apps (Store)
+
+- **APPS → Store → Jetzt aktualisieren** lädt den Katalog aus dem Repo [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps). Bei **Webpad** auf **Installieren**: Die Box lädt das Paket, prüft die SHA-256-Summe und installiert es.
+- **APPS → Installiert → Öffnen ↗** startet die App in einem neuen Tab auf Port **8081** (bzw. 8444 mit HTTPS). Das ist absichtlich eine andere Adresse als die Verwaltung.
+- **Benutzer** legt fest, wem die App in „Mein ShareOS“ angezeigt wird (alle, einzelne Benutzer, Gruppen).
+- **Eigene App:** unter Store → *Paket installieren* eine `.sapp`-Datei hochladen (gebaut mit `tools/build.py` aus dem App-Repo). Sie wird als „eigene / ungeprüft“ markiert.
+- **Weitere Quellen** (eigene Kataloge) unter APPS → Quellen.
+
 ## Wenn etwas schiefgeht
 
 | Zeichen | Bedeutung / Abhilfe |

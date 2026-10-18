@@ -755,7 +755,58 @@
 		"Kein Laufwerk eingehängt – zuerst unter SPEICHER einrichten.": "No drive mounted – set one up under STORAGE first.",
 		"Kein persönlicher Ordner vorhanden.": "There is no personal folder.",
 		"Es werden nur die ersten 2000 Einträge gezeigt.": "Only the first 2000 entries are shown.",
-		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "Hostname saved. The HTTPS certificate was reissued for the new name – the browser will ask once more."
+		"Hostname gespeichert. Das HTTPS-Zertifikat wurde für den neuen Namen neu ausgestellt – der Browser fragt einmal neu nach.": "Hostname saved. The HTTPS certificate was reissued for the new name – the browser will ask once more.",
+		"INSTALLIERT": "INSTALLED",
+		"STORE": "STORE",
+		"QUELLEN": "SOURCES",
+		"INSTALLIERTE APPS": "INSTALLED APPS",
+		"Noch keine App installiert. Im": "No app installed yet. The",
+		"Store": "store",
+		"gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.": "has apps to install – or upload your own package (.sapp).",
+		"Apps": "Apps",
+		"APP-STORE": "APP STORE",
+		"Beta (auch Vorabversionen)": "Beta (also pre-releases)",
+		"Jetzt aktualisieren": "Refresh now",
+		"PAKET INSTALLIEREN": "INSTALL PACKAGE",
+		"PAKETDATEI": "PACKAGE FILE",
+		"Für eigene Apps (gebaut mit": "For your own apps (built with",
+		"aus dem App-Repo). Hochgeladene Pakete gelten als „eigene / ungeprüft“.": "from the app repository). Uploaded packages count as “own / not verified”.",
+		"Hochladen & installieren": "Upload & install",
+		"VERFÜGBARE APPS": "AVAILABLE APPS",
+		"APP": "APP",
+		"HERAUSGEBER": "PUBLISHER",
+		"Werkzeuge": "Tools",
+		"Medien": "Media",
+		"Büro": "Office",
+		"Netzwerk": "Network",
+		"Download": "Download",
+		"Sync": "Sync",
+		"wird geladen …": "downloading …",
+		"aus dem Store": "from the store",
+		"eigene / ungeprüft": "own / not verified",
+		"eigene": "own",
+		"SICHTBAR FÜR": "VISIBLE TO",
+		"alle Benutzer": "all users",
+		"nur Administratoren": "administrators only",
+		"Alle Benutzer mit Web-Zugang": "All users with web access",
+		"Administratoren sehen alle Apps. Die Auswahl bestimmt, wem die App in „Mein ShareOS“ angezeigt wird.": "Administrators see all apps. The selection decides who sees the app in “My ShareOS”.",
+		"Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.": "The app is deleted. Data it stored in the browser stays there.",
+		"APP-QUELLEN": "APP SOURCES",
+		"WEITERE QUELLE (KATALOG-ADRESSE)": "ANOTHER SOURCE (CATALOG ADDRESS)",
+		"Eine Quelle ist ein App-Katalog (": "A source is an app catalog (",
+		") im Format des Repos": ") in the format of the repository",
+		". Eigene Apps: das Repo als Vorlage nehmen, die GitHub Action baut Pakete und Katalog. Nur Quellen eintragen, denen du vertraust.": ". Own apps: use the repository as a template, its GitHub Action builds packages and catalog. Only add sources you trust.",
+		"Quelle entfernen?": "Remove source?",
+		"Apps aus dieser Quelle erscheinen nicht mehr im Store. Installierte Apps bleiben.": "Apps from this source no longer show up in the store. Installed apps stay.",
+		"MEINE APPS": "MY APPS",
+		"Store aktualisiert.": "Store refreshed.",
+		"Entfernt.": "Removed.",
+		"Lade den Katalog …": "Loading the catalog …",
+		"Keine Apps gefunden – Internetverbindung und Quellen prüfen.": "No apps found – check the internet connection and the sources.",
+		"Kein Benutzer mit Web-Zugang – unter Freigaben → Benutzer einrichten.": "No user with web access – set one up under Shares → Users.",
+		"braucht neuere ShareOS": "needs a newer ShareOS",
+		"noch nicht geladen": "not loaded yet",
+		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Web apps run on their own port (8081 / 8444 for HTTPS) – apart from this interface, so an app cannot use your login. Anyone who knows the address can open a web app on the network; “visible to” decides who sees it in “My ShareOS”."
 	},
 	"patterns": [
 		[
@@ -1317,6 +1368,74 @@
 		[
 			"^Dateien: (.*)$",
 			"Files: $1"
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+)\\) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann\\. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird\\.$",
+			"Web apps run on their own port ($1) – apart from this interface, so an app cannot use your login. Anyone who knows the address can open a web app on the network; “visible to” decides who sees it in “My ShareOS”."
+		],
+		[
+			"^Web-Apps laufen auf einem eigenen Port \\((\\d+) / (\\d+) für HTTPS\\)(.*)$",
+			"Web apps run on their own port ($1 / $2 for HTTPS) – apart from this interface, so an app cannot use your login. Anyone who knows the address can open a web app on the network; “visible to” decides who sees it in “My ShareOS”."
+		],
+		[
+			"^Stand (.+)$",
+			"as of $1"
+		],
+		[
+			"^(.+) · sichtbar für (.+)$",
+			"$1 · visible to $2"
+		],
+		[
+			"^(.+) · SICHTBAR FÜR$",
+			"$1 · VISIBLE TO"
+		],
+		[
+			"^(.+) entfernen\\?$",
+			"Remove $1?"
+		],
+		[
+			"^(\\S+) (\\S+) installiert\\.$",
+			"$1 $2 installed."
+		],
+		[
+			"^(\\S+) (\\S+) installiert \\(eigene App\\)\\.$",
+			"$1 $2 installed (own app)."
+		],
+		[
+			"^(\\S+) wird geladen …$",
+			"$1 downloading …"
+		],
+		[
+			"^(\\S+) wird geprüft …$",
+			"$1 being verified …"
+		],
+		[
+			"^(\\S+) wird installiert …$",
+			"$1 being installed …"
+		],
+		[
+			"^Update (.+)$",
+			"Update $1"
+		],
+		[
+			"^Store: (.*)$",
+			"Store: $1"
+		],
+		[
+			"^Apps: (.*)$",
+			"Apps: $1"
+		],
+		[
+			"^Entfernen: (.*)$",
+			"Remove: $1"
+		],
+		[
+			"^Quellen: (.*)$",
+			"Sources: $1"
+		],
+		[
+			"^Paket: (.*)$",
+			"Package: $1"
 		]
 	],
 	"words": [

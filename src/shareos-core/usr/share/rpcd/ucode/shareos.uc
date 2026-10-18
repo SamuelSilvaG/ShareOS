@@ -13,6 +13,8 @@
 //                    jobs | job_set | job_del | job_run | job_stop | job_log
 //   shareos.files    roots | list | mkdir | rename | move | delete | ticket
 //                    (file browser: admins all volumes, users their personal folder)
+//   shareos.apps     installed | catalog | install | status | upload_ticket | install_upload |
+//                    remove | set | store_get | store_set   (web apps, own web server)
 //   shareos.widget   get | set | status   (status page for widget apps, token protected)
 //   shareos.update   check | status | download | apply | cancel
 //
@@ -607,7 +609,7 @@ function password_ok(user, pass) {
 /* ---------- settings backup ---------- */
 
 const CRYPT = '/usr/sbin/shareos-crypt';
-const BACKUP_CONFIGS = [ 'shareos', 'storage', 'network', 'accounts', 'shares' ];
+const BACKUP_CONFIGS = [ 'shareos', 'storage', 'network', 'accounts', 'shares', 'paperless', 'cloud', 'apps' ];
 const BACKUP_FILES = [ '/etc/ksmbd/ksmbdpwd.db', '/etc/ssl/shareos/server.crt', '/etc/ssl/shareos/server.key', '/etc/hostname', '/etc/timezone' ];
 
 function lines_of(path) { return filter(split(readfile(path) ?? '', '\n'), (l) => l != ''); }
@@ -887,6 +889,32 @@ function cloud_log(c, name, n) {
 
 function me_cloud_allowed(u) { return u != 'root' && cursor().get('accounts', u, 'cloud') == '1' && !!cursor().get('accounts', u, 'home'); }
 
+/* ---------- apps ---------- */
+
+const APPS_TOOL = '/usr/sbin/shareos-apps';
+const APPS_UPLOAD = '/tmp/shareos-apps/upload.sapp';
+
+function apps_json(args) {
+	let r = sh(APPS_TOOL + ' ' + join(' ', map(args, shq)));
+	let j = json(trim(r.out) || 'null');
+	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
+}
+
+function apps_server() {
+	let c = cursor();
+	return { port: +(c.get('apps', 'store', 'port') ?? 8081), https_port: +(c.get('apps', 'store', 'https_port') ?? 8444),
+		https: c.get('shareos', 'web', 'https') != '0' };
+}
+
+// apps a user may see: users list contains '*', the name or one of its '@groups'
+function apps_for(u) {
+	if (!u) return [];
+	let c = cursor(), groups = list_of(c.get('accounts', u, 'groups'));
+	let admin = u == 'root' || c.get('accounts', u, 'role') == 'admin';
+	return filter(apps_json([ 'list' ]).apps ?? [], (a) => admin || index(a.users, '*') >= 0 || index(a.users, u) >= 0
+		|| length(filter(groups, (g) => index(a.users, '@' + g) >= 0)) > 0);
+}
+
 /* ---------- file browser ---------- */
 
 const FILES_TICKETS = '/tmp/shareos-files';
@@ -1003,6 +1031,8 @@ function me_info(u) {
 	info.host = read_trim('/proc/sys/kernel/hostname');
 	info.cloud = me_cloud_allowed(u);
 	info.files = u != 'root' && role != 'admin' && files_allowed(u);
+	info.apps = role == 'admin' ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, description: a.description }));
+	info.apps_server = apps_server();
 	info.ui = u == 'root' ? null : { theme: c.get('accounts', u, 'theme') ?? null, accent: c.get('accounts', u, 'accent') ?? null };
 	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
 	return info;
@@ -2185,6 +2215,102 @@ return {
 				let t = new_token();
 				writefile(FILES_TICKETS + '/' + t, sprintf('%s\n%s\n%s\n%d\n%s\n', a.mode, acc_role(u) == 'admin' ? 'root' : u, target, time() + 120, pct_enc(a.name)));
 				return { url: '/cgi-bin/files?t=' + t };
+			}
+		}
+	},
+
+	'shareos.apps': {
+		installed: {
+			call: function() { return { ...apps_server(), apps: apps_json([ 'list' ]).apps ?? [] }; }
+		},
+
+		catalog: {
+			// refresh: ask the catalog sources now (network), otherwise the last result
+			args: { refresh: false },
+			call: function(req) { return apps_json([ req.args.refresh ? 'catalog' : 'cached' ]); }
+		},
+
+		install: {
+			args: { id: '', version: '' },
+			call: function(req) {
+				let a = req.args;
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/)) return { error: 'invalid app id' };
+				if (a.version && !match(a.version, /^v?[0-9]+\.[0-9]+(\.[0-9]+)?(-[A-Za-z0-9.]+)?$/)) return { error: 'invalid version' };
+				system('mkdir -p /tmp/shareos-apps && printf \'{"state":"downloading","id":"%s"}\' ' + shq(a.id) + ' > /tmp/shareos-apps/job.json');
+				system('start-stop-daemon -S -b -x ' + APPS_TOOL + ' -- install ' + shq(a.id) + (a.version ? ' ' + shq(a.version) : ''));
+				return { started: true };
+			}
+		},
+
+		status: { call: function() { return apps_json([ 'status' ]); } },
+
+		upload_ticket: {
+			// one-time address: the browser sends the .sapp file there (cgi-bin/files)
+			call: function() {
+				system('mkdir -p ' + FILES_TICKETS + ' /tmp/shareos-apps && chmod 700 ' + FILES_TICKETS + '; rm -f ' + APPS_UPLOAD);
+				let t = new_token();
+				writefile(FILES_TICKETS + '/' + t, sprintf('put\nroot\n%s\n%d\nupload.sapp\n', APPS_UPLOAD, time() + 300));
+				return { url: '/cgi-bin/files?t=' + t };
+			}
+		},
+
+		install_upload: {
+			call: function() {
+				if (!stat(APPS_UPLOAD)) return { error: 'no uploaded package' };
+				let r = apps_json([ 'install-file', APPS_UPLOAD ]);
+				unlink(APPS_UPLOAD);
+				return r;
+			}
+		},
+
+		remove: {
+			args: { id: '' },
+			call: function(req) {
+				if (!match(req.args.id ?? '', /^[a-z][a-z0-9-]{1,31}$/)) return { error: 'invalid app id' };
+				return apps_json([ 'remove', req.args.id ]);
+			}
+		},
+
+		set: {
+			// users: '*' (everyone with web access), user names, '@group'
+			args: { id: '', users: [] },
+			call: function(req) {
+				let a = req.args, c = cursor(), s = 'app_' + replace(a.id ?? '', '-', '_');
+				if (!match(a.id ?? '', /^[a-z][a-z0-9-]{1,31}$/) || c.get('apps', s) != 'app') return { error: 'unknown app' };
+				if (type(a.users) != 'array') return { error: 'invalid users' };
+				for (let x in a.users) {
+					if (x == '*') continue;
+					if (substr(x, 0, 1) == '@' ? c.get('accounts', substr(x, 1)) != 'group' : c.get('accounts', x) != 'user') return { error: 'unknown user or group: ' + x };
+				}
+				c.delete('apps', s, 'users');
+				if (length(a.users)) c.set('apps', s, 'users', a.users);
+				c.commit('apps');
+				return { ok: true };
+			}
+		},
+
+		store_get: {
+			call: function() {
+				let c = cursor(), src = c.get('apps', 'store', 'source');
+				return { channel: c.get('apps', 'store', 'channel') ?? 'stable', sources: type(src) == 'array' ? src : (src ? [ src ] : []), ...apps_server() };
+			}
+		},
+
+		store_set: {
+			args: { channel: '', sources: [] },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				if (a.channel && !(a.channel in { stable: 1, beta: 1 })) return { error: 'invalid channel' };
+				if (a.sources != null) {
+					if (type(a.sources) != 'array' || length(a.sources) > 10) return { error: 'invalid sources' };
+					for (let u in a.sources)
+						if (!match(u, /^https:\/\/[A-Za-z0-9.:\[\]_-]+(\/[^\s"'<>]*)?$/)) return { error: 'invalid source (https://… only): ' + u };
+				}
+				c.set('apps', 'store', 'store');
+				if (a.channel) c.set('apps', 'store', 'channel', a.channel);
+				if (a.sources != null) { c.delete('apps', 'store', 'source'); if (length(a.sources)) c.set('apps', 'store', 'source', a.sources); }
+				c.commit('apps');
+				return { ok: true };
 			}
 		}
 	},

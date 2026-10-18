@@ -62,6 +62,9 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S50avahi-daemon $(TARGET_DIR)/etc/init.d/S50avahi-daemon
 	$(INSTALL) -D -m 0644 $(@D)/etc/avahi/avahi-daemon.conf $(TARGET_DIR)/etc/avahi/avahi-daemon.conf
 	$(INSTALL) -D -m 0644 $(@D)/etc/avahi/services/shareos-web.service $(TARGET_DIR)/etc/avahi/services/shareos-web.service
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-apps $(TARGET_DIR)/usr/sbin/shareos-apps
+	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S51apps $(TARGET_DIR)/etc/init.d/S51apps
+	$(INSTALL) -D -m 0644 $(@D)/etc/config/apps $(TARGET_DIR)/etc/config/apps
 	rm -rf $(TARGET_DIR)/www
 	cp -a $(@D)/www $(TARGET_DIR)/www
 endef

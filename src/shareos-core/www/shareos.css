@@ -257,3 +257,10 @@ label.btn.dis{opacity:.45;cursor:not-allowed}
 .fbt .r{text-align:right}
 .fb.drag{border-color:var(--accent);box-shadow:var(--glow)}
 @media (max-width:640px){.fbt th:nth-child(4),.fbt td:nth-child(4){display:none}.fbtools .sep{display:none}}
+
+/* Apps */
+.appicon{display:block;width:40px;height:40px;border-radius:9px;object-fit:contain;background:var(--bg);border:1px solid var(--line);padding:4px}
+.appicon.ph{background:linear-gradient(135deg,var(--ph),var(--bg))}
+.card .icon .appicon{width:100%;height:100%;border:0;padding:6px;background:none}
+a.card.applink{text-decoration:none;color:inherit}
+a.card.applink:hover{border-color:var(--dim);box-shadow:var(--glow)}

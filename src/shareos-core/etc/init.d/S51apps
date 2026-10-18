@@ -1,0 +1,34 @@
+#!/bin/sh
+# Web server for ShareOS web apps: /www-apps on its own port (apps.store.port),
+# another origin than the admin interface on port 80/443.
+PID=/var/run/uhttpd-apps.pid
+DIR=/www-apps
+
+start() {
+	mkdir -p $DIR
+	[ -f $DIR/index.html ] || cat > $DIR/index.html <<'X'
+<!doctype html><meta charset="utf-8"><title>ShareOS Apps</title>
+<script>location.replace(location.protocol + '//' + location.hostname + '/#/apps');</script>
+X
+	port=$(uci -q get apps.store.port || echo 8081)
+	tls=
+	if [ "$(uci -q get shareos.web.https)" != 0 ]; then
+		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
+		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
+		[ -s "$crt" ] && [ -s "$key" ] && tls="-s $(uci -q get apps.store.https_port || echo 8444) -C $crt -K $key"
+	fi
+	start-stop-daemon -S -q -b -m -p $PID -x /usr/bin/uhttpd -- \
+		-f -h $DIR -r ShareOS-Apps -p "$port" $tls -S -D -t 30 -T 30 -k 20 -n 3 -N 50
+}
+
+stop() {
+	start-stop-daemon -K -q -p $PID 2>/dev/null
+	rm -f $PID
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	restart|reload) stop; sleep 1; start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

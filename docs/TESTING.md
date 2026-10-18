@@ -155,6 +155,14 @@ their permissions.
 - **Look:** users with web access set light/dark and the accent colour for themselves under **Appearance**. "Same as for everyone" goes back to the admin's choice.
 - Test idea: upload a large file (e.g. 1 GB) and download it again. It must not stop after 60 s.
 
+## 12. Apps (store)
+
+- **APPS → Store → Refresh now** loads the catalog from the [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) repository. **Install** next to **Webpad**: the box downloads the package, checks its SHA-256 and installs it.
+- **APPS → Installed → Open ↗** starts the app in a new tab on port **8081** (8444 with HTTPS) – deliberately another address than the admin interface.
+- **Users** decides who sees the app in "My ShareOS" (everyone, single users, groups).
+- **Own app:** upload a `.sapp` file under Store → *Install package* (built with `tools/build.py` from the app repository). It is marked "own / not verified".
+- **More sources** (own catalogs) under APPS → Sources.
+
 ## If something goes wrong
 
 | Sign | Meaning / fix |

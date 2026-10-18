@@ -118,7 +118,10 @@ def me(user):
             'home': {'volume': x['home'], 'path': f"/mnt/{x['home']}/home/{user}", 'smb': user} if x['home'] else None,
             'usage': [{'volume': 'daten', 'used': 61_500_000_000, 'limit': x['quota'] * 1000000}], 'shares': mine, 'host': 'skynet-nas',
             'cloud': x.get('cloud', False), 'paperless': bool(x['home']), 'files': x.get('files', False) and x['role'] == 'user',
-            'ui': x.get('ui', {'theme': None, 'accent': None})}
+            'ui': x.get('ui', {'theme': None, 'accent': None}),
+            'apps': [{'id': a['id'], 'name': a['name'], 'entry': a['entry'], 'icon': a['icon'], 'description': a['description']}
+                     for a in APPS['installed'].values() if '*' in a['users'] or user in a['users']],
+            'apps_server': {'port': 8081, 'https_port': 8444, 'https': True}}
 
 
 PL_LOG = [
@@ -208,6 +211,86 @@ def files_call(user, method, args):
     return {'error': 'unknown'}
 
 
+APPS = {'installed': {}, 'job': None, 'channel': 'stable',
+        'sources': ['https://github.com/UniqueDroid/ShareOS-Apps/releases/download/catalog/index.json'], 'refreshed': 0}
+CATALOG = [
+    {'id': 'webpad', 'name': 'Webpad', 'publisher': 'UniqueDroid', 'category': 'tools', 'type': 'webapp',
+     'description': {'de': 'Texteditor im Browser im Stil von Notepad++: Syntaxhervorhebung, Tabs, Suchen und Ersetzen. Läuft komplett offline.',
+                     'en': 'Text editor in the browser in the style of Notepad++. Works fully offline.'},
+     'icon_url': None, 'entry': 'index.html', 'icon': 'icon.svg',
+     'versions': [{'version': '1.0.0', 'date': '2026-10-18T10:28:46Z', 'prerelease': False, 'url': 'https://example/webpad.sapp', 'sha256': '0' * 64,
+                   'size': 513577, 'min_shareos': '0.1.0', 'notes_url': 'https://github.com/UniqueDroid/ShareOS-Apps/releases/tag/webpad-v1.0.0'}]},
+    {'id': 'mediathek', 'name': 'Mediathek', 'publisher': 'Beispiel', 'category': 'media', 'type': 'webapp',
+     'description': {'de': 'Fotos und Videos der Freigaben im Browser ansehen (Beispiel-Eintrag).', 'en': 'Browse photos and videos (sample entry).'},
+     'icon_url': None, 'entry': 'index.html',
+     'versions': [{'version': '0.3.0-beta.1', 'date': '2026-10-16T09:00:00Z', 'prerelease': True, 'url': 'https://example/m.sapp', 'sha256': '0' * 64,
+                   'size': 182000, 'min_shareos': '0.1.0', 'notes_url': ''}]},
+]
+
+
+def apps_catalog():
+    out = []
+    for a in CATALOG:
+        vs = [v for v in a['versions'] if APPS['channel'] == 'beta' or not v['prerelease']]
+        if not vs:
+            continue
+        i = APPS['installed'].get(a['id'])
+        out.append(dict(a, versions=vs, latest=vs[0]['version'], installed=i['version'] if i else None,
+                        update_available=bool(i) and i['version'] != vs[0]['version'], compatible=True, source=APPS['sources'][0]))
+    return {'time': APPS['refreshed'], 'channel': APPS['channel'], 'sources': APPS['sources'], 'errors': [], 'apps': out}
+
+
+def apps_call(method, args):
+    srv = {'port': 8081, 'https_port': 8444, 'https': True}
+    if method == 'installed':
+        return dict(srv, apps=list(APPS['installed'].values()))
+    if method == 'catalog':
+        if args.get('refresh'):
+            APPS['refreshed'] = int(time.time())
+        return apps_catalog()
+    if method == 'store_get':
+        return dict(srv, channel=APPS['channel'], sources=APPS['sources'])
+    if method == 'store_set':
+        if args.get('channel'):
+            APPS['channel'] = args['channel']
+        if args.get('sources') is not None:
+            APPS['sources'] = args['sources']
+        return {'ok': True}
+    if method == 'install':
+        a = next(x for x in CATALOG if x['id'] == args['id'])
+        APPS['job'] = {'state': 'downloading', 'id': a['id'], 'version': args.get('version') or a['versions'][0]['version'], 't': time.time()}
+        return {'started': True}
+    if method == 'status':
+        j = APPS['job']
+        if not j:
+            return {'state': 'idle'}
+        dt = time.time() - j['t']
+        if dt < 1.2:
+            return {'state': 'downloading', 'id': j['id']}
+        if dt < 2:
+            return {'state': 'verifying', 'id': j['id']}
+        a = next(x for x in CATALOG if x['id'] == j['id'])
+        APPS['installed'][a['id']] = {'id': a['id'], 'name': a['name'], 'version': j['version'], 'publisher': a['publisher'], 'description': a['description'],
+                                      'type': 'webapp', 'entry': 'index.html', 'icon': a.get('icon'), 'category': a['category'], 'permissions': [],
+                                      'verified': True, 'source': APPS['sources'][0], 'installed': int(time.time()), 'users': ['*']}
+        APPS['job'] = None
+        return {'state': 'done', 'id': a['id'], 'version': j['version']}
+    if method == 'remove':
+        APPS['installed'].pop(args['id'], None)
+        return {'ok': True}
+    if method == 'set':
+        APPS['installed'][args['id']]['users'] = args['users']
+        return {'ok': True}
+    if method == 'upload_ticket':
+        return {'url': '/cgi-bin/files?t=upload'}
+    if method == 'install_upload':
+        APPS['installed']['meine-app'] = {'id': 'meine-app', 'name': 'Meine App', 'version': '0.1.0', 'publisher': 'Jan', 'description': 'Eigene Test-App',
+                                          'type': 'webapp', 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': [],
+                                          'verified': False, 'source': 'upload', 'installed': int(time.time()), 'users': []}
+        return {'ok': True, 'id': 'meine-app', 'version': '0.1.0', 'verified': False}
+    return {'error': 'unknown'}
+
+
 def call(obj, method, args):
     if obj == 'session' and method == 'login':
         user, pw = args.get('username'), args.get('password')
@@ -253,6 +336,8 @@ def call(obj, method, args):
                 return {'started': True}
             return {'allowed': True, 'installed': c['installed'], 'remotes': mine, 'jobs': cloud_jobs(u), 'shares': ['fotos'], 'ok': True}
         return me(u)
+    if obj == 'shareos.apps':
+        return apps_call(method, args)
     if obj == 'shareos.files':
         return files_call(STATE['sessions'].get(SID, 'root'), method, args)
     if obj == 'shareos.widget':
@@ -448,6 +533,9 @@ class H(SimpleHTTPRequestHandler):
 
     def files_cgi(self):
         t = self.path.split('t=')[-1]
+        if t == 'upload':
+            n = int(self.headers.get('Content-Length') or 0); self.rfile.read(n)
+            return self.reply(200, {'ok': True})
         tk = TICKETS.pop(t, None)
         if not tk:
             return self.reply(403, {'error': 'invalid ticket'})
