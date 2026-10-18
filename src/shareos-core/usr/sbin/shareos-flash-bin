@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+# shareos-flash-bin – write a firmware file in D-Link format (.bin) from
+# ShareOS, e.g. to go back to Alt-F or to install another ShareOS .bin
+#
+#   shareos-flash-bin info <file.bin>          what is in it (key=value lines)
+#   shareos-flash-bin write <file.bin> --yes   write kernel and initramfs
+#
+# Only kernel (uImage partition) and initramfs (ramdisk partition) are
+# written – both are checked (D-Link header and checksums, U-Boot headers,
+# the 3 MB that the stock U-Boot loads) and read back after writing. The
+# 'image' partition with the ShareOS system and settings is not touched:
+#   - Alt-F starts afterwards, but without its extra packages – flash the same
+#     .bin once more in Alt-F's own firmware page to restore them.
+#   - The D-Link firmware is best installed from Alt-F.
+#   - A ShareOS .bin keeps the system and settings in flash.
+#
+PATH=${SHAREOS_TEST_PATH:+$SHAREOS_TEST_PATH:}/usr/sbin:/usr/bin:/sbin:/bin
+ROOT=${SHAREOS_ROOT:-}
+UBOOT_MAX=3145728
+
+die() { echo "error: $*"; rm -rf "${T:-/nonexistent}"; exit 1; }
+mtd_by_name() { sed -n "s/^\(mtd[0-9]*\):.*\"$1\"\$/\1/p" $ROOT/proc/mtd; }
+
+# U-Boot image: magic 27 05 19 56, image name at byte 32
+uimage_name() { [ "$(dd if="$1" bs=4 count=1 2>/dev/null)" = "$(printf '\047\005\031\126')" ] && dd if="$1" bs=1 skip=32 count=32 2>/dev/null | tr -d '\000'; }
+
+split_bin() {
+	[ -f "$1" ] || die "file not found"
+	T=$(mktemp -d)
+	if ! out=$(cd "$T" && dns323-fw -s -k kernel -i initramfs -a sqimage -d defaults "$1" 2>&1); then
+		echo "$out" | grep -q 'chksum is' && die "the file is damaged (checksum)"
+		die "not a D-Link firmware file"
+	fi
+	echo "$out" | grep -q 'kernel saved, checksum is OK' || die "kernel in the file is damaged"
+	echo "$out" | grep -q 'initramfs saved, checksum is OK' || die "initramfs in the file is damaged"
+	SIG=$(echo "$out" | sed -n 's/^signature is "\(.*\)"/\1/p' | head -1)
+	[ "$SIG" = DNS320L ] || die "the file is for another device (${SIG:-unknown})"
+	KN=$(uimage_name "$T/kernel") || die "kernel is not a U-Boot image"
+	IN=$(uimage_name "$T/initramfs") || die "initramfs is not a U-Boot image"
+	KS=$(stat -c %s "$T/kernel"); IS=$(stat -c %s "$T/initramfs")
+	[ "$KS" -le $UBOOT_MAX ] || die "kernel larger than the 3 MB the boot loader loads"
+	[ "$IS" -le $UBOOT_MAX ] || die "initramfs larger than the 3 MB the boot loader loads"
+	case "$KN" in
+		ShareOS-*) KIND=shareos ;;
+		*[Aa]lt-[Ff]*|*Alt-F*) KIND=altf ;;
+		*) KIND=other ;;
+	esac
+	SQ=0; [ -s "$T/sqimage" ] && SQ=$(stat -c %s "$T/sqimage")
+}
+
+cmd_info() {
+	split_bin "$1"
+	echo "kind=$KIND"
+	echo "kernel=$KN"
+	echo "initramfs=$IN"
+	echo "kernel_size=$KS"
+	echo "initramfs_size=$IS"
+	echo "sqimage_size=$SQ"
+	rm -rf "$T"
+}
+
+flash() {   # partition file
+	m=$(mtd_by_name "$1"); [ -n "$m" ] || die "partition $1 not found"
+	n=$(stat -c %s "$2")
+	flash_erase -q $ROOT/dev/$m 0 0 || die "erasing $1 failed"
+	nandwrite -q -p $ROOT/dev/$m "$2" || die "writing $1 failed"
+	nanddump -q -l "$n" -f "$T/check" $ROOT/dev/$m || die "reading $1 back failed"
+	cmp -s "$T/check" "$2" || die "$1 does not read back correctly"
+}
+
+cmd_write() {
+	[ "$2" = --yes ] || die "add --yes: this replaces kernel and initramfs in flash"
+	grep -qE 'DNS-320L' $ROOT/proc/device-tree/model 2>/dev/null || die "this is not a DNS-320L"
+	if [ -f $ROOT/tmp/shareos-update/state.json ] && grep -qE '"state": *"(downloading|verifying|flashing)"' $ROOT/tmp/shareos-update/state.json; then
+		die "a firmware update is running"
+	fi
+	split_bin "$1"
+	logger -t shareos-flash-bin "writing $KN" 2>/dev/null
+	# initramfs first: with a new initramfs and the old kernel the box still boots
+	flash ramdisk "$T/initramfs"
+	flash uImage "$T/kernel"
+	sync
+	echo "ok kind=$KIND kernel=$KN"
+	rm -rf "$T"
+}
+
+case "$1" in
+	info) cmd_info "$2" ;;
+	write) cmd_write "$2" "$3" ;;
+	*) sed -n '3,19s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac

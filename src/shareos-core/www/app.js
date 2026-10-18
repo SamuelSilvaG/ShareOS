@@ -75,6 +75,7 @@ const I = {
 	info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
 	warn: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/>',
 	ok: '<path d="m5 12 5 5 9-10"/>',
+	x: '<path d="M6 6l12 12M18 6 6 18"/>',
 	reboot: '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
 	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
 	ul: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
@@ -1376,6 +1377,9 @@ function smartLine(sm) {
 		${bad ? html` · <span style="color:var(--red)">${sm.reallocated || 0} umgelagert, ${sm.pending || 0} schwebend</span>` : ''}`;
 }
 
+// small "x" that hides a message for good (the box forgets it)
+const closeX = (act) => html`<button class="bx" type="button" data-act="${act}" title="Schließen" aria-label="Schließen">${svg(I.x)}</button>`;
+
 function storageView() {
 	const st = S.storage, i = S.info || {};
 	if (!st) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade Laufwerke …</span></div></div>`;
@@ -1383,7 +1387,7 @@ function storageView() {
 	const running = job?.state === 'running';
 	return html`
 	${running ? html`<div class="banner" style="border-color:var(--dim)"><div class="spin" style="margin:0;width:20px;height:20px"></div><span><b>Einrichtung läuft</b> – ${job.step || ''}. Box nicht ausschalten.</span></div>` : ''}
-	${job?.state === 'error' ? html`<div class="banner">${svg(I.warn)}<span><b>Einrichtung fehlgeschlagen:</b> ${job.error}</span></div>` : ''}
+	${job?.state === 'error' ? html`<div class="banner">${svg(I.warn)}<span style="flex:1"><b>Einrichtung fehlgeschlagen:</b> ${job.error}</span>${closeX('job-clear')}</div>` : ''}
 	${S.wiz ? wizardView(st) : ''}
 	<section class="sec">
 		${secHead('volumes', 'VOLUMES', st.volumes.length ? st.volumes.length + ' eingerichtet' : 'noch keine')}
@@ -1628,7 +1632,7 @@ const SYS = {
 		const bootOk = i.boot === 'flash';
 		return html`
 		${(u.pending_reboot || u.state === 'flashed') && !busy ? html`<div class="banner">${svg(I.reboot)}<span style="flex:1;min-width:240px"><b>Neustart nötig</b> – das neue System wird beim nächsten Start installiert (ca. 1 Minute, Box nicht ausschalten).</span><button class="btn primary" type="button" data-act="reboot">Jetzt neu starten</button></div>` : ''}
-		${u.last_upgrade ? html`<div class="banner" style="${u.last_upgrade.startsWith('ok') ? 'border-color:var(--dim)' : ''}">${svg(u.last_upgrade.startsWith('ok') ? I.ok : I.warn)}<span>Letztes Update: <b>${u.last_upgrade.startsWith('ok') ? 'erfolgreich installiert (' + u.last_upgrade.slice(3) + ')' : u.last_upgrade}</b></span></div>` : ''}
+		${u.last_upgrade ? html`<div class="banner" style="${u.last_upgrade.startsWith('ok') ? 'border-color:var(--dim)' : ''}">${svg(u.last_upgrade.startsWith('ok') ? I.ok : I.warn)}<span style="flex:1">Letztes Update: <b>${u.last_upgrade.startsWith('ok') ? 'erfolgreich installiert (' + u.last_upgrade.slice(3) + ')' : u.last_upgrade}</b></span>${closeX('upd-ack')}</div>` : ''}
 		${!bootOk && i.boot ? html`<div class="banner">${svg(I.warn)}<span>Die Box läuft gerade nicht aus dem Flash (<b>${i.boot}</b>). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.</span></div>` : ''}
 		<div class="split">
 			<section class="main">
@@ -1684,6 +1688,13 @@ const SYS = {
 					</ol>
 					<p class="note">Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.</p>
 				</div>
+				<form class="panel" id="f-bin" style="margin-top:16px">
+					<div class="ph"><span class="pt">FIRMWARE-DATEI EINSPIELEN</span><span class="tag ml">.bin</span></div>
+					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. um <b>zurück zu Alt-F</b> zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
+					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>DATEI</span><input type="file" name="file" accept=".bin" required></label></div>
+					<div id="bin-info"></div>
+					<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Hochladen & prüfen</button></div>
+				</form>
 			</aside>
 		</div>`;
 	},
@@ -1840,7 +1851,7 @@ const SYS = {
 		const v = (k, d) => (st ? n[k] : '') || d;
 		return html`
 		${n.pending ? html`<div class="banner">${svg(I.warn)}<span style="flex:1;min-width:240px"><b>Neue Netzwerkeinstellungen warten auf Bestätigung</b> – ohne Bestätigung kehrt die Box in ${n.pending.left} s zu den alten zurück.</span><button class="btn primary" type="button" data-act="net-confirm">Behalten</button></div>` : ''}
-		${n.result === 'rolledback' && !n.pending ? html`<div class="banner">${svg(I.warn)}<span>Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.</span></div>` : ''}
+		${n.result === 'rolledback' && !n.pending ? html`<div class="banner">${svg(I.warn)}<span style="flex:1">Die letzte Änderung wurde nicht bestätigt; die vorherigen Netzwerkeinstellungen sind wieder aktiv.</span>${closeX('net-dismiss')}</div>` : ''}
 		<h2 class="gh">NETZWERK <span>eth0 · ${e.speed ? e.speed + ' Mbit/s' : 'kein Link'}</span></h2>
 		<div class="g2">
 			<form class="panel" id="f-net">
@@ -1984,6 +1995,39 @@ const VIEWS_AFTER = {
 			});
 		}
 
+		if (sub === 'firmware') {
+			$('#f-bin')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target, file = f.file.files[0], box = $('#bin-info'), btn = $('button[type=submit]', f);
+				if (!file) return;
+				btn.disabled = true;
+				try {
+					const t = await rpc('shareos.update', 'bin_ticket');
+					await fbSend(t.url, file, () => {});
+					const i = await rpc('shareos.update', 'bin_info');
+					const kind = { shareos: 'ShareOS', altf: 'Alt-F', other: 'andere Firmware' }[i.kind] || i.kind;
+					box.innerHTML = html`<dl class="kv" style="margin-top:10px"><dt>Art</dt><dd><b>${kind}</b></dd><dt>Kernel</dt><dd>${i.kernel}</dd>
+						<dt>Größe</dt><dd>${fmtBytes(+i.kernel_size)} + ${fmtBytes(+i.initramfs_size)}</dd></dl>
+						${i.kind === 'altf' || i.kind === 'other' ? html`<p class="note" style="color:var(--amber)">Danach startet ${kind}. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen. Zurück zu ShareOS: die ShareOS-.bin in Alt-F flashen, System und Einstellungen sind noch da.</p>` : ''}
+						<div class="acts" style="margin-top:10px"><button class="btn danger" type="button" id="bin-write">Einspielen</button></div>`.s;
+					$('#bin-write').addEventListener('click', async () => {
+						if (!await confirmDlg(`${kind} einspielen?`, 'Kernel und Startsystem werden ersetzt und geprüft. Box während des Schreibens nicht ausschalten.', 'Einspielen', true)) return;
+						cover('Firmware wird geschrieben', 'Kernel und Startsystem – bitte warten, nicht ausschalten');
+						try {
+							await rpc('shareos.update', 'bin_write', { confirm: true });
+							uncover();
+							if (await confirmDlg('Geschrieben', `${kind} ist im Flash. Jetzt neu starten?`, 'Neu starten')) {
+								try { await rpc('shareos.system', 'reboot'); } catch (err) { }
+								stopPolling();
+								if (i.kind === 'shareos') waitForBox('Neustart läuft', `${kind} startet`);
+								else cover('Neustart läuft', `${kind} startet – dessen Oberfläche ist gleich unter ${location.hostname} erreichbar (Port 80).`);
+							}
+						} catch (err) { uncover(); toast('Einspielen: ' + err.message, true); }
+					});
+				} catch (err) { box.innerHTML = ''; toast('Firmware-Datei: ' + err.message, true); }
+				btn.disabled = false;
+			});
+		}
 		if (sub === 'allgemein') {
 			if (!S.widget) loadWidget();
 			$('#app-install')?.addEventListener('click', async () => {
@@ -2498,7 +2542,8 @@ async function refreshUpdateStatus() {
 		if ((S.check?.update_available ? S.check.latest : null) !== had) renderHeader();
 		// no result yet (fresh start) or an old one: ask now (GitHub allows 60 anonymous API calls per hour)
 		if (!S.checking && !S.autoChecked && (!S.upd.check || Date.now() / 1000 - S.upd.check.time > 6 * 3600)) { S.autoChecked = true; checkUpdates(true); }
-		if (S.route.tab === 'system' && S.route.sub === 'firmware' && !document.activeElement?.matches('select')) renderMain();
+		// keep the page while a .bin is being checked/written below
+		if (S.route.tab === 'system' && S.route.sub === 'firmware' && !document.activeElement?.matches('select') && !$('#bin-info:not(:empty)') && !$('#f-bin input')?.files?.length) renderMain();
 		if (prev && prev !== S.upd.state && S.upd.state === 'ready') toast('Update geladen und geprüft.');
 		if (prev && prev !== S.upd.state && S.upd.state === 'flashed') toast('Update geschrieben – bitte neu starten.');
 		const busy = ['downloading', 'verifying', 'flashing'].includes(S.upd.state);
@@ -2761,6 +2806,18 @@ const ACTIONS = {
 		renderMain();
 		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
 		catch (e) { S.updPending = null; toast('Installieren: ' + e.message, true); refreshUpdateStatus(); }
+	},
+
+	async 'upd-ack'() {
+		try { S.upd = await rpc('shareos.update', 'ack'); renderMain(); } catch (e) { toast(e.message, true); }
+	},
+
+	async 'job-clear'() {
+		try { await rpc('shareos.storage', 'job_clear'); if (S.storage) S.storage.job = null; renderMain(); } catch (e) { toast(e.message, true); }
+	},
+
+	async 'net-dismiss'() {
+		try { await rpc('shareos.net', 'dismiss'); if (S.net) S.net.result = null; renderMain(); } catch (e) { toast(e.message, true); }
 	},
 
 	async cancel() {

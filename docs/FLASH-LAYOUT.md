@@ -22,13 +22,31 @@ mtd6 my-dlink       2 MB   never touched
      The read-only system is visible at `/rom`, the writable layer at `/overlay`.
    - **`shareos.netroot=<tftp server>`**: fetch `rootfs.squashfs` via TFTP into
      RAM, overlay in tmpfs – **nothing is written to flash**.
+   - **first installation**: mtd3 has no UBI, or UBI without the volumes
+     `rootfs` and `rootfs_data` (the ShareOS `.bin` was flashed from the
+     Alt-F/D-Link web interface): `shareos-firstinstall` takes the
+     `.sysupgrade.tar` from a USB stick/disk (FAT/exFAT/ext4, top folder or
+     `shareos/`) or downloads it from GitHub (HTTPS, `.sha256`), checks it,
+     rewrites kernel/initramfs if the bundle has other ones, runs
+     `shareos-install-ubi` and reboots. Orange USB LED blinks fast; on failure
+     → rescue with the reason in `/tmp/firstinstall.err`.
    - **`shareos.rescue`** or any failure: stay in the initramfs – DHCP, SSH
      (dropbear), serial login, flash tools, `shareos-install-ubi`. Orange USB
      LED blinks.
 3. The squashfs root runs BusyBox init and the normal ShareOS services.
 
-The initramfs never attaches mtd3 unless it already carries UBI, so foreign
-data (Alt-F's extra-package squashfs) is never touched implicitly.
+The initramfs never attaches mtd3 unless it already carries UBI. Foreign data
+(Alt-F's extra-package squashfs) is only replaced by the first installation,
+i.e. after the ShareOS `.bin` was flashed deliberately.
+
+## Writing another D-Link .bin (back to Alt-F)
+
+`shareos-flash-bin info|write <file.bin> [--yes]` (web: System → Firmware →
+*Install firmware file*) splits the file with `dns323-fw`, requires valid
+checksums, the DNS-320L signature, U-Boot headers and at most 3 MB per part,
+then writes mtd2 (initramfs) and mtd1 (kernel) and reads both back. mtd3 is
+left alone: Alt-F then starts without its extra packages (flash the same file
+once more in Alt-F to restore them).
 
 ## Installing / updating the system volume
 

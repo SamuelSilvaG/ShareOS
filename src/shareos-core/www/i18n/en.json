@@ -808,7 +808,19 @@
 		"noch nicht geladen": "not loaded yet",
 		"Web-Apps laufen auf einem eigenen Port (8081 / 8444 für HTTPS) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.": "Web apps run on their own port (8081 / 8444 for HTTPS) – apart from this interface, so an app cannot use your login. Anyone who knows the address can open a web app on the network; “visible to” decides who sees it in “My ShareOS”.",
 		"Installation abgeschlossen": "Installation finished",
-		"(100 %) – jetzt neu starten.": "(100 %) – restart now."
+		"(100 %) – jetzt neu starten.": "(100 %) – restart now.",
+		"FIRMWARE-DATEI EINSPIELEN": "INSTALL FIRMWARE FILE",
+		"Eine Firmware im D-Link-Format, z. B. um ": "A firmware in D-Link format, e.g. to go ",
+		"zurück zu Alt-F": "back to Alt-F",
+		" zu wechseln. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.": ". Kernel and boot system are written; the ShareOS system and settings stay in flash.",
+		"Hochladen & prüfen": "Upload & check",
+		"Art": "Type",
+		"andere Firmware": "other firmware",
+		"Einspielen": "Install",
+		"Firmware wird geschrieben": "Writing firmware",
+		"Kernel und Startsystem – bitte warten, nicht ausschalten": "Kernel and boot system – please wait, do not switch off",
+		"Geschrieben": "Written",
+		"Größe": "Size"
 	},
 	"patterns": [
 		[
@@ -1438,6 +1450,38 @@
 		[
 			"^Paket: (.*)$",
 			"Package: $1"
+		],
+		[
+			"^Danach startet (.+)\\. Die Zusatzpakete von Alt-F fehlen dann – in Alt-F dieselbe Datei noch einmal über dessen Firmware-Seite flashen\\. Zurück zu ShareOS: die ShareOS-\\.bin in Alt-F flashen, System und Einstellungen sind noch da\\.$",
+			"Afterwards $1 starts. Alt-F's extra packages are missing then – flash the same file once more in Alt-F's firmware page. Back to ShareOS: flash the ShareOS .bin in Alt-F, system and settings are still there."
+		],
+		[
+			"^(.+) einspielen\\?$",
+			"Install $1?"
+		],
+		[
+			"^Kernel und Startsystem werden ersetzt und geprüft\\. Box während des Schreibens nicht ausschalten\\.$",
+			"Kernel and boot system are replaced and checked. Do not switch the box off while writing."
+		],
+		[
+			"^(.+) ist im Flash\\. Jetzt neu starten\\?$",
+			"$1 is in flash. Restart now?"
+		],
+		[
+			"^(.+) startet – dessen Oberfläche ist gleich unter (.+) erreichbar \\(Port 80\\)\\.$",
+			"$1 is starting – its interface will be at $2 shortly (port 80)."
+		],
+		[
+			"^(.+) startet$",
+			"$1 is starting"
+		],
+		[
+			"^Einspielen: (.*)$",
+			"Install: $1"
+		],
+		[
+			"^Firmware-Datei: (.*)$",
+			"Firmware file: $1"
 		]
 	],
 	"words": [

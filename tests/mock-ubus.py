@@ -497,6 +497,16 @@ def call(obj, method, args):
         if method == 'apply':
             STATE['apply_t'] = time.time()
             return {'started': True}
+        if method == 'ack':
+            STATE['acked'] = True
+        if method == 'bin_ticket':
+            return {'url': '/cgi-bin/files?t=upload'}
+        if method == 'bin_info':
+            return {'kind': 'altf', 'kernel': 'Alt-F-1.0, kernel 4.4.86', 'initramfs': 'Alt-F-1.0, initrd',
+                    'kernel_size': '2410000', 'initramfs_size': '3100000', 'sqimage_size': '0'}
+        if method == 'bin_write':
+            time.sleep(2)
+            return {'ok': True, 'kind': 'altf'}
         rel = {'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1'}
         if method == 'status' and STATE.get('apply_t') and time.time() - STATE['apply_t'] < 2:
             # like the real updater: just after the click it may still report 'ready'
@@ -514,7 +524,10 @@ def call(obj, method, args):
                  'latest': 'v0.2.0-beta.1', 'update_available': True}
         if method == 'check':
             return {'current': '0.1.0-beta.1', 'fwname': 'DNS-320L-rev-Ax', **check}
-        return {'state': 'idle', 'current': '0.1.0-beta.1', 'check': check, 'last_upgrade': 'ok 0.1.0-beta.1'}
+        r = {'state': 'idle', 'current': '0.1.0-beta.1', 'check': check, 'last_upgrade': 'ok 0.1.0-beta.1'}
+        if STATE.get('acked'):
+            del r['last_upgrade']
+        return r
     if obj == 'uci':
         if method == 'get':
             return {'values': {}}

@@ -6,6 +6,6 @@
 - Tags/releases are created by Jan; prepare the release text and the `CHANGELOG.md` section.
 - **Every release updates the docs** – see `docs/RELEASE.md` (CHANGELOG, README status/features, TESTEN/TESTING, ENTWICKLUNG/DEVELOPMENT).
 - Photos for the docs: strip EXIF/GPS and blur serial-number stickers before committing.
-- Tests: `tests/` (host: test-update, test-net; ARM emulator with sudo: run-stack-qemu --check, test-users, test-storage, test-cloud-paperless, test-apps). UI work: `tests/mock-ubus.py`. ucode plugin: `tests/check-ucode-order.py` (no hoisting in ucode).
+- Tests: `tests/` (host: test-update, test-net, test-flash-bin, check-acl.py; ARM emulator with sudo: run-stack-qemu --check, test-users, test-storage, test-cloud-paperless, test-apps, test-firstinstall). UI work: `tests/mock-ubus.py`. ucode plugin: `tests/check-ucode-order.py` (no hoisting in ucode).
 - Never `rm -rf` a chroot that still has mounts below it (it would delete the host's /dev).
 - Apps live in the separate repository UniqueDroid/ShareOS-Apps.

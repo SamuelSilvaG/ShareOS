@@ -26,7 +26,8 @@
 				],
 				"shareos.update": [
 					"check",
-					"status"
+					"status",
+					"bin_info"
 				],
 				"shareos.ui": [
 					"get"
@@ -78,6 +79,12 @@
 				"shareos.files": [
 					"roots",
 					"list"
+				],
+				"shareos.apps": [
+					"installed",
+					"catalog",
+					"status",
+					"store_get"
 				]
 			},
 			"uci": [
@@ -106,12 +113,16 @@
 				"shareos.storage": [
 					"setup",
 					"volume",
+					"job_clear",
 					"spindown"
 				],
 				"shareos.update": [
 					"download",
 					"apply",
-					"cancel"
+					"cancel",
+					"ack",
+					"bin_ticket",
+					"bin_write"
 				],
 				"shareos.ui": [
 					"set"
@@ -144,7 +155,8 @@
 				],
 				"shareos.net": [
 					"set",
-					"confirm"
+					"confirm",
+					"dismiss"
 				],
 				"shareos.accounts": [
 					"add",
@@ -197,6 +209,14 @@
 					"move",
 					"delete",
 					"ticket"
+				],
+				"shareos.apps": [
+					"install",
+					"upload_ticket",
+					"install_upload",
+					"remove",
+					"set",
+					"store_set"
 				]
 			},
 			"uci": [

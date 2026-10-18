@@ -18,10 +18,12 @@ usr/sbin/ubiattach usr/sbin/ubidetach usr/sbin/ubimkvol usr/sbin/ubirmvol
 usr/sbin/ubiupdatevol usr/sbin/ubiformat usr/sbin/ubiblock usr/sbin/ubinfo
 usr/sbin/nanddump usr/sbin/nandwrite usr/sbin/flash_erase usr/sbin/mtdinfo
 usr/sbin/dns323-fw
+usr/bin/curl
 "
 FILES="
 etc/passwd etc/group etc/shadow etc/shells etc/shareos-release
 usr/share/udhcpc/default.script
+etc/ssl/certs/ca-certificates.crt
 "
 
 copy() { # copy a path from the target, keeping symlinks
@@ -57,9 +59,25 @@ for round in 1 2 3; do
 	done
 done
 
+# kernel modules for the first installation from a USB stick or disk
+KV=$(ls "$TARGET/lib/modules" | head -1)
+MODS="usb-common usbcore ehci-hcd ehci-orion usb-storage fat vfat exfat mbcache jbd2 ext4 nls_cp437 nls_iso8859-1"
+DEP="$TARGET/lib/modules/$KV/modules.dep"
+want=""
+for m in $MODS; do
+	line=$(grep -E "(^|/)$m\.ko(\.[a-z]+)?:" "$DEP" || true)
+	[ -n "$line" ] || { echo "mk-initramfs: module $m not found" >&2; exit 1; }
+	want="$want ${line%%:*} ${line#*:}"
+done
+for f in $(echo $want | tr ' ' '\n' | sort -u); do copy "lib/modules/$KV/$f"; done
+for f in modules.dep modules.alias modules.symbols modules.builtin modules.builtin.modinfo modules.order; do
+	[ -e "$TARGET/lib/modules/$KV/$f" ] && copy "lib/modules/$KV/$f"
+done
+
 # init and tools
 install -m 0755 "$BOARD/initramfs/init" "$R/init"
 install -D -m 0755 "$BOARD/initramfs/usr/sbin/shareos-install-ubi" "$R/usr/sbin/shareos-install-ubi"
+install -D -m 0755 "$BOARD/initramfs/usr/sbin/shareos-firstinstall" "$R/usr/sbin/shareos-firstinstall"
 mkdir -p "$R"/{proc,sys,dev,tmp,run,mnt,root,var,etc/dropbear}
 ln -sf /tmp "$R/var/tmp"
 echo shareos-rescue > "$R/etc/hostname"

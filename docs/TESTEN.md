@@ -2,16 +2,50 @@
 
 *English version: [TESTING.md](TESTING.md)*
 
-Stand: 17.10.2026. ShareOS ist in der **Testphase**. Die Installation auf eine
-Box mit Alt-F braucht im Moment noch die **serielle Konsole** (Stiftleiste JP1,
-ohne Löten, siehe [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)). Ist ShareOS
-einmal installiert, laufen Updates über die Weboberfläche.
+Stand: 18.10.2026. ShareOS ist in der **Testphase**. Es gibt zwei Wege zur
+Installation:
 
-Jeder Schritt hat einen Rückweg: Zuerst läuft ShareOS nur im RAM, dann kommt
-das System in den Flash und ganz zum Schluss der Kernel. Die Alt-F-Partitionen
-werden vorher gesichert.
+- **Weg A – über die Firmware-Seite von Alt-F oder D-Link** (ohne serielle
+  Konsole, ab 0.1.0-beta.7). Auf echter Hardware noch nicht erprobt: beim
+  ersten Mal am besten die serielle Konsole als Rückfallebene anschließen.
+- **Weg B – über die serielle Konsole** (Stiftleiste JP1, ohne Löten, siehe
+  [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): erprobt, Schritte 1–3 unten.
 
-## Was du brauchst
+Ist ShareOS einmal installiert, laufen Updates über die Weboberfläche. Zurück
+zu Alt-F geht ebenfalls über die Weboberfläche (siehe
+[Zurück zu Alt-F](#zurück-zu-alt-f)).
+
+## Weg A: über die Firmware-Seite von Alt-F oder D-Link
+
+Aus dem GitHub-Release brauchst du:
+
+- `ShareOS-<version>-DNS-320L-rev-Ax.bin` (Kernel und Startsystem, ca. 3,3 MB)
+- empfohlen: `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` auf einem
+  USB-Stick (FAT32, exFAT oder ext4; oberste Ebene oder Ordner `shareos`).
+  Ohne Stick lädt die Box das Paket selbst von GitHub – dafür muss das
+  Netzwerkkabel stecken und der Router per DHCP eine Adresse vergeben.
+
+1. Den USB-Stick mit dem Paket in die Box stecken (falls vorhanden).
+2. In der Weboberfläche von Alt-F (bzw. der D-Link-Firmware) auf der
+   Firmware-Seite die ShareOS-`.bin` auswählen und flashen. Alt-F schreibt
+   dabei nur Kernel und Startsystem.
+3. Die Box startet neu. ShareOS merkt, dass noch kein System im Flash ist, und
+   installiert es: zuerst vom USB-Stick, sonst von GitHub (Prüfsumme wird
+   kontrolliert). Die **orange USB-LED blinkt schnell**, das dauert einige
+   Minuten. Die Zusatzpakete von Alt-F im Flash werden dabei ersetzt.
+4. Danach startet die Box von selbst neu – jetzt mit ShareOS. Weiter mit
+   [4. Weboberfläche](#4-weboberfläche).
+
+Klappt die Installation nicht (kein Stick, kein Netz, Paket defekt), bleibt
+die Box im **Rettungsmodus** (orange USB-LED blinkt langsam). Der Grund steht
+auf der seriellen Konsole und per SSH (`ssh root@<ip>`, Passwort `shareos`) in
+`/tmp/firstinstall.err`, das Protokoll in `/tmp/firstinstall.log`. Abhilfe:
+Paket auf einen USB-Stick kopieren, einstecken, Box aus- und wieder
+einschalten.
+
+## Weg B: über die serielle Konsole
+
+### Was du brauchst
 
 - das Update-Paket `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` aus einem
   GitHub-Release
@@ -66,11 +100,6 @@ Niemals `saveenv` eingeben. Anmelden mit `root` / `shareos`. Mit
 `shareos-check` lässt sich die Hardware prüfen.
 
 ## 3. System in den Flash schreiben
-
-> Die `.bin` aus einem Release enthält nur Kernel und Startsystem. Über die
-> Firmware-Seite von Alt-F oder D-Link geflasht, startet die Box danach im
-> Rettungsmodus, bis das System (Schritt unten) installiert ist. Eine
-> Installationsseite dafür ist geplant.
 
 Auf der Box, im Netzwerk-Start aus Schritt 2:
 ```sh
@@ -182,6 +211,22 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Eigene App:** unter Store → *Paket installieren* eine `.sapp`-Datei hochladen (gebaut mit `tools/build.py` aus dem App-Repo). Sie wird als „eigene / ungeprüft“ markiert.
 - **Weitere Quellen** (eigene Kataloge) unter APPS → Quellen.
 
+## Zurück zu Alt-F
+
+1. Die Alt-F-`.bin` für den DNS-320L bereitlegen (z. B. `Alt-F-1.0-DNS-320L-rev-A.bin`).
+2. In ShareOS unter **System → Firmware → Firmware-Datei einspielen** die Datei
+   hochladen. ShareOS prüft sie (D-Link-Format, Prüfsummen, Gerät, Größe) und
+   zeigt an, was drin ist.
+3. **Einspielen** – Kernel und Startsystem werden geschrieben und
+   zurückgelesen. Danach **Neu starten**: Alt-F startet.
+4. Alt-F läuft dann ohne seine Zusatzpakete. In Alt-F dieselbe `.bin` noch
+   einmal über dessen Firmware-Seite flashen, dann sind sie wieder da.
+
+Zurück zu ShareOS: die ShareOS-`.bin` in Alt-F flashen. Solange Alt-F die
+Partition `image` nicht überschrieben hat (Schritt 4 ausgelassen), sind System
+und Einstellungen von ShareOS noch da; sonst installiert ShareOS sich wie in
+Weg A neu. Zur D-Link-Firmware geht es am besten über Alt-F.
+
 ## Wenn etwas schiefgeht
 
 | Zeichen | Bedeutung / Abhilfe |
@@ -189,6 +234,6 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 | Die orange USB-LED blinkt | Rettungsmodus: Grund und SSH-Adresse stehen auf der Konsole. `shareos-install-ubi` ist dort verfügbar. |
 | U-Boot meldet einen defekten Image-Header | U-Boot startet automatisch das D-Link-Rettungssystem. Darüber lässt sich Alt-F per Weboberfläche flashen. |
 | Der Kernel hängt | Wie in Schritt 2 per TFTP starten und die Sicherung zurückschreiben: `flash_erase /dev/mtd1 0 0; nandwrite -p /dev/mtd1 uImage.bin` (mtd2 mit `ramdisk.bin`) |
-| Ganz zurück zu Alt-F | Sicherung zurückschreiben (siehe Zeile davor), dann in Alt-F die Zusatzpakete neu flashen |
+| Ganz zurück zu Alt-F | Am einfachsten über die Weboberfläche (siehe [Zurück zu Alt-F](#zurück-zu-alt-f)). Ohne Weboberfläche: Sicherung zurückschreiben (siehe Zeile davor), dann in Alt-F die Zusatzpakete neu flashen |
 
 U-Boot, MAC-Adresse und das D-Link-Rettungssystem fasst ShareOS nie an.

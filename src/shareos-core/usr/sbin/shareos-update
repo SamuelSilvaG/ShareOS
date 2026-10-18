@@ -461,6 +461,12 @@ function cmd_cancel() {
 	return out(s);
 }
 
+// the message about the last installed update was read: forget it
+function cmd_ack() {
+	unlink(ROOT + '/overlay/upgrade-result');
+	cmd_status();
+}
+
 let cmd = ARGV[0];
 switch (cmd) {
 case 'check':    cmd_check(ARGV[1]); break;
@@ -469,7 +475,8 @@ case 'download': cmd_download(ARGV[1]); break;
 case 'apply':    cmd_apply(ARGV[1]); break;
 case 'status':   cmd_status(); break;
 case 'cancel':   cmd_cancel(); break;
+case 'ack':      cmd_ack(); break;
 default:
-	warn('usage: shareos-update check [stable|beta] | auto | download <tag> | apply <tag> | status | cancel\n');
+	warn('usage: shareos-update check [stable|beta] | auto | download <tag> | apply <tag> | status | cancel | ack\n');
 	exit(2);
 }

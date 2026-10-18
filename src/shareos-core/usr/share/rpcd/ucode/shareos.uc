@@ -1394,6 +1394,14 @@ return {
 				system(NET + ' confirm');
 				return { ok: true, cert_renewed: cert_refresh() };
 			}
+		},
+
+		// hide the "rolled back" message
+		dismiss: {
+			call: function() {
+				unlink(NET_ST + '/result');
+				return { ok: true };
+			}
 		}
 	},
 
@@ -1580,6 +1588,16 @@ return {
 				let r = sh(STORAGE + ' ' + act + ' ' + shq(n));
 				if (r.rc == 0) system(USERS + ' sync >/dev/null 2>&1');
 				return r.rc == 0 ? { ok: true } : { error: trim(r.out) || act + ' failed' };
+			}
+		},
+
+		// hide the message of a finished or failed setup job
+		job_clear: {
+			call: function() {
+				if (storage_job()?.state == 'running')
+					return { error: 'a storage job is running' };
+				unlink(SMART_DIR + '/job');
+				return { ok: true };
 			}
 		},
 
@@ -2392,6 +2410,46 @@ return {
 		cancel: {
 			call: function() {
 				return run_updater([ 'cancel' ]);
+			}
+		},
+
+		// hide the "last update" message
+		ack: {
+			call: function() {
+				return run_updater([ 'ack' ]);
+			}
+		},
+
+		// another firmware file in D-Link format (.bin), e.g. back to Alt-F
+		bin_ticket: {
+			call: function() {
+				system('mkdir -p ' + FILES_TICKETS + ' /tmp/shareos-fw && chmod 700 ' + FILES_TICKETS + ' /tmp/shareos-fw; rm -f /tmp/shareos-fw/upload.bin');
+				let t = new_token();
+				writefile(FILES_TICKETS + '/' + t, sprintf('put\nroot\n/tmp/shareos-fw/upload.bin\n%d\nupload.bin\n', time() + 300));
+				return { url: '/cgi-bin/files?t=' + t };
+			}
+		},
+
+		bin_info: {
+			call: function() {
+				if (!stat('/tmp/shareos-fw/upload.bin')) return { error: 'no uploaded file' };
+				let r = sh('/usr/sbin/shareos-flash-bin info /tmp/shareos-fw/upload.bin'), o = {};
+				if (r.rc != 0) { unlink('/tmp/shareos-fw/upload.bin'); return { error: replace(trim(r.out), /^error: /, '') }; }
+				for (let l in split(r.out, '\n')) { let m = match(l, /^([a-z_]+)=(.*)$/); if (m) o[m[1]] = m[2]; }
+				return o;
+			}
+		},
+
+		bin_write: {
+			args: { confirm: false },
+			call: function(req) {
+				if (req.args.confirm !== true) return { error: 'confirm must be true' };
+				if (!stat('/tmp/shareos-fw/upload.bin')) return { error: 'no uploaded file' };
+				let r = sh('/usr/sbin/shareos-flash-bin write /tmp/shareos-fw/upload.bin --yes');
+				unlink('/tmp/shareos-fw/upload.bin');
+				if (r.rc != 0) return { error: replace(trim(r.out), /^error: /, '') };
+				let m = match(r.out, /kind=([a-z]+)/);
+				return { ok: true, kind: m ? m[1] : 'other' };
 			}
 		}
 	}
