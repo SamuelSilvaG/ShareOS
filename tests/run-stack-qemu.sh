@@ -81,6 +81,19 @@ if [ "$CHECK" = "--check" ]; then
 	t "self-signed certificate created on start" "$(rpc $SID shareos.web get)" "d['result'][1]['https'] and d['result'][1]['cert']['selfsigned'] and d['result'][1]['cert']['subject'].startswith('CN=')"
 	t "HTTPS answers with that certificate" "$(curl -sk -o /dev/null -w '{"c":%{http_code}}' https://127.0.0.1:$((PORT+363))/)" "d['c']==200"
 	t "own certificate: garbage rejected" "$(rpc $SID shareos.web install '{"cert":"x","key":"y"}')" "'PEM' in d['result'][1]['error']"
+	# own wildcard certificate from an own CA (like pfSense exports it), installed through the web interface path
+	CT=$(mktemp -d)
+	openssl req -x509 -newkey rsa:2048 -nodes -keyout $CT/ca.key -out $CT/ca.crt -days 30 -subj "/CN=Test CA" 2>/dev/null
+	openssl req -newkey rsa:2048 -nodes -keyout $CT/w.key -out $CT/w.csr -subj "/CN=*.skynet.lan" 2>/dev/null
+	printf 'subjectAltName=DNS:*.skynet.lan\nkeyUsage=digitalSignature,keyEncipherment\nextendedKeyUsage=serverAuth\n' > $CT/ext
+	openssl x509 -req -in $CT/w.csr -CA $CT/ca.crt -CAkey $CT/ca.key -CAcreateserial -out $CT/w.crt -days 30 -extfile $CT/ext 2>/dev/null
+	certreq() { python3 -c "import json,sys; print(json.dumps({'cert':open(sys.argv[1]).read(),'key':open(sys.argv[2]).read()}))" "$1" "$2"; }
+	t "own certificate: wrong key rejected" "$(rpc $SID shareos.web install "$(certreq $CT/w.crt $CT/ca.key)")" "'error' in d['result'][1]"
+	t "own wildcard certificate installed" "$(rpc $SID shareos.web install "$(certreq $CT/w.crt $CT/w.key)")" "d['result'][1].get('ok') and 'skynet.lan' in d['result'][1]['cert']['subject']"
+	rpc $SID shareos.web selfsigned >/dev/null
+	rm -rf $CT
+	# the web server restarts after a certificate change
+	sleep 2; for i in $(seq 50); do curl -s -o /dev/null "http://127.0.0.1:$PORT/" && break; sleep 0.2; done
 	t "language can be changed" "$(rpc $SID shareos.ui set '{"lang":"de"}')" "d['result'][1]['lang']=='de'"
 	t "invalid language rejected" "$(rpc $SID shareos.ui set '{"lang":"../x"}')" "'invalid' in d['result'][1]['error']"
 	t "hardware settings readable" "$(rpc $SID shareos.hw get)" "d['result'][1]['fan']['preset']=='balanced' and d['result'][1]['led']['status']=='heartbeat'"

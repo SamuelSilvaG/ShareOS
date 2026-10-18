@@ -65,18 +65,26 @@ ensure() {
 	fi
 }
 
-# start a throw-away uhttpd with the pair and do a TLS handshake against it
+# start a throw-away uhttpd with the pair and do a TLS handshake against it.
+# Any HTTP answer means the handshake worked; uhttpd only serves world-readable
+# files and rpcd runs with a strict umask, so the page itself may be refused.
 test_pair() {
 	d=$(mktemp -d)
 	echo ok > $d/index.html
+	chmod 755 $d; chmod 644 $d/index.html
 	port=$((40000 + $$ % 20000))
 	uhttpd -f -h $d -s 127.0.0.1:$port -C "$1" -K "$2" >/dev/null 2>&1 &
 	pid=$!
-	sleep 1
-	r=$(curl -sk --max-time 5 https://127.0.0.1:$port/ 2>/dev/null)
+	code=000
+	for i in 1 2 3 4 5; do
+		sleep 1
+		code=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 5 https://127.0.0.1:$port/ 2>/dev/null)
+		[ "$code" != 000 ] && break
+		kill -0 $pid 2>/dev/null || break
+	done
 	kill $pid 2>/dev/null; wait $pid 2>/dev/null
 	rm -rf $d
-	[ "$r" = ok ]
+	[ "$code" != 000 ]
 }
 
 install_pair() {
