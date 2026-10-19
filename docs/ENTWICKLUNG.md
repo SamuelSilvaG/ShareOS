@@ -49,7 +49,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 
 | Zeit | Ereignis |
 |---|---|
-| ~11:00 | Jan schließt einen USB-TTL-Adapter an die unbestückte Stiftleiste JP1 an, ohne zu löten. Claude führt durch: Pinbelegung, vertauschte RX/TX-Leitungen, eine wackelige Masse. |
+| ~11:00 | Jan lötet einen USB-TTL-Adapter an die unbestückte Stiftleiste JP1 an. Claude führt durch: Pinbelegung, vertauschte RX/TX-Leitungen, eine wackelige Masse. |
 | ~12:15 | Das Unterbrechen des Autoboots klappt nicht. Claude findet im U-Boot-Code die D-Link-Eigenheit: **Leertaste, dann 1**. |
 | ~12:30 | TFTP-Timeouts: Ursache ist die Firewall (ufw) auf Jans PC. |
 | 12:44 | **ShareOS startet zum ersten Mal auf der Box**, aus dem RAM, ohne etwas zu flashen. Gigabit, MAC-Adresse, Lüfter, Temperatur, Taster und Weboberfläche funktionieren. |
