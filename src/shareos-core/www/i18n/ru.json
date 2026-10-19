@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "Тестовое сообщение отправлено.",
 		"Alle Meldungen löschen?": "Удалить все сообщения?",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "Список очищается. Если проблема сохранится, устройство сообщит о ней при следующей проверке.",
-		"•••••• (gespeichert)": "•••••• (сохранено)"
+		"•••••• (gespeichert)": "•••••• (сохранено)",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "ИМЯ УСТРОЙСТВА ДЛЯ ССЫЛОК (НАПР. НА ПРИЛОЖЕНИЯ)",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Оставьте пустым: при собственном сертификате имя берётся из него, иначе — адрес, по которому открыта эта страница. Имя должно разрешаться в сети (DNS).",
+		"Name speichern": "Сохранить имя",
+		"Name gespeichert.": "Имя сохранено."
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"Тест: $1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"Эта страница открыта через $1. Без предупреждения о сертификате:"
+		],
+		[
+			"^Name: (.+)$",
+			"Имя: $1"
 		]
 	],
 	"words": [

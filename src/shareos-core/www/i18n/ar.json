@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "أُرسلت الرسالة التجريبية.",
 		"Alle Meldungen löschen?": "حذف كل الرسائل؟",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "تُفرغ القائمة. إذا استمرت مشكلة فسيبلغ الجهاز عنها في الفحص التالي.",
-		"•••••• (gespeichert)": "•••••• (محفوظ)"
+		"•••••• (gespeichert)": "•••••• (محفوظ)",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "اسم الجهاز للروابط (مثلاً إلى التطبيقات)",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "اتركه فارغاً: مع شهادة خاصة يُؤخذ الاسم منها، وإلا فالعنوان الذي فُتحت به هذه الصفحة. يجب أن يكون الاسم قابلاً للحل في الشبكة (DNS).",
+		"Name speichern": "حفظ الاسم",
+		"Name gespeichert.": "تم حفظ الاسم."
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"اختبار: $1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"هذه الصفحة مفتوحة عبر $1. بدون تحذير الشهادة:"
+		],
+		[
+			"^Name: (.+)$",
+			"الاسم: $1"
 		]
 	],
 	"words": [

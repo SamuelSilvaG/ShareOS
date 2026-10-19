@@ -1162,3 +1162,9 @@ P195	$1 AVISOS
 P196	$1 não lidos
 P197	Avisos: $1
 P198	Teste: $1
+E927	NOME DA CAIXA PARA LINKS (EX.: PARA AS APPS)
+E928	Deixar vazio: com um certificado próprio o nome é retirado dele; caso contrário, o endereço com que esta página foi aberta. O nome tem de ser resolvível na rede (DNS).
+E929	Guardar nome
+E930	Nome guardado.
+P199	Esta página está aberta através de $1. Sem aviso de certificado:
+P200	Nome: $1

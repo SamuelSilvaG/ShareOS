@@ -2,29 +2,44 @@
 #
 # Runs uhttpd and restarts it if it exits (crash or kill), so the web
 # interface comes back on its own. Every exit is logged to syslog.
-# HTTPS (port 443) and the redirect come from UCI shareos.web.
+# HTTPS and the redirect come from UCI shareos.web; every start reads the
+# certificate again, so "killall uhttpd" applies a new one.
+#
+#   shareos-uhttpd          admin interface: /www on port 80/443, /ubus
+#   shareos-uhttpd apps     web apps: /www-apps on apps.store.port / https_port
 #
 child=
 trap '[ -n "$child" ] && kill $child 2>/dev/null; exit 0' TERM INT
+MODE=${1:-admin}
 PORT=${SHAREOS_HTTP_PORT:-80}
 while :; do
 	tls=
 	if [ "$(uci -q get shareos.web.https)" != 0 ]; then
 		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
 		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
-		/usr/sbin/shareos-cert ensure >/dev/null 2>&1   # also renews our self-signed one after an IP/name change
+		# also renews our self-signed one after an IP/name change
+		[ "$MODE" = apps ] || /usr/sbin/shareos-cert ensure >/dev/null 2>&1
 		if [ -s "$crt" ] && [ -s "$key" ]; then
-			tls="-s ${SHAREOS_HTTPS_PORT:-443} -C $crt -K $key"
-			[ "$(uci -q get shareos.web.redirect)" = 1 ] && tls="$tls -q"
+			if [ "$MODE" = apps ]; then
+				tls="-s $(uci -q get apps.store.https_port || echo 8444) -C $crt -K $key"
+			else
+				tls="-s ${SHAREOS_HTTPS_PORT:-443} -C $crt -K $key"
+				[ "$(uci -q get shareos.web.redirect)" = 1 ] && tls="$tls -q"
+			fi
 		fi
 	fi
-	/usr/bin/uhttpd -f -h /www -r ShareOS -p $PORT $tls \
-		-u /ubus -U /var/run/ubus/ubus.sock -x /cgi-bin \
-		-t 60 -T 30 -k 20 -A 1 -n 3 -N 100 -R -S -D &
+	if [ "$MODE" = apps ]; then
+		/usr/bin/uhttpd -f -h /www-apps -r ShareOS-Apps -p "$(uci -q get apps.store.port || echo 8081)" $tls \
+			-x /_shareos/cgi -S -D -t 300 -T 30 -k 20 -n 3 -N 50 &
+	else
+		/usr/bin/uhttpd -f -h /www -r ShareOS -p $PORT $tls \
+			-u /ubus -U /var/run/ubus/ubus.sock -x /cgi-bin \
+			-t 60 -T 30 -k 20 -A 1 -n 3 -N 100 -R -S -D &
+	fi
 	child=$!
 	wait $child
 	rc=$?
 	child=
-	logger -t shareos-uhttpd "uhttpd exited with status $rc$([ $rc -gt 128 ] && echo " (signal $((rc - 128)))"), restarting"
+	logger -t shareos-uhttpd "uhttpd ($MODE) exited with status $rc$([ $rc -gt 128 ] && echo " (signal $((rc - 128)))"), restarting"
 	sleep 1
 done

@@ -1162,3 +1162,9 @@ P195	$1 MESSAGES
 P196	$1 non lus
 P197	Messages : $1
 P198	Test : $1
+E927	NOM DU BOÎTIER POUR LES LIENS (P. EX. VERS LES APPS)
+E928	Laisser vide : avec votre propre certificat, le nom en est tiré, sinon l'adresse avec laquelle cette page est ouverte. Le nom doit être résolu dans le réseau (DNS).
+E929	Enregistrer le nom
+E930	Nom enregistré.
+P199	Cette page est ouverte via $1. Sans avertissement de certificat :
+P200	Nom : $1

@@ -1968,7 +1968,9 @@ const SYS = {
 		const w = S.web;
 		if (!w) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 		const c = w.cert || {};
-		const host = location.hostname;
+		const name = w.host || w.cert_host || '';
+		const host = name || location.hostname;
+		const viaOther = name && location.protocol === "https:" && location.hostname !== name;
 		return html`<div class="g2">
 			<div class="panel">
 				<div class="ph"><span class="pt">VERBINDUNG</span><span class="tag ml ${location.protocol === 'https:' ? 'ok' : 'warn'}">${location.protocol === 'https:' ? 'diese Seite: HTTPS' : 'diese Seite: HTTP'}</span></div>
@@ -1980,6 +1982,13 @@ const SYS = {
 					<dt>HTTPS</dt><dd><a href="https://${host}/">https://${host}/</a></dd>
 					<dt>HTTP</dt><dd><a href="http://${host}/">http://${host}/</a></dd>
 				</dl>
+				${viaOther ? html`<p class="note">Diese Seite ist über ${location.hostname} geöffnet. Ohne Zertifikatswarnung: <a href="${location.protocol}//${name}/#/system/network">${location.protocol}//${name}/</a></p>` : ''}
+				<form id="f-webhost" style="margin-top:14px">
+					<label class="f"><span>NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)</span>
+						<input name="host" value="${w.host || ''}" placeholder="${w.cert_host || location.hostname}" autocomplete="off" spellcheck="false"></label>
+					<p class="note">Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).</p>
+					<div class="acts" style="margin-top:8px"><button class="btn" type="submit">Name speichern</button></div>
+				</form>
 				<p class="note">Nach einer Änderung startet der Webserver neu; die Seite ist für einen Moment nicht erreichbar.</p>
 			</div>
 			<div class="panel">
@@ -2203,6 +2212,15 @@ const VIEWS_AFTER = {
 			if (!S.web) loadWeb();
 			$('#opt-https')?.addEventListener('change', (e) => webSet({ https: e.target.checked }));
 			$('#opt-redirect')?.addEventListener('change', (e) => webSet({ redirect: e.target.checked }));
+			$('#f-webhost')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const h = e.target.host.value.trim();
+				try {
+					await rpc('shareos.web', 'set', { host: h });
+					S.web.host = h; if (S.apps) S.apps.installed = null;
+					toast('Name gespeichert.'); renderMain();
+				} catch (err) { toast('Name: ' + err.message, true); }
+			});
 			document.querySelectorAll('#f-cert input[type=file]').forEach((inp) => inp.addEventListener('change', async () => {
 				const f = inp.files[0];
 				if (f) $(`#f-cert textarea[name=${inp.dataset.target}]`).value = await f.text();
@@ -3471,14 +3489,17 @@ const APP_SUBS = [['installed', 'INSTALLIERT'], ['store', 'STORE'], ['sources', 
 const APP_CAT = { tools: 'Werkzeuge', media: 'Medien', office: 'Büro', network: 'Netzwerk', system: 'System', download: 'Download', sync: 'Sync' };
 const txtOf = (d) => (d && typeof d === 'object' ? d[LANG] || d.de || d.en || '' : d || '');
 
+// apps open under the box's name (set by hand, or the name of the installed
+// certificate on HTTPS) – not under the IP address this page may have been opened with
 function appBase(srv) {
 	const s = srv || S.apps?.installed || {};
 	const https = location.protocol === 'https:' && s.https;
-	return `${https ? 'https' : 'http'}://${location.hostname}:${https ? s.https_port || 8444 : s.port || 8081}`;
+	const host = s.host && (https || !s.host_auto) ? s.host : location.hostname;
+	return `${https ? 'https' : 'http'}://${host}:${https ? s.https_port || 8444 : s.port || 8081}`;
 }
 const appUrl = (a, srv) => `${appBase(srv)}/${a.id}/${a.entry || 'index.html'}`;
 function appIcon(a, srv) {
-	const src = a.icon_url || (a.icon ? `${appBase(srv)}/${a.id}/${a.icon}` : '');
+	const src = a.icon_data || a.icon_url || (a.icon ? `${appBase(srv)}/${a.id}/${a.icon}` : '');
 	return src ? html`<img class="appicon" src="${src}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'appicon ph'}))">` : html`<span class="appicon ph"></span>`;
 }
 

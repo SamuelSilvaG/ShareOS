@@ -113,6 +113,8 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 00:10 | **App-Plattform**: `window`/`opens` im Manifest, `/_shareos/theme.css` und das App-SDK, Datei-Tickets – Webpad 1.1 öffnet eine Textdatei aus dem Dateibrowser und speichert sie zurück, Ende zu Ende in Chromium getestet. |
 | 00:50 | **Speicher**: RAID 0 und JBOD neben dem Spiegel, ext3/ext2/FAT32, Spiegel mit neuer Platte reparieren. |
 | 01:20 | **Meldungen**: Prüfung alle 10 Minuten (RAID, Laufwerke, Temperatur, SMART, Updates), fehlgeschlagene Aufträge melden sich sofort; E-Mail und Push (ntfy, Gotify, Webhook). |
+| 07:08 | Jan merged WebTerm 1.0.0 und Webpad 1.2.0; der App-Store veröffentlicht beide selbst. |
+| 09:10 | Jans Test von beta.9: installierte Apps ohne Symbol, Links mit der IP statt `shareos.skynet.lan`. Ursache: Die Oberfläche war über die IP geöffnet, Apps und Symbole kamen von `https://<IP>:8444` – dafür gilt das Wildcard-Zertifikat nicht, und für Bilder fragt kein Browser nach. Lösung: Symbole kommen mit der App-Liste, Links nehmen den Namen aus dem Zertifikat (oder einen eingestellten), der App-Webserver bekommt denselben Wächter wie die Oberfläche. |
 
 ## Bemerkenswerte Problemlösungen
 

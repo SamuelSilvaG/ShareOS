@@ -4,6 +4,12 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.10
+
+- **Apps open under the box's name:** links to apps (store, file browser, *My ShareOS*) used the address the interface was opened with – an IP address gave a certificate warning on port 8444 although a certificate for the name was installed. Apps now open under the name the installed certificate is valid for (a wildcard certificate `*.skynet.lan` gives `<hostname>.skynet.lan`) or under a name set by hand: System → Network → *Box name for links*. Opened by IP, the HTTPS panel links to the name.
+- **App icons** of installed apps are shown again: they come with the app list instead of being loaded from the apps web server (other port, and a browser does not ask about a certificate for images).
+- The apps web server (port 8081/8444) is now watched like the interface: it comes back on its own after a crash and after every certificate or network change, always with the current certificate.
+
 ## 0.1.0-beta.9
 
 - **Update without internet:** System → Firmware → *Install firmware file* also takes the `.sysupgrade.tar` of a release (best with its `.sha256`). It is checked like an update from GitHub (checksums of all parts, made for this box, sizes) and then installed with the usual button – for boxes without internet or with GitHub blocked. Older and newer versions can be installed this way.
