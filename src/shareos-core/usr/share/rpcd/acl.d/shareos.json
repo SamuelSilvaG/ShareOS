@@ -117,6 +117,7 @@
 				],
 				"shareos.storage": [
 					"setup",
+					"repair",
 					"volume",
 					"usb_eject",
 					"usb_format",

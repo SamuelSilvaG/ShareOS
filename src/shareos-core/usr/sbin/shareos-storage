@@ -3,12 +3,21 @@
 # shareos-storage – disks, RAID and volumes for ShareOS
 #
 #   shareos-storage boot | shutdown            (S20storage)
-#   shareos-storage setup mirror <name> <disk> <disk> [--swap=MiB] [--fs=FS] --yes
+#   shareos-storage setup mirror|stripe|span <name> <disk> <disk> [--swap=MiB] [--fs=FS] --yes
+#                                              one volume over two disks: mirror = RAID 1
+#                                              (copy on both), stripe = RAID 0 (sum, faster,
+#                                              no redundancy), span = JBOD (sum, one after
+#                                              the other, no redundancy)
 #   shareos-storage setup single <name>=<disk>[:FS] [<name>=<disk>[:FS]] [--swap=MiB] [--fs=FS] --yes
 #                                              erase the disks and create volumes
 #                                              (--swap: swap partition per disk,
 #                                              default 1024, 0 = none; FS: ext4
-#                                              (default), btrfs, exfat, ntfs)
+#                                              (default), ext3, ext2, btrfs, exfat,
+#                                              ntfs, vfat)
+#   shareos-storage repair <name> <disk> [--swap=MiB] --yes
+#                                              a mirror with a missing disk: erase <disk>,
+#                                              add it to the mirror; the rebuild runs in
+#                                              the background (see the RAID status)
 #   shareos-storage mount <name> | umount <name>
 #   shareos-storage forget <name>              unmount and remove from the config
 #   shareos-storage spindown <minutes>         0 = never
@@ -63,8 +72,8 @@ partn() { case "$1" in *[0-9]) echo /dev/${1}p$2 ;; *) echo /dev/${1}$2 ;; esac;
 of_disk() { case "$2" in *[0-9]) case "$1" in "$2"|"$2"p[0-9]*) return 0 ;; esac ;; *) case "$1" in "$2"|"$2"[0-9]*) return 0 ;; esac ;; esac; return 1; }
 SWAP_MB=1024
 FS=ext4
-valid_fs() { case "$1" in ext4|btrfs|exfat|ntfs) return 0 ;; esac; return 1; }
-linux_fs() { case "$1" in ext4|btrfs) return 0 ;; esac; return 1; }
+valid_fs() { case "$1" in ext4|ext3|ext2|btrfs|exfat|ntfs|vfat) return 0 ;; esac; return 1; }
+linux_fs() { case "$1" in ext4|ext3|ext2|btrfs) return 0 ;; esac; return 1; }
 # file systems without owners: everybody may write, access is decided by the share
 mount_args() {   # fs -> "-t <type> -o <options>"
 	case "$1" in
@@ -255,6 +264,8 @@ make_fs() {   # dev name fs
 	step "creating file system ($3) on $1"
 	case "$3" in
 		ext4) mkfs.ext4 -F -q -L "$2" -m 1 $(quota_supported && echo -O quota) -E lazy_itable_init=1,lazy_journal_init=1 "$1" ;;
+		ext3|ext2) mke2fs -t "$3" -F -q -L "$2" -m 1 -E lazy_itable_init=1 "$1" ;;
+		vfat) mkfs.vfat -F 32 -n "$(printf %.11s "$2" | tr a-z A-Z)" "$1" >/dev/null ;;   # FAT labels: 11 characters
 		btrfs) mkfs.btrfs -f -q -L "$2" "$1" >/dev/null ;;
 		exfat) mkfs.exfat -L "$(printf %.15s "$2")" "$1" >/dev/null ;;   # exFAT labels: 15 characters
 		ntfs) mkntfs -Q -F -q -L "$2" "$1" >/dev/null ;;
@@ -263,7 +274,7 @@ make_fs() {   # dev name fs
 
 # GPT partition type: Linux, RAID or "Microsoft basic data" (exFAT/NTFS, so
 # Windows and macOS show the disk when it is connected to a computer)
-part_type() { case "$1" in R) echo R ;; exfat|ntfs) echo EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 ;; *) echo L ;; esac; }
+part_type() { case "$1" in R) echo R ;; exfat|ntfs|vfat) echo EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 ;; *) echo L ;; esac; }
 
 add_volume() {   # name dev layout fs
 	local uuid
@@ -298,16 +309,17 @@ cmd_setup() {
 		esac
 	done
 	echo "$SWAP_MB" | grep -qE '^[0-9]+$' && [ "$SWAP_MB" -le 8192 ] || { echo "invalid --swap" >&2; exit 2; }
-	valid_fs "$FS" || { echo "invalid --fs (ext4, btrfs, exfat, ntfs)" >&2; exit 2; }
+	valid_fs "$FS" || { echo "invalid --fs (ext4, ext3, ext2, btrfs, exfat, ntfs, vfat)" >&2; exit 2; }
 	[ $yes = 1 ] || { echo "setup erases the disks – add --yes" >&2; exit 2; }
 	set -- $args
 	job_start "setup $layout $*"
 
 	case "$layout" in
-	mirror)
+	mirror|stripe|span)
 		name=$1 d1=$2 d2=$3
+		case "$layout" in mirror) what=mirror ;; stripe) what="RAID 0" ;; span) what=JBOD ;; esac
 		valid_name "$name" || die "invalid name '$name'"
-		valid_disk "$d1" && valid_disk "$d2" && [ "$d1" != "$d2" ] || die "mirror needs two different disks"
+		valid_disk "$d1" && valid_disk "$d2" && [ "$d1" != "$d2" ] || die "$what needs two different disks"
 		uci -q get storage.$name >/dev/null && [ "$(uci -q get storage.$name)" = volume ] && \
 			{ dev=$(volume_dev $name); case "$dev" in /dev/$d1*|/dev/$d2*|/dev/md*) ;; *) die "volume $name exists" ;; esac; }
 		step "preparing $d1 and $d2"
@@ -315,12 +327,18 @@ cmd_setup() {
 		step "partitioning $d1"; partition $d1 R; p1=$DATA
 		step "partitioning $d2"; partition $d2 R; p2=$DATA
 		md=$(free_md)
-		step "creating mirror $md"
-		mdadm --create $md --run --quiet --level=1 --raid-devices=2 --metadata=1.2 \
-			--name="$name" --bitmap=internal $p1 $p2 || die "mdadm --create failed"
+		step "creating $what $md"
+		case "$layout" in
+			mirror) mdadm --create $md --run --quiet --level=1 --raid-devices=2 --metadata=1.2 \
+				--name="$name" --bitmap=internal $p1 $p2 ;;
+			stripe) mdadm --create $md --run --quiet --level=0 --raid-devices=2 --metadata=1.2 \
+				--name="$name" --chunk=512 $p1 $p2 ;;
+			span) mdadm --create $md --run --quiet --level=linear --raid-devices=2 --metadata=1.2 \
+				--name="$name" $p1 $p2 ;;
+		esac || die "mdadm --create failed"
 		write_mdconf
 		make_fs $md "$name" $FS
-		add_volume "$name" $md mirror $FS
+		add_volume "$name" $md $layout $FS
 		apps_area "$name"
 		;;
 	single)
@@ -344,11 +362,47 @@ cmd_setup() {
 		done
 		write_mdconf
 		;;
-	*) die "unknown layout '$layout' (mirror|single)" ;;
+	*) die "unknown layout '$layout' (mirror|stripe|span|single)" ;;
 	esac
 	apply_spindown
 	job_set state done step "finished"
 	log "setup finished"
+}
+
+cmd_repair() {
+	name=$1 disk=$2; shift 2
+	yes=0
+	for a; do
+		case "$a" in --yes) yes=1 ;; --swap=*) SWAP_MB=${a#--swap=} ;; esac
+	done
+	echo "$SWAP_MB" | grep -qE '^[0-9]+$' && [ "$SWAP_MB" -le 8192 ] || { echo "invalid --swap" >&2; exit 2; }
+	[ $yes = 1 ] || { echo "repair erases $disk – add --yes" >&2; exit 2; }
+	job_start "repair $name $disk"
+	[ "$(uci -q get storage.$name.layout)" = mirror ] || die "$name is not a mirror"
+	md=$(volume_dev $name)
+	case "$md" in /dev/md*) ;; *) die "mirror $name not found" ;; esac
+	b=${md#/dev/}
+	[ "$(cat /sys/block/$b/md/degraded 2>/dev/null || echo 0)" -ge 1 ] || die "mirror $name is complete – nothing to repair"
+	valid_disk "$disk" || die "invalid disk '$disk'"
+	need=0
+	for sl in $(ls /sys/block/$b/slaves 2>/dev/null); do
+		of_disk $sl $disk && die "$disk already belongs to $name"
+		need=$(cat /sys/class/block/$sl/size)
+	done
+	# room for the data partition: disk minus swap and the partition table (sectors)
+	have=$(( $(cat /sys/block/$disk/size) - SWAP_MB * 2048 - 4096 ))
+	[ "$have" -ge "$need" ] || die "$disk is too small for $name"
+	step "preparing $disk"
+	release_disk $disk
+	step "partitioning $disk"; partition $disk R; p=$DATA
+	mdadm --manage $md --remove failed >/dev/null 2>&1
+	mdadm --manage $md --remove detached >/dev/null 2>&1
+	step "adding $disk to $name"
+	mdadm --manage $md --add $p || die "mdadm --add failed"
+	write_mdconf
+	swap_on
+	job_set state done step "rebuilding $name"
+	log "repair of $name with $disk started"
 }
 
 cmd_boot() {
@@ -378,6 +432,7 @@ cmd_shutdown() {
 
 case "$1" in
 	boot) cmd_boot ;;
+	repair) shift; cmd_repair "$@" ;;
 	shutdown) cmd_shutdown ;;
 	setup) shift; cmd_setup "$@" ;;
 	mount)

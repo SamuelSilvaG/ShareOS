@@ -74,8 +74,11 @@ def storage():
         'usb': [] if STATE.get('usb_gone') else [{'dev': '/dev/sdc1', 'path': '/mnt/usb-stick', 'fs': 'exfat'}],
         'swaps': [{'device': '/dev/sda1', 'size': 1 << 30, 'used': 12 << 20}, {'device': '/dev/sdb1', 'size': 1 << 30, 'used': 11 << 20}],
         'apps': 'daten',
-        'arrays': {'md0': {'name': 'md0', 'state': 'active', 'level': 'raid1', 'members': ['sdb2', 'sda2'], 'disks': 2, 'active': 2,
-                           'health': 'UU', 'sync': {'action': 'resync', 'percent': pct, 'finish': '412.5min'}}},
+        # MOCK_DEGRADED=1: sdb is new/empty, the mirror runs on sda only
+        'arrays': {'md0': {'name': 'md0', 'state': 'active', 'level': 'raid1', 'members': ['sda2'], 'disks': 2, 'active': 1, 'health': 'U_'}
+                   if os.environ.get('MOCK_DEGRADED') and not STATE.get('repair_t') else
+                   {'name': 'md0', 'state': 'active', 'level': 'raid1', 'members': ['sdb2', 'sda2'], 'disks': 2, 'active': 2,
+                    'health': 'UU', 'sync': {'action': 'recovery' if STATE.get('repair_t') else 'resync', 'percent': pct, 'finish': '412.5min'}}},
         'volumes': [{'name': 'daten', 'uuid': '1b4e28ba-2fa1-11d2-883f-0016d3cca427', 'fstype': 'ext4', 'layout': 'mirror', 'enabled': True,
                      'device': '/dev/md0', 'mountpoint': '/mnt/daten', 'mounted': True, 'size': 3936 << 30, 'used': 1210 << 30, 'avail': 2726 << 30}],
         'spindown': 20, 'job': STATE['job']}
@@ -544,6 +547,8 @@ def call(obj, method, args):
             return storage()
         if method == 'usb_eject':
             STATE['usb_gone'] = True
+        if method == 'repair':
+            STATE['repair_t'] = time.time()
         return {'ok': True}
     if obj == 'shareos.update':
         if method == 'apply':

@@ -196,7 +196,7 @@ const SMART_MAX_AGE = 1800;     // s; SMART reads keep disks awake, so cache the
 function valid_name(n) { return type(n) == 'string' && match(n, /^[a-z0-9][a-z0-9_-]{0,15}$/); }
 function valid_disk(d) { return type(d) == 'string' && match(d, /^sd[a-z]$/) && stat('/sys/block/' + d); }
 const USB = '/usr/sbin/shareos-usb';
-const FS_DISK = { ext4: 1, btrfs: 1, exfat: 1, ntfs: 1 };
+const FS_DISK = { ext4: 1, ext3: 1, ext2: 1, btrfs: 1, exfat: 1, ntfs: 1, vfat: 1 };
 const FS_USB = { exfat: 1, vfat: 1, ntfs: 1, ext4: 1 };
 // USB sticks/disks hang below a USB host in sysfs; the bays are SATA
 function is_usb(d) { return valid_disk(d) && index(realpath('/sys/block/' + d) ?? '', '/usb') >= 0; }
@@ -1653,8 +1653,9 @@ return {
 		},
 
 		setup: {
-			// layout mirror: name + disks[2]; layout single: volumes [{name, disk}]
-			// fs: ext4 (default), btrfs, exfat, ntfs – for the mirror; volumes may carry their own
+			// layout mirror (RAID 1) | stripe (RAID 0) | span (JBOD): name + disks[2];
+			// layout single: volumes [{name, disk}]
+			// fs: ext4 (default), ext3, ext2, btrfs, exfat, ntfs, vfat – volumes may carry their own
 			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, fs: '', confirm: false },
 			call: function(req) {
 				let a = req.args;
@@ -1669,14 +1670,14 @@ return {
 				let j = storage_job();
 				if (j?.state == 'running')
 					return { error: 'a storage job is already running' };
-				if (a.layout == 'mirror') {
+				if (a.layout == 'mirror' || a.layout == 'stripe' || a.layout == 'span') {
 					if (!valid_name(a.name)) return { error: 'invalid name' };
 					if (type(a.disks) != 'array' || length(a.disks) != 2 || a.disks[0] == a.disks[1] ||
 					    !valid_disk(a.disks[0]) || !valid_disk(a.disks[1]))
-						return { error: 'a mirror needs two different disks' };
+						return { error: 'two different disks are needed' };
 					if (is_usb(a.disks[0]) || is_usb(a.disks[1]))
 						return { error: 'USB drives are formatted with usb_format' };
-					return spawn_storage([ 'setup', 'mirror', a.name, a.disks[0], a.disks[1], sw, '--fs=' + fs, '--yes' ]);
+					return spawn_storage([ 'setup', a.layout, a.name, a.disks[0], a.disks[1], sw, '--fs=' + fs, '--yes' ]);
 				}
 				if (a.layout == 'single') {
 					if (type(a.volumes) != 'array' || !length(a.volumes))
@@ -1694,6 +1695,21 @@ return {
 					return spawn_storage(args);
 				}
 				return { error: 'unknown layout' };
+			}
+		},
+
+		// a mirror with a missing disk: erase a disk and add it
+		repair: {
+			args: { name: '', disk: '', confirm: false },
+			call: function(req) {
+				let a = req.args;
+				if (a.confirm !== true) return { error: 'confirm must be true' };
+				if (!valid_name(a.name)) return { error: 'invalid name' };
+				if (cursor().get('storage', a.name, 'layout') != 'mirror') return { error: 'not a mirror' };
+				if (!valid_disk(a.disk)) return { error: 'invalid disk' };
+				if (is_usb(a.disk)) return { error: 'USB drives cannot be part of a mirror' };
+				if (storage_job()?.state == 'running') return { error: 'a storage job is already running' };
+				return spawn_storage([ 'repair', a.name, a.disk, '--yes' ]);
 			}
 		},
 

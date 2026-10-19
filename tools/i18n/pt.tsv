@@ -1104,3 +1104,18 @@ E876	Exibido no ShareOS
 E877	Pode ser exibido como página dentro da interface do ShareOS (em vez de janela própria).
 P188	Abrir com $1
 P189	Abrir: $1
+E878	RAID 0 – rápido
+E879	JBOD – espaço total
+E880	NOME DO VOLUME
+E881	Sistema de arquivos Linux mais antigo (ex.: do Alt-F): permissões por usuário, pastas pessoais, apps; sem limite de armazenamento.
+E882	Sem journal – verificação longa após queda de energia. Só se um aparelho antigo precisar.
+E883	Para aparelhos muito antigos. Arquivos de até 4 GB, sem permissões por usuário, sem limite de armazenamento, sem pastas pessoais, sem apps.
+P190	Os dois discos viram um volume, dados distribuídos entre eles: mais rápido, espaço $1. Se um disco falhar, tudo se perde.
+P191	Os dois discos viram um volume, um após o outro, com $1 (também com discos de tamanhos diferentes). Se um disco falhar, tudo se perde.
+E884	Reparar espelho
+E885	Coloque um disco novo na baia livre e depois «Reparar espelho».
+E886	Apagar e reparar
+E887	Reparo iniciado.
+P192	Reparar o espelho «$1»?
+P193	$1 ($2 · $3) é apagado por completo e adicionado ao espelho como segundo disco. Os dados são copiados em segundo plano (várias horas em discos grandes); o volume continua utilizável.
+P194	falta um disco ($1)

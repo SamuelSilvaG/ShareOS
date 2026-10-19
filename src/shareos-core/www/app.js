@@ -1360,18 +1360,24 @@ function renderUserHome() {
 
 /* ---------- storage (Speicher) ---------------------------------------------- */
 
-const LAYOUT_TXT = { mirror: 'Spiegel (RAID 1)', single: 'Einzelnes Laufwerk' };
+const LAYOUT_TXT = { mirror: 'Spiegel (RAID 1)', stripe: 'RAID 0', span: 'JBOD', single: 'Einzelnes Laufwerk' };
+// layouts with one volume over both disks
+const pairLayout = (l) => l === 'mirror' || l === 'stripe' || l === 'span';
 // file systems: label and what the choice means
 const FS_DISK = [['ext4', 'ext4 – empfohlen', 'Alle Funktionen: Rechte je Benutzer, Speicherlimit, persönliche Ordner, Apps.'],
 	['btrfs', 'Btrfs', 'Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit je Benutzer. Braucht mehr Arbeitsspeicher.'],
 	['exfat', 'exFAT', 'Auch an Windows und macOS lesbar. Keine Rechte je Benutzer (wer eine Freigabe schreiben darf, darf alles darin), kein Speicherlimit, keine persönlichen Ordner, keine Apps.'],
-	['ntfs', 'NTFS', 'Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.']];
+	['ntfs', 'NTFS', 'Auch an Windows lesbar. Keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.'],
+	['ext3', 'ext3', 'Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.'],
+	['ext2', 'ext2', 'Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.'],
+	['vfat', 'FAT32', 'Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.']];
 const FS_USB = [['exfat', 'exFAT – empfohlen', 'Windows, macOS, Linux, Fernseher; Dateien über 4 GB.'],
 	['vfat', 'FAT32', 'Für ältere Geräte (Autoradio, Kamera); Dateien höchstens 4 GB.'],
 	['ntfs', 'NTFS', 'Für Windows-Rechner.'],
 	['ext4', 'ext4', 'Für Linux und Sicherungen mit Rechten.']];
-const FS_NAME = { ext4: 'ext4', btrfs: 'Btrfs', exfat: 'exFAT', ntfs: 'NTFS', ntfs3: 'NTFS', vfat: 'FAT32' };
-const linuxFs = (v) => !v.fstype || v.fstype === 'ext4' || v.fstype === 'btrfs';
+const FS_NAME = { ext4: 'ext4', ext3: 'ext3', ext2: 'ext2', btrfs: 'Btrfs', exfat: 'exFAT', ntfs: 'NTFS', ntfs3: 'NTFS', vfat: 'FAT32' };
+const LINUX_FS = ['ext4', 'ext3', 'ext2', 'btrfs'];
+const linuxFs = (v) => !v.fstype || LINUX_FS.includes(v.fstype);
 const fsSelect = (list, val, cls = '') => html`<select class="${cls}">${list.map(([v, t]) => html`<option value="${v}"${val === v ? raw(' selected') : ''}>${t}</option>`)}</select>`;
 const fsNote = (list, val) => html`<p class="note fs-note" style="margin:6px 0 0">${(list.find((x) => x[0] === val) || list[0])[2]}</p>`;
 
@@ -1486,8 +1492,16 @@ function storageView() {
 	</section>`;
 }
 
+// internal disks that could replace the missing disk of a mirror (not part of it, not USB)
+function repairCandidates(st, md) {
+	return (st.disks || []).filter((d) => !d.usb && !d.rm && d.tran !== 'usb'
+		&& !(md.members || []).some((m) => m === d.name || m.startsWith(d.name)));
+}
+
 function volActions(v, running) {
-	return html`${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
+	const st = S.storage, md = arrayOf(st, v.device);
+	const repair = v.layout === 'mirror' && md?.health?.includes('_') && !md.sync && repairCandidates(st, md).length;
+	return html`${repair ? html`<button class="btn sm primary" type="button" data-act="vol-repair" data-name="${v.name}" ${running ? 'disabled' : ''}>Spiegel reparieren</button>` : ''}${v.mounted ? html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="umount" ${running ? 'disabled' : ''}>Aushängen</button>`
 			: html`<button class="btn sm" type="button" data-act="vol" data-name="${v.name}" data-op="mount" ${running || !v.device ? 'disabled' : ''}>Einhängen</button>`}
 		<button class="btn sm ghost" type="button" data-act="vol" data-name="${v.name}" data-op="forget" ${running ? 'disabled' : ''}>Entfernen</button>`;
 }
@@ -1527,6 +1541,7 @@ function volumeCard(st, v, running) {
 			<div class="desc">${LAYOUT_TXT[v.layout] || v.layout || ''} · ${FS_NAME[v.fstype] || v.fstype || 'ext4'}${v.mounted ? html` · ${fmtBytes(v.avail)} frei von ${fmtBytes(v.size)}` : ' · nicht eingehängt'}</div>
 			${v.mounted ? html`<div class="bar" style="margin-top:10px"><i class="${p > 90 ? 'crit' : p > 80 ? 'warn' : ''}" style="width:${p.toFixed(0)}%"></i></div>` : ''}
 			${md ? html`<div class="desc" style="margin-top:8px">${md.name}: ${degraded ? html`<span style="color:var(--amber)">eine Platte fehlt (${md.health})</span>` : html`beide Platten aktiv (${md.health || '?'})`}</div>` : ''}
+			${degraded && !md.sync && v.layout === 'mirror' && !repairCandidates(st, md).length ? html`<div class="desc" style="margin-top:6px">Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.</div>` : ''}
 			${md?.sync ? html`<div class="desc" style="margin-top:6px">${md.sync.action === 'resync' ? 'Erst-Synchronisierung' : md.sync.action === 'recovery' ? 'Wiederherstellung' : 'Prüfung'}: ${md.sync.delayed ? 'wartet' : md.sync.percent.toFixed(1) + ' %' + (md.sync.finish ? ' · noch ' + fmtMin(md.sync.finish) : '')}</div>
 				<div class="bar" style="margin-top:6px"><i class="warn" style="width:${md.sync.percent}%"></i></div>` : ''}
 			<div class="ip">${v.mountpoint}${v.device ? ' · ' + v.device : ' · Dateisystem nicht gefunden'}</div>
@@ -1586,6 +1601,8 @@ function wizardView(st) {
 		const two = chosen.length === 2;
 		const opts = two
 			? [['mirror', 'Spiegel (RAID 1) – empfohlen', `Beide Platten enthalten dieselben Daten. Fällt eine aus, ist nichts verloren. Nutzbar: ${fmtBytes(smallest)}.`],
+				['stripe', 'RAID 0 – schnell', `Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz ${fmtBytes(2 * smallest)}. Fällt eine Platte aus, ist alles verloren.`],
+				['span', 'JBOD – voller Platz', `Beide Platten werden hintereinander ein Laufwerk mit ${fmtBytes(chosen.reduce((a, d) => a + d.size, 0))} (auch bei verschieden großen Platten). Fällt eine Platte aus, ist alles verloren.`],
 				['single', 'Zwei getrennte Laufwerke', `Doppelter Platz (${fmtBytes(chosen.reduce((a, d) => a + d.size, 0))}), aber keine Ausfallsicherheit – jede Platte ist ein eigenes Laufwerk.`]]
 			: [['single', 'Einzelnes Laufwerk', `Die Platte wird ein Laufwerk mit ${fmtBytes(chosen[0]?.size)}. Für Ausfallsicherheit später eine zweite Platte als Spiegel einrichten.`]];
 		if (!opts.some((o) => o[0] === w.layout)) w.layout = opts[0][0];
@@ -1598,18 +1615,19 @@ function wizardView(st) {
 			</select></label></div>
 			<p class="note">Die Box hat nur 256 MB RAM. Swap auf den Platten fängt Lastspitzen ab (Freigaben, Cloud-Sync, Paketinstallation). Er liegt als eigene kleine Partition vorne auf jeder Platte; der Rest wird das Laufwerk.</p>`;
 	} else if (w.step === 2) {
-		const fields = w.layout === 'mirror' ? [['__mirror', 'NAME DES SPIEGELS']] : chosen.map((d) => [d.name, `NAME FÜR ${d.name.toUpperCase()} (${fmtBytes(d.size)})`]);
+		const fields = pairLayout(w.layout) ? [['__mirror', w.layout === 'mirror' ? 'NAME DES SPIEGELS' : 'NAME DES LAUFWERKS']] : chosen.map((d) => [d.name, `NAME FÜR ${d.name.toUpperCase()} (${fmtBytes(d.size)})`]);
 		body = html`<div style="display:grid;gap:14px">${fields.map(([k, l]) => html`<div class="fields">
 				<label class="f"><span>${l}</span><input class="wiz-name" data-k="${k}" value="${w.names[k] || ''}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required></label>
 				<label class="f"><span>DATEISYSTEM</span><select class="wiz-fs" data-k="${k}">${FS_DISK.map(([v, t]) => html`<option value="${v}"${(w.fs[k] || 'ext4') === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
 				<div style="grid-column:1/-1">${fsNote(FS_DISK, w.fs[k] || 'ext4')}</div></div>`)}</div>
 			<p class="note">Kleinbuchstaben, Ziffern, - und _ (max. 16 Zeichen). Das Laufwerk erscheint als <code>/mnt/&lt;name&gt;</code>; Freigaben legst du später darauf an.</p>`;
 	} else {
-		const vols = w.layout === 'mirror' ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(smallest), w.fs.__mirror || 'ext4']]
+		const pairSize = w.layout === 'mirror' ? smallest : w.layout === 'stripe' ? 2 * smallest : chosen.reduce((a, d) => a + d.size, 0);
+		const vols = pairLayout(w.layout) ? [[w.names.__mirror, chosen.map((d) => d.name).join(' + '), fmtBytes(pairSize), w.fs.__mirror || 'ext4']]
 			: chosen.map((d) => [w.names[d.name], d.name, fmtBytes(d.size), w.fs[d.name] || 'ext4']);
 		body = html`<div class="tw"><table class="t" style="min-width:480px"><thead><tr><th>LAUFWERK</th><th>PLATTEN</th><th>GRÖSSE</th><th>AUFBAU</th><th>DATEISYSTEM</th></tr></thead>
 			<tbody>${vols.map(([n, ds, sz, f]) => html`<tr><td><b>${n}</b></td><td>${ds}</td><td>${sz}</td><td>${LAYOUT_TXT[w.layout]}</td><td>${FS_NAME[f]}</td></tr>`)}</tbody></table></div>
-			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}${(() => { const k = (w.layout === 'mirror' ? ['__mirror'] : w.disks).find((x) => ['ext4', 'btrfs'].includes(w.fs[x] || 'ext4')); return k ? `Apps-Bereich auf „${w.names[k]}“ (falls noch keiner besteht).` : 'kein Apps-Bereich (Pakete und App-Daten brauchen ext4 oder Btrfs).'; })()}</p>
+			<p class="note">${w.swap ? `Je Platte ${fmtBytes(w.swap * 1048576)} Swap, ` : 'Kein Swap, '}${(() => { const k = (pairLayout(w.layout) ? ['__mirror'] : w.disks).find((x) => LINUX_FS.includes(w.fs[x] || 'ext4')); return k ? `Apps-Bereich auf „${w.names[k]}“ (falls noch keiner besteht).` : 'kein Apps-Bereich (Pakete und App-Daten brauchen ext4 oder Btrfs).'; })()}</p>
 			<p class="note" style="color:var(--amber)">Beim Klick auf „Einrichten“ werden ${chosen.map((d) => d.name).join(' und ')} vollständig gelöscht.${w.layout === 'mirror' ? ' Die Erst-Synchronisierung läuft danach im Hintergrund (bei großen Platten mehrere Stunden); das Laufwerk ist sofort nutzbar.' : ''}</p>`;
 	}
 	return html`<section class="sec"><div class="panel" style="border-color:var(--dim);box-shadow:var(--glow)">
@@ -1646,7 +1664,7 @@ function wizardCheck() {
 		if (w.disks.length > 2) return 'Höchstens zwei Platten.';
 	}
 	if (w.step === 2) {
-		const keys = w.layout === 'mirror' ? ['__mirror'] : w.disks;
+		const keys = pairLayout(w.layout) ? ['__mirror'] : w.disks;
 		const names = keys.map((k) => w.names[k] || '');
 		if (names.some((n) => !NAME_RE.test(n))) return 'Ungültiger Name: nur a–z, 0–9, - und _, max. 16 Zeichen.';
 		if (new Set(names).size !== names.length) return 'Die Namen müssen verschieden sein.';
@@ -2926,8 +2944,8 @@ const ACTIONS = {
 	async 'wiz-run'() {
 		const w = S.wiz;
 		if (!await confirmDlg('Platten löschen und einrichten?', `${w.disks.join(' und ')} werden vollständig gelöscht. Das lässt sich nicht rückgängig machen.`, 'Löschen & einrichten', true)) return;
-		const args = w.layout === 'mirror'
-			? { layout: 'mirror', name: w.names.__mirror, disks: w.disks, swap: w.swap, fs: w.fs.__mirror || 'ext4', confirm: true }
+		const args = pairLayout(w.layout)
+			? { layout: w.layout, name: w.names.__mirror, disks: w.disks, swap: w.swap, fs: w.fs.__mirror || 'ext4', confirm: true }
 			: { layout: 'single', volumes: w.disks.map((d) => ({ name: w.names[d], disk: d, fs: w.fs[d] || 'ext4' })), swap: w.swap, confirm: true };
 		try { await rpc('shareos.storage', 'setup', args); S.wiz = null; toast('Einrichtung gestartet.'); setTimeout(loadStorage, 1000); }
 		catch (e) { toast('Einrichten: ' + e.message, true); }
@@ -2965,6 +2983,17 @@ const ACTIONS = {
 		try { await rpc('shareos.storage', 'smart', { disk: el.dataset.disk }); } catch (e) { toast('SMART: ' + e.message, true); }
 		loadStorage();
 	},
+	async 'vol-repair'(el) {
+		const name = el.dataset.name, st = S.storage, v = (st.volumes || []).find((x) => x.name === name);
+		const md = arrayOf(st, v?.device), cand = md ? repairCandidates(st, md) : [];
+		if (!cand.length) return;
+		const d = cand[0];
+		if (!await confirmDlg(`Spiegel „${name}“ reparieren?`, `${d.name} (${d.model || ''} · ${fmtBytes(d.size)}) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen. Die Daten werden danach im Hintergrund kopiert (bei großen Platten mehrere Stunden); das Laufwerk bleibt nutzbar.`, 'Löschen & reparieren', true)) return;
+		try { await rpc('shareos.storage', 'repair', { name, disk: d.name, confirm: true }); toast('Reparatur gestartet.'); }
+		catch (e) { toast(`${name}: ${e.message}`, true); }
+		loadStorage();
+	},
+
 	async vol(el) {
 		const { name, op } = el.dataset;
 		if (op === 'forget' && !await confirmDlg(`„${name}“ entfernen?`, 'Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.', 'Entfernen')) return;

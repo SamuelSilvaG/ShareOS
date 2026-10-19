@@ -880,7 +880,17 @@
 		"Öffnen": "Abrir",
 		"In eigenem Fenster ↗": "En su propia ventana ↗",
 		"In ShareOS anzeigen": "Se muestra en ShareOS",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Puede mostrarse como página dentro de la interfaz de ShareOS (en lugar de en su propia ventana)."
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Puede mostrarse como página dentro de la interfaz de ShareOS (en lugar de en su propia ventana).",
+		"RAID 0 – schnell": "RAID 0 – rápido",
+		"JBOD – voller Platz": "JBOD – todo el espacio",
+		"NAME DES LAUFWERKS": "NOMBRE DEL VOLUMEN",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Sistema de archivos Linux más antiguo (p. ej. de Alt-F): permisos por usuario, carpetas personales, apps; sin límite de almacenamiento.",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "Sin journal – larga comprobación tras un corte de luz. Solo si un dispositivo antiguo lo necesita.",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Para dispositivos muy antiguos. Archivos de hasta 4 GB, sin permisos por usuario, sin límite de almacenamiento, sin carpetas personales, sin apps.",
+		"Spiegel reparieren": "Reparar espejo",
+		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "Coloque un disco nuevo en la bahía libre y luego «Reparar espejo».",
+		"Löschen & reparieren": "Borrar y reparar",
+		"Reparatur gestartet.": "Reparación iniciada."
 	},
 	"patterns": [
 		[
@@ -1642,6 +1652,26 @@
 		[
 			"^Öffnen: (.+)$",
 			"Abrir: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Ambos discos forman un volumen, los datos se reparten entre ellos: más rápido, espacio $1. Si falla un disco, se pierde todo."
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Ambos discos forman un volumen uno tras otro con $1 (también con discos de distinto tamaño). Si falla un disco, se pierde todo."
+		],
+		[
+			"^Spiegel „(.+)“ reparieren\\?$",
+			"¿Reparar el espejo «$1»?"
+		],
+		[
+			"^(\\S+) \\((.*) · (.+)\\) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen\\. Die Daten werden danach im Hintergrund kopiert \\(bei großen Platten mehrere Stunden\\); das Laufwerk bleibt nutzbar\\.$",
+			"$1 ($2 · $3) se borra por completo y se añade al espejo como segundo disco. Después los datos se copian en segundo plano (varias horas en discos grandes); el volumen sigue utilizable."
+		],
+		[
+			"^eine Platte fehlt \\((.+)\\)$",
+			"falta un disco ($1)"
 		]
 	],
 	"words": [

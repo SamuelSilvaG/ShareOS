@@ -36,9 +36,9 @@ Alt-F easy to use: the stock U-Boot and the stock flash layout.
 Version in brackets = first release with the feature.
 
 **Storage**
-- Setup wizard: one disk, two separate disks or a mirror (RAID 1, mdadm), optional swap partition per disk
-- File system per volume: **ext4** (recommended: owners, storage limit per user, personal folders, apps), **Btrfs**, **exFAT**, **NTFS** (beta.7)
-- SMART values and health, disk standby, RAID status with sync progress, mount/unmount/remove volumes
+- Setup wizard: one disk, two separate disks, a mirror (RAID 1), RAID 0 or JBOD (mdadm; RAID 0/JBOD from beta.9), optional swap partition per disk
+- File system per volume: **ext4** (recommended: owners, storage limit per user, personal folders, apps), **Btrfs**, **exFAT**, **NTFS** (beta.7), **ext3**, **ext2**, **FAT32** (beta.9)
+- SMART values and health, disk standby, RAID status with sync progress, repair a mirror with a new disk (beta.9), mount/unmount/remove volumes
 - **USB sticks and disks:** mounted at `/mnt/usb-<name>` when plugged in (FAT32, exFAT, NTFS, ext4, Btrfs), **Safely remove**, **Format** with exFAT, FAT32, NTFS or ext4 (beta.7)
 
 **Shares, users, files**
@@ -84,7 +84,7 @@ Version in brackets = first release with the feature.
 | Configuration | own config files | many scattered files | UCI (OpenWrt style), backup/restore as JSON |
 | Updates | manual upload of a `.bin` | manual upload of a `.bin` | online from GitHub Releases, verified, every 6 h checked |
 | File systems | ext3/ext4; FAT32/NTFS via FUSE ¹ | ext2/3/4, FAT, NTFS (ntfs-3g), btrfs, LVM2 | ext4, Btrfs, exFAT, NTFS (kernel ntfs3), FAT32 |
-| RAID | own metadata format ¹ | mdadm (RAID 0/1/5, JBOD), LVM | mdadm RAID 1 (mirror) |
+| RAID | own metadata format ¹ | mdadm (RAID 0/1/5, JBOD), LVM | mdadm RAID 1 (mirror), RAID 0, JBOD |
 | USB drives | mounted ¹ | mounted on plug-in | mounted on plug-in, safely remove, format (4 file systems) |
 | Users and rights | users, groups, quota ¹ | users, groups, quota | users, groups, rights per share, storage limit per user, users with their own web area |
 | Extensions | add-ons (discontinued) | ipkg packages with a web page | app store (ShareOS-Apps), web apps on their own port |
@@ -115,7 +115,7 @@ sample data via `tests/mock-ubus.py`.
 - Notifications (ubus): disks, updates, cloud jobs – in the interface, by e-mail or push
 - Native apps in the same store (MiniDLNA, Transmission, Syncthing …)
 - More of the app platform: "open with" defaults per file type, a two-pane file manager (ShareCommander)
-- Storage: **RAID with mdadm** (RAID 1 mirror, RAID 0, JBOD – the DNS-320L has two bays; RAID 5 needs three or more disks), **LVM2**, more file systems (ext2/ext3, FAT on the bays …)
+- Storage: **LVM2**; RAID 5 only makes sense with three or more disks (the DNS-320L has two bays)
 - More devices (DNS-320/325/327L)
 
 ## Layout

@@ -880,7 +880,17 @@
 		"Öffnen": "Открыть",
 		"In eigenem Fenster ↗": "В отдельном окне ↗",
 		"In ShareOS anzeigen": "Показывается в ShareOS",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Может отображаться как страница в интерфейсе ShareOS (вместо отдельного окна)."
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Может отображаться как страница в интерфейсе ShareOS (вместо отдельного окна).",
+		"RAID 0 – schnell": "RAID 0 – быстро",
+		"JBOD – voller Platz": "JBOD – весь объём",
+		"NAME DES LAUFWERKS": "ИМЯ ТОМА",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "Старая файловая система Linux (например, из Alt-F): права для пользователей, личные папки, приложения; без лимита хранилища.",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "Без журнала – долгая проверка после отключения питания. Только если этого требует старое устройство.",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "Для очень старых устройств. Файлы до 4 ГБ, без прав для пользователей, без лимита хранилища, без личных папок, без приложений.",
+		"Spiegel reparieren": "Восстановить зеркало",
+		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "Вставьте новый диск в свободный отсек, затем «Восстановить зеркало».",
+		"Löschen & reparieren": "Стереть и восстановить",
+		"Reparatur gestartet.": "Восстановление запущено."
 	},
 	"patterns": [
 		[
@@ -1642,6 +1652,26 @@
 		[
 			"^Öffnen: (.+)$",
 			"Открыть: $1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Оба диска становятся одним томом, данные распределяются по ним: быстрее, объём $1. При отказе одного диска теряется всё."
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"Оба диска становятся одним томом друг за другом объёмом $1 (также с дисками разного размера). При отказе одного диска теряется всё."
+		],
+		[
+			"^Spiegel „(.+)“ reparieren\\?$",
+			"Восстановить зеркало «$1»?"
+		],
+		[
+			"^(\\S+) \\((.*) · (.+)\\) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen\\. Die Daten werden danach im Hintergrund kopiert \\(bei großen Platten mehrere Stunden\\); das Laufwerk bleibt nutzbar\\.$",
+			"$1 ($2 · $3) будет полностью стёрт и добавлен в зеркало вторым диском. Затем данные копируются в фоне (для больших дисков несколько часов); том остаётся доступным."
+		],
+		[
+			"^eine Platte fehlt \\((.+)\\)$",
+			"не хватает диска ($1)"
 		]
 	],
 	"words": [

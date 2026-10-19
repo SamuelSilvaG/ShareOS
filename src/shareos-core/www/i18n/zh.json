@@ -880,7 +880,17 @@
 		"Öffnen": "打开",
 		"In eigenem Fenster ↗": "在独立窗口中 ↗",
 		"In ShareOS anzeigen": "在 ShareOS 中显示",
-		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "可以作为页面显示在 ShareOS 界面中（而不是独立窗口）。"
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "可以作为页面显示在 ShareOS 界面中（而不是独立窗口）。",
+		"RAID 0 – schnell": "RAID 0 – 快速",
+		"JBOD – voller Platz": "JBOD – 全部空间",
+		"NAME DES LAUFWERKS": "卷名称",
+		"Älteres Linux-Dateisystem (z. B. von Alt-F gewohnt): Rechte je Benutzer, persönliche Ordner, Apps; kein Speicherlimit.": "较旧的 Linux 文件系统（如 Alt-F 中使用的）：按用户权限、个人文件夹、应用；无存储限额。",
+		"Ohne Journal – nach Stromausfall lange Prüfung. Nur wenn ein altes Gerät es braucht.": "无日志 – 断电后检查时间长。仅在旧设备需要时使用。",
+		"Für sehr alte Geräte. Dateien höchstens 4 GB, keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps.": "用于非常旧的设备。文件最大 4 GB，无按用户权限、无存储限额、无个人文件夹、无应用。",
+		"Spiegel reparieren": "修复镜像",
+		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "将新硬盘插入空闲盘位，然后点“修复镜像”。",
+		"Löschen & reparieren": "清除并修复",
+		"Reparatur gestartet.": "修复已开始。"
 	},
 	"patterns": [
 		[
@@ -1642,6 +1652,26 @@
 		[
 			"^Öffnen: (.+)$",
 			"打开：$1"
+		],
+		[
+			"^Beide Platten werden ein Laufwerk, Daten abwechselnd verteilt: schneller, Platz (.+)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"两块硬盘组成一个卷，数据分布在两者上：更快，空间 $1。任一硬盘故障，所有数据都会丢失。"
+		],
+		[
+			"^Beide Platten werden hintereinander ein Laufwerk mit (.+) \\(auch bei verschieden großen Platten\\)\\. Fällt eine Platte aus, ist alles verloren\\.$",
+			"两块硬盘依次组成一个卷，容量 $1（硬盘大小不同也可以）。任一硬盘故障，所有数据都会丢失。"
+		],
+		[
+			"^Spiegel „(.+)“ reparieren\\?$",
+			"修复镜像“$1”？"
+		],
+		[
+			"^(\\S+) \\((.*) · (.+)\\) wird vollständig gelöscht und als zweite Platte in den Spiegel aufgenommen\\. Die Daten werden danach im Hintergrund kopiert \\(bei großen Platten mehrere Stunden\\); das Laufwerk bleibt nutzbar\\.$",
+			"$1（$2 · $3）将被完全清除，并作为第二块硬盘加入镜像。之后数据在后台复制（大硬盘需要数小时）；卷仍可使用。"
+		],
+		[
+			"^eine Platte fehlt \\((.+)\\)$",
+			"缺少一块硬盘（$1）"
 		]
 	],
 	"words": [
