@@ -48,10 +48,11 @@ P=$R/tmp/pkg; mkdir -p $P
 mkapp() {   # dir id version [extra python for the manifest]
 	mkdir -p "$1/files"
 	echo '<!doctype html><title>ok</title>' > "$1/files/index.html"
+	echo '<svg xmlns="http://www.w3.org/2000/svg"/>' > "$1/files/icon.svg"
 	python3 - "$1" "$2" "$3" <<'PY'
 import json, sys
 d, i, v = sys.argv[1:4]
-json.dump({"id": i, "name": "Test " + i, "version": v, "publisher": "Test", "type": "webapp", "entry": "index.html",
+json.dump({"id": i, "name": "Test " + i, "version": v, "publisher": "Test", "type": "webapp", "entry": "index.html", "icon": "icon.svg",
            "description": {"de": "Test-App", "en": "test app"}}, open(d + "/app.json", "w"))
 PY
 }
@@ -105,6 +106,13 @@ check "app server root leads to the admin interface" "curl -s http://127.0.0.1:$
 check "app server: no directory listing" "! curl -s http://127.0.0.1:$PORT/hello/ | grep -qi 'index of'"
 i=0; until run "ubus list shareos.apps" >/dev/null 2>&1 || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
 check "rpc: installed with server ports" "rpc shareos.apps installed '{}' | js \"d['port']==$PORT and [a['id'] for a in d['apps']][0]=='hello'\""
+check "rpc: icon as data URL (no request to the apps server)" "rpc shareos.apps installed '{}' | js \"d['apps'][0]['icon_data'].startswith('data:image/svg+xml;base64,')\""
+check "rpc: box name for app links set by hand" "rpc shareos.web set '{\"host\":\"NAS.example.lan\"}' | js \"d['ok']\" && rpc shareos.apps installed '{}' | js \"d['host']=='nas.example.lan' and d['host_auto']==False\""
+check "rpc: invalid box name rejected" "rpc shareos.web set '{\"host\":\"a b\"}' | grep -q 'invalid host'"
+check "rpc: box name cleared again" "rpc shareos.web set '{\"host\":\"\"}' | js \"d['ok']\" && ! run 'uci -q get shareos.web.host'"
+run 'killall uhttpd'
+i=0; until curl -s -o /dev/null "http://127.0.0.1:$PORT/" || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
+check "apps server comes back after killall uhttpd (supervisor)" "[ \"\$(curl -s http://127.0.0.1:$PORT/hello/index.html)\" = '<!doctype html><title>ok</title>' ]"
 check "rpc: store sources must be https" "rpc shareos.apps store_set '{\"sources\":[\"http://x/index.json\"]}' | grep -q 'https'"
 check "rpc: unknown user in visibility rejected" "rpc shareos.apps set '{\"id\":\"hello\",\"users\":[\"ghost\"]}' | grep -q 'unknown user'"
 mkdir -p "$R/mnt/daten"; run "uci set storage.daten=volume; uci commit storage; echo lisa1234 | shareos-users add lisa user; echo bert1234 | shareos-users add bert user" >/dev/null

@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "Test message sent.",
 		"Alle Meldungen löschen?": "Delete all messages?",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "The list is emptied. If a problem persists, the box reports it again at the next check.",
-		"•••••• (gespeichert)": "•••••• (saved)"
+		"•••••• (gespeichert)": "•••••• (saved)",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "BOX NAME FOR LINKS (E.G. TO THE APPS)",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Leave empty: with your own certificate the name is taken from it, otherwise the address this page was opened with. The name must resolve in your network (DNS).",
+		"Name speichern": "Save name",
+		"Name gespeichert.": "Name saved."
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"Test: $1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"This page is opened via $1. Without a certificate warning:"
+		],
+		[
+			"^Name: (.+)$",
+			"Name: $1"
 		]
 	],
 	"words": [

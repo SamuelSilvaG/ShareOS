@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "Message de test envoyé.",
 		"Alle Meldungen löschen?": "Supprimer tous les messages ?",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "La liste est vidée. Si un problème persiste, le boîtier le signalera à la prochaine vérification.",
-		"•••••• (gespeichert)": "•••••• (enregistré)"
+		"•••••• (gespeichert)": "•••••• (enregistré)",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "NOM DU BOÎTIER POUR LES LIENS (P. EX. VERS LES APPS)",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Laisser vide : avec votre propre certificat, le nom en est tiré, sinon l'adresse avec laquelle cette page est ouverte. Le nom doit être résolu dans le réseau (DNS).",
+		"Name speichern": "Enregistrer le nom",
+		"Name gespeichert.": "Nom enregistré."
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"Test : $1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"Cette page est ouverte via $1. Sans avertissement de certificat :"
+		],
+		[
+			"^Name: (.+)$",
+			"Nom : $1"
 		]
 	],
 	"words": [

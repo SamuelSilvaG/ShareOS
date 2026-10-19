@@ -406,11 +406,10 @@ function cert_info() {
 	return i;
 }
 
-// uhttpd runs under shareos-uhttpd, which reads the settings again on restart
-// the admin web server is restarted by its supervisor (shareos-uhttpd);
-// the apps web server shares the certificate and is started again here
+// both web servers (admin interface and apps) run under shareos-uhttpd,
+// which starts them again and reads settings and certificate anew
 function restart_uhttpd() {
-	system('(sleep 1; killall uhttpd; sleep 2; /etc/init.d/S51apps start) >/dev/null 2>&1 &');
+	system('(sleep 1; killall uhttpd) >/dev/null 2>&1 &');
 }
 
 // our self-signed certificate names hostname and IP: renew it after a change
@@ -971,10 +970,32 @@ function apps_json(args) {
 	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
 }
 
+// the name under which the box is reached in links to apps: set by hand
+// (shareos.web.host) or taken from an installed certificate – so an app opens
+// under the name the certificate is valid for, also when this interface was
+// opened by its IP address
+function cert_host() {
+	let i = cert_info();
+	if (i.none || i.selfsigned) return null;
+	let names = [];
+	for (let s in i.san) { let m = match(s, /^dNSName:(.+)$/); if (m) push(names, lc(trim(m[1]))); }
+	let cn = match(i.subject ?? '', /CN=([^,\/]+)/);
+	if (cn) push(names, lc(trim(cn[1])));
+	let h = lc(read_trim('/proc/sys/kernel/hostname') ?? '');
+	for (let n in names) if (h && index(n, h + '.') == 0) return n;
+	for (let n in names) { let m = match(n, /^\*\.([a-z0-9.-]+)$/); if (m && h) return h + '.' + m[1]; }
+	for (let n in names) if (match(n, /^[a-z0-9][a-z0-9.-]*\.[a-z0-9-]+$/)) return n;
+	return null;
+}
+function web_host() {
+	let h = cursor().get('shareos', 'web', 'host');
+	return h ? { host: h, auto: false } : { host: cert_host(), auto: true };
+}
+
 function apps_server() {
-	let c = cursor();
+	let c = cursor(), wh = web_host();
 	return { port: +(c.get('apps', 'store', 'port') ?? 8081), https_port: +(c.get('apps', 'store', 'https_port') ?? 8444),
-		https: c.get('shareos', 'web', 'https') != '0' };
+		https: c.get('shareos', 'web', 'https') != '0', host: wh.host, host_auto: wh.auto };
 }
 
 // apps a user may see: users list contains '*', the name or one of its '@groups'
@@ -1205,15 +1226,23 @@ return {
 		get: {
 			call: function() {
 				let c = cursor();
-				return { https: c.get('shareos', 'web', 'https') != '0', redirect: c.get('shareos', 'web', 'redirect') == '1', cert: cert_info() };
+				let wh = web_host();
+				return { https: c.get('shareos', 'web', 'https') != '0', redirect: c.get('shareos', 'web', 'redirect') == '1', cert: cert_info(),
+					host: c.get('shareos', 'web', 'host') ?? '', cert_host: cert_host() };
 			}
 		},
 
 		set: {
-			args: { https: true, redirect: false },
+			args: { https: true, redirect: false, host: '' },
 			call: function(req) {
 				let c = cursor();
+				let h = req.args.host;
+				if (h != null && h != '' && !match(h, /^[A-Za-z0-9]([A-Za-z0-9.-]{0,250}[A-Za-z0-9])?$/)) return { error: 'invalid host name' };
 				c.set('shareos', 'web', 'web');
+				if (h != null) {
+					if (h == '') c.delete('shareos', 'web', 'host'); else c.set('shareos', 'web', 'host', lc(h));
+					if (req.args.https == null && req.args.redirect == null) { c.commit('shareos'); return { ok: true }; }
+				}
 				if (req.args.https != null) c.set('shareos', 'web', 'https', req.args.https ? '1' : '0');
 				if (req.args.redirect != null) c.set('shareos', 'web', 'redirect', req.args.redirect ? '1' : '0');
 				c.commit('shareos');

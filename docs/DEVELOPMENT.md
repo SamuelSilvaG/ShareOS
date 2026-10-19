@@ -112,6 +112,8 @@ the box for why the web server was not running.
 | 00:10 | **App platform**: `window`/`opens` in the manifest, `/_shareos/theme.css` and the app SDK, file tickets – Webpad 1.1 opens a text file from the file browser and saves it back, tested end to end in Chromium. |
 | 00:50 | **Storage**: RAID 0 and JBOD besides the mirror, ext3/ext2/FAT32, repair a mirror with a new disk. |
 | 01:20 | **Messages**: checks every 10 minutes (RAID, volumes, temperature, SMART, updates), failed jobs report at once; e-mail and push (ntfy, Gotify, webhook). |
+| 07:08 | Jan merged WebTerm 1.0.0 and Webpad 1.2.0; the app store released both on its own. |
+| 09:10 | Jan's test of beta.9: installed apps without icon, links with the IP instead of `shareos.skynet.lan`. Cause: the interface was opened by IP, apps and icons came from `https://<IP>:8444` – the wildcard certificate does not cover that, and browsers do not ask about images. Fix: icons come with the app list, links use the certificate's name (or one set by hand), the apps web server gets the same supervisor as the interface. |
 
 ## Notable problems solved
 

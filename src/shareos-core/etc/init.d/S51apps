@@ -3,7 +3,9 @@
 # another origin than the admin interface on port 80/443.
 # /_shareos/ (from the firmware): theme.css and app.js for the apps, and
 # /_shareos/cgi/file – the file an app was opened with (ticket).
-PID=/var/run/uhttpd-apps.pid
+# Supervised by shareos-uhttpd (restarts it if it exits, reads the
+# certificate again on every start).
+PID=/var/run/shareos-uhttpd-apps.pid
 DIR=/www-apps
 
 start() {
@@ -12,20 +14,17 @@ start() {
 <!doctype html><meta charset="utf-8"><title>ShareOS Apps</title>
 <script>location.replace(location.protocol + '//' + location.hostname + '/#/apps');</script>
 X
-	port=$(uci -q get apps.store.port || echo 8081)
-	tls=
-	if [ "$(uci -q get shareos.web.https)" != 0 ]; then
-		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
-		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
-		[ -s "$crt" ] && [ -s "$key" ] && tls="-s $(uci -q get apps.store.https_port || echo 8444) -C $crt -K $key"
-	fi
-	start-stop-daemon -S -q -b -m -p $PID -x /usr/bin/uhttpd -- \
-		-f -h $DIR -r ShareOS-Apps -p "$port" $tls -x /_shareos/cgi -S -D -t 300 -T 30 -k 20 -n 3 -N 50
+	# the web server of older versions (without supervisor)
+	[ -f /var/run/uhttpd-apps.pid ] && { start-stop-daemon -K -q -p /var/run/uhttpd-apps.pid; rm -f /var/run/uhttpd-apps.pid; }
+	start-stop-daemon -S -q -b -m -p $PID -x /bin/sh -- /usr/sbin/shareos-uhttpd apps
 }
 
 stop() {
 	start-stop-daemon -K -q -p $PID 2>/dev/null
 	rm -f $PID
+	# the supervisor stops its uhttpd on TERM; one still running is ended here
+	sleep 1; pgrep -f 'uhttpd .*-h /www-apps' >/dev/null && pkill -f 'uhttpd .*-h /www-apps'
+	return 0
 }
 
 case "$1" in

@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "परीक्षण संदेश भेजा गया।",
 		"Alle Meldungen löschen?": "सभी संदेश हटाएँ?",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "सूची खाली हो जाएगी। समस्या बनी रही तो डिवाइस अगली जाँच में फिर बताएगा।",
-		"•••••• (gespeichert)": "•••••• (सहेजा गया)"
+		"•••••• (gespeichert)": "•••••• (सहेजा गया)",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "लिंक के लिए बॉक्स का नाम (जैसे ऐप्स के लिए)",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "खाली छोड़ें: अपने प्रमाणपत्र के साथ नाम उसी से लिया जाता है, अन्यथा वह पता जिससे यह पेज खोला गया है। नाम नेटवर्क में हल होना चाहिए (DNS)।",
+		"Name speichern": "नाम सहेजें",
+		"Name gespeichert.": "नाम सहेजा गया।"
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"परीक्षण: $1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"यह पेज $1 से खोला गया है। प्रमाणपत्र चेतावनी के बिना:"
+		],
+		[
+			"^Name: (.+)$",
+			"नाम: $1"
 		]
 	],
 	"words": [

@@ -246,6 +246,18 @@ function job(o) {
 
 /* ---------- installed apps ---------- */
 
+// the icon as data: URL – shown by the admin interface without a request to
+// the apps web server (other origin, port and maybe certificate)
+const ICON_TYPES = { svg: 'image/svg+xml', png: 'image/png', webp: 'image/webp', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif' };
+function icon_data(id, icon) {
+	if (type(icon) != 'string' || match(icon, /(^|\/)\.\.(\/|$)/) || substr(icon, 0, 1) == '/') return null;
+	let ext = match(lc(icon), /\.([a-z]+)$/), mime = ext ? ICON_TYPES[ext[1]] : null;
+	let p = APPS + '/' + id + '/' + icon, st = stat(p);
+	if (!mime || !st || st.type != 'file' || st.size > 65536) return null;
+	let d = readfile(p);
+	return d ? 'data:' + mime + ';base64,' + b64enc(d) : null;
+}
+
 function installed() {
 	let c = conf().c, list = [];
 	for (let id in sort(lsdir(APPS) ?? [])) {
@@ -256,7 +268,7 @@ function installed() {
 		let users = c.get('apps', s, 'users');
 		push(list, { id, name: a.name ?? id, version: a.version, publisher: a.publisher ?? '',
 			description: a.description ?? '', type: a.type ?? 'webapp', entry: a.entry ?? 'index.html',
-			icon: a.icon ?? null, category: a.category ?? '', homepage: a.homepage ?? '', license: a.license ?? '',
+			icon: a.icon ?? null, icon_data: icon_data(id, a.icon), category: a.category ?? '', homepage: a.homepage ?? '', license: a.license ?? '',
 			permissions: a.permissions ?? [], jobs: jobs_of(id, a, c),
 			window: type(a.window) == 'object' ? { width: a.window.width ?? null, height: a.window.height ?? null } : null,
 			opens: opens_of(a),

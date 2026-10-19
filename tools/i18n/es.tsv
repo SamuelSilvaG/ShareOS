@@ -1162,3 +1162,9 @@ P195	$1 AVISOS
 P196	$1 sin leer
 P197	Avisos: $1
 P198	Prueba: $1
+E927	NOMBRE DEL EQUIPO PARA ENLACES (P. EJ. A LAS APPS)
+E928	Dejar vacío: con un certificado propio se toma el nombre de él; si no, la dirección con la que se abrió esta página. El nombre debe resolverse en la red (DNS).
+E929	Guardar nombre
+E930	Nombre guardado.
+P199	Esta página está abierta mediante $1. Sin aviso de certificado:
+P200	Nombre: $1

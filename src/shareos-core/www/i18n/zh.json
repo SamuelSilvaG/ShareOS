@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "测试消息已发送。",
 		"Alle Meldungen löschen?": "删除所有消息？",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "列表将被清空。如果问题仍然存在，设备会在下次检查时再次报告。",
-		"•••••• (gespeichert)": "••••••（已保存）"
+		"•••••• (gespeichert)": "••••••（已保存）",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "用于链接的设备名称（例如指向应用）",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "留空：使用自有证书时从证书中获取名称，否则使用打开本页的地址。该名称必须能在网络中解析（DNS）。",
+		"Name speichern": "保存名称",
+		"Name gespeichert.": "名称已保存。"
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"测试：$1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"本页通过 $1 打开。无证书警告的地址："
+		],
+		[
+			"^Name: (.+)$",
+			"名称：$1"
 		]
 	],
 	"words": [

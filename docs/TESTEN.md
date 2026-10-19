@@ -243,6 +243,8 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - Aussehen: in ShareOS Hell/Dunkel oder die Akzentfarbe wechseln – eine offene App zieht mit.
 - Benutzer mit persönlichem Ordner können das genauso mit ihren Dateien.
 
+- **Name und Symbole (beta.10):** ShareOS über die IP öffnen (`https://10.241.1.106`). Unter **Apps → Installiert** haben Webpad und WebTerm ihr Symbol. **Öffnen** startet die App unter dem Namen des Zertifikats (`https://shareos.skynet.lan:8444/…`), ohne Zertifikatswarnung. **System → Netzwerk → Name der Box für Links** zeigt den Namen aus dem Zertifikat als Vorschlag; ein eigener Name wird dort gespeichert, leer = automatisch.
+
 ## 14b. Meldungen
 
 - **System → Meldungen**: E-Mail (Mailserver, STARTTLS/SSL, Benutzer, Passwort, Absender, Empfänger) und/oder Push (ntfy: `https://ntfy.sh/<thema>`, das Thema in der ntfy-App abonnieren; Gotify: Server und App-Token; Webhook). **Speichern**, dann **Testnachricht** – sie muss ankommen.

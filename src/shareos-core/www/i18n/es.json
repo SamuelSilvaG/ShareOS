@@ -929,7 +929,11 @@
 		"Testnachricht verschickt.": "Mensaje de prueba enviado.",
 		"Alle Meldungen löschen?": "¿Borrar todos los avisos?",
 		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "La lista se vacía. Si un problema persiste, la caja lo avisará de nuevo en la próxima comprobación.",
-		"•••••• (gespeichert)": "•••••• (guardado)"
+		"•••••• (gespeichert)": "•••••• (guardado)",
+		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "NOMBRE DEL EQUIPO PARA ENLACES (P. EJ. A LAS APPS)",
+		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Dejar vacío: con un certificado propio se toma el nombre de él; si no, la dirección con la que se abrió esta página. El nombre debe resolverse en la red (DNS).",
+		"Name speichern": "Guardar nombre",
+		"Name gespeichert.": "Nombre guardado."
 	},
 	"patterns": [
 		[
@@ -1727,6 +1731,14 @@
 		[
 			"^Test: (.+)$",
 			"Prueba: $1"
+		],
+		[
+			"^Diese Seite ist über (.+) geöffnet\\. Ohne Zertifikatswarnung:$",
+			"Esta página está abierta mediante $1. Sin aviso de certificado:"
+		],
+		[
+			"^Name: (.+)$",
+			"Nombre: $1"
 		]
 	],
 	"words": [

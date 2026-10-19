@@ -261,9 +261,10 @@ def apps_catalog():
 
 
 def apps_call(method, args):
-    srv = {'port': 8081, 'https_port': 8444, 'https': True}
+    srv = {'port': 8081, 'https_port': 8444, 'https': True, 'host': STATE.get('web_host') or None, 'host_auto': False}
+    ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzNkYTVmZiIvPjwvc3ZnPg=='
     if method == 'installed':
-        return dict(srv, apps=list(APPS['installed'].values()))
+        return dict(srv, apps=[dict(a, icon_data=ICON if a['id'] == 'webpad' else None) for a in APPS['installed'].values()])
     if method == 'catalog':
         if args.get('refresh'):
             APPS['refreshed'] = int(time.time())
@@ -548,7 +549,9 @@ def call(obj, method, args):
     if obj == 'shareos.web':
         if method == 'set':
             STATE.update({k: v for k, v in args.items() if k in ('https', 'redirect')})
-        return {'https': STATE['https'], 'redirect': STATE['redirect'], 'cert': {
+            if 'host' in args:
+                STATE['web_host'] = args['host']
+        return {'https': STATE['https'], 'redirect': STATE['redirect'], 'host': STATE.get('web_host', ''), 'cert_host': 'skynet-nas.skynet.lan', 'cert': {
             'subject': 'CN=skynet-nas, O=ShareOS', 'issuer': 'CN=skynet-nas, O=ShareOS', 'from': '2026-10-17 00:00:00',
             'until': '2036-10-17 23:59:59', 'san': ['dNSName:skynet-nas', 'dNSName:skynet-nas.local', 'iPAddress:10.241.1.106'], 'selfsigned': True}}
     if obj == 'shareos.system':
