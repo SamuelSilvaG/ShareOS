@@ -1,0 +1,306 @@
+#!/usr/bin/ucode -S
+//
+// shareos-notify – messages of the box: kept for the web interface and sent
+// by e-mail and/or push (ntfy, Gotify, webhook)
+//
+//   shareos-notify send <info|warn|error> <source> <key> <title_de> <title_en> [text_de] [text_en]
+//                                      a message; the same key is one message
+//                                      (counted, sent again after 24 h at most)
+//   shareos-notify clear <key>         the cause is gone (e.g. the mirror is
+//                                      complete again)
+//   shareos-notify check               look at RAID, volumes, temperature,
+//                                      SMART (cached values) and updates (cron)
+//   shareos-notify list                JSON for the web interface
+//   shareos-notify read <id|all>       mark as read
+//   shareos-notify delete <id|all>
+//   shareos-notify test                send a test message on every channel
+//
+// Settings: UCI shareos.notify (email, smtp_*, mail_from, mail_to,
+// email_level; push, push_type ntfy|gotify|webhook, push_url, push_token,
+// push_level; temp_max °C, disk_full %). Messages: /etc/shareos/notifications.json
+// (at most 100). SHAREOS_ROOT: fake root for tests; SHAREOS_NOTIFY_DRY=1
+// prints the deliveries instead of sending them.
+//
+'use strict';
+
+import { readfile, writefile, mkdir, stat, glob, popen, unlink } from 'fs';
+import { cursor } from 'uci';
+
+const ROOT = getenv('SHAREOS_ROOT') ?? '';
+const DB = ROOT + '/etc/shareos/notifications.json';
+const LEVELS = { info: 1, warn: 2, error: 3 };
+const MAX = 100;
+const RESEND = 24 * 3600;
+const DRY = !!getenv('SHAREOS_NOTIFY_DRY');
+const CA = '/etc/ssl/certs/ca-certificates.crt';
+const CURL = [ 'curl', '-sS', '--max-time', '30', ...(stat(CA) ? [ '--cacert', CA ] : []) ];
+
+function shq(s) { return "'" + replace('' + s, "'", "'\\''") + "'"; }
+let QUIET = false;
+function out(o) { if (!QUIET) print(sprintf('%J\n', o)); }
+function newid() { return replace(trim(readfile('/proc/sys/kernel/random/uuid') ?? ('' + time())), '-', ''); }
+
+function conf() {
+	let c = ROOT ? cursor(ROOT + '/etc/config') : cursor();
+	let n = c.get_all('shareos', 'notify') ?? {};
+	return { c, n };
+}
+
+function load() {
+	let d = null;
+	try { d = json(readfile(DB) ?? 'null'); } catch (e) { }
+	return type(d) == 'array' ? d : [];
+}
+
+function save(list) {
+	// keep the newest; drop read or resolved ones first
+	while (length(list) > MAX) {
+		let i = 0;
+		for (let k = 0; k < length(list); k++) if (list[k].read || list[k].resolved) { i = k; break; }
+		splice(list, i, 1);
+	}
+	mkdir(ROOT + '/etc/shareos');
+	writefile(DB + '.tmp', sprintf('%J', list));
+	system('mv ' + shq(DB + '.tmp') + ' ' + shq(DB));
+}
+
+function hostname() { return trim(readfile('/proc/sys/kernel/hostname') ?? 'shareos'); }
+
+function lang() {
+	let l = conf().c.get('shareos', 'ui', 'lang');
+	return l == 'de' ? 'de' : 'en';
+}
+
+function run(argv, input) {
+	if (DRY) { print('deliver: ' + join(' ', argv) + (input != null ? ' <<< ' + input : '') + '\n'); return { rc: 0, out: '' }; }
+	let cmd = join(' ', map(argv, shq)) + ' 2>&1';
+	if (input != null) {
+		let tmp = '/tmp/shareos-notify.' + newid();
+		writefile(tmp, input);
+		cmd = cmd + ' < ' + shq(tmp);
+		let p = popen(cmd, 'r'), o = p ? p.read('all') : '', rc = p ? p.close() : -1;
+		unlink(tmp);
+		return { rc, out: o ?? '' };
+	}
+	let p = popen(cmd, 'r'), o = p ? p.read('all') : '', rc = p ? p.close() : -1;
+	return { rc, out: o ?? '' };
+}
+
+/* ---------- delivery ---------- */
+
+function send_mail(n, m) {
+	let host = n.smtp_host, to = n.mail_to;
+	if (!host || !to) return 'e-mail: server or recipient missing';
+	let tls = n.smtp_tls ?? 'starttls', port = n.smtp_port ?? (tls == 'ssl' ? '465' : '587');
+	let url = (tls == 'ssl' ? 'smtps://' : 'smtp://') + host + ':' + port;
+	let from = n.mail_from || to;
+	let L = lang();
+	let subj = '[ShareOS ' + hostname() + '] ' + (L == 'de' ? m.title_de : m.title_en);
+	// RFC 2047 for non-ASCII subjects
+	let b64 = b64enc(subj);
+	let body = sprintf('From: ShareOS <%s>\r\nTo: %s\r\nSubject: =?UTF-8?B?%s?=\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n\r\n%s\r\n\r\n-- \r\nShareOS %s\r\n',
+		from, to, b64, (L == 'de' ? (m.text_de || m.title_de) : (m.text_en || m.title_en)), hostname());
+	let argv = [ ...CURL, '--url', url, '--mail-from', from ];
+	for (let r in split(to, /[ ,;]+/)) if (length(r)) push(argv, '--mail-rcpt', r);
+	if (tls == 'starttls') push(argv, '--ssl-reqd');
+	// the password goes into a netrc file, not onto the command line (ps)
+	let netrc = null;
+	if (n.smtp_user) {
+		netrc = '/tmp/shareos-notify.netrc.' + newid();
+		if (!DRY) { system('umask 077; : > ' + shq(netrc)); writefile(netrc, sprintf('machine %s login %s password %s\n', host, n.smtp_user, n.smtp_pass ?? '')); }
+		push(argv, '--netrc-file', netrc);
+	}
+	push(argv, '-T', '-');
+	let r = run(argv, body);
+	if (netrc && !DRY) unlink(netrc);
+	return r.rc == 0 ? null : 'e-mail: ' + (trim(r.out) || 'curl exit ' + r.rc);
+}
+
+function send_push(n, m) {
+	let url = n.push_url, typ = n.push_type ?? 'ntfy';
+	if (!url || !match(url, /^https?:\/\/[^ ]+$/)) return 'push: invalid address';
+	let L = lang(), title = 'ShareOS ' + hostname() + ': ' + (L == 'de' ? m.title_de : m.title_en);
+	let text = (L == 'de' ? (m.text_de || m.title_de) : (m.text_en || m.title_en));
+	let prio = { info: 3, warn: 4, error: 5 }[m.level] ?? 3;
+	let argv = [ ...CURL, '-f', '-H', 'Content-Type: application/json' ], body;
+	if (typ == 'ntfy') {
+		let u = match(url, /^(https?:\/\/[^\/]+)\/([^\/?#]+)$/);
+		if (!u) return 'push: ntfy address must be like https://ntfy.sh/<topic>';
+		body = { topic: u[2], title, message: text, priority: prio, tags: [ m.level == 'error' ? 'rotating_light' : m.level == 'warn' ? 'warning' : 'information_source' ] };
+		url = u[1];
+		if (n.push_token) push(argv, '-H', 'Authorization: Bearer ' + n.push_token);
+	} else if (typ == 'gotify') {
+		body = { title, message: text, priority: prio * 2 - 2 };
+		url = replace(url, /\/+$/, '') + '/message';
+		if (n.push_token) push(argv, '-H', 'X-Gotify-Key: ' + n.push_token);
+	} else {
+		body = { host: hostname(), level: m.level, source: m.source, key: m.key, title, text, time: m.last };
+		if (n.push_token) push(argv, '-H', 'Authorization: Bearer ' + n.push_token);
+	}
+	push(argv, '-X', 'POST', '--data-binary', '@-', url);
+	let r = run(argv, sprintf('%J', body));
+	return r.rc == 0 ? null : 'push: ' + (trim(r.out) || 'curl exit ' + r.rc);
+}
+
+function deliver(m, force) {
+	let n = conf().n, errs = [], lv = LEVELS[m.level] ?? 1;
+	if (n.email == '1' && (force || lv >= (LEVELS[n.email_level ?? 'warn'] ?? 2))) {
+		let e = send_mail(n, m); if (e) push(errs, e);
+	}
+	if (n.push == '1' && (force || lv >= (LEVELS[n.push_level ?? 'warn'] ?? 2))) {
+		let e = send_push(n, m); if (e) push(errs, e);
+	}
+	if (length(errs)) system('logger -t shareos-notify ' + shq(join('; ', errs)));
+	return errs;
+}
+
+/* ---------- messages ---------- */
+
+function cmd_send(level, source, key, tde, ten, xde, xen) {
+	if (!LEVELS[level] || !match(source ?? '', /^[a-z][a-z0-9-]{0,31}$/) || !match(key ?? '', /^[a-zA-Z0-9._-]{1,64}$/) || !tde)
+		return out({ error: 'usage: send <info|warn|error> <source> <key> <title_de> <title_en> [text_de] [text_en]' });
+	let list = load(), now = time(), m = null;
+	for (let x in list) if (x.key == key && !x.resolved) { m = x; break; }
+	let again = false;
+	if (m) {
+		m.last = now; m.count = (m.count ?? 1) + 1; m.level = level;
+		m.title_de = tde; m.title_en = ten || tde; m.text_de = xde ?? ''; m.text_en = xen ?? xde ?? '';
+		again = now - (m.delivered ?? 0) >= RESEND;
+		if (again) m.read = false;
+	} else {
+		m = { id: substr(newid(), 0, 16), key, level, source, title_de: tde, title_en: ten || tde,
+			text_de: xde ?? '', text_en: xen ?? xde ?? '', time: now, last: now, count: 1, read: false, resolved: false };
+		push(list, m);
+		again = true;
+	}
+	if (again) { m.delivered = now; save(list); deliver(m); }
+	else save(list);
+	system('logger -t shareos-notify ' + shq(level + ' ' + key + ': ' + m.title_en));
+	out({ ok: true, id: m.id, sent: again });
+}
+
+function cmd_clear(key) {
+	let list = load(), n = 0;
+	for (let x in list) if (x.key == key && !x.resolved) { x.resolved = true; x.resolved_at = time(); n++; }
+	if (n) save(list);
+	out({ ok: true, cleared: n });
+}
+
+function cmd_list() {
+	let list = load();
+	out({ items: reverse(list), unread: length(filter(list, (x) => !x.read && !x.resolved)) });
+}
+
+function cmd_mark(what, del) {
+	let list = load();
+	if (del) list = what == 'all' ? [] : filter(list, (x) => x.id != what);
+	else for (let x in list) if (what == 'all' || x.id == what) x.read = true;
+	save(list);
+	out({ ok: true });
+}
+
+function cmd_test() {
+	let n = conf().n;
+	let m = { level: 'info', source: 'system', key: 'test', last: time(),
+		title_de: 'Testnachricht', title_en: 'Test message',
+		text_de: 'Wenn du das liest, kommen Nachrichten von ShareOS an.', text_en: 'If you read this, messages from ShareOS arrive.' };
+	if (n.email != '1' && n.push != '1') return out({ error: 'neither e-mail nor push is switched on' });
+	let errs = deliver(m, true);
+	out(length(errs) ? { error: join('; ', errs) } : { ok: true });
+}
+
+/* ---------- checks (cron, every 10 minutes) ---------- */
+
+function sh_out(cmd) { let p = popen(cmd, 'r'), o = p ? p.read('all') : ''; p?.close(); return o ?? ''; }
+function check_raid() {
+	let cur = null;
+	for (let line in split(readfile(ROOT + '/proc/mdstat') ?? '', '\n')) {
+		let m = match(line, /^(md[0-9]+) : /);
+		if (m) { cur = m[1]; continue; }
+		let h = cur ? match(line, /\[[0-9]+\/[0-9]+\] \[([U_]+)\]/) : null;
+		if (!h) continue;
+		if (index(h[1], '_') >= 0)
+			cmd_send('error', 'storage', 'raid-' + cur, 'RAID ' + cur + ' unvollständig', 'RAID ' + cur + ' degraded',
+				'Eine Platte fehlt oder ist ausgefallen (' + h[1] + '). Die Daten liegen nur noch auf einer Platte. Neue Platte einsetzen und unter Speicher „Spiegel reparieren“ wählen.',
+				'A disk is missing or failed (' + h[1] + '). The data is on one disk only. Put in a new disk and choose “Repair mirror” under Storage.');
+		else cmd_clear('raid-' + cur);
+		cur = null;
+	}
+}
+
+function check_volumes(n) {
+	let c = conf().c, full = +(n.disk_full ?? 90);
+	let mounts = readfile(ROOT + '/proc/mounts') ?? '';
+	c.foreach('storage', 'volume', (v) => {
+		let name = v['.name'];
+		if (v.enabled == '0') return;
+		let mp = '/mnt/' + name;
+		if (index(mounts, ' ' + mp + ' ') < 0) {
+			cmd_send('error', 'storage', 'vol-missing-' + name, 'Laufwerk „' + name + '“ nicht verfügbar', 'Volume “' + name + '” not available',
+				'Das Laufwerk ist nicht eingehängt (Platte fehlt, defekt oder wird noch geprüft).', 'The volume is not mounted (disk missing, broken or still being checked).');
+			return;
+		}
+		cmd_clear('vol-missing-' + name);
+		let f = split(trim(split(sh_out('df -k ' + shq(mp)), '\n')[1] ?? ''), /\s+/);
+		let used = length(f) >= 5 ? +replace(f[4], '%', '') : 0;
+		if (used >= full)
+			cmd_send(used >= 98 ? 'error' : 'warn', 'storage', 'vol-full-' + name, 'Laufwerk „' + name + '“ zu ' + used + ' % voll', 'Volume “' + name + '” ' + used + ' % full',
+				'Bitte Platz schaffen oder alte Dateien verschieben.', 'Please free some space or move old files.');
+		else if (used < full - 2) cmd_clear('vol-full-' + name);
+	});
+}
+
+function check_temp(n) {
+	let t = +trim(readfile(ROOT + '/tmp/sys/temp1_input') ?? '0') / 1000, max = +(n.temp_max ?? 55);
+	if (!(t > 0)) return;
+	if (t >= max)
+		cmd_send('warn', 'system', 'temp', 'Box zu warm: ' + int(t) + ' °C', 'Box too warm: ' + int(t) + ' °C',
+			'Lüfter, Staub und Aufstellort prüfen (Grenze ' + max + ' °C).', 'Check the fan, dust and where the box stands (limit ' + max + ' °C).');
+	else if (t < max - 3) cmd_clear('temp');
+}
+
+function check_smart() {
+	for (let f in glob(ROOT + '/tmp/shareos-storage/smart-*.json')) {
+		let disk = match(f, /smart-(sd[a-z]+)\.json$/)?.[1], s = null;
+		if (!disk) continue;
+		try { s = json(readfile(f)); } catch (e) { }
+		if (type(s) != 'object' || s.standby || s.error) continue;
+		let bad = s.passed === false ? 'error' : ((+s.reallocated > 0 || +s.pending > 0 || +s.uncorrectable > 0) ? 'warn' : null);
+		if (bad)
+			cmd_send(bad, 'storage', 'smart-' + disk, 'Platte ' + disk + ': SMART meldet Probleme', 'Disk ' + disk + ': SMART reports problems',
+				sprintf('Gesamtstatus %s, neu zugeordnete Sektoren %s, schwebende %s. Daten sichern und die Platte bald tauschen.', s.passed === false ? 'FEHLER' : 'ok', s.reallocated ?? '?', s.pending ?? '?'),
+				sprintf('Overall %s, reallocated sectors %s, pending %s. Back up the data and replace the disk soon.', s.passed === false ? 'FAILED' : 'ok', s.reallocated ?? '?', s.pending ?? '?'));
+		else cmd_clear('smart-' + disk);
+	}
+}
+
+function check_update() {
+	let s = null;
+	try { s = json(readfile(ROOT + '/tmp/shareos-update/state.json') ?? 'null'); } catch (e) { }
+	let c = s?.check;
+	if (c?.update_available && c.latest)
+		cmd_send('info', 'update', 'update-' + c.latest, 'Update verfügbar: ' + c.latest, 'Update available: ' + c.latest,
+			'Unter System → Firmware installieren.', 'Install it under System → Firmware.');
+}
+
+function cmd_check() {
+	let n = conf().n;
+	// the output of the single sends is not wanted here
+	QUIET = true;
+	check_raid(); check_volumes(n); check_temp(n); check_smart(); check_update();
+	QUIET = false;
+	out({ ok: true });
+}
+
+switch (ARGV[0]) {
+case 'send': cmd_send(ARGV[1], ARGV[2], ARGV[3], ARGV[4], ARGV[5], ARGV[6], ARGV[7]); break;
+case 'clear': cmd_clear(ARGV[1]); break;
+case 'check': cmd_check(); break;
+case 'list': cmd_list(); break;
+case 'read': cmd_mark(ARGV[1] ?? 'all', false); break;
+case 'delete': cmd_mark(ARGV[1] ?? 'all', true); break;
+case 'test': cmd_test(); break;
+default:
+	print(join('\n', map(filter(split(readfile(sourcepath()) ?? '', '\n'), (l) => match(l, /^\/\/ {1,3}shareos-notify/)), (l) => substr(l, 3))) + '\n');
+	exit(2);
+}

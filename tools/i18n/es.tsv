@@ -1119,3 +1119,46 @@ E887	Reparación iniciada.
 P192	¿Reparar el espejo «$1»?
 P193	$1 ($2 · $3) se borra por completo y se añade al espejo como segundo disco. Después los datos se copian en segundo plano (varias horas en discos grandes); el volumen sigue utilizable.
 P194	falta un disco ($1)
+E888	AVISOS
+E889	1 AVISO
+E890	Marcar todo como leído
+E891	Borrar todo
+E892	RESUELTO
+E893	ERROR
+E894	ADVERTENCIA
+E895	INFO
+E896	Leído
+E897	Sin avisos – todo en orden.
+E898	Cada 10 minutos la caja comprueba RAID, volúmenes (montados, ocupación), temperatura, valores SMART y actualizaciones; los trabajos en la nube, tareas de apps y trabajos de almacenamiento fallidos avisan al instante. Los avisos repetidos se cuentan y se reenvían como mucho una vez al día.
+E899	CORREO
+E900	Enviar avisos por correo
+E901	SERVIDOR DE CORREO (SMTP)
+E902	CIFRADO
+E903	STARTTLS (puerto 587)
+E904	SSL/TLS (puerto 465)
+E905	ninguno (puerto 25)
+E906	PUERTO (VACÍO = PREDETERMINADO)
+E907	REMITENTE
+E908	DESTINATARIOS (SEPARADOS POR COMAS)
+E909	ENVIAR
+E910	todo (info, advertencia, error)
+E911	advertencias y errores
+E912	solo errores
+E913	PUSH
+E914	Enviar avisos al móvil
+E915	TOKEN DE ACCESO (OPCIONAL)
+E916	Webhook (JSON)
+E917	ntfy: dirección con tema, p. ej.
+E918	(también un servidor ntfy propio), suscríbase al mismo tema en la app ntfy. Gotify: dirección del servidor y token de la app.
+E919	LÍMITES
+E920	TEMPERATURA DESDE (°C)
+E921	VOLUMEN LLENO DESDE (%)
+E922	Mensaje de prueba
+E923	Mensaje de prueba enviado.
+E924	¿Borrar todos los avisos?
+E925	La lista se vacía. Si un problema persiste, la caja lo avisará de nuevo en la próxima comprobación.
+E926	•••••• (guardado)
+P195	$1 AVISOS
+P196	$1 sin leer
+P197	Avisos: $1
+P198	Prueba: $1

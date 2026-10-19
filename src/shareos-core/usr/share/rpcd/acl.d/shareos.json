@@ -90,6 +90,10 @@
 				],
 				"shareos.time": [
 					"get"
+				],
+				"shareos.notify": [
+					"list",
+					"get"
 				]
 			},
 			"uci": [
@@ -235,6 +239,12 @@
 					"set",
 					"sync",
 					"set_clock"
+				],
+				"shareos.notify": [
+					"read",
+					"delete",
+					"set",
+					"test"
 				]
 			},
 			"uci": [

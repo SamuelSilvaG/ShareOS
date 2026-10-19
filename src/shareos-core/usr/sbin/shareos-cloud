@@ -202,9 +202,11 @@ cmd_run() {
 	if [ $rc_exit = 0 ]; then
 		printf 'state=ok\nended=%s\nsummary=%s\n' "$(date +%s)" "$summary" > $ST/$J.state
 		log "job $J finished: $summary"
+		shareos-notify clear "cloud-$J" >/dev/null 2>&1
 	else
 		printf 'state=error\nended=%s\nsummary=%s\nerror=%s\n' "$(date +%s)" "$summary" "${err:-rclone exit $rc_exit}" > $ST/$J.state
 		log "job $J failed: ${err:-exit $rc_exit}"
+		shareos-notify send warn cloud "cloud-$J" "Cloud-Sync „$J“ fehlgeschlagen" "Cloud sync “$J” failed" "${err:-rclone exit $rc_exit}" "${err:-rclone exit $rc_exit}" >/dev/null 2>&1
 	fi
 	# keep the last result over a reboot
 	cp $ST/$J.state "$logd/$J.state" 2>/dev/null

@@ -278,3 +278,9 @@ a.card.applink:hover{border-color:var(--dim);box-shadow:var(--glow)}
 .embedbox .ph{padding:10px 14px;margin:0;border-bottom:1px solid var(--line);gap:8px}
 .embedbox iframe{flex:1;width:100%;border:0;background:var(--bg)}
 @media (max-width:640px){.embedwrap{padding:0}.embedbox{border-radius:0}}
+
+/* messages */
+.chip.err,.sos a.chip.err{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
+.notelist{display:grid;gap:10px}
+.note-item.read{opacity:.65}
+.note-item .ph{flex-wrap:wrap}

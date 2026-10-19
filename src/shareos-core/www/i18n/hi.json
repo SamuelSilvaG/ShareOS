@@ -890,7 +890,46 @@
 		"Spiegel reparieren": "मिरर ठीक करें",
 		"Neue Platte in den freien Schacht einsetzen, dann „Spiegel reparieren“.": "खाली बे में नई डिस्क लगाएँ, फिर “मिरर ठीक करें”।",
 		"Löschen & reparieren": "मिटाएँ और ठीक करें",
-		"Reparatur gestartet.": "मरम्मत शुरू हुई।"
+		"Reparatur gestartet.": "मरम्मत शुरू हुई।",
+		"MELDUNGEN": "संदेश",
+		"1 MELDUNG": "1 संदेश",
+		"Alle als gelesen markieren": "सभी को पढ़ा हुआ चिह्नित करें",
+		"Alle löschen": "सभी हटाएँ",
+		"ERLEDIGT": "सुलझ गया",
+		"FEHLER": "त्रुटि",
+		"WARNUNG": "चेतावनी",
+		"INFO": "जानकारी",
+		"Gelesen": "पढ़ा",
+		"Keine Meldungen – alles in Ordnung.": "कोई संदेश नहीं – सब ठीक है।",
+		"Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.": "डिवाइस हर 10 मिनट में RAID, वॉल्यूम (माउंट, भराव), तापमान, SMART मान और अपडेट जाँचता है; असफल क्लाउड जॉब, ऐप कार्य और स्टोरेज जॉब तुरंत बताते हैं। दोहराए गए संदेश गिने जाते हैं और दिन में अधिकतम एक बार फिर भेजे जाते हैं।",
+		"E-MAIL": "ईमेल",
+		"Meldungen per E-Mail schicken": "संदेश ईमेल से भेजें",
+		"MAILSERVER (SMTP)": "मेल सर्वर (SMTP)",
+		"VERSCHLÜSSELUNG": "एन्क्रिप्शन",
+		"STARTTLS (Port 587)": "STARTTLS (पोर्ट 587)",
+		"SSL/TLS (Port 465)": "SSL/TLS (पोर्ट 465)",
+		"keine (Port 25)": "कोई नहीं (पोर्ट 25)",
+		"PORT (LEER = STANDARD)": "पोर्ट (खाली = डिफ़ॉल्ट)",
+		"ABSENDER": "प्रेषक",
+		"EMPFÄNGER (MEHRERE MIT KOMMA)": "प्राप्तकर्ता (कॉमा से अलग)",
+		"SCHICKEN": "भेजें",
+		"alles (Info, Warnung, Fehler)": "सब कुछ (जानकारी, चेतावनी, त्रुटि)",
+		"Warnungen und Fehler": "चेतावनियाँ और त्रुटियाँ",
+		"nur Fehler": "केवल त्रुटियाँ",
+		"PUSH": "पुश",
+		"Meldungen aufs Handy schicken": "संदेश फ़ोन पर भेजें",
+		"ZUGANGSSCHLÜSSEL (OPTIONAL)": "एक्सेस टोकन (वैकल्पिक)",
+		"Webhook (JSON)": "Webhook (JSON)",
+		"ntfy: Adresse mit Thema, z. B.": "ntfy: विषय सहित पता, जैसे",
+		"(eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.": "(अपना ntfy सर्वर भी चलेगा), ntfy ऐप में वही विषय सब्सक्राइब करें। Gotify: सर्वर पता और ऐप टोकन।",
+		"GRENZEN": "सीमाएँ",
+		"TEMPERATUR AB (°C)": "तापमान से (°C)",
+		"LAUFWERK VOLL AB (%)": "वॉल्यूम भरा से (%)",
+		"Testnachricht": "परीक्षण संदेश",
+		"Testnachricht verschickt.": "परीक्षण संदेश भेजा गया।",
+		"Alle Meldungen löschen?": "सभी संदेश हटाएँ?",
+		"Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.": "सूची खाली हो जाएगी। समस्या बनी रही तो डिवाइस अगली जाँच में फिर बताएगा।",
+		"•••••• (gespeichert)": "•••••• (सहेजा गया)"
 	},
 	"patterns": [
 		[
@@ -1672,6 +1711,22 @@
 		[
 			"^eine Platte fehlt \\((.+)\\)$",
 			"एक डिस्क गायब है ($1)"
+		],
+		[
+			"^(\\d+) MELDUNGEN$",
+			"$1 संदेश"
+		],
+		[
+			"^(\\d+) ungelesen$",
+			"$1 अपठित"
+		],
+		[
+			"^Meldungen: (.+)$",
+			"संदेश: $1"
+		],
+		[
+			"^Test: (.+)$",
+			"परीक्षण: $1"
 		]
 	],
 	"words": [

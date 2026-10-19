@@ -943,6 +943,26 @@ function me_cloud_allowed(u) { return u != 'root' && cursor().get('accounts', u,
 /* ---------- apps ---------- */
 
 const APPS_TOOL = '/usr/sbin/shareos-apps';
+const NOTIFY = '/usr/sbin/shareos-notify';
+const NOTIFY_KEYS = [ 'email', 'smtp_host', 'smtp_tls', 'smtp_port', 'smtp_user', 'mail_from', 'mail_to', 'email_level',
+	'push', 'push_type', 'push_url', 'push_level', 'temp_max', 'disk_full' ];
+
+function notify_json(args) {
+	let r = sh(NOTIFY + ' ' + join(' ', map(args, shq)));
+	let j = null;
+	try { j = json(trim(r.out) || 'null'); } catch (e) { }
+	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
+}
+
+// settings without the secrets (only whether they are set)
+function notify_settings() {
+	let n = cursor().get_all('shareos', 'notify') ?? {}, o = {};
+	for (let k in NOTIFY_KEYS) o[k] = n[k] ?? '';
+	o.email = n.email == '1'; o.push = n.push == '1';
+	o.has_pass = !!length(n.smtp_pass ?? ''); o.has_token = !!length(n.push_token ?? '');
+	o.temp_max = +(n.temp_max ?? 55); o.disk_full = +(n.disk_full ?? 90);
+	return o;
+}
 const APPS_UPLOAD = '/tmp/shareos-apps/upload.sapp';
 
 function apps_json(args) {
@@ -2568,6 +2588,65 @@ return {
 				c.commit('apps');
 				return { ok: true };
 			}
+		}
+	},
+
+	'shareos.notify': {
+		list: {
+			call: function() { return notify_json([ 'list' ]); }
+		},
+		// id or "all"
+		read: {
+			args: { id: '' },
+			call: function(req) {
+				let id = req.args.id || 'all';
+				if (id != 'all' && !match(id, /^[0-9a-f]{1,32}$/)) return { error: 'invalid id' };
+				return notify_json([ 'read', id ]);
+			}
+		},
+		delete: {
+			args: { id: '' },
+			call: function(req) {
+				let id = req.args.id || 'all';
+				if (id != 'all' && !match(id, /^[0-9a-f]{1,32}$/)) return { error: 'invalid id' };
+				return notify_json([ 'delete', id ]);
+			}
+		},
+		get: {
+			call: function() { return notify_settings(); }
+		},
+		// smtp_pass / push_token: null = keep, '' = remove
+		set: {
+			args: { email: false, smtp_host: '', smtp_tls: '', smtp_port: '', smtp_user: '', smtp_pass: '', mail_from: '', mail_to: '', email_level: '',
+				push: false, push_type: '', push_url: '', push_token: '', push_level: '', temp_max: 55, disk_full: 90 },
+			call: function(req) {
+				let a = req.args, c = cursor();
+				let mail = (x) => x == null || x == '' || match(x, /^[^@\s,;]+@[^@\s,;]+$/);
+				if (a.smtp_host != null && a.smtp_host != '' && !match(a.smtp_host, /^[A-Za-z0-9.-]{1,253}$/)) return { error: 'invalid mail server' };
+				if (a.smtp_tls != null && a.smtp_tls != '' && !(a.smtp_tls in { starttls: 1, ssl: 1, none: 1 })) return { error: 'invalid encryption' };
+				if (a.smtp_port != null && a.smtp_port != '' && !(match('' + a.smtp_port, /^[0-9]+$/) && +a.smtp_port >= 1 && +a.smtp_port <= 65535)) return { error: 'invalid port' };
+				if (!mail(a.mail_from)) return { error: 'invalid sender address' };
+				for (let r in split(a.mail_to ?? '', /[ ,;]+/)) if (length(r) && !mail(r)) return { error: 'invalid recipient: ' + r };
+				for (let k in [ 'email_level', 'push_level' ]) if (a[k] != null && a[k] != '' && !(a[k] in { info: 1, warn: 1, error: 1 })) return { error: 'invalid level' };
+				if (a.push_type != null && a.push_type != '' && !(a.push_type in { ntfy: 1, gotify: 1, webhook: 1 })) return { error: 'invalid push service' };
+				if (a.push_url != null && a.push_url != '' && !match(a.push_url, /^https?:\/\/[^\s'"]{3,250}$/)) return { error: 'invalid push address' };
+				if (a.temp_max != null && !(+a.temp_max >= 40 && +a.temp_max <= 70)) return { error: 'temperature limit: 40 … 70 °C' };
+				if (a.disk_full != null && !(+a.disk_full >= 50 && +a.disk_full <= 99)) return { error: 'full limit: 50 … 99 %' };
+				for (let k in [ 'smtp_user', 'smtp_pass', 'push_token' ]) if (a[k] != null && match(a[k], /[\n\r]/)) return { error: 'invalid characters' };
+				if (c.get('shareos', 'notify') != 'notify') c.set('shareos', 'notify', 'notify');
+				for (let k in [ 'smtp_host', 'smtp_tls', 'smtp_port', 'smtp_user', 'mail_from', 'mail_to', 'email_level', 'push_type', 'push_url', 'push_level' ])
+					if (a[k] != null) c.set('shareos', 'notify', k, '' + a[k]);
+				for (let k in [ 'smtp_pass', 'push_token' ]) if (a[k] != null) c.set('shareos', 'notify', k, a[k]);
+				if (a.email != null) c.set('shareos', 'notify', 'email', a.email ? '1' : '0');
+				if (a.push != null) c.set('shareos', 'notify', 'push', a.push ? '1' : '0');
+				if (a.temp_max != null) c.set('shareos', 'notify', 'temp_max', '' + int(a.temp_max));
+				if (a.disk_full != null) c.set('shareos', 'notify', 'disk_full', '' + int(a.disk_full));
+				c.commit('shareos');
+				return notify_settings();
+			}
+		},
+		test: {
+			call: function() { return notify_json([ 'test' ]); }
 		}
 	},
 

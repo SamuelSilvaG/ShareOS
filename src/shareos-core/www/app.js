@@ -154,7 +154,7 @@ const TABS = [
 	['overview', 'ÜBERSICHT'], ['storage', 'SPEICHER'], ['shares', 'FREIGABEN'], ['services', 'DIENSTE'],
 	['apps', 'APPS', true], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['general', 'ALLGEMEIN'], ['time', 'ZEIT'], ['network', 'NETZWERK'], ['power', 'ENERGIE & RESET'], ['logs', 'PROTOKOLLE'], ['appearance', 'DARSTELLUNG'], ['about', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['notifications', 'MELDUNGEN'], ['general', 'ALLGEMEIN'], ['time', 'ZEIT'], ['network', 'NETZWERK'], ['power', 'ENERGIE & RESET'], ['logs', 'PROTOKOLLE'], ['appearance', 'DARSTELLUNG'], ['about', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
 const SHR_SUBS = [['shares', 'FREIGABEN'], ['files', 'DATEIEN'], ['users', 'BENUTZER'], ['groups', 'GRUPPEN']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
@@ -389,9 +389,12 @@ function startPolling() {
 	tick();
 	S.timer = setInterval(tick, 5000);
 	refreshUpdateStatus();
+	loadNotes();
+	S.noteTimer = setInterval(loadNotes, 60000);
 }
 function stopPolling() {
 	clearInterval(S.timer); S.timer = null;
+	clearInterval(S.noteTimer); S.noteTimer = null;
 	clearTimeout(S.updTimer); S.updTimer = null;
 }
 
@@ -475,6 +478,7 @@ function renderHeader(offline = false) {
 		</div>
 		<div class="side">
 			<div class="row">
+				${S.notes?.unread ? html`<a class="chip ${S.notes.items.some((x) => !x.read && !x.resolved && x.level === 'error') ? 'err' : 'warn'}" href="#/system/notifications"><i></i>${S.notes.unread === 1 ? '1 MELDUNG' : S.notes.unread + ' MELDUNGEN'}</a>` : ''}
 				${upd ? html`<a class="chip warn" href="#/system/firmware"><i></i>UPDATE ${upd.replace(/^v/, '')} <small>verfügbar</small></a>` : ''}
 				${offline ? html`<span class="chip warn"><i></i>OFFLINE</span>`
 					: html`<span class="chip"><i></i>ONLINE <small>seit ${fmtUptime(i.uptime)}</small></span>`}
@@ -1829,6 +1833,61 @@ const SYS = {
 		<div class="g2">${appPanel()}${widgetPanel()}</div>`;
 	},
 
+	notifications() {
+		const n = S.notes, c = S.noteCfg;
+		if (!n || !c) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+		const de = LANG === 'de', when = (t) => fmtTime(t);
+		const LV = { error: ['err', 'FEHLER'], warn: ['warn', 'WARNUNG'], info: ['', 'INFO'] };
+		const lvSel = (name, v) => html`<select name="${name}">${[['info', 'alles (Info, Warnung, Fehler)'], ['warn', 'Warnungen und Fehler'], ['error', 'nur Fehler']].map(([k, t]) => html`<option value="${k}"${(v || 'warn') === k ? raw(' selected') : ''}>${t}</option>`)}</select>`;
+		return html`<div class="split">
+			<section class="main">
+				<h2 class="gh">MELDUNGEN <span>${n.unread} ungelesen</span></h2>
+				${n.items.length ? html`<div class="acts" style="margin:0 0 12px"><button class="btn sm" type="button" data-act="note-read" data-id="all" ${n.unread ? '' : 'disabled'}>Alle als gelesen markieren</button>
+					<button class="btn sm ghost" type="button" data-act="note-del" data-id="all">Alle löschen</button></div>
+				<div class="notelist">${n.items.map((x) => html`<div class="panel note-item${x.read || x.resolved ? ' read' : ''}">
+					<div class="ph" style="gap:8px"><span class="tag ${x.resolved ? 'ok' : LV[x.level]?.[0] || ''}">${x.resolved ? 'ERLEDIGT' : LV[x.level]?.[1] || x.level}</span>
+						<b class="name" style="font-size:14px">${de ? x.title_de : x.title_en}</b>${x.count > 1 ? html`<span class="tag">${x.count}×</span>` : ''}
+						<span class="ml mut" style="font-size:12px">${when(x.last)}</span></div>
+					${(de ? x.text_de : x.text_en) ? html`<p class="mut" style="margin:6px 0 0;font-size:13px">${de ? x.text_de : x.text_en}</p>` : ''}
+					<div class="acts" style="margin-top:10px">${x.read || x.resolved ? '' : html`<button class="btn sm" type="button" data-act="note-read" data-id="${x.id}">Gelesen</button>`}
+						<button class="btn sm ghost" type="button" data-act="note-del" data-id="${x.id}">Löschen</button></div></div>`)}</div>`
+				: html`<div class="panel"><div class="empty">${svg(I.ok)}<span>Keine Meldungen – alles in Ordnung.</span></div></div>`}
+				<p class="note">Die Box prüft alle 10 Minuten RAID, Laufwerke (eingehängt, Füllstand), Temperatur, SMART-Werte und Updates; fehlgeschlagene Cloud-Aufträge, App-Aufgaben und Speicher-Aufträge melden sich sofort. Gleiche Meldungen werden gezählt und höchstens einmal am Tag erneut verschickt.</p>
+			</section>
+			<aside class="aside">
+				<form class="panel" id="f-notify">
+					<div class="ph"><span class="pt">E-MAIL</span></div>
+					<label class="chk"><input type="checkbox" name="email"${c.email ? raw(' checked') : ''}><span>Meldungen per E-Mail schicken</span></label>
+					<div class="fields" style="grid-template-columns:1fr;margin-top:10px">
+						<label class="f"><span>MAILSERVER (SMTP)</span><input name="smtp_host" value="${c.smtp_host}" placeholder="smtp.example.org" autocomplete="off"></label>
+						<label class="f"><span>VERSCHLÜSSELUNG</span><select name="smtp_tls">${[['starttls', 'STARTTLS (Port 587)'], ['ssl', 'SSL/TLS (Port 465)'], ['none', 'keine (Port 25)']].map(([k, t]) => html`<option value="${k}"${(c.smtp_tls || 'starttls') === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+						<label class="f"><span>PORT (LEER = STANDARD)</span><input name="smtp_port" value="${c.smtp_port}" inputmode="numeric"></label>
+						<label class="f"><span>BENUTZER</span><input name="smtp_user" value="${c.smtp_user}" autocomplete="off"></label>
+						<label class="f"><span>PASSWORT</span><input name="smtp_pass" type="password" autocomplete="new-password" placeholder="${c.has_pass ? '•••••• (gespeichert)' : ''}"></label>
+						<label class="f"><span>ABSENDER</span><input name="mail_from" value="${c.mail_from}" placeholder="nas@example.org"></label>
+						<label class="f"><span>EMPFÄNGER (MEHRERE MIT KOMMA)</span><input name="mail_to" value="${c.mail_to}" placeholder="ich@example.org"></label>
+						<label class="f"><span>SCHICKEN</span>${lvSel('email_level', c.email_level)}</label>
+					</div>
+					<div class="ph" style="margin-top:18px"><span class="pt">PUSH</span></div>
+					<label class="chk"><input type="checkbox" name="push"${c.push ? raw(' checked') : ''}><span>Meldungen aufs Handy schicken</span></label>
+					<div class="fields" style="grid-template-columns:1fr;margin-top:10px">
+						<label class="f"><span>DIENST</span><select name="push_type">${[['ntfy', 'ntfy'], ['gotify', 'Gotify'], ['webhook', 'Webhook (JSON)']].map(([k, t]) => html`<option value="${k}"${(c.push_type || 'ntfy') === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+						<label class="f"><span>ADRESSE</span><input name="push_url" value="${c.push_url}" placeholder="https://ntfy.sh/mein-nas-thema"></label>
+						<label class="f"><span>ZUGANGSSCHLÜSSEL (OPTIONAL)</span><input name="push_token" type="password" autocomplete="new-password" placeholder="${c.has_token ? '•••••• (gespeichert)' : ''}"></label>
+						<label class="f"><span>SCHICKEN</span>${lvSel('push_level', c.push_level)}</label>
+					</div>
+					<p class="note">ntfy: Adresse mit Thema, z. B. <code>https://ntfy.sh/mein-nas-7f3k</code> (eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.</p>
+					<div class="ph" style="margin-top:18px"><span class="pt">GRENZEN</span></div>
+					<div class="fields">
+						<label class="f"><span>TEMPERATUR AB (°C)</span><input name="temp_max" type="number" min="40" max="70" value="${c.temp_max}"></label>
+						<label class="f"><span>LAUFWERK VOLL AB (%)</span><input name="disk_full" type="number" min="50" max="99" value="${c.disk_full}"></label>
+					</div>
+					<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Speichern</button><button class="btn ghost" type="button" data-act="note-test">Testnachricht</button></div>
+				</form>
+			</aside>
+		</div>`;
+	},
+
 	time() {
 		const t = S.time;
 		if (!t) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
@@ -2080,6 +2139,22 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'logs') loadLog();
+		if (sub === 'notifications') {
+			if (!S.noteCfg) loadNoteCfg();
+			if (!S.notes) loadNotes();
+			$('#f-notify')?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const f = e.target;
+				const a = { email: f.email.checked, smtp_host: f.smtp_host.value.trim(), smtp_tls: f.smtp_tls.value, smtp_port: f.smtp_port.value.trim(),
+					smtp_user: f.smtp_user.value.trim(), mail_from: f.mail_from.value.trim(), mail_to: f.mail_to.value.trim(), email_level: f.email_level.value,
+					push: f.push.checked, push_type: f.push_type.value, push_url: f.push_url.value.trim(), push_level: f.push_level.value,
+					temp_max: +f.temp_max.value, disk_full: +f.disk_full.value };
+				if (f.smtp_pass.value) a.smtp_pass = f.smtp_pass.value;
+				if (f.push_token.value) a.push_token = f.push_token.value;
+				try { S.noteCfg = await rpc('shareos.notify', 'set', a); toast('Gespeichert.'); renderMain(); }
+				catch (err) { toast('Meldungen: ' + err.message, true); }
+			});
+		}
 		if (sub === 'time') {
 			if (!S.time) loadTime();
 			clearInterval(S.clockTimer);
@@ -2409,6 +2484,21 @@ function fromLocalInput(v, tz) {
 	return Math.round(guess);
 }
 function setTime(t) { S.time = t; S.timeOffset = t.now - Math.floor(Date.now() / 1000); }
+async function loadNotes() {
+	try {
+		const n = await rpc('shareos.notify', 'list');
+		const was = S.notes?.unread;
+		S.notes = n;
+		if (was !== n.unread) renderHeader();
+		if (S.route.tab === 'system' && S.route.sub === 'notifications' && !$('#f-notify :focus')) renderMain();
+	} catch (e) { }
+}
+
+async function loadNoteCfg() {
+	try { S.noteCfg = await rpc('shareos.notify', 'get'); } catch (e) { toast('Meldungen: ' + e.message, true); }
+	if (S.route.tab === 'system' && S.route.sub === 'notifications') renderMain();
+}
+
 async function loadTime() {
 	try {
 		const [t, z] = await Promise.all([rpc('shareos.time', 'get'), S.zones ? null : rpc('shareos.setup', 'zones')]);
@@ -3318,6 +3408,18 @@ Object.assign(ACTIONS, {
 	'fb-crumb'(el) { fbLoad(el.dataset.p); },
 	'fb-up'() { const p = S.fb.path.split('/'); p.pop(); fbLoad(p.join('/')); },
 	'fb-dl'(el) { fbDownload(el.dataset.name); },
+	async 'note-read'(el) { try { await rpc('shareos.notify', 'read', { id: el.dataset.id }); } catch (e) { toast(e.message, true); } loadNotes(); },
+	async 'note-del'(el) {
+		if (el.dataset.id === 'all' && !await confirmDlg('Alle Meldungen löschen?', 'Die Liste wird geleert. Besteht ein Problem weiter, meldet die Box es bei der nächsten Prüfung wieder.', 'Löschen')) return;
+		try { await rpc('shareos.notify', 'delete', { id: el.dataset.id }); } catch (e) { toast(e.message, true); }
+		loadNotes();
+	},
+	async 'note-test'(el) {
+		el.disabled = true;
+		try { await rpc('shareos.notify', 'test'); toast('Testnachricht verschickt.'); }
+		catch (e) { toast('Test: ' + e.message, true); }
+		el.disabled = false;
+	},
 	'fb-app'(el) { fbOpenIn(el.dataset.app, el.dataset.name); },
 	'app-launch'(el) { const a = findApp(el.dataset.id); if (a) launchApp(a); },
 	'embed-close'() { closeEmbed(); },

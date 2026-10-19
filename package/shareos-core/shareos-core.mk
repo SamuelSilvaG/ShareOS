@@ -50,6 +50,7 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/file $(TARGET_DIR)/www-apps/_shareos/cgi/file
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-reset-access $(TARGET_DIR)/usr/sbin/shareos-reset-access
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-buttons $(TARGET_DIR)/usr/sbin/shareos-buttons
+	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-notify $(TARGET_DIR)/usr/sbin/shareos-notify
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-net $(TARGET_DIR)/usr/sbin/shareos-net
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S40network $(TARGET_DIR)/etc/init.d/S40network
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/network $(TARGET_DIR)/etc/config/network

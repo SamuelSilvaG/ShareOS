@@ -94,6 +94,10 @@ if [ "$CHECK" = "--check" ]; then
 	rm -rf $CT
 	# the web server restarts after a certificate change
 	sleep 2; for i in $(seq 50); do curl -s -o /dev/null "http://127.0.0.1:$PORT/" && break; sleep 0.2; done
+	t "notify: settings readable, no password" "$(rpc $SID shareos.notify get)" "d['result'][1]['temp_max']==55 and 'smtp_pass' not in d['result'][1]"
+	t "notify: invalid push address rejected" "$(rpc $SID shareos.notify set '{"push_url":"javascript:x"}')" "'push address' in d['result'][1]['error']"
+	t "notify: settings stored, password kept secret" "$(rpc $SID shareos.notify set '{"email":true,"smtp_host":"mail.example.org","smtp_pass":"geheim","mail_to":"a@example.org"}')" "d['result'][1]['email'] and d['result'][1]['has_pass'] and 'geheim' not in json.dumps(d)"
+	t "notify: list" "$(rpc $SID shareos.notify list)" "'items' in d['result'][1]"
 	t "language can be changed" "$(rpc $SID shareos.ui set '{"lang":"de"}')" "d['result'][1]['lang']=='de'"
 	t "invalid language rejected" "$(rpc $SID shareos.ui set '{"lang":"../x"}')" "'invalid' in d['result'][1]['error']"
 	t "hardware settings readable" "$(rpc $SID shareos.hw get)" "d['result'][1]['fan']['preset']=='balanced' and d['result'][1]['led']['status']=='heartbeat'"

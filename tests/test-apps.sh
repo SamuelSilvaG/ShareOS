@@ -162,6 +162,7 @@ check "job runs as the app user in its data folder" "echo '$o' | js \"d['rc']==0
 check "job cannot change the app files or read /etc/shadow" "echo '$L' | grep -q denied && echo '$L' | grep -q noshadow"
 o=$(run 'shareos-apps run-job ticker slow')
 check "time limit stops a job" "echo '$o' | js \"d['timeout'] and d['duration']<25\""
+check "failed task becomes a message" "run 'shareos-notify list' | js \"any(x['key']=='appjob-ticker-slow' and x['level']=='warn' for x in d['items'])\""
 run 'ubus call shareos.apps job_set "{\"id\":\"ticker\",\"job\":\"tick\",\"schedule\":\"* * * * *\"}"' > $T/js1
 check "rpc: too frequent schedule rejected" "grep -q 'every 5 minutes' $T/js1"
 rpc_ok=$(run 'ubus call shareos.apps job_set "{\"id\":\"ticker\",\"job\":\"tick\",\"schedule\":\"15 2 * * *\"}"')

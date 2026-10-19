@@ -36,10 +36,13 @@ jobs:
         run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-net.sh "$HOME/hostroot/bin/uci"
       - name: Button tests (reset/USB)
         run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-buttons.sh "$HOME/hostroot/bin"
+      - name: Notification tests
+        run: LD_LIBRARY_PATH="$HOME/hostroot/lib" tests/test-notify.sh "$HOME/hostroot/bin"
       - name: rpcd plugin compiles, no forward references
         run: |
           tests/check-ucode-order.py src/shareos-core/usr/share/rpcd/ucode/shareos.uc
           tests/check-ucode-order.py src/shareos-core/usr/sbin/shareos-apps
+          tests/check-ucode-order.py src/shareos-core/usr/sbin/shareos-notify
           tests/check-acl.py
           tests/check-i18n.py
           LD_LIBRARY_PATH="$HOME/hostroot/lib" "$HOME/hostroot/bin/ucode" -c -o /tmp/apps.ucc src/shareos-core/usr/sbin/shareos-apps

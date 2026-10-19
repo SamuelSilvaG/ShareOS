@@ -41,7 +41,11 @@ JOB=$JOBDIR/job
 MDCONF=/etc/mdadm.conf
 
 log() { logger -t shareos-storage "$*"; echo "$*"; }
-die() { log "ERROR: $*"; job_set state error error "$*"; exit 1; }
+die() {
+	log "ERROR: $*"; job_set state error error "$*"
+	[ -n "$IN_JOB" ] && shareos-notify send error storage storage-job "Speicher-Auftrag fehlgeschlagen" "Storage job failed" "$*" "$*" >/dev/null 2>&1
+	exit 1
+}
 
 # --- job state (read by the rpcd plugin) ---------------------------------------
 job_set() {
