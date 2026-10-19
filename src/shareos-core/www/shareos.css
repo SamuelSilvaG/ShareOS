@@ -271,3 +271,10 @@ label.btn.dis{opacity:.45;cursor:not-allowed}
 .card .icon .appicon{width:100%;height:100%;border:0;padding:6px;background:none}
 a.card.applink{text-decoration:none;color:inherit}
 a.card.applink:hover{border-color:var(--dim);box-shadow:var(--glow)}
+
+/* app shown inside ShareOS (permission "embed") */
+.embedwrap{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.55)}
+.embedbox{width:min(1200px,100%);height:min(860px,100%);display:flex;flex-direction:column;padding:0;overflow:hidden}
+.embedbox .ph{padding:10px 14px;margin:0;border-bottom:1px solid var(--line);gap:8px}
+.embedbox iframe{flex:1;width:100%;border:0;background:var(--bg)}
+@media (max-width:640px){.embedwrap{padding:0}.embedbox{border-radius:0}}

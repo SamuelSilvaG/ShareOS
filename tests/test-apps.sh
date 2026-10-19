@@ -173,6 +173,36 @@ check "update keeps the own schedule, removed jobs disappear" "run 'shareos-apps
 run 'shareos-apps remove ticker' >/dev/null
 check "remove: user, data, jobs and cron entries gone" "! grep -q '^app-ticker:' $R/etc/passwd && ! grep -q '^app-ticker:' $R/etc/group && [ ! -e $R/var/lib/shareos-apps/ticker ] && ! run 'uci show apps' | grep -q appjob && ! grep -q 'run-job ticker' $R/etc/crontabs/root"
 
+# --- app platform: theme/SDK, opening files in an app ---------------------------------
+check "SDK and theme served to the apps" "curl -s http://127.0.0.1:$PORT/_shareos/app.js | grep -q 'window.ShareOS' && curl -s http://127.0.0.1:$PORT/_shareos/theme.css | grep -q 'sos-menubar'"
+mkapp $T/ed editor 1.0.0 && python3 -c "import json; f='$T/ed/app.json'; d=json.load(open(f)); d.update(window={'width': 900, 'height': 600}, opens=[{'ext': ['.txt', '.md'], 'mode': 'edit'}, {'ext': ['.png'], 'mode': 'view'}]); json.dump(d,open(f,'w'))" && pack $T/ed $P/editor.sapp
+mkapp $T/eb embedder 1.0.0 && python3 -c "import json; f='$T/eb/app.json'; d=json.load(open(f)); d.update(permissions=['embed'], opens=[{'ext': ['TXT']}]); json.dump(d,open(f,'w'))" && pack $T/eb $P/embedder-bad.sapp
+mkapp $T/ew wide 1.0.0 && python3 -c "import json; f='$T/ew/app.json'; d=json.load(open(f)); d.update(window={'width': 99999}); json.dump(d,open(f,'w'))" && pack $T/ew $P/wide.sapp
+check "manifest: invalid file extension refused" "run 'shareos-apps install-file /tmp/pkg/embedder-bad.sapp' | grep -q 'invalid extension'"
+check "manifest: window size checked" "run 'shareos-apps install-file /tmp/pkg/wide.sapp' | grep -q 'window width'"
+check "manifest: window and opens accepted and listed" "run 'shareos-apps install-file /tmp/pkg/editor.sapp' | js \"d.get('ok')\" && run 'shareos-apps list' | js \"[a for a in d['apps'] if a['id']=='editor'][0]['opens'][0]=={'ext':['.txt','.md'],'mode':'edit','label':None} and [a for a in d['apps'] if a['id']=='editor'][0]['window']=={'width':900,'height':600}\""
+run "uci set storage.daten=volume; uci set storage.daten.uuid=0; uci commit storage; mkdir -p /mnt/daten /tmp/shareos-sessions" >/dev/null
+mount -t tmpfs tmpfs "$R/mnt/daten"
+printf 'Hallo Welt\n' > "$R/mnt/daten/notiz.txt"; printf 'x' > "$R/mnt/daten/bild.png"; printf 'x' > "$R/mnt/daten/archiv.zip"
+SIDA=0123456789abcdef0123456789abcdef; echo root > "$R/tmp/shareos-sessions/$SIDA"
+s() { printf '{"ubus_rpc_session":"%s"%s}' "$SIDA" "${1:-}"; }
+check "openers: apps that open files" "rpc shareos.files openers '$(s)' | js \"[a['id'] for a in d['apps']]==['editor'] and d['port']==$PORT\""
+check "app ticket: file type the app does not open refused" "rpc shareos.files app_ticket '$(s ',"root":"daten","path":"","name":"archiv.zip","app":"editor"')' | grep -q 'does not open'"
+check "app ticket: unknown app refused" "rpc shareos.files app_ticket '$(s ',"root":"daten","path":"","name":"notiz.txt","app":"nope"')' | grep -q 'not available'"
+check "app ticket: without session refused" "rpc shareos.files app_ticket '{\"root\":\"daten\",\"name\":\"notiz.txt\",\"app\":\"editor\"}' | grep -q 'not allowed'"
+TK=$(rpc shareos.files app_ticket "$(s ',"root":"daten","path":"","name":"notiz.txt","app":"editor"')" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["ticket"] if d.get("mode")=="edit" else "")')
+TV=$(rpc shareos.files app_ticket "$(s ',"root":"daten","path":"","name":"bild.png","app":"editor"')" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["ticket"] if d.get("mode")=="view" else "")')
+F=http://127.0.0.1:$PORT/_shareos/cgi/file
+check "app ticket: edit for .txt, view for .png" "[ \${#TK} -eq 32 ] && [ \${#TV} -eq 32 ]"
+check "app reads the file with its ticket" "[ \"\$(curl -s '$F?t=$TK')\" = 'Hallo Welt' ] && curl -s '$F?t=$TK&info=1' | js \"d['name']=='notiz.txt' and d['mode']=='edit' and d['size']==11\""
+check "app saves the file (twice), owner kept" "curl -s -X PUT --data-binary 'Neu 1' '$F?t=$TK' | js \"d['ok']\" && curl -s -X PUT --data-binary 'Neu 2' '$F?t=$TK' | js \"d['ok']\" && [ \"\$(cat $R/mnt/daten/notiz.txt)\" = 'Neu 2' ] && ! ls -a $R/mnt/daten | grep -q part"
+check "view ticket cannot save" "curl -s -X PUT --data-binary 'evil' '$F?t=$TV' | grep -q 'read-only' && [ \"\$(cat $R/mnt/daten/bild.png)\" = x ]"
+check "invalid ticket refused" "curl -s '$F?t=ffffffffffffffffffffffffffffffff' | grep -q 'invalid ticket' && curl -s '$F?t=../../etc/shadow' | grep -q 'invalid ticket'"
+sed -i '4s/.*/1/' "$R/tmp/shareos-appfiles/$TK"
+check "expired ticket refused" "curl -s '$F?t=$TK' | grep -q 'expired'"
+check "only ShareOS scripts run as CGI on the app server" "[ \"\$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$PORT/cgi-bin/x)\" != 200 ]"
+umount -l "$R/mnt/daten"
+
 # --- minimum ShareOS version on a beta of the box ---------------------------------
 cp $R/etc/shareos-release $T/release.bak
 sed -i 's/^SHAREOS_VERSION=.*/SHAREOS_VERSION="0.1.0-beta.10"/' $R/etc/shareos-release

@@ -26,6 +26,14 @@
 //          crond as the app's own user app-<id> (no login, no access to other
 //          users' files) in the app's data folder, with a time limit; the
 //          schedules can be changed or switched off under APPS.
+//   embed  may be shown as a page inside the ShareOS interface (meant for
+//          apps that only have settings); others open in their own window.
+// Window and files (optional):
+//   "window": { "width": 900, "height": 640 }      size of the app's window
+//   "opens": [ { "ext": [".txt", ".md"], "mode": "edit", "label": {…} } ]
+//          file types the app opens from the file browser; "edit" may save
+//          back, "view" only reads. The app gets the file through the
+//          ShareOS app SDK (/_shareos/app.js) with a ticket bound to it.
 // Web apps are served by their own web server (port apps.store.port, default
 // 8081) from /www-apps/<id>/ – another origin than the admin interface, so an
 // app cannot use the admin's login.
@@ -51,7 +59,7 @@ const MAX_PKG = 64 * 1048576;       // download / upload
 const MAX_FILES = 40 * 1048576;     // unpacked
 const ID_RE = /^[a-z][a-z0-9-]{1,31}$/;
 const JOB_RE = /^[a-z][a-z0-9-]{0,23}$/;
-const PERMISSIONS = { cron: 1 };
+const PERMISSIONS = { cron: 1, embed: 1 };
 const MAX_JOBS = 5;
 const MAX_LOG = 65536;
 // the test suite serves catalogs and packages from files
@@ -159,6 +167,29 @@ function jobs_of(id, a, c) {
 	return list;
 }
 
+// optional "window" and "opens" of the manifest
+function check_ui(a) {
+	if (a.window != null) {
+		let w = a.window;
+		if (type(w) != 'object') return 'invalid window';
+		for (let k in [ 'width', 'height' ])
+			if (w[k] != null && !(type(w[k]) == 'int' && w[k] >= 200 && w[k] <= 4000)) return 'window ' + k + ': 200 … 4000';
+	}
+	if (a.opens == null) return null;
+	if (type(a.opens) != 'array' || length(a.opens) > 16) return 'invalid opens (at most 16 entries)';
+	for (let o in a.opens) {
+		if (type(o) != 'object' || type(o.ext) != 'array' || !length(o.ext) || length(o.ext) > 32) return 'opens: ext must list file extensions';
+		for (let e in o.ext)
+			if (type(e) != 'string' || !match(e, /^\.[a-z0-9]{1,10}$/)) return 'opens: invalid extension ' + e + ' (like ".txt", lower case)';
+		if (o.mode != null && o.mode != 'view' && o.mode != 'edit') return 'opens: mode is "view" or "edit"';
+	}
+	return null;
+}
+
+function opens_of(a) {
+	return map(type(a.opens) == 'array' ? a.opens : [], (o) => ({ ext: o.ext, mode: o.mode ?? 'view', label: o.label ?? null }));
+}
+
 function check_jobs(a, dir) {
 	let perms = a.permissions ?? [];
 	if (type(perms) != 'array') return 'invalid permissions';
@@ -227,6 +258,8 @@ function installed() {
 			description: a.description ?? '', type: a.type ?? 'webapp', entry: a.entry ?? 'index.html',
 			icon: a.icon ?? null, category: a.category ?? '', homepage: a.homepage ?? '', license: a.license ?? '',
 			permissions: a.permissions ?? [], jobs: jobs_of(id, a, c),
+			window: type(a.window) == 'object' ? { width: a.window.width ?? null, height: a.window.height ?? null } : null,
+			opens: opens_of(a),
 			verified: c.get('apps', s, 'verified') == '1', source: c.get('apps', s, 'source') ?? '',
 			installed: +(c.get('apps', s, 'installed') ?? 0),
 			users: type(users) == 'array' ? users : (users ? [ users ] : []) });
@@ -328,7 +361,7 @@ function check_app(dir) {
 	if (match(e, /(^\/|\.\.)/) || stat(dir + '/' + e)?.type != 'file') return { error: 'entry file ' + e + ' missing' };
 	if (too_old(a.min_shareos))
 		return { error: 'needs ShareOS ' + a.min_shareos + ' or newer' };
-	let je = check_jobs(a, dir);
+	let je = check_jobs(a, dir) ?? check_ui(a);
 	if (je) return { error: je };
 	return a;
 }

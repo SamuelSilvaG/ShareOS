@@ -232,6 +232,13 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **System → Zeit:** Die Uhr der Box läuft live in ihrer Zeitzone. Zeitzone ändern, NTP aus- und einschalten, eigene Zeitserver eintragen (z. B. `fritz.box`), *Jetzt abgleichen*. Mit NTP aus lässt sich die Uhr von Hand stellen oder die Zeit des Browsers übernehmen. Protokolle zeigen danach die Ortszeit.
 - **System → Darstellung → Sprache:** 10 Sprachen (Englisch, Deutsch, Chinesisch, Hindi, Spanisch, Französisch, Arabisch, Bengalisch, Portugiesisch, Russisch). Arabisch stellt die Seite auf rechts-nach-links um. Die Übersetzungen außer Deutsch/Englisch sind maschinell – Fehler bitte melden.
 
+## 14a. Dateien in Apps öffnen
+
+- **Webpad 1.1** installieren (Store). Im Dateibrowser steht bei einer `.txt`-Datei **Webpad ↗**; darauf (oder auf den Dateinamen) klicken: Webpad öffnet sich in einem eigenen Fenster mit der Datei.
+- Etwas ändern, **Ctrl+S**: Meldung „gespeichert“; der Dateibrowser zeigt neue Größe und Zeit. Besitzer und Rechte der Datei bleiben.
+- Aussehen: in ShareOS Hell/Dunkel oder die Akzentfarbe wechseln – eine offene App zieht mit.
+- Benutzer mit persönlichem Ordner können das genauso mit ihren Dateien.
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

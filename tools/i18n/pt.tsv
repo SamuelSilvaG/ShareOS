@@ -1098,3 +1098,9 @@ E870	SOMA DE VERIFICAÇÃO (.SHA256, OPCIONAL)
 E871	Enviado – o pacote está sendo verificado.
 E872	Arquivo enviado – verificado: SHA-256 do arquivo .sha256, somas de todas as partes, adequado para este dispositivo. Configurações e pacotes são mantidos.
 E873	Arquivo enviado – verificado: somas de todas as partes, adequado para este dispositivo (sem arquivo .sha256). Configurações e pacotes são mantidos.
+E874	Abrir
+E875	Em janela própria ↗
+E876	Exibido no ShareOS
+E877	Pode ser exibido como página dentro da interface do ShareOS (em vez de janela própria).
+P188	Abrir com $1
+P189	Abrir: $1

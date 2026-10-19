@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "校验和（.SHA256，可选）",
 		"Hochgeladen – das Paket wird geprüft.": "已上传 – 正在检查软件包。",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "已上传的文件 – 已检查：.sha256 文件的 SHA-256、所有部分的校验和、适用于此设备。设置和软件包将保留。",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "已上传的文件 – 已检查：所有部分的校验和、适用于此设备（无 .sha256 文件）。设置和软件包将保留。"
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "已上传的文件 – 已检查：所有部分的校验和、适用于此设备（无 .sha256 文件）。设置和软件包将保留。",
+		"Öffnen": "打开",
+		"In eigenem Fenster ↗": "在独立窗口中 ↗",
+		"In ShareOS anzeigen": "在 ShareOS 中显示",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "可以作为页面显示在 ShareOS 界面中（而不是独立窗口）。"
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1：权限"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"用 $1 打开"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"打开：$1"
 		]
 	],
 	"words": [

@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "CHECKSUM (.SHA256, OPTIONAL)",
 		"Hochgeladen – das Paket wird geprüft.": "Uploaded – the bundle is being checked.",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Uploaded file – verified: SHA-256 of the .sha256 file, checksums of all parts, made for this device. Settings and packages are kept.",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Uploaded file – verified: checksums of all parts, made for this device (without .sha256 file). Settings and packages are kept."
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Uploaded file – verified: checksums of all parts, made for this device (without .sha256 file). Settings and packages are kept.",
+		"Öffnen": "Open",
+		"In eigenem Fenster ↗": "In its own window ↗",
+		"In ShareOS anzeigen": "Shown in ShareOS",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "May be shown as a page inside the ShareOS interface (instead of its own window)."
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1: permissions"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"Open with $1"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"Open: $1"
 		]
 	],
 	"words": [

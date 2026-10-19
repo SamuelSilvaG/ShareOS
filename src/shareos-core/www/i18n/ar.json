@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "المجموع الاختباري (‎.SHA256‎، اختياري)",
 		"Hochgeladen – das Paket wird geprüft.": "تم الرفع – جارٍ فحص الحزمة.",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "ملف مرفوع – تم الفحص: SHA-256 حسب ملف ‎.sha256‎، والمجاميع الاختبارية لكل الأجزاء، ومناسب لهذا الجهاز. تبقى الإعدادات والحزم.",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "ملف مرفوع – تم الفحص: المجاميع الاختبارية لكل الأجزاء، ومناسب لهذا الجهاز (بدون ملف ‎.sha256‎). تبقى الإعدادات والحزم."
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "ملف مرفوع – تم الفحص: المجاميع الاختبارية لكل الأجزاء، ومناسب لهذا الجهاز (بدون ملف ‎.sha256‎). تبقى الإعدادات والحزم.",
+		"Öffnen": "فتح",
+		"In eigenem Fenster ↗": "في نافذة مستقلة ↗",
+		"In ShareOS anzeigen": "يُعرض داخل ShareOS",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "يمكن عرضه كصفحة داخل واجهة ShareOS (بدلاً من نافذة مستقلة)."
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1: الأذونات"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"فتح باستخدام $1"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"فتح: $1"
 		]
 	],
 	"words": [

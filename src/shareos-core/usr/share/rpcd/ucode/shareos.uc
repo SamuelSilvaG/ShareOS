@@ -11,7 +11,8 @@
 //   shareos.paperless get | set_global | test | inbox_set | inbox_del | run | tags | log
 //   shareos.cloud    status | install | remotes | remote_add | remote_del | remote_test |
 //                    jobs | job_set | job_del | job_run | job_stop | job_log
-//   shareos.files    roots | list | mkdir | rename | move | delete | ticket
+//   shareos.files    roots | list | mkdir | rename | move | delete | ticket |
+//                    openers | app_ticket   (open a file in an app)
 //                    (file browser: admins all volumes, users their personal folder)
 //   shareos.apps     installed | catalog | install | status | upload_ticket | install_upload |
 //                    remove | set | store_get | store_set   (web apps, own web server)
@@ -406,8 +407,10 @@ function cert_info() {
 }
 
 // uhttpd runs under shareos-uhttpd, which reads the settings again on restart
+// the admin web server is restarted by its supervisor (shareos-uhttpd);
+// the apps web server shares the certificate and is started again here
 function restart_uhttpd() {
-	system('(sleep 1; killall uhttpd) >/dev/null 2>&1 &');
+	system('(sleep 1; killall uhttpd; sleep 2; /etc/init.d/S51apps start) >/dev/null 2>&1 &');
 }
 
 // our self-signed certificate names hostname and IP: renew it after a change
@@ -966,6 +969,7 @@ function apps_for(u) {
 /* ---------- file browser ---------- */
 
 const FILES_TICKETS = '/tmp/shareos-files';
+const APP_TICKETS = '/tmp/shareos-appfiles';     // read by /www-apps/_shareos/cgi/file
 const FILES_MAX = 2000;            // entries listed per folder
 
 function acc_role(u) { return u == 'root' ? 'admin' : (cursor().get('accounts', u, 'role') ?? 'share'); }
@@ -2374,6 +2378,42 @@ return {
 				let t = new_token();
 				writefile(FILES_TICKETS + '/' + t, sprintf('%s\n%s\n%s\n%d\n%s\n', a.mode, acc_role(u) == 'admin' ? 'root' : u, target, time() + 120, pct_enc(a.name)));
 				return { url: '/cgi-bin/files?t=' + t };
+			}
+		},
+
+		// apps that open files (manifest "opens") for this account
+		openers: {
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				return { ...apps_server(), apps: map(filter(apps_for(u), (a) => length(a.opens ?? []) > 0),
+					(a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, window: a.window, opens: a.opens })) };
+			}
+		},
+
+		// open a file in an app: a ticket for the apps web server
+		// (/_shareos/cgi/file), bound to this file, this app and this account
+		app_ticket: {
+			args: { root: '', path: '', name: '', app: '' },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				if (!name_ok(a.name)) return { error: 'invalid name' };
+				let app = filter(apps_for(u), (x) => x.id == a.app)[0];
+				if (!app) return { error: 'app not available' };
+				let m = match(lc(a.name), /(\.[a-z0-9]{1,10})$/), mode = null;
+				for (let o in app.opens ?? [])
+					if (m && index(o.ext, m[1]) >= 0 && mode != 'edit') mode = o.mode;
+				if (!mode) return { error: 'the app does not open this file type' };
+				let p = files_path(u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let target = p.abs + '/' + a.name;
+				if (lstat(target)?.type != 'file') return { error: 'not a file' };
+				system('mkdir -p ' + APP_TICKETS + ' && chmod 700 ' + APP_TICKETS);
+				system('find ' + APP_TICKETS + ' -type f -mmin +480 -delete 2>/dev/null');
+				let t = new_token();
+				writefile(APP_TICKETS + '/' + t, sprintf('%s\n%s\n%s\n%d\n%s\n%s\n', mode, acc_role(u) == 'admin' ? 'root' : u, target, time() + 8 * 3600, app.id, pct_enc(a.name)));
+				return { ticket: t, mode, app: app.id, entry: app.entry, window: app.window, ...apps_server() };
 			}
 		}
 	},

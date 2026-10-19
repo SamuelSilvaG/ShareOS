@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "चेकसम (.SHA256, वैकल्पिक)",
 		"Hochgeladen – das Paket wird geprüft.": "अपलोड हुआ – पैकेज की जाँच हो रही है।",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "अपलोड की गई फ़ाइल – जाँची गई: .sha256 फ़ाइल के अनुसार SHA-256, सभी भागों के चेकसम, इस डिवाइस के लिए उपयुक्त। सेटिंग्स और पैकेज बने रहते हैं।",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "अपलोड की गई फ़ाइल – जाँची गई: सभी भागों के चेकसम, इस डिवाइस के लिए उपयुक्त (.sha256 फ़ाइल के बिना)। सेटिंग्स और पैकेज बने रहते हैं।"
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "अपलोड की गई फ़ाइल – जाँची गई: सभी भागों के चेकसम, इस डिवाइस के लिए उपयुक्त (.sha256 फ़ाइल के बिना)। सेटिंग्स और पैकेज बने रहते हैं।",
+		"Öffnen": "खोलें",
+		"In eigenem Fenster ↗": "अलग विंडो में ↗",
+		"In ShareOS anzeigen": "ShareOS में दिखाया जाता है",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "ShareOS इंटरफ़ेस के अंदर एक पेज के रूप में दिखाया जा सकता है (अलग विंडो के बजाय)।"
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1: अनुमतियाँ"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"$1 से खोलें"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"खोलें: $1"
 		]
 	],
 	"words": [

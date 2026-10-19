@@ -78,7 +78,8 @@
 				],
 				"shareos.files": [
 					"roots",
-					"list"
+					"list",
+					"openers"
 				],
 				"shareos.apps": [
 					"installed",
@@ -216,7 +217,8 @@
 					"rename",
 					"move",
 					"delete",
-					"ticket"
+					"ticket",
+					"app_ticket"
 				],
 				"shareos.apps": [
 					"install",
@@ -253,7 +255,8 @@
 				],
 				"shareos.files": [
 					"roots",
-					"list"
+					"list",
+					"openers"
 				]
 			}
 		},
@@ -275,7 +278,8 @@
 					"rename",
 					"move",
 					"delete",
-					"ticket"
+					"ticket",
+					"app_ticket"
 				]
 			}
 		}

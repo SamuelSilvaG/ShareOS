@@ -96,7 +96,7 @@ watch() {
 			fb=$(fallback_ip); [ -n "$fb" ] && ip addr del "$fb/24" dev $IF 2>/dev/null
 			ifdown $IF 2>/dev/null; ifup $IF
 			# the self-signed certificate names the address
-			shareos-cert ensure 2>/dev/null | grep -q renewed && killall uhttpd 2>/dev/null
+			shareos-cert ensure 2>/dev/null | grep -q renewed && { killall uhttpd 2>/dev/null; sleep 2; /etc/init.d/S51apps start >/dev/null 2>&1; }
 			exit 0
 		fi
 	done

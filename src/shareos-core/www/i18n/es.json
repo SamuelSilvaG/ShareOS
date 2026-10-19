@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "SUMA DE COMPROBACIÓN (.SHA256, OPCIONAL)",
 		"Hochgeladen – das Paket wird geprüft.": "Subido – se está comprobando el paquete.",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Archivo subido – comprobado: SHA-256 del archivo .sha256, sumas de todas las partes, apto para este dispositivo. Los ajustes y paquetes se conservan.",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Archivo subido – comprobado: sumas de todas las partes, apto para este dispositivo (sin archivo .sha256). Los ajustes y paquetes se conservan."
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Archivo subido – comprobado: sumas de todas las partes, apto para este dispositivo (sin archivo .sha256). Los ajustes y paquetes se conservan.",
+		"Öffnen": "Abrir",
+		"In eigenem Fenster ↗": "En su propia ventana ↗",
+		"In ShareOS anzeigen": "Se muestra en ShareOS",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Puede mostrarse como página dentro de la interfaz de ShareOS (en lugar de en su propia ventana)."
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1: permisos"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"Abrir con $1"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"Abrir: $1"
 		]
 	],
 	"words": [

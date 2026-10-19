@@ -876,7 +876,11 @@
 		"PRÜFSUMME (.SHA256, OPTIONAL)": "SOMME DE CONTRÔLE (.SHA256, FACULTATIF)",
 		"Hochgeladen – das Paket wird geprüft.": "Téléversé – le paquet est en cours de vérification.",
 		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Fichier téléversé – vérifié : SHA-256 du fichier .sha256, sommes de toutes les parties, adapté à cet appareil. Les réglages et paquets sont conservés.",
-		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Fichier téléversé – vérifié : sommes de toutes les parties, adapté à cet appareil (sans fichier .sha256). Les réglages et paquets sont conservés."
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Fichier téléversé – vérifié : sommes de toutes les parties, adapté à cet appareil (sans fichier .sha256). Les réglages et paquets sont conservés.",
+		"Öffnen": "Ouvrir",
+		"In eigenem Fenster ↗": "Dans sa propre fenêtre ↗",
+		"In ShareOS anzeigen": "Affichée dans ShareOS",
+		"Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).": "Peut être affichée comme une page dans l'interface ShareOS (au lieu de sa propre fenêtre)."
 	},
 	"patterns": [
 		[
@@ -1630,6 +1634,14 @@
 		[
 			"^(.+): Berechtigungen$",
 			"$1 : autorisations"
+		],
+		[
+			"^Öffnen mit (.+)$",
+			"Ouvrir avec $1"
+		],
+		[
+			"^Öffnen: (.+)$",
+			"Ouvrir : $1"
 		]
 	],
 	"words": [
