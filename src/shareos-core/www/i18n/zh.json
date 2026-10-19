@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "允许并安装",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "应用将被删除，包括其任务和设备上的数据。",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Cron 格式的计划 (分 时 日 月 星期)，最多每 5 分钟一次，例如",
-		"= täglich 3:30 Uhr.": "= 每天 3:30。"
+		"= täglich 3:30 Uhr.": "= 每天 3:30。",
+		"Update ohne Internet:": "无网络更新：",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "上传 ShareOS 版本的 .sysupgrade.tar，最好连同其 .sha256 文件。检查方式与从 GitHub 更新相同。",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "校验和（.SHA256，可选）",
+		"Hochgeladen – das Paket wird geprüft.": "已上传 – 正在检查软件包。",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "已上传的文件 – 已检查：.sha256 文件的 SHA-256、所有部分的校验和、适用于此设备。设置和软件包将保留。",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "已上传的文件 – 已检查：所有部分的校验和、适用于此设备（无 .sha256 文件）。设置和软件包将保留。"
 	},
 	"patterns": [
 		[

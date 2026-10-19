@@ -7,6 +7,8 @@
 //   shareos-update apply <tag>           install a verified download, then reboot
 //   shareos-update status                current state (JSON)
 //   shareos-update cancel                forget a download
+//   shareos-update local <file> [sha256] verify an uploaded .sysupgrade.tar (no internet
+//                                        needed); then "apply local" installs it
 //
 // Everything prints one JSON object on stdout; the rpcd plugin
 // (/usr/share/rpcd/ucode/shareos.uc) uses the same commands.
@@ -339,6 +341,48 @@ function cmd_download(tag) {
 	return out(s);
 }
 
+// a bundle uploaded in the web interface (no internet, GitHub blocked …).
+// Same checks as a download; the outer SHA-256 only when the .sha256 of the
+// release was given too (otherwise integrity comes from SHA256SUMS inside).
+function cmd_local(file, sha) {
+	let s = load_state();
+	if (s.state == 'downloading' || s.state == 'verifying' || s.state == 'flashing')
+		return out({ ...s, error: 'busy: ' + s.state });
+	let dir = STATE_DIR + '/dl';
+	mkdir(STATE_DIR);
+	mkdir(dir);
+	unlink(dir + '/fw.tar');
+	unlink(dir + '/fw.tar.part');
+	let st = file ? stat(file) : null;
+	s.release = { tag: 'local', version: '?', local: true, size: st?.size ?? 0 };
+	delete s.error;
+	if (!st || st.type != 'file')
+		fail(s, 'no uploaded file');
+	if (!rename(file, dir + '/fw.tar') && capture([ 'mv', file, dir + '/fw.tar' ]).rc != 0)
+		fail(s, 'cannot move the uploaded file');
+
+	s.state = 'verifying';
+	save_state(s);
+	let have = match(capture([ 'sha256sum', dir + '/fw.tar' ]).out, /^([0-9a-f]{64})/);
+	if (!have)
+		fail(s, 'cannot read the uploaded file');
+	if (sha) {
+		let want = match(sha, /([0-9a-f]{64})/);
+		if (!want)
+			fail(s, 'checksum file is invalid');
+		if (want[1] != have[1])
+			fail(s, 'SHA-256 mismatch – the file does not match its .sha256');
+		s.release.sha_checked = true;
+	}
+	writefile(dir + '/fw.sha256', have[1] + '  fw.tar\n');
+	verify_image(s, dir, s.release);
+	s.release.version = s.bundle.version;
+
+	s.state = 'ready';
+	save_state(s);
+	return out(s);
+}
+
 function mtd_by_name(name) {
 	for (let line in split(readfile(ROOT + '/proc/mtd') ?? '', '\n')) {
 		let m = match(line, /^(mtd[0-9]+): ([0-9a-f]+) [0-9a-f]+ "([^"]+)"/);
@@ -484,6 +528,7 @@ case 'download': cmd_download(ARGV[1]); break;
 case 'apply':    cmd_apply(ARGV[1]); break;
 case 'status':   cmd_status(); break;
 case 'cancel':   cmd_cancel(); break;
+case 'local':    cmd_local(ARGV[1], ARGV[2]); break;
 case 'ack':      cmd_ack(); break;
 default:
 	warn('usage: shareos-update check [stable|beta] | auto | download <tag> | apply <tag> | status | cancel | ack\n');

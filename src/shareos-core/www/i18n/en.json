@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "Allow & install",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "The app is deleted, with its tasks and its data on the box.",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Schedule in cron format (minute hour day month weekday), at most every 5 minutes, e.g.",
-		"= täglich 3:30 Uhr.": "= daily at 3:30."
+		"= täglich 3:30 Uhr.": "= daily at 3:30.",
+		"Update ohne Internet:": "Update without internet:",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "upload the .sysupgrade.tar of a ShareOS release, preferably with its .sha256 file. It is checked like an update from GitHub.",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "CHECKSUM (.SHA256, OPTIONAL)",
+		"Hochgeladen – das Paket wird geprüft.": "Uploaded – the bundle is being checked.",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Uploaded file – verified: SHA-256 of the .sha256 file, checksums of all parts, made for this device. Settings and packages are kept.",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Uploaded file – verified: checksums of all parts, made for this device (without .sha256 file). Settings and packages are kept."
 	},
 	"patterns": [
 		[

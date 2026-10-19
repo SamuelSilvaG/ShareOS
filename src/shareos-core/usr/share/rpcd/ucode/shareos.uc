@@ -2602,6 +2602,31 @@ return {
 			}
 		},
 
+		// update without internet: upload the .sysupgrade.tar of a release
+		local_ticket: {
+			call: function() {
+				system('mkdir -p ' + FILES_TICKETS + ' /tmp/shareos-fw && chmod 700 ' + FILES_TICKETS + ' /tmp/shareos-fw; rm -f /tmp/shareos-fw/upload.tar');
+				let t = new_token();
+				writefile(FILES_TICKETS + '/' + t, sprintf('put\nroot\n/tmp/shareos-fw/upload.tar\n%d\nupload.tar\n', time() + 300));
+				return { url: '/cgi-bin/files?t=' + t };
+			}
+		},
+
+		local: {
+			// sha256: content of the release's .sha256 file (optional)
+			args: { sha256: '' },
+			call: function(req) {
+				let sha = req.args.sha256 ?? '';
+				let m = match(sha, /[0-9a-f]{64}/);
+				if (sha != '' && !m) return { error: 'checksum file is invalid' };
+				if (!stat('/tmp/shareos-fw/upload.tar')) return { error: 'no uploaded file' };
+				let s = run_updater([ 'status' ]);
+				if (s.state == 'downloading' || s.state == 'verifying' || s.state == 'flashing')
+					return { error: 'busy: ' + s.state };
+				return spawn_updater(m ? [ 'local', '/tmp/shareos-fw/upload.tar', m[0] ] : [ 'local', '/tmp/shareos-fw/upload.tar' ]);
+			}
+		},
+
 		// another firmware file in D-Link format (.bin), e.g. back to Alt-F
 		bin_ticket: {
 			call: function() {

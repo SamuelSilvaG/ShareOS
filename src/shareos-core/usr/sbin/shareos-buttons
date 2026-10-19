@@ -1,0 +1,138 @@
+#!/usr/bin/ucode -S
+//
+// shareos-buttons – the buttons handled by the kernel's gpio-keys driver
+//
+//   Reset button (back, pin hole), held and released after
+//     less than 5 s    nothing (a slip is harmless)
+//     5 … 10 s         access reset: network back to DHCP (fallback
+//                      192.168.0.32), root password "shareos", web interface
+//                      over http again with a new self-signed certificate;
+//                      users, shares, apps and data stay; then reboot
+//     10 … 15 s        nothing (let go here to cancel)
+//     15 s or longer   factory reset: all settings and installed packages are
+//                      removed on the next boot; the data on the disks stays
+//   The orange USB LED shows the zone while the button is held: blinking
+//   slowly = access reset, off = cancel, blinking fast = factory reset.
+//
+//   USB button (front): safely removes all USB drives (like "Safely remove").
+//
+// The durations come from the kernel's event timestamps.
+//   SHAREOS_BUTTONS_DEV=<file>  read events from this file (tests)
+//   SHAREOS_BUTTONS_DRY=1       print the actions instead of running them
+//
+'use strict';
+
+import { open, popen, readfile, glob } from 'fs';
+import * as struct from 'struct';
+
+const EV_KEY = 1;
+const KEY_RESTART = 0x198;          // reset button
+const KEY_COPY = 0x85;              // USB button
+const ACCESS_MIN = 5, ACCESS_MAX = 10, FACTORY_MIN = 15;
+const DRY = !!getenv('SHAREOS_BUTTONS_DRY');
+
+function log(msg) {
+	if (DRY) print('log: ' + msg + '\n');
+	else system('logger -t shareos-buttons ' + "'" + replace(msg, "'", "'\\''") + "'");
+}
+
+function run(cmd) {
+	if (DRY) print('run: ' + cmd + '\n');
+	else system(cmd);
+}
+
+// the event device of gpio-keys
+function find_dev() {
+	let env = getenv('SHAREOS_BUTTONS_DEV');
+	if (env) return env;
+	for (let d in glob('/sys/class/input/event*'))
+		if (trim(readfile(d + '/device/name') ?? '') == 'gpio-keys')
+			return '/dev/input/' + substr(d, rindex(d, '/') + 1);
+	return null;
+}
+
+// LED feedback while the reset button is held (background shell, killed on release)
+let feedback = null;
+
+function feedback_start() {
+	if (DRY) return;
+	let p = popen('/bin/sh -c ' + "'" + 'L=$(ls -d /sys/class/leds/*:orange:usb 2>/dev/null | head -1); [ -n "$L" ] || exit 0; ' +
+		'blink() { echo timer > $L/trigger; echo $1 > $L/delay_on; echo $1 > $L/delay_off; }; ' +
+		'(sleep ' + ACCESS_MIN + '; blink 500; sleep ' + (ACCESS_MAX - ACCESS_MIN) + '; echo none > $L/trigger; echo 0 > $L/brightness; ' +
+		'sleep ' + (FACTORY_MIN - ACCESS_MAX) + '; blink 100) >/dev/null 2>&1 & echo $!' + "'", 'r');
+	if (!p) return;
+	feedback = trim(p.read('all') ?? '');
+	p.close();
+}
+
+function feedback_stop() {
+	if (DRY) return;
+	if (feedback && match(feedback, /^[0-9]+$/))
+		system('kill ' + feedback + ' 2>/dev/null; pkill -P ' + feedback + ' 2>/dev/null');
+	feedback = null;
+	system('L=$(ls -d /sys/class/leds/*:orange:usb 2>/dev/null | head -1); [ -n "$L" ] && { echo none > $L/trigger; echo 0 > $L/brightness; }');
+}
+
+function reset_released(secs) {
+	if (secs < ACCESS_MIN) {
+		log(sprintf('reset button released after %.1f s – nothing to do', secs));
+	} else if (secs < ACCESS_MAX) {
+		log(sprintf('reset button held %.1f s – access reset', secs));
+		run('/usr/sbin/shareos-reset-access --yes');
+	} else if (secs < FACTORY_MIN) {
+		log(sprintf('reset button held %.1f s – cancelled', secs));
+	} else {
+		log(sprintf('reset button held %.1f s – factory reset', secs));
+		run('/usr/sbin/shareos-factory-reset --yes');
+	}
+}
+
+function usb_pressed() {
+	log('USB button – removing USB drives');
+	let p = DRY ? null : popen('/usr/sbin/shareos-usb list 2>/dev/null', 'r'), seen = {};
+	let out = p ? (p.read('all') ?? '') : '';
+	p?.close();
+	if (DRY) out = getenv('SHAREOS_BUTTONS_USB') ?? '';
+	for (let line in split(out, '\n')) {
+		let m = match(line, /^\/dev\/(sd[a-z]+)[0-9]* /);
+		if (m && !seen[m[1]]) {
+			seen[m[1]] = true;
+			run('/usr/sbin/shareos-usb eject ' + m[1]);
+		}
+	}
+	if (!length(keys(seen))) log('no USB drive mounted');
+}
+
+let evdev = find_dev();
+if (!evdev) {
+	log('no gpio-keys input device – buttons not available');
+	exit(0);
+}
+let f = open(evdev, "r");
+if (!f) {
+	log("cannot open " + evdev);
+	exit(1);
+}
+
+let pressed_at = null;
+while (true) {
+	let ev = f.read(16);
+	if (ev == null || length(ev) < 16) break;
+	let e = struct.unpack('<IIHHi', ev);
+	let sec = e[0], usec = e[1], typ = e[2], code = e[3], value = e[4];
+	if (typ != EV_KEY || value == 2) continue;      // 2 = auto repeat
+	let t = sec + usec / 1000000.0;
+	if (code == KEY_RESTART) {
+		if (value == 1) {
+			pressed_at = t;
+			feedback_start();
+		} else if (pressed_at != null) {
+			feedback_stop();
+			reset_released(t - pressed_at);
+			pressed_at = null;
+		}
+	} else if (code == KEY_COPY && value == 1) {
+		usb_pressed();
+	}
+}
+f.close();

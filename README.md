@@ -60,6 +60,7 @@ Version in brackets = first release with the feature.
 - Back to Alt-F (or any D-Link `.bin`) from the firmware page, checked and read back (beta.7)
 - First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP
 - HTTPS with a self-signed certificate that follows name and IP, own certificate possible
+- Reset button: access reset (5–10 s: network, root password, certificate) or factory reset (≥ 15 s), USB button removes USB drives (beta.9)
 - Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256), messages that can be closed
 - Look: light/dark/system, accent colours, tiles or tables, per user
 - 10 languages: English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese, Russian (beta.7; more: [docs/TRANSLATING.md](docs/TRANSLATING.md))
@@ -107,8 +108,14 @@ ShareOS firmware page. Details: [docs/TESTING.md](docs/TESTING.md),
 a build host with qemu (`tests/run-stack-qemu.sh`), the web interface with
 sample data via `tests/mock-ubus.py`.
 
-Next: hardware tests of the current betas, notifications, native apps
-(MiniDLNA, Transmission, Syncthing …) in the same store, more devices (DNS-320/325/327L), a public beta.
+## Roadmap
+
+- Hardware tests of the current betas, then a public beta
+- Notifications (ubus): disks, updates, cloud jobs – in the interface, by e-mail or push
+- Native apps in the same store (MiniDLNA, Transmission, Syncthing …)
+- Shared app architecture: `shareos-theme.css`, app SDK, open files from the file browser in an app, apps shown inside ShareOS (permission `embed`)
+- Storage: **RAID with mdadm** (RAID 1 mirror, RAID 0, JBOD – the DNS-320L has two bays; RAID 5 needs three or more disks), **LVM2**, more file systems (ext2/ext3, FAT on the bays …)
+- More devices (DNS-320/325/327L)
 
 ## Layout
 

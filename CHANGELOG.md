@@ -4,6 +4,12 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.9
+
+- **Update without internet:** System → Firmware → *Install firmware file* also takes the `.sysupgrade.tar` of a release (best with its `.sha256`). It is checked like an update from GitHub (checksums of all parts, made for this box, sizes) and then installed with the usual button – for boxes without internet or with GitHub blocked. Older and newer versions can be installed this way.
+- **Reset button** (back): held 5–10 s = access reset (network back to DHCP with fallback 192.168.0.32, root password `shareos`, web interface over http with a new self-signed certificate; everything else stays), 15 s or longer = factory reset (settings and packages; the data on the disks stays), 10–15 s = cancel. The orange USB LED shows the zone while holding. Before, the button did nothing.
+- **USB button** (front): safely removes all USB drives.
+
 ## 0.1.0-beta.8
 
 - Fix: an own HTTPS certificate (e.g. a wildcard certificate of an own CA) was always refused with "certificate and key do not match" when uploaded in the web interface – the check failed because of file permissions, not because of the certificate.

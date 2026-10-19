@@ -209,6 +209,13 @@ their permissions.
 - **More sources** (own catalogs) under APPS → Sources.
 - **Scheduled tasks** (from beta.7, for apps with the permission `cron`): the install dialog lists the permissions. **APPS → Installed → Tasks** shows schedule, on/off and the last run; *Run now*, then *Log* shows the output. A changed schedule stays after an app update. Check with `crontab -l` (line `shareos-apps run-job`) and `ps` (the job runs as user `app-<id>`).
 
+## 12a. Update without internet
+
+- Download `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` and its `.sha256` from a release on the PC.
+- **System → Firmware → Install firmware file**: choose the `.tar` as *File* and the `.sha256` as *Checksum*, **Upload & check**. After about half a minute the update panel shows "<version> install" with "Uploaded file – verified …".
+- **Install**, then **Restart now** – the same as an update from GitHub.
+- Wrong `.sha256`, a file for another device or a damaged file are refused with a message.
+
 ## 13. File systems and USB drives
 
 - **Storage → Wizard**: in the "Name" step every volume gets a choice of **ext4** (recommended, everything), **Btrfs** (no storage limit per user), **exFAT** and **NTFS** (also readable on Windows/macOS; no permissions per user, no storage limit, no personal folders, no apps). The summary shows the chosen file system. "Erase & format" on a disk has the same field.
@@ -221,6 +228,16 @@ their permissions.
 
 - **System → Time:** the box's clock runs live in its time zone. Change the time zone, switch NTP off and on, enter own time servers (e.g. `fritz.box`), *Sync now*. With NTP off the clock can be set by hand or taken from the browser. Logs then show the local time.
 - **System → Appearance → Language:** 10 languages (English, German, Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian). Arabic switches the page to right to left. Translations other than German/English are machine-made – please report mistakes.
+
+## 15. Buttons
+
+- **Reset button** (pin hole at the back), hold and let go:
+  - shorter than 5 s: nothing;
+  - **5–10 s** (orange USB LED blinks slowly): **access reset** – network back to DHCP (fallback `192.168.0.32`), root password `shareos`, web interface over http again with a new self-signed certificate; users, shares, apps and data stay; the box restarts;
+  - 10–15 s (LED off): cancelled;
+  - **15 s or longer** (LED blinks fast): **factory reset** – all settings and installed packages are removed, the data on the disks stays.
+- **USB button** (front): safely removes all USB drives.
+- What happened is in the system log (`shareos-buttons`).
 
 ## Back to Alt-F
 

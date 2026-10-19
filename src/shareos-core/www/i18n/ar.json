@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "السماح والتثبيت",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "يُحذف التطبيق مع مهامه وبياناته على الجهاز.",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "الجدولة بتنسيق cron (دقيقة ساعة يوم شهر يوم_الأسبوع)، مرة كل 5 دقائق كحد أقصى، مثلاً",
-		"= täglich 3:30 Uhr.": "= يوميًا الساعة 3:30."
+		"= täglich 3:30 Uhr.": "= يوميًا الساعة 3:30.",
+		"Update ohne Internet:": "التحديث بدون إنترنت:",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "ارفع ملف ‎.sysupgrade.tar‎ لإصدار من ShareOS، ويفضل مع ملف ‎.sha256‎ الخاص به. يُفحص كما في التحديث من GitHub.",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "المجموع الاختباري (‎.SHA256‎، اختياري)",
+		"Hochgeladen – das Paket wird geprüft.": "تم الرفع – جارٍ فحص الحزمة.",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "ملف مرفوع – تم الفحص: SHA-256 حسب ملف ‎.sha256‎، والمجاميع الاختبارية لكل الأجزاء، ومناسب لهذا الجهاز. تبقى الإعدادات والحزم.",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "ملف مرفوع – تم الفحص: المجاميع الاختبارية لكل الأجزاء، ومناسب لهذا الجهاز (بدون ملف ‎.sha256‎). تبقى الإعدادات والحزم."
 	},
 	"patterns": [
 		[

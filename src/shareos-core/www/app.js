@@ -1720,8 +1720,8 @@ const SYS = {
 						${u.state === 'verifying' ? html`<div class="bar big busy" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Paket wird geprüft …</b> SHA-256 und Inhalt, dauert etwa eine halbe Minute.</p>` : ''}
 						${u.state === 'flashing' ? (() => { const [fp, fl] = FLASH_STEPS[u.step] || [2, 'Wird gestartet']; return html`<div class="bar big busy" style="margin-top:12px"><i style="width:${fp}%"></i></div><p class="note"><b>${fl} …</b> (${fp} %) – Box <b>nicht ausschalten</b>, das dauert etwa 1–2 Minuten.</p>`; })() : ''}
 						${u.state === 'flashed' ? html`<div class="bar big" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Installation abgeschlossen</b> (100 %) – jetzt neu starten.</p>` : ''}
-						${u.state === 'ready' ? html`<div class="acts" style="margin-top:14px"><button class="btn primary" type="button" data-act="apply" data-tag="${u.release.tag}" ${bootOk ? '' : 'disabled'}>${svg(I.dl)}${u.release.version} installieren</button><button class="btn ghost" type="button" data-act="cancel">Verwerfen</button></div>
-							<p class="note">Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.</p>` : ''}`
+						${u.state === 'ready' ? html`<div class="acts" style="margin-top:14px"><button class="btn primary" type="button" data-act="apply" data-tag="${u.release.tag}" data-ver="${u.release.version}" ${bootOk ? '' : 'disabled'}>${svg(I.dl)}${u.release.version} installieren</button><button class="btn ghost" type="button" data-act="cancel">Verwerfen</button></div>
+							<p class="note">${u.release.local ? (u.release.sha_checked ? 'Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät.' : 'Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei).') : 'Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät.'} Einstellungen und Pakete bleiben erhalten.</p>` : ''}`
 					: ''}
 					${u.state === 'error' ? html`<div class="banner" style="margin:16px 0 0">${svg(I.warn)}<span><b>Fehler:</b> ${u.error}</span><button class="btn sm ghost" type="button" data-act="cancel">OK</button></div>` : ''}
 					<div class="fields" style="margin-top:18px">
@@ -1756,9 +1756,11 @@ const SYS = {
 					<p class="note">Einstellungen und installierte Pakete bleiben erhalten. Bei einem Abbruch wird die Installation beim nächsten Start wiederholt.</p>
 				</div>
 				<form class="panel" id="f-bin" style="margin-top:16px">
-					<div class="ph"><span class="pt">FIRMWARE-DATEI EINSPIELEN</span><span class="tag ml">.bin</span></div>
+					<div class="ph"><span class="pt">FIRMWARE-DATEI EINSPIELEN</span><span class="tag ml">.tar · .bin</span></div>
+					<p class="note" style="margin:0 0 10px"><b>Update ohne Internet:</b> eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.</p>
 					<p class="note" style="margin:0 0 10px">Eine Firmware im D-Link-Format, z. B. für den <b>Wechsel zurück zu Alt-F</b>. Geschrieben werden Kernel und Startsystem; System und Einstellungen von ShareOS bleiben im Flash.</p>
-					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>DATEI</span><input type="file" name="file" accept=".bin" required></label></div>
+					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>DATEI</span><input type="file" name="file" accept=".tar,.bin" required></label>
+						<label class="f"><span>PRÜFSUMME (.SHA256, OPTIONAL)</span><input type="file" name="sha" accept=".sha256,.txt"></label></div>
 					<div id="bin-info"></div>
 					<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Hochladen & prüfen</button></div>
 				</form>
@@ -2131,6 +2133,22 @@ const VIEWS_AFTER = {
 				const f = e.target, file = f.file.files[0], box = $('#bin-info'), btn = $('button[type=submit]', f);
 				if (!file) return;
 				btn.disabled = true;
+				if (/\.tar$/i.test(file.name)) {
+					try {
+						const sha = f.sha.files[0] ? (await f.sha.files[0].text()).slice(0, 400) : '';
+						const t = await rpc('shareos.update', 'local_ticket');
+						await fbSend(t.url, file, () => {});
+						await rpc('shareos.update', 'local', { sha256: sha });
+						f.reset();
+						toast('Hochgeladen – das Paket wird geprüft.');
+						S.updPending = { state: 'verifying', until: Date.now() + 15000 };
+						S.upd = { ...S.upd, state: 'verifying', release: { tag: 'local', version: file.name.replace(/^ShareOS-|-DNS-.*$/g, '') } };
+						renderMain();
+						refreshUpdateStatus();
+					} catch (err) { toast('Firmware-Datei: ' + err.message, true); }
+					btn.disabled = false;
+					return;
+				}
 				try {
 					const t = await rpc('shareos.update', 'bin_ticket');
 					await fbSend(t.url, file, () => {});
@@ -2979,7 +2997,7 @@ const ACTIONS = {
 	async apply(el) {
 		const tag = el.dataset.tag;
 		el.disabled = true;
-		if (!await confirmDlg('Update installieren?', `ShareOS ${tag.replace(/^v/, '')} wird in den Flash geschrieben. Danach ist ein Neustart nötig, bei dem das neue System installiert wird. Während des Schreibens die Box nicht ausschalten.`, 'Installieren')) { el.disabled = false; return; }
+		if (!await confirmDlg('Update installieren?', `ShareOS ${(el.dataset.ver || tag).replace(/^v/, '')} wird in den Flash geschrieben. Danach ist ein Neustart nötig, bei dem das neue System installiert wird. Während des Schreibens die Box nicht ausschalten.`, 'Installieren')) { el.disabled = false; return; }
 		S.updPending = { state: 'flashing', until: Date.now() + 15000 };
 		S.upd = { ...S.upd, state: 'flashing', step: '' };
 		renderMain();

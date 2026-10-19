@@ -1092,3 +1092,9 @@ P184	Tareas: $1
 P185	Tarea: $1
 P186	Registro: $1
 P187	$1: permisos
+E868	Actualizar sin internet:
+E869	sube el .sysupgrade.tar de una versión de ShareOS, preferiblemente con su archivo .sha256. Se comprueba igual que una actualización desde GitHub.
+E870	SUMA DE COMPROBACIÓN (.SHA256, OPCIONAL)
+E871	Subido – se está comprobando el paquete.
+E872	Archivo subido – comprobado: SHA-256 del archivo .sha256, sumas de todas las partes, apto para este dispositivo. Los ajustes y paquetes se conservan.
+E873	Archivo subido – comprobado: sumas de todas las partes, apto para este dispositivo (sin archivo .sha256). Los ajustes y paquetes se conservan.

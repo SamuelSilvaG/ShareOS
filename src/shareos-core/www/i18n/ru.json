@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "Разрешить и установить",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "Приложение удаляется вместе с его задачами и данными на устройстве.",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "Расписание в формате cron (минута час день месяц день_недели), не чаще чем раз в 5 минут, например",
-		"= täglich 3:30 Uhr.": "= ежедневно в 3:30."
+		"= täglich 3:30 Uhr.": "= ежедневно в 3:30.",
+		"Update ohne Internet:": "Обновление без интернета:",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "загрузите .sysupgrade.tar выпуска ShareOS, желательно вместе с его файлом .sha256. Проверка такая же, как при обновлении с GitHub.",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "КОНТРОЛЬНАЯ СУММА (.SHA256, НЕОБЯЗАТЕЛЬНО)",
+		"Hochgeladen – das Paket wird geprüft.": "Загружено – пакет проверяется.",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "Загруженный файл – проверено: SHA-256 по файлу .sha256, контрольные суммы всех частей, подходит для этого устройства. Настройки и пакеты сохраняются.",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "Загруженный файл – проверено: контрольные суммы всех частей, подходит для этого устройства (без файла .sha256). Настройки и пакеты сохраняются."
 	},
 	"patterns": [
 		[

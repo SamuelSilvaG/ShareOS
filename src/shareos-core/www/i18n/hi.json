@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "अनुमति दें और इंस्टॉल करें",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "ऐप अपने कार्यों और डिवाइस पर अपने डेटा सहित मिटा दिया जाता है।",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "cron प्रारूप में समय-सारणी (मिनट घंटा दिन महीना सप्ताह_दिन), अधिकतम हर 5 मिनट, जैसे",
-		"= täglich 3:30 Uhr.": "= रोज़ 3:30 बजे।"
+		"= täglich 3:30 Uhr.": "= रोज़ 3:30 बजे।",
+		"Update ohne Internet:": "इंटरनेट के बिना अपडेट:",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "ShareOS रिलीज़ की .sysupgrade.tar अपलोड करें, बेहतर हो तो उसकी .sha256 फ़ाइल के साथ। इसकी जाँच GitHub से अपडेट की तरह होती है।",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "चेकसम (.SHA256, वैकल्पिक)",
+		"Hochgeladen – das Paket wird geprüft.": "अपलोड हुआ – पैकेज की जाँच हो रही है।",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "अपलोड की गई फ़ाइल – जाँची गई: .sha256 फ़ाइल के अनुसार SHA-256, सभी भागों के चेकसम, इस डिवाइस के लिए उपयुक्त। सेटिंग्स और पैकेज बने रहते हैं।",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "अपलोड की गई फ़ाइल – जाँची गई: सभी भागों के चेकसम, इस डिवाइस के लिए उपयुक्त (.sha256 फ़ाइल के बिना)। सेटिंग्स और पैकेज बने रहते हैं।"
 	},
 	"patterns": [
 		[

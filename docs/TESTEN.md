@@ -212,6 +212,13 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Weitere Quellen** (eigene Kataloge) unter APPS → Quellen.
 - **Geplante Aufgaben** (ab beta.7, für Apps mit der Berechtigung `cron`): Der Installationsdialog nennt die Berechtigungen. **APPS → Installiert → Aufgaben** zeigt Zeitplan, an/aus und den letzten Lauf; *Jetzt ausführen*, danach zeigt *Protokoll* die Ausgabe. Ein geänderter Zeitplan bleibt nach einem App-Update erhalten. Prüfen mit `crontab -l` (Zeile `shareos-apps run-job`) und `ps` (die Aufgabe läuft als Benutzer `app-<id>`).
 
+## 12a. Update ohne Internet
+
+- Am PC aus einem Release `ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` und die passende `.sha256` herunterladen.
+- **System → Firmware → Firmware-Datei einspielen**: bei *Datei* die `.tar`, bei *Prüfsumme* die `.sha256` wählen, **Hochladen & prüfen**. Nach etwa einer halben Minute zeigt der Update-Bereich „<version> installieren“ mit „Hochgeladene Datei – geprüft …“.
+- **Installieren**, danach **Jetzt neu starten** – wie beim Update von GitHub.
+- Falsche `.sha256`, eine Datei für ein anderes Gerät oder eine beschädigte Datei werden mit einer Meldung abgelehnt.
+
 ## 13. Dateisysteme und USB-Laufwerke
 
 - **Speicher → Assistent**: Im Schritt „Name“ gibt es je Laufwerk die Auswahl **ext4** (empfohlen, alle Funktionen), **Btrfs** (ohne Speicherlimit je Benutzer), **exFAT** und **NTFS** (auch an Windows/macOS lesbar; keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps). Die Zusammenfassung zeigt das gewählte Dateisystem. Das gleiche Feld hat „Löschen & formatieren“ an einer Platte.
@@ -224,6 +231,16 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
 - **System → Zeit:** Die Uhr der Box läuft live in ihrer Zeitzone. Zeitzone ändern, NTP aus- und einschalten, eigene Zeitserver eintragen (z. B. `fritz.box`), *Jetzt abgleichen*. Mit NTP aus lässt sich die Uhr von Hand stellen oder die Zeit des Browsers übernehmen. Protokolle zeigen danach die Ortszeit.
 - **System → Darstellung → Sprache:** 10 Sprachen (Englisch, Deutsch, Chinesisch, Hindi, Spanisch, Französisch, Arabisch, Bengalisch, Portugiesisch, Russisch). Arabisch stellt die Seite auf rechts-nach-links um. Die Übersetzungen außer Deutsch/Englisch sind maschinell – Fehler bitte melden.
+
+## 15. Tasten
+
+- **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:
+  - kürzer als 5 s: nichts;
+  - **5–10 s** (orange USB-LED blinkt langsam): **Zugangs-Reset** – Netzwerk zurück auf DHCP (Ersatzadresse `192.168.0.32`), root-Passwort `shareos`, Weboberfläche wieder über http mit neuem selbstsigniertem Zertifikat; Benutzer, Freigaben, Apps und Daten bleiben; die Box startet neu;
+  - 10–15 s (LED aus): abgebrochen;
+  - **15 s oder länger** (LED blinkt schnell): **Werkseinstellungen** – alle Einstellungen und installierten Pakete werden entfernt, die Daten auf den Festplatten bleiben.
+- **USB-Taste** (vorne): wirft alle USB-Laufwerke sicher aus.
+- Was passiert ist, steht im Systemprotokoll (`shareos-buttons`).
 
 ## Zurück zu Alt-F
 

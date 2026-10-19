@@ -538,8 +538,18 @@ def call(obj, method, args):
             return {'started': True}
         if method == 'ack':
             STATE['acked'] = True
-        if method == 'bin_ticket':
+        if method in ('bin_ticket', 'local_ticket'):
             return {'url': '/cgi-bin/files?t=upload'}
+        if method == 'local':
+            STATE['local_t'] = time.time(); STATE['local_sha'] = bool(args.get('sha256'))
+            return {'started': True}
+        if method == 'status' and STATE.get('local_t') and not STATE.get('apply_t'):
+            lrel = {'tag': 'local', 'version': '0.1.0-beta.8', 'local': True, **({'sha_checked': True} if STATE['local_sha'] else {})}
+            if time.time() - STATE['local_t'] < 5:
+                return {'state': 'verifying', 'current': '0.1.0-beta.7', 'release': {**lrel, 'version': '?'}}
+            return {'state': 'ready', 'current': '0.1.0-beta.7', 'release': lrel}
+        if method == 'cancel':
+            STATE.pop('local_t', None)
         if method == 'bin_info':
             return {'kind': 'altf', 'kernel': 'Alt-F-1.0, kernel 4.4.86', 'initramfs': 'Alt-F-1.0, initrd',
                     'kernel_size': '2410000', 'initramfs_size': '3100000', 'sqimage_size': '0'}

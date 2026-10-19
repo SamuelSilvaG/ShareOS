@@ -153,5 +153,25 @@ echo "ok 0.1.0" > "$ROOT/overlay/upgrade-result"; rm -rf "$ROOT/overlay/upgrade"
 o=$(run status);         check "status: result of the last upgrade" "$o" "d['last_upgrade']=='ok 0.1.0' and 'pending_reboot' not in d"
 o=$(run cancel);         check "cancel resets the state" "$o" "d['state']=='idle'"
 
+# --- update from an uploaded file (no internet) -----------------------------------
+sed -i "s|option api .*|option api 'http://127.0.0.1:1'|" "$ROOT/etc/config/shareos"   # GitHub unreachable
+TB=ShareOS-0.2.0-beta.1-$FWN.sysupgrade.tar
+o=$(run local "$ROOT/tmp/none.tar"); check "local: missing file reported" "$o" "d['state']=='error' and 'no uploaded file' in d['error']"
+cp "$WEB/dl/$TB" "$ROOT/tmp/up.tar"
+o=$(run local "$ROOT/tmp/up.tar" 0000000000000000000000000000000000000000000000000000000000000000)
+check "local: wrong .sha256 rejected" "$o" "d['state']=='error' and 'does not match' in d['error']"
+cp "$WEB/dl/ShareOS-0.1.1-$FWN.sysupgrade.tar" "$ROOT/tmp/up.tar"
+o=$(run local "$ROOT/tmp/up.tar"); check "local: bundle for another box rejected" "$o" "d['state']=='error' and 'DNS-325' in d['error']"
+cp "$WEB/dl/ShareOS-0.0.8-$FWN.sysupgrade.tar" "$ROOT/tmp/up.tar"
+o=$(run local "$ROOT/tmp/up.tar"); check "local: damaged part rejected without .sha256 too" "$o" "d['state']=='error' and 'SHA256SUMS' in d['error']"
+cp "$WEB/dl/$TB" "$ROOT/tmp/up.tar"
+o=$(run local "$ROOT/tmp/up.tar" "$(cat "$WEB/dl/$TB.sha256")")
+check "local: verified with its .sha256, ready to install" "$o" "d['state']=='ready' and d['release']['tag']=='local' and d['release']['version']=='0.2.0-beta.1' and d['release']['sha_checked'] and not __import__('os').path.exists('$ROOT/tmp/up.tar')"
+cp "$WEB/dl/$TB" "$ROOT/tmp/up.tar"
+o=$(run local "$ROOT/tmp/up.tar"); check "local: works without .sha256" "$o" "d['state']=='ready' and 'sha_checked' not in d['release']"
+o=$(run apply local);    check "local: apply flashes the uploaded version" "$o" "d['state']=='flashed' and d['flashed']['tag']=='local'"
+check "local: staged version is the uploaded one" "{\"v\":\"$(cat "$ROOT/overlay/upgrade/version")\"}" "d['v']=='0.2.0-beta.1'"
+run cancel >/dev/null
+
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

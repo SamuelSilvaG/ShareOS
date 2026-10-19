@@ -1092,3 +1092,9 @@ P184	Tarefas: $1
 P185	Tarefa: $1
 P186	Log: $1
 P187	$1: permissões
+E868	Atualizar sem internet:
+E869	envie o .sysupgrade.tar de uma versão do ShareOS, de preferência com o arquivo .sha256. É verificado como uma atualização pelo GitHub.
+E870	SOMA DE VERIFICAÇÃO (.SHA256, OPCIONAL)
+E871	Enviado – o pacote está sendo verificado.
+E872	Arquivo enviado – verificado: SHA-256 do arquivo .sha256, somas de todas as partes, adequado para este dispositivo. Configurações e pacotes são mantidos.
+E873	Arquivo enviado – verificado: somas de todas as partes, adequado para este dispositivo (sem arquivo .sha256). Configurações e pacotes são mantidos.

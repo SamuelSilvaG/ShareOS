@@ -870,7 +870,13 @@
 		"Erlauben & installieren": "অনুমতি দিয়ে ইনস্টল করুন",
 		"Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.": "অ্যাপটি এর কাজ ও ডিভাইসের ডেটাসহ মুছে ফেলা হয়।",
 		"Zeitplan im Cron-Format (Minute Stunde Tag Monat Wochentag), höchstens alle 5 Minuten, z. B.": "cron ফরম্যাটে সময়সূচি (মিনিট ঘণ্টা দিন মাস সপ্তাহের_দিন), সর্বোচ্চ প্রতি ৫ মিনিটে, যেমন",
-		"= täglich 3:30 Uhr.": "= প্রতিদিন ৩:৩০-এ।"
+		"= täglich 3:30 Uhr.": "= প্রতিদিন ৩:৩০-এ।",
+		"Update ohne Internet:": "ইন্টারনেট ছাড়া আপডেট:",
+		"eine .sysupgrade.tar eines ShareOS-Release hochladen, am besten mit der passenden .sha256-Datei. Geprüft wird wie beim Update von GitHub.": "ShareOS রিলিজের .sysupgrade.tar আপলোড করুন, সম্ভব হলে এর .sha256 ফাইলসহ। GitHub থেকে আপডেটের মতোই যাচাই করা হয়।",
+		"PRÜFSUMME (.SHA256, OPTIONAL)": "চেকসাম (.SHA256, ঐচ্ছিক)",
+		"Hochgeladen – das Paket wird geprüft.": "আপলোড হয়েছে – প্যাকেজ যাচাই করা হচ্ছে।",
+		"Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät. Einstellungen und Pakete bleiben erhalten.": "আপলোড করা ফাইল – যাচাই হয়েছে: .sha256 ফাইল অনুযায়ী SHA-256, সব অংশের চেকসাম, এই ডিভাইসের উপযোগী। সেটিংস ও প্যাকেজ থেকে যায়।",
+		"Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei). Einstellungen und Pakete bleiben erhalten.": "আপলোড করা ফাইল – যাচাই হয়েছে: সব অংশের চেকসাম, এই ডিভাইসের উপযোগী (.sha256 ফাইল ছাড়া)। সেটিংস ও প্যাকেজ থেকে যায়।"
 	},
 	"patterns": [
 		[

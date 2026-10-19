@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# shareos-reset-access --yes [--no-reboot]
+#
+# Gets you back into a box you are locked out of (reset button 5–10 s):
+# network back to DHCP with the fallback address 192.168.0.32, root password
+# "shareos", web interface over http again (no redirect) with a new
+# self-signed certificate. Users, shares, apps and data stay. Then reboot.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+ROOT=${SHAREOS_ROOT:-}
+case " $* " in *" --yes "*) ;; *)
+	sed -n '3,8s/^# \{0,1\}//p' "$0"; echo "Nothing done. Add --yes."; exit 2 ;;
+esac
+log() { logger -t shareos-reset-access "$*" 2>/dev/null; echo "$*"; }
+U="${SHAREOS_UCI:-uci} -q ${ROOT:+-c $ROOT/etc/config}"
+
+$U set network.lan.proto=dhcp
+$U set network.lan.ipaddr=''
+$U set network.lan.gateway=''
+$U set network.lan.dns=''
+$U set network.lan.netmask='255.255.255.0'
+$U set network.lan.fallback='192.168.0.32'
+$U commit network || { log "ERROR: network settings not written"; exit 1; }
+log "network: DHCP, fallback 192.168.0.32"
+
+if [ -n "$ROOT" ]; then
+	log "root password: shareos (skipped in test root)"
+elif echo 'root:shareos' | chpasswd -c sha512 >/dev/null 2>&1; then
+	log "root password: shareos"
+else
+	log "root password could not be reset"
+fi
+
+$U set shareos.web.https=1
+$U set shareos.web.redirect=0
+$U delete shareos.web.cert
+$U delete shareos.web.key
+$U commit shareos
+if [ -z "$ROOT" ]; then
+	rm -f /etc/ssl/shareos/server.crt /etc/ssl/shareos/server.key
+	shareos-cert selfsigned >/dev/null 2>&1
+fi
+log "web interface: http and https with a new self-signed certificate"
+
+sync
+case " $* " in *" --no-reboot "*) exit 0 ;; esac
+log "rebooting"
+reboot

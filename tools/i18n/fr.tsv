@@ -1092,3 +1092,9 @@ P184	Tâches : $1
 P185	Tâche : $1
 P186	Journal : $1
 P187	$1 : autorisations
+E868	Mise à jour sans internet :
+E869	téléversez le .sysupgrade.tar d'une version de ShareOS, de préférence avec son fichier .sha256. Il est vérifié comme une mise à jour depuis GitHub.
+E870	SOMME DE CONTRÔLE (.SHA256, FACULTATIF)
+E871	Téléversé – le paquet est en cours de vérification.
+E872	Fichier téléversé – vérifié : SHA-256 du fichier .sha256, sommes de toutes les parties, adapté à cet appareil. Les réglages et paquets sont conservés.
+E873	Fichier téléversé – vérifié : sommes de toutes les parties, adapté à cet appareil (sans fichier .sha256). Les réglages et paquets sont conservés.
