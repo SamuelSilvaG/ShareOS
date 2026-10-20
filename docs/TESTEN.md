@@ -8,7 +8,7 @@ Installation:
 - **Weg A – über die Firmware-Seite von Alt-F oder D-Link** (ohne serielle
   Konsole, ab 0.1.0-beta.7). Auf echter Hardware noch nicht erprobt: beim
   ersten Mal am besten die serielle Konsole als Rückfallebene anschließen.
-- **Weg B – über die serielle Konsole** (Stiftleiste JP1, ohne Löten, siehe
+- **Weg B – über die serielle Konsole** (Stiftleiste JP1, drei Kabel anlöten, siehe
   [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): erprobt, Schritte 1–3 unten.
 
 Ist ShareOS einmal installiert, laufen Updates über die Weboberfläche. Zurück
@@ -53,12 +53,14 @@ einschalten.
   Box; Pin 2 (3,3 V) bleibt frei. Einstellung 115200 8N1
 - einen PC mit TFTP-Server, zum Beispiel `dnsmasq`
 
-### Serielle Konsole anschließen (ohne Löten)
+### Serielle Konsole anschließen (drei Kabel anlöten)
 
-JP1 sitzt neben dem USB-Anschluss und ist nicht bestückt. Es reicht, die
-Drähte des Adapters (Dupont-Kabel) durch die Lötaugen zu stecken und mit etwas
-Heißkleber zu sichern. Pin 1 ist das eckige Lötauge (Pfeil auf der Platine),
-zwischen Pin 1 und Pin 2 ist eine Lücke.
+JP1 sitzt neben dem USB-Anschluss und ist nicht bestückt. Eine Stiftleiste
+lässt sich nicht einfach durchstecken: In den Lötaugen steckt noch Lötzinn, sie
+müssten erst freigemacht werden (Entlötlitze/-pumpe). Einfacher ist es, drei
+Kabel (TX, RX, GND) direkt an die Lötaugen anzulöten und den 3,3-V-Pin frei zu
+lassen. Pin 1 ist das eckige Lötauge (Pfeil auf der Platine), zwischen Pin 1
+und Pin 2 ist eine Lücke.
 
 | Belegung von JP1 | So sieht es angeschlossen aus |
 |---|---|

@@ -97,6 +97,8 @@ if [ "$CHECK" = "--check" ]; then
 	t "notify: settings readable, no password" "$(rpc $SID shareos.notify get)" "d['result'][1]['temp_max']==55 and 'smtp_pass' not in d['result'][1]"
 	t "notify: invalid push address rejected" "$(rpc $SID shareos.notify set '{"push_url":"javascript:x"}')" "'push address' in d['result'][1]['error']"
 	t "notify: settings stored, password kept secret" "$(rpc $SID shareos.notify set '{"email":true,"smtp_host":"mail.example.org","smtp_pass":"geheim","mail_to":"a@example.org"}')" "d['result'][1]['email'] and d['result'][1]['has_pass'] and 'geheim' not in json.dumps(d)"
+	t "notify: ntfy address and addresses with s accepted" "$(rpc $SID shareos.notify set '{"push_type":"ntfy","push_url":"https://ntfy.sh/mein-nas","mail_to":"sven@example.sh","mail_from":"nas@skynet.lan"}')" "d['result'][1].get('push_url')=='https://ntfy.sh/mein-nas'"
+	t "notify: Telegram with chat ID" "$(rpc $SID shareos.notify set '{"push_type":"telegram","push_chat":"-100123"}')" "d['result'][1].get('push_chat')=='-100123'"
 	t "notify: list" "$(rpc $SID shareos.notify list)" "'items' in d['result'][1]"
 	t "language can be changed" "$(rpc $SID shareos.ui set '{"lang":"de"}')" "d['result'][1]['lang']=='de'"
 	t "invalid language rejected" "$(rpc $SID shareos.ui set '{"lang":"../x"}')" "'invalid' in d['result'][1]['error']"

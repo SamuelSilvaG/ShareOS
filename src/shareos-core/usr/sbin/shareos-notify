@@ -1,7 +1,7 @@
 #!/usr/bin/ucode -S
 //
 // shareos-notify – messages of the box: kept for the web interface and sent
-// by e-mail and/or push (ntfy, Gotify, webhook)
+// by e-mail and/or push (ntfy, Gotify, Telegram, webhook)
 //
 //   shareos-notify send <info|warn|error> <source> <key> <title_de> <title_en> [text_de] [text_en]
 //                                      a message; the same key is one message
@@ -14,9 +14,12 @@
 //   shareos-notify read <id|all>       mark as read
 //   shareos-notify delete <id|all>
 //   shareos-notify test                send a test message on every channel
+//   shareos-notify telegram-chats      chats that wrote to the Telegram bot
+//                                      (to find the chat ID)
 //
 // Settings: UCI shareos.notify (email, smtp_*, mail_from, mail_to,
-// email_level; push, push_type ntfy|gotify|webhook, push_url, push_token,
+// email_level; push, push_type ntfy|gotify|telegram|webhook, push_url,
+// push_token (Telegram: bot token), push_chat (Telegram: chat ID),
 // push_level; temp_max °C, disk_full %). Messages: /etc/shareos/notifications.json
 // (at most 100). SHAREOS_ROOT: fake root for tests; SHAREOS_NOTIFY_DRY=1
 // prints the deliveries instead of sending them.
@@ -116,11 +119,35 @@ function send_mail(n, m) {
 	return r.rc == 0 ? null : 'e-mail: ' + (trim(r.out) || 'curl exit ' + r.rc);
 }
 
+// Telegram: the bot token is part of the address – handed to curl in a file
+// (mode 600), never on the command line
+const TG_TOKEN = /^[0-9]{3,15}:[A-Za-z0-9_-]{20,80}$/;
+function telegram(token, method, body) {
+	if (!match(token ?? '', TG_TOKEN)) return { error: 'telegram: invalid bot token (from @BotFather, like 123456:ABC…)' };
+	let cfg = '/tmp/shareos-notify-tg.' + newid();
+	let argv = [ ...CURL, '-H', 'Content-Type: application/json', '-K', DRY ? 'url = https://api.telegram.org/bot<token>/' + method : cfg ];
+	if (body != null) push(argv, '-X', 'POST', '--data-binary', '@-');
+	if (!DRY) { system('umask 077; : > ' + shq(cfg)); writefile(cfg, sprintf('url = "https://api.telegram.org/bot%s/%s"\n', token, method)); }
+	let r = run(argv, body != null ? sprintf('%J', body) : null);
+	if (!DRY) unlink(cfg);
+	if (DRY) return { ok: true, result: [] };
+	let j = json(r.out || 'null');
+	if (type(j) != 'object') return { error: 'telegram: ' + (trim(r.out) || 'curl exit ' + r.rc) };
+	if (!j.ok) return { error: 'telegram: ' + (j.description ?? 'failed') };
+	return j;
+}
+
 function send_push(n, m) {
 	let url = n.push_url, typ = n.push_type ?? 'ntfy';
-	if (!url || !match(url, /^https?:\/\/[^ ]+$/)) return 'push: invalid address';
 	let L = lang(), title = 'ShareOS ' + hostname() + ': ' + (L == 'de' ? m.title_de : m.title_en);
 	let text = (L == 'de' ? (m.text_de || m.title_de) : (m.text_en || m.title_en));
+	if (typ == 'telegram') {
+		if (!match(n.push_chat ?? '', /^-?[0-9]{1,20}$|^@[A-Za-z0-9_]{5,32}$/)) return 'push: telegram chat ID missing';
+		let icon = m.level == 'error' ? '🚨 ' : m.level == 'warn' ? '⚠️ ' : 'ℹ️ ';
+		let r = telegram(n.push_token, 'sendMessage', { chat_id: n.push_chat, text: icon + title + (text && text != title ? '\n\n' + text : ''), disable_web_page_preview: true });
+		return r.error ? 'push: ' + r.error : null;
+	}
+	if (!url || !match(url, /^https?:\/\/[^ ]+$/)) return 'push: invalid address';
 	let prio = { info: 3, warn: 4, error: 5 }[m.level] ?? 3;
 	let argv = [ ...CURL, '-f', '-H', 'Content-Type: application/json' ], body;
 	if (typ == 'ntfy') {
@@ -207,6 +234,20 @@ function cmd_test() {
 	if (n.email != '1' && n.push != '1') return out({ error: 'neither e-mail nor push is switched on' });
 	let errs = deliver(m, true);
 	out(length(errs) ? { error: join('; ', errs) } : { ok: true });
+}
+
+// chats that wrote to the bot (getUpdates): to find the chat ID
+function cmd_tg_chats() {
+	let r = telegram(conf().n.push_token, 'getUpdates', null);
+	if (r.error) return out({ error: r.error });
+	let seen = {}, chats = [];
+	for (let u in r.result ?? []) {
+		let c = (u.message ?? u.channel_post ?? u.my_chat_member ?? {}).chat;
+		if (type(c) != 'object' || seen[c.id]) continue;
+		seen[c.id] = true;
+		push(chats, { id: '' + c.id, type: c.type, name: c.title ?? join(' ', filter([ c.first_name, c.last_name ], (x) => x)) ?? '', username: c.username ?? '' });
+	}
+	out({ chats });
 }
 
 /* ---------- checks (cron, every 10 minutes) ---------- */
@@ -300,6 +341,7 @@ case 'list': cmd_list(); break;
 case 'read': cmd_mark(ARGV[1] ?? 'all', false); break;
 case 'delete': cmd_mark(ARGV[1] ?? 'all', true); break;
 case 'test': cmd_test(); break;
+case 'telegram-chats': cmd_tg_chats(); break;
 default:
 	print(join('\n', map(filter(split(readfile(sourcepath()) ?? '', '\n'), (l) => match(l, /^\/\/ {1,3}shareos-notify/)), (l) => substr(l, 3))) + '\n');
 	exit(2);

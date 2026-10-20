@@ -191,6 +191,8 @@
 					"passwd",
 					"paperless_set",
 					"cloud_remote_add",
+					"cloud_auth_start",
+					"cloud_auth_finish",
 					"cloud_remote_del",
 					"cloud_job_set",
 					"cloud_job_del",
@@ -210,6 +212,8 @@
 				"shareos.cloud": [
 					"install",
 					"remote_add",
+					"auth_start",
+					"auth_finish",
 					"remote_del",
 					"remote_test",
 					"job_set",
@@ -245,7 +249,8 @@
 					"read",
 					"delete",
 					"set",
-					"test"
+					"test",
+					"telegram_chats"
 				]
 			},
 			"uci": [
@@ -279,6 +284,8 @@
 					"passwd",
 					"paperless_set",
 					"cloud_remote_add",
+					"cloud_auth_start",
+					"cloud_auth_finish",
 					"cloud_remote_del",
 					"cloud_job_set",
 					"cloud_job_del",

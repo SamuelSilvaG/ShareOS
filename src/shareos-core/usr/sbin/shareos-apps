@@ -32,6 +32,9 @@
 //          browser (his personal folder; admins: all volumes and USB drives),
 //          with his rights, through /_shareos/cgi/fs (SDK: ShareOS.fs) –
 //          for file managers and editors that save on the box.
+// Not a permission: "internet": true says the app loads data from the
+// internet (online services, streams, maps …); shown in the store. Web apps
+// and jobs may always use the network.
 // Window and files (optional):
 //   "window": { "width": 900, "height": 640 }      size of the app's window
 //   "opens": [ { "ext": [".txt", ".md"], "mode": "edit", "label": {…} } ]
@@ -273,7 +276,7 @@ function installed() {
 		push(list, { id, name: a.name ?? id, version: a.version, publisher: a.publisher ?? '',
 			description: a.description ?? '', type: a.type ?? 'webapp', entry: a.entry ?? 'index.html',
 			icon: a.icon ?? null, icon_data: icon_data(id, a.icon), category: a.category ?? '', homepage: a.homepage ?? '', license: a.license ?? '',
-			permissions: a.permissions ?? [], jobs: jobs_of(id, a, c),
+			permissions: a.permissions ?? [], internet: a.internet === true, jobs: jobs_of(id, a, c),
 			window: type(a.window) == 'object' ? { width: a.window.width ?? null, height: a.window.height ?? null } : null,
 			opens: opens_of(a),
 			verified: c.get('apps', s, 'verified') == '1', source: c.get('apps', s, 'source') ?? '',

@@ -35,7 +35,14 @@ check "ntfy push as JSON to the server with topic" "echo \"\$o\" | grep -q 'http
 o=$(N send info storage k3 'Info' 'Info'); check "info is below the default level warn: kept, not delivered" "! echo '$o' | grep -q '^deliver:'" "$o"
 $U set shareos.notify.push_type=gotify; $U set shareos.notify.push_url=https://gotify.example.org; $U set shareos.notify.push_token=tok; $U set shareos.notify.email=0; $U commit shareos
 o=$(N test); check "test message: Gotify with its key" "echo \"\$o\" | grep -q 'https://gotify.example.org/message' && echo \"\$o\" | grep -q 'X-Gotify-Key: tok'" "$o"
-$U set shareos.notify.push_url='ftp://x'; $U commit shareos
+$U set shareos.notify.push_type=telegram; $U set shareos.notify.push_token=123456789:AAH-telegram_secret_token_abcdefgh; $U set shareos.notify.push_chat=-100123; $U commit shareos
+o=$(N test); check "test message: Telegram bot, token not on the command line" "echo \"\$o\" | grep -q 'api.telegram.org/bot<token>/sendMessage' && echo \"\$o\" | grep -q '\"chat_id\": \"-100123\"' && ! echo \"\$o\" | grep -q 'telegram_secret'" "$o"
+$U set shareos.notify.push_chat=; $U commit shareos
+o=$(N test); check "Telegram without chat ID reported" "echo '$o' | grep -q 'chat ID missing'" "$o"
+$U set shareos.notify.push_chat=-100123; $U set shareos.notify.push_token=kaputt; $U commit shareos
+o=$(N test); check "invalid Telegram token reported" "echo '$o' | grep -q 'invalid bot token'" "$o"
+o=$(N telegram-chats); check "telegram-chats answers JSON" "echo '$o' | grep -q 'invalid bot token'" "$o"
+$U set shareos.notify.push_type=gotify; $U set shareos.notify.push_url='ftp://x'; $U commit shareos
 o=$(N test); check "invalid push address reported" "echo '$o' | grep -q 'invalid address'" "$o"
 $U set shareos.notify.push=0; $U commit shareos
 N delete all >/dev/null

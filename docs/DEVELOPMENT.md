@@ -22,7 +22,7 @@ bootloader that must not be changed, and no debugger except a serial console.
 | | Jan (initiator) | Claude (AI) |
 |---|---|---|
 | Goals & direction | Modernise Alt-F, a web UI in the style of his intranet, updates from GitHub, cloud, Paperless | Proposals with trade-offs (OpenWrt vs. Alt-F base, CGI vs. rpcd/ucode, partitioning) |
-| Decisions | "Replace the old UI completely", "foundation first", "no OpenWrt", "no soldering", a wizard *and* a manual path | – |
+| Decisions | "Replace the old UI completely", "foundation first", "no OpenWrt", as little soldering as possible, a wizard *and* a manual path | – |
 | Code | 1 commit: importing Alt-F | 26 commits, about 5,500 new lines (build system, device tree, init, updater, backend, web UI, tests, docs) |
 | Hardware | Connected the serial adapter, drove U-Boot, ran commands, sent back logs, installed the disks | Specified every command, read every log, found the causes |
 | Tests | The real box (DNS-320L rev A3) | Emulator (qemu-user), test suites with a simulated box and virtual disks |
@@ -48,7 +48,7 @@ the box for why the web server was not running.
 
 | Time | Event |
 |---|---|
-| ~11:00 | Jan connects a USB-TTL adapter to the unpopulated header JP1, without soldering. Claude guides him through the pinout, swapped RX/TX wires and a loose ground. |
+| ~11:00 | Jan solders three wires of a USB-TTL adapter to the unpopulated header JP1 (the holes are filled with solder, a pin header does not go in). Claude guides him through the pinout, swapped RX/TX wires and a loose ground. |
 | ~12:15 | Stopping autoboot does not work. Claude finds the D-Link quirk in the U-Boot code: **space, then 1**. |
 | ~12:30 | TFTP timeouts: the cause is the firewall (ufw) on Jan's PC. |
 | 12:44 | **ShareOS boots on the box for the first time**, from RAM, without flashing anything. Gigabit, MAC address, fan, temperature, buttons and the web interface all work. |
@@ -205,7 +205,7 @@ mirror and an update available.*
 - 27 commits, 26 of them by Claude
 - about 5,500 new lines: build/board 1,300, backend + web UI 2,900, tests 370, docs 500
 - 18 updater tests (including a complete install on a simulated box), 21 interface checks in the ARM emulator, storage tests with virtual disks
-- 0 solder joints, 0 bricked boxes
+- 3 solder joints (the serial console), 0 bricked boxes
 
 ## How the work was done
 

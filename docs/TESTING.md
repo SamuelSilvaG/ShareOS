@@ -8,7 +8,7 @@ install it:
 - **Way A – from the Alt-F or D-Link firmware page** (no serial console, from
   0.1.0-beta.7 on). Not yet tried on real hardware: for the first time, best
   keep the serial console connected as a safety net.
-- **Way B – over the serial console** (header JP1, no soldering, see
+- **Way B – over the serial console** (header JP1, three soldered wires, see
   [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): tested, steps 1–3 below.
 
 Once ShareOS is installed, updates go through the web interface. Going back to
@@ -50,12 +50,13 @@ bundle to a USB stick, plug it in, switch the box off and on again.
   pin 2 (3.3 V) unconnected. Settings: 115200 8N1
 - a PC with a TFTP server, for example `dnsmasq`
 
-### Connecting the serial console (no soldering)
+### Connecting the serial console (three soldered wires)
 
-JP1 sits next to the USB port and is not populated. It is enough to push the
-adapter's wires (Dupont cables) through the holes and secure them with a little
-hot glue. Pin 1 is the square pad (arrow on the board); there is a gap between
-pin 1 and pin 2.
+JP1 sits next to the USB port and is not populated. A pin header cannot simply
+be pushed in: the holes are still filled with solder and would have to be
+cleared first (desoldering wick or pump). It is easier to solder three wires
+(TX, RX, GND) straight to the pads and leave the 3.3 V pin free. Pin 1 is the
+square pad (arrow on the board); there is a gap between pin 1 and pin 2.
 
 | JP1 pinout | What it looks like connected |
 |---|---|

@@ -891,7 +891,7 @@ function groupsView() {
 /* ---------- Paperless ----------------------------------------------------------- */
 
 const PL_STATE = { SUCCESS: ['ok', 'übernommen'], PENDING: ['', 'wird verarbeitet'], FAILURE: ['err', 'Fehler'], UNKNOWN: ['warn', 'unbekannt'] };
-const fmtTime = (t) => (t ? new Date(t * 1000).toLocaleString(LOC, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–');
+const fmtTime = (t) => (t ? new Date(t * 1000).toLocaleString(LOC, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '–');
 
 async function loadPaperless() {
 	try {
@@ -1002,8 +1002,17 @@ const CLOUD_MODES = {
 	mirror_down: 'Spiegeln von der Cloud – löscht hier, was in der Cloud fehlt'
 };
 const CLOUD_SCHED = [['', 'nur von Hand'], ['17 * * * *', 'stündlich'], ['30 2 * * *', 'täglich um 2:30'], ['0 3 * * 0', 'sonntags um 3:00'], ['custom', 'eigene Zeit (cron)']];
-const REMOTE_TYPES = { webdav: 'Nextcloud / ownCloud / WebDAV', s3: 'S3 (AWS, MinIO, Wasabi …)', sftp: 'SFTP (SSH-Server)', raw: 'andere – rclone-Konfiguration einfügen' };
+const REMOTE_TYPES = { gdrive: 'Google Drive', gphotos: 'Google Fotos', onedrive: 'Microsoft OneDrive', dropbox: 'Dropbox', webdav: 'Nextcloud / ownCloud / WebDAV',
+	s3: 'S3 (AWS, MinIO, Wasabi …)', b2: 'Backblaze B2', mega: 'MEGA', pcloud: 'pCloud', box: 'Box', koofr: 'Koofr', yandex: 'Yandex Disk',
+	sftp: 'SFTP (SSH-Server)', ftp: 'FTP', smb: 'Windows-Freigabe (SMB)', raw: 'andere – rclone-Konfiguration einfügen' };
+// services where you sign in in the browser (OAuth): no password is stored, only a token
+const REMOTE_OAUTH = { gdrive: 1, gphotos: 1, onedrive: 1, dropbox: 1, pcloud: 1, box: 1, yandex: 1 };
 const REMOTE_FIELDS = {
+	ftp: [['host', 'SERVER'], ['port', 'PORT', '21'], ['user', 'BENUTZER'], ['pass', 'PASSWORT', 'password']],
+	smb: [['host', 'SERVER'], ['user', 'BENUTZER'], ['domain', 'DOMÄNE (OPTIONAL)', 'WORKGROUP'], ['pass', 'PASSWORT', 'password']],
+	mega: [['user', 'E-MAIL'], ['pass', 'PASSWORT', 'password']],
+	b2: [['account', 'KEY-ID (ACCOUNT)'], ['key', 'APPLICATION KEY', 'password']],
+	koofr: [['provider', 'ANBIETER', ['koofr', 'digistorage', 'other']], ['user', 'E-MAIL'], ['password', 'APP-PASSWORT', 'password']],
 	webdav: [['url', 'ADRESSE (WEBDAV-URL)', 'https://cloud.example.com/remote.php/dav/files/NAME/'], ['vendor', 'ANBIETER', ['nextcloud', 'owncloud', 'other']], ['user', 'BENUTZER'], ['pass', 'PASSWORT / APP-PASSWORT', 'password']],
 	s3: [['provider', 'ANBIETER', ['AWS', 'Minio', 'Wasabi', 'Other']], ['endpoint', 'ENDPUNKT (LEER BEI AWS)'], ['region', 'REGION'], ['access_key_id', 'ACCESS KEY'], ['secret_access_key', 'SECRET KEY', 'password']],
 	sftp: [['host', 'SERVER'], ['port', 'PORT', '22'], ['user', 'BENUTZER'], ['pass', 'PASSWORT', 'password']]
@@ -1132,6 +1141,13 @@ function remoteEditor(scope, re) {
 				? html`<select name="p_${k}">${extra.map((o) => html`<option>${o}</option>`)}</select>`
 				: html`<input name="p_${k}" type="${extra === 'password' ? 'password' : 'text'}" autocomplete="off"${extra && extra !== 'password' ? raw(` placeholder="${esc(extra)}"`) : ''}>`}</label>`)}
 		</div>
+		${REMOTE_OAUTH[re.type] ? html`<div style="margin-top:12px">
+			<p class="note" style="margin-top:0">Bei ${REMOTE_TYPES[re.type]} meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort.</p>
+			<div class="acts"><button class="btn" type="button" data-act="cl-auth" data-scope="${scope}">1. Bei ${REMOTE_TYPES[re.type]} anmelden ↗</button>${re.authed ? html`<span class="tag ok">angemeldet ✓</span>` : ''}</div>
+			${re.authUrl && !re.authed ? html`<p class="note">Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie <code>http://127.0.0.1:53682/?state=…&amp;code=…</code>. Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:</p>
+			<div class="fields" style="grid-template-columns:1fr auto;align-items:end"><label class="f"><span>2. ADRESSE NACH DER ANMELDUNG</span><input name="auth_url" autocomplete="off" spellcheck="false" placeholder="http://127.0.0.1:53682/?state=…"></label>
+			<button class="btn" type="button" data-act="cl-authfin" data-scope="${scope}">Übernehmen</button></div>` : ''}
+		</div>` : ''}
 		${re.type === 'raw' ? html`<label class="f" style="margin-top:12px"><span>ABSCHNITT AUS RCLONE.CONF (BEGINNT MIT [NAME])</span>
 			<textarea name="raw" rows="8" spellcheck="false" data-i18n-skip style="width:100%;font:inherit;font-size:12px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px" placeholder="[gdrive]&#10;type = drive&#10;token = {...}"></textarea></label>` : ''}
 		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Hinzufügen</button></div>
@@ -1171,6 +1187,7 @@ function cloudAfter(scope) {
 	$('#f-remote')?.addEventListener('submit', async (e) => {
 		e.preventDefault();
 		const f = e.target, type = f.type.value, params = {};
+		if (REMOTE_OAUTH[type] && !S.cloud.remoteEdit?.authed) { toast('Erst anmelden (Schritt 1 und 2).', true); return; }
 		(REMOTE_FIELDS[type] || []).forEach(([k]) => { const v = f['p_' + k]?.value.trim(); if (v) params[k] = v; });
 		try {
 			await CLOUD_API[scope].addRemote({ name: f.name.value.trim(), type, params, raw: type === 'raw' ? f.raw.value.trim() + '\n' : '' });
@@ -1871,12 +1888,14 @@ const SYS = {
 					<div class="ph" style="margin-top:18px"><span class="pt">PUSH</span></div>
 					<label class="chk"><input type="checkbox" name="push"${c.push ? raw(' checked') : ''}><span>Meldungen aufs Handy schicken</span></label>
 					<div class="fields" style="grid-template-columns:1fr;margin-top:10px">
-						<label class="f"><span>DIENST</span><select name="push_type">${[['ntfy', 'ntfy'], ['gotify', 'Gotify'], ['webhook', 'Webhook (JSON)']].map(([k, t]) => html`<option value="${k}"${(c.push_type || 'ntfy') === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
-						<label class="f"><span>ADRESSE</span><input name="push_url" value="${c.push_url}" placeholder="https://ntfy.sh/mein-nas-thema"></label>
-						<label class="f"><span>ZUGANGSSCHLÜSSEL (OPTIONAL)</span><input name="push_token" type="password" autocomplete="new-password" placeholder="${c.has_token ? '•••••• (gespeichert)' : ''}"></label>
+						<label class="f"><span>DIENST</span><select name="push_type">${[['ntfy', 'ntfy'], ['gotify', 'Gotify'], ['telegram', 'Telegram (Bot)'], ['webhook', 'Webhook (JSON)']].map(([k, t]) => html`<option value="${k}"${(c.push_type || 'ntfy') === k ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+						<label class="f" data-push="url"${c.push_type === 'telegram' ? raw(' hidden') : ''}><span>ADRESSE</span><input name="push_url" value="${c.push_url}" placeholder="https://ntfy.sh/mein-nas-thema"></label>
+						<label class="f"><span data-push="url"${c.push_type === 'telegram' ? raw(' hidden') : ''}>ZUGANGSSCHLÜSSEL (OPTIONAL)</span><span data-push="tg"${c.push_type === 'telegram' ? '' : raw(' hidden')}>BOT-TOKEN (VON @BOTFATHER)</span><input name="push_token" type="password" autocomplete="new-password" placeholder="${c.has_token ? '•••••• (gespeichert)' : ''}"></label>
+						<label class="f" data-push="tg"${c.push_type === 'telegram' ? '' : raw(' hidden')}><span>CHAT-ID</span><span class="row" style="display:flex;gap:6px"><input name="push_chat" value="${c.push_chat || ''}" placeholder="123456789" style="flex:1"><button class="btn sm ghost" type="button" data-act="tg-chats">Chat-ID suchen</button></span></label>
 						<label class="f"><span>SCHICKEN</span>${lvSel('push_level', c.push_level)}</label>
 					</div>
 					<p class="note">ntfy: Adresse mit Thema, z. B. <code>https://ntfy.sh/mein-nas-7f3k</code> (eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.</p>
+					<p class="note">Telegram: In Telegram mit <code>@BotFather</code> einen Bot anlegen (<code>/newbot</code>) und den Token hier eintragen, speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.</p>
 					<div class="ph" style="margin-top:18px"><span class="pt">GRENZEN</span></div>
 					<div class="fields">
 						<label class="f"><span>TEMPERATUR AB (°C)</span><input name="temp_max" type="number" min="40" max="70" value="${c.temp_max}"></label>
@@ -2156,12 +2175,16 @@ const VIEWS_AFTER = {
 				const f = e.target;
 				const a = { email: f.email.checked, smtp_host: f.smtp_host.value.trim(), smtp_tls: f.smtp_tls.value, smtp_port: f.smtp_port.value.trim(),
 					smtp_user: f.smtp_user.value.trim(), mail_from: f.mail_from.value.trim(), mail_to: f.mail_to.value.trim(), email_level: f.email_level.value,
-					push: f.push.checked, push_type: f.push_type.value, push_url: f.push_url.value.trim(), push_level: f.push_level.value,
+					push: f.push.checked, push_type: f.push_type.value, push_url: f.push_url.value.trim(), push_chat: f.push_chat.value.trim(), push_level: f.push_level.value,
 					temp_max: +f.temp_max.value, disk_full: +f.disk_full.value };
 				if (f.smtp_pass.value) a.smtp_pass = f.smtp_pass.value;
 				if (f.push_token.value) a.push_token = f.push_token.value;
 				try { S.noteCfg = await rpc('shareos.notify', 'set', a); toast('Gespeichert.'); renderMain(); }
 				catch (err) { toast('Meldungen: ' + err.message, true); }
+			});
+			$('#f-notify select[name=push_type]')?.addEventListener('change', (e) => {
+				const tg = e.target.value === 'telegram';
+				document.querySelectorAll('#f-notify [data-push]').forEach((el) => { el.hidden = (el.dataset.push === 'tg') !== tg; });
 			});
 		}
 		if (sub === 'time') {
@@ -2913,6 +2936,29 @@ const ACTIONS = {
 		catch (e) { toast('rclone: ' + e.message, true); }
 	},
 	'cl-rnew'(el) { S.cloud.remoteEdit = { type: 'webdav' }; el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); },
+	async 'cl-auth'(el) {
+		const scope = el.dataset.scope, re = S.cloud.remoteEdit, f = $('#f-remote');
+		re.name = f.name.value;
+		const w = window.open('about:blank', '_blank');
+		el.disabled = true;
+		try {
+			const r = scope === 'admin' ? await rpc('shareos.cloud', 'auth_start', { type: re.type }) : await rpc('shareos.me', 'cloud_auth_start', { type: re.type });
+			if (w) w.location.href = r.url; else window.open(r.url, '_blank');
+			re.authUrl = r.url; re.authed = false;
+		} catch (e) { w?.close(); toast('Anmelden: ' + e.message, true); }
+		scope === 'admin' ? renderMain() : renderUserMain();
+	},
+	async 'cl-authfin'(el) {
+		const scope = el.dataset.scope, re = S.cloud.remoteEdit, f = $('#f-remote');
+		re.name = f.name.value;
+		el.disabled = true;
+		try {
+			const url = f.auth_url.value.trim();
+			if (scope === 'admin') await rpc('shareos.cloud', 'auth_finish', { url }); else await rpc('shareos.me', 'cloud_auth_finish', { url });
+			re.authed = true; toast('Angemeldet – jetzt „Hinzufügen“.');
+		} catch (e) { toast('Anmelden: ' + e.message, true); }
+		scope === 'admin' ? renderMain() : renderUserMain();
+	},
 	'cl-rcancel'(el) { S.cloud.remoteEdit = null; el.dataset.scope === 'admin' ? renderMain() : renderUserMain(); },
 	async 'cl-rtest'(el) {
 		el.disabled = true;
@@ -3432,6 +3478,17 @@ Object.assign(ACTIONS, {
 		try { await rpc('shareos.notify', 'delete', { id: el.dataset.id }); } catch (e) { toast(e.message, true); }
 		loadNotes();
 	},
+	async 'tg-chats'(el) {
+		el.disabled = true;
+		try {
+			const r = await rpc('shareos.notify', 'telegram_chats');
+			if (!r.chats.length) { toast('Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.', true); return; }
+			const c = r.chats[r.chats.length - 1];
+			$('#f-notify input[name=push_chat]').value = c.id;
+			toast(`Chat gefunden: ${c.name || c.username || c.id} – jetzt speichern.`);
+		} catch (e) { toast('Telegram: ' + e.message, true); }
+		finally { el.disabled = false; }
+	},
 	async 'note-test'(el) {
 		el.disabled = true;
 		try { await rpc('shareos.notify', 'test'); toast('Testnachricht verschickt.'); }
@@ -3642,7 +3699,7 @@ function appInstalled() {
 			<div class="info"><div class="name">${a.name} <span class="mut" style="font-size:12px">${a.version}</span></div>
 				<div class="desc">${txtOf(a.description)}</div>
 				<div class="desc" style="margin-top:6px"><span class="tag ${a.verified ? 'ok' : 'warn'}">${a.verified ? 'aus dem Store' : 'eigene / ungeprüft'}</span> ${upd(a) ? html`<span class="tag warn">Update ${upd(a).latest}</span>` : ''}</div>
-				${(a.permissions || []).length ? html`<div class="desc" style="margin-top:6px">${a.permissions.map((p) => html`<span class="tag" title="${PERM_TXT[p] || p}">${PERM_TAG[p] || p}</span> `)}</div>` : ''}
+				${permTags(appPerms(a))}
 				<div class="ip">${a.publisher} · sichtbar für ${appUsersTxt(a)}</div>
 				<div class="acts" style="margin-top:10px">${appActions(a, upd(a))}</div></div></div>`)}</div>`}
 		<p class="note">Web-Apps laufen auf einem eigenen Port (${A.installed.port}${A.installed.https ? ' / ' + A.installed.https_port + ' für HTTPS' : ''}) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.</p>
@@ -3659,10 +3716,14 @@ function appActions(a, upd) {
 }
 
 // permissions an app can ask for (app.json "permissions")
-const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien' };
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', internet: 'Nutzt das Internet' };
+// permissions plus "internet" (manifest field: the app loads data from the internet – not a restriction, shown for transparency)
+const appPerms = (x) => [...(x?.permissions || []), ...(x?.internet ? ['internet'] : [])];
+const permTags = (perms) => (perms.length ? html`<div class="desc" style="margin-top:6px">${perms.map((p) => html`<span class="tag" title="${PERM_TXT[p] || p}">${PERM_TAG[p] || p}</span> `)}</div>` : '');
 const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.',
 	embed: 'Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).',
-	files: 'Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.' };
+	files: 'Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.',
+	internet: 'Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.' };
 
 function appJobsEditor(id) {
 	const a = (S.apps.installed.apps || []).find((x) => x.id === id);
@@ -3712,7 +3773,7 @@ function appStore() {
 	for (const a of c.apps || []) {
 		const v = a.versions[0];
 		rows.push(html`<tr><td style="width:44px">${appIcon(a)}</td>
-			<td><b>${a.name}</b>${a.category ? html` <span class="tag">${APP_CAT[a.category] || a.category}</span>` : ''}<div class="mut" style="font-size:12px;max-width:420px">${txtOf(a.description)}</div></td>
+			<td><b>${a.name}</b>${a.category ? html` <span class="tag">${APP_CAT[a.category] || a.category}</span>` : ''}<div class="mut" style="font-size:12px;max-width:420px">${txtOf(a.description)}</div>${permTags(appPerms(v))}</td>
 			<td><b>${v.version}</b>${v.prerelease ? html` <span class="tag">BETA</span>` : ''}</td>
 			<td class="mut">${a.publisher}</td><td class="mut">${fmtDate(v.date)}</td><td class="mut">${fmtBytes(v.size)}</td>
 			<td style="white-space:nowrap">${a.installed && !a.update_available ? html`<span class="tag ok">installiert</span>`
@@ -3805,7 +3866,7 @@ Object.assign(ACTIONS, {
 	async 'app-install'(el) {
 		const c = (S.apps.catalog?.apps || []).find((x) => x.id === el.dataset.id);
 		const v = c?.versions.find((x) => x.version === el.dataset.v) || c?.versions[0];
-		const perms = v?.permissions || [];
+		const perms = appPerms(v);
 		if (perms.length && !await confirmDlg(`${c.name}: Berechtigungen`, perms.map((p) => PERM_TXT[p] || p).join(' '), 'Erlauben & installieren')) return;
 		try {
 			await rpc('shareos.apps', 'install', { id: el.dataset.id, version: el.dataset.v });

@@ -8,6 +8,16 @@
 #                                      secrets (pass=, secret_access_key=) on
 #                                      stdin as key=value lines; type raw =
 #                                      an rclone.conf section on stdin
+#   shareos-cloud auth-start <owner> <type>
+#                                      sign in at an OAuth service (Google
+#                                      Drive, OneDrive, Dropbox …): prints
+#                                      url=<sign-in page>
+#   shareos-cloud auth-finish <owner> <address>
+#                                      the address the browser was sent to
+#                                      after signing in (http://127.0.0.1:53682/?…,
+#                                      not reachable from the PC): handed to
+#                                      rclone on the box, which keeps the token
+#                                      for the next remote-add of this owner
 #   shareos-cloud remote-del <owner> <name>
 #   shareos-cloud remote-test <owner> <name>
 #   shareos-cloud run <job>            run a job now (also from cron)
@@ -105,20 +115,82 @@ cmd_remote_add() {   # owner name type [k=v...]; secrets on stdin
 	rc=$(rclone_bin) || die "rclone is not installed"
 	c=$(ensure_conf "$o")
 	grep -q "^\[$n\]" "$c" && die "a connection named $n exists"
+	# known services: our names -> rclone backends; OAuth ones take the token
+	# from auth-finish
+	case "$type" in
+		webdav|s3|sftp|ftp|smb|mega|b2|koofr) btype=$type ;;
+		gdrive) btype=drive ;; gphotos) btype='google photos' ;;
+		onedrive|dropbox|box|pcloud|yandex) btype=$type ;;
+		raw) btype=raw ;;
+		*) die "unknown type $type" ;;
+	esac
 	if [ "$type" = raw ]; then
 		sect=$(cat)
 		echo "$sect" | head -1 | grep -qE '^\[[A-Za-z0-9_-]+\]$' || die "the pasted text must start with [name]"
 		echo "$sect" | sed "1s/.*/[$n]/" >> "$c"
 	else
-		case "$type" in webdav|s3|sftp|ftp|smb) ;; *) die "unknown type $type" ;; esac
 		for kv; do echo "$kv" | grep -qE '^[a-z_]+=' || die "invalid option $kv"; done
 		# secrets from stdin, appended to the arguments
 		while IFS= read -r kv; do [ -n "$kv" ] && set -- "$@" "$kv"; done
-		as_owner "$o" "$rc" config create "$n" "$type" "$@" --obscure --non-interactive --config "$c" >/dev/null 2>$ST.err \
+		case "$type" in gdrive|gphotos|onedrive|dropbox|box|pcloud|yandex)
+			[ -s $ST/auth.token ] && [ "$(cat $ST/auth.owner 2>/dev/null)" = "$o" ] && [ "$(cat $ST/auth.type 2>/dev/null)" = "$type" ] \
+				|| die "sign in first (the sign-in is missing or for another service)"
+			set -- "$@" "token=$(cat $ST/auth.token)"
+			rm -f $ST/auth.token ;;
+		esac
+		as_owner "$o" "$rc" config create "$n" "$btype" "$@" --obscure --non-interactive --config "$c" >/dev/null 2>$ST.err \
 			|| { e=$(tail -n1 $ST.err); rm -f $ST.err; die "${e:-rclone config failed}"; }
 		rm -f $ST.err
 	fi
 	[ "$o" = - ] || chown "$o":users "$c"
+	echo "ok"
+}
+
+# --- OAuth sign-in (rclone authorize on the box) -------------------------------------
+# rclone waits on 127.0.0.1:53682 for the browser to come back. The browser of
+# the PC cannot reach that, so the user copies the address it ended up on and
+# auth-finish hands it to rclone here.
+auth_kill() {
+	[ -f $ST/auth.pid ] && { p=$(cat $ST/auth.pid); pkill -P "$p" 2>/dev/null; kill "$p" 2>/dev/null; }
+	rm -f $ST/auth.pid
+}
+
+cmd_auth_start() {   # owner type
+	o=$1 type=$2
+	check_owner "$o"
+	case "$type" in gdrive) b=drive ;; gphotos) b='google photos' ;; onedrive|dropbox|box|pcloud|yandex) b=$type ;; *) die "no sign-in for $type" ;; esac
+	rc=$(rclone_bin) || die "rclone is not installed"
+	mkdir -p $ST; auth_kill; rm -f $ST/auth.token $ST/auth.out
+	printf '%s' "$o" > $ST/auth.owner; printf '%s' "$type" > $ST/auth.type
+	umask 077
+	HOME=$ST timeout 900 "$rc" authorize "$b" --auth-no-open-browser --config /dev/null > $ST/auth.out 2>&1 < /dev/null &
+	echo $! > $ST/auth.pid
+	i=0; url=
+	while [ $i -lt 40 ] && [ -z "$url" ]; do
+		sleep 0.5; i=$((i + 1))
+		url=$(sed -n 's/.*go to the following link: \(http[^ ]*\).*/\1/p' $ST/auth.out 2>/dev/null | head -1)
+	done
+	[ -n "$url" ] || { auth_kill; die "rclone did not start the sign-in: $(tail -n1 $ST/auth.out 2>/dev/null)"; }
+	# the local page only forwards to the service: hand out the real address
+	real=$(curl -s -o /dev/null -w '%{redirect_url}' --max-time 10 "$url")
+	echo "url=${real:-$url}"
+}
+
+cmd_auth_finish() {   # owner address
+	o=$1 a=$2
+	[ "$(cat $ST/auth.owner 2>/dev/null)" = "$o" ] && [ -f $ST/auth.pid ] || die "start the sign-in again"
+	q=$(printf '%s' "$a" | sed -n 's#^ *https\{0,1\}://\(127\.0\.0\.1\|localhost\):53682/\(?[^ ]*\) *$#\2#p')
+	[ -n "$q" ] || die "paste the whole address from the browser (starts with http://127.0.0.1:53682/)"
+	curl -s -o /dev/null --max-time 60 "http://127.0.0.1:53682/$q"
+	i=0
+	while [ $i -lt 60 ] && ! grep -q '<---End paste' $ST/auth.out 2>/dev/null && kill -0 "$(cat $ST/auth.pid 2>/dev/null)" 2>/dev/null; do sleep 0.5; i=$((i + 1)); done
+	tok=$(sed -n '/Paste the following into your remote machine --->/,/<---End paste/p' $ST/auth.out | sed '1d;$d' | tr -d '\n')
+	auth_kill
+	if [ -z "$tok" ]; then
+		e=$(grep -i 'error\|failed' $ST/auth.out | tail -n1 | sed 's/^[0-9/ :]*\(NOTICE\|ERROR\|CRITICAL\): *//' | cut -c1-200)
+		die "sign-in failed: ${e:-no answer from the service}"
+	fi
+	( umask 077; printf '%s' "$tok" > $ST/auth.token )
 	echo "ok"
 }
 
@@ -231,11 +303,13 @@ cmd_status() {
 case "$1" in
 	install) cmd_install ;;
 	remote-add) shift; cmd_remote_add "$@" ;;
+	auth-start) cmd_auth_start "$2" "$3" ;;
+	auth-finish) cmd_auth_finish "$2" "$3" ;;
 	remote-del) cmd_remote_del "$2" "$3" ;;
 	remote-test) cmd_remote_test "$2" "$3" ;;
 	remotes) cmd_remotes "$2" ;;
 	run) cmd_run "$2" ;;
 	stop) cmd_stop "$2" ;;
 	status) cmd_status ;;
-	*) sed -n '3,22s/^# \{0,1\}//p' "$0"; exit 2 ;;
+	*) sed -n '3,32s/^# \{0,1\}//p' "$0"; exit 2 ;;
 esac
