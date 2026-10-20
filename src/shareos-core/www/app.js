@@ -3605,7 +3605,8 @@ function appIcon(a, srv) {
 
 // apps get the look and the address of this interface (for messages) in the URL
 function appParams(extra = {}) {
-	return new URLSearchParams({ theme: effTheme(), accent: S.accent, origin: location.origin, ...extra }).toString();
+	// user: the app SDK keeps the browser storage of the accounts apart
+	return new URLSearchParams({ theme: effTheme(), accent: S.accent, origin: location.origin, user: S.me?.name || S.user || '', lang: LANG, ...extra }).toString();
 }
 const appLaunchUrl = (a, srv, extra) => `${appUrl(a, srv)}?${appParams(extra)}`;
 const appWins = new Set();

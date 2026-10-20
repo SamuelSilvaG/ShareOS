@@ -277,6 +277,15 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 5. Firmware-Update (oder Neustart): nano und htop sind noch da.
 6. Apps → Installiert → htop → *Entfernen*: `htop` im Terminal → „not found“.
 
+## 14e. Apps je Konto und Dateien der Box (beta.13)
+
+1. Webpad 1.4 und WinWeb Player 1.1 installieren (Store oder die `.sapp`-Dateien).
+2. Als **root**: Webpad öffnen, „Geheimnis von root“ tippen, Fenster schließen.
+3. Abmelden, als **Benutzer** (mit Web-Zugang) anmelden, Webpad aus *Mein ShareOS* öffnen: Der Text von root ist **nicht** da. Etwas tippen, schließen.
+4. Wieder als root: Webpad zeigt „Geheimnis von root“.
+5. WinWeb Player → **+ Von der Box**: ein Dialog mit deinen Ordnern (Benutzer: persönlicher Ordner; root: Volumes und USB-Laufwerke). Einen Ordner mit MP3s wählen, mehrere mit Strg+Klick markieren, *Öffnen*: Sie stehen in der Playlist, spielen sofort, der Schieberegler spult. **+ Vom Rechner** geht weiterhin.
+6. System → Terminal über **HTTPS** (`https://<box>/`): Die Shell erscheint (kein „Press ↵ to Reconnect“).
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

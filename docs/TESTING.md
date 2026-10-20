@@ -273,6 +273,15 @@ their permissions.
 5. Firmware update (or reboot): nano and htop are still there.
 6. Apps → Installed → htop → *Remove*: `htop` in the terminal → "not found".
 
+## 14e. Apps per account and files of the box (beta.13)
+
+1. Install Webpad 1.4 and WinWeb Player 1.1 (store, or the `.sapp` files).
+2. As **root**: open Webpad, type "secret of root", close the window.
+3. Sign out, sign in as a **user** (with web access), open Webpad from *My ShareOS*: the text of root is **not** there. Type something, close.
+4. As root again: Webpad shows "secret of root".
+5. WinWeb Player → **+ From the box**: a dialog with your folders (user: personal folder; root: volumes and USB drives). Choose a folder with MP3s, select several with Ctrl+click, *Open*: they are in the playlist, play at once, the slider seeks. **+ From this computer** still works.
+6. System → Terminal over **HTTPS** (`https://<box>/`): the shell appears (no "Press ↵ to Reconnect").
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:
