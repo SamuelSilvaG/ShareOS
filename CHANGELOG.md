@@ -4,6 +4,10 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.11
+
+- **Media files in apps:** files opened in an app (e.g. a video in WinWeb Player) are served in parts on request (HTTP range requests), so a player starts at once and can seek in large files; audio, video and pictures come with their media type. Other files stay a plain download.
+
 ## 0.1.0-beta.10
 
 - **Apps open under the box's name:** links to apps (store, file browser, *My ShareOS*) used the address the interface was opened with – an IP address gave a certificate warning on port 8444 although a certificate for the name was installed. Apps now open under the name the installed certificate is valid for (a wildcard certificate `*.skynet.lan` gives `<hostname>.skynet.lan`) or under a name set by hand: System → Network → *Box name for links*. Opened by IP, the HTTPS panel links to the name.

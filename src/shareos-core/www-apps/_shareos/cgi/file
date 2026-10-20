@@ -1,6 +1,8 @@
 #!/bin/sh
 # ShareOS app platform: the file an app was opened with
-#   GET  /_shareos/cgi/file?t=<ticket>         file content
+#   GET  /_shareos/cgi/file?t=<ticket>         file content (also a byte
+#                                              range: "Range: bytes=a-b", so
+#                                              players can seek in large files)
 #   GET  /_shareos/cgi/file?t=<ticket>&info=1  {"name","size","mode","app"}
 #   PUT  /_shareos/cgi/file?t=<ticket>         save (only with mode "edit")
 # Tickets come from the rpcd method shareos.files.app_ticket (logged-in
@@ -34,14 +36,47 @@ as_user() {   # shell command (with the account's rights)
 P=$(q "$path")
 
 case "$REQUEST_METHOD" in
-	GET)
+	GET|HEAD)
 		size=$(as_user "stat -c %s -- $P" 2>/dev/null) || reply '404 Not Found' '{"error":"not found"}'
 		if [ -n "$info" ]; then
 			reply '200 OK' "{\"name\":\"$enc\",\"size\":$size,\"mode\":\"$mode\",\"app\":\"$app\"}"
 		fi
-		printf 'Status: 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %s\r\n' "$size"
-		printf 'Cache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n'
-		as_user "cat -- $P"
+		# media and pictures get their type (players and <img> need it);
+		# everything else stays a download – never HTML from a user's file
+		case "$(printf '%s' "${path##*/}" | tr 'A-Z' 'a-z')" in
+			*.mp3) ct=audio/mpeg ;; *.m4a|*.aac) ct=audio/mp4 ;; *.ogg|*.oga|*.opus) ct=audio/ogg ;;
+			*.flac) ct=audio/flac ;; *.wav) ct=audio/wav ;; *.mp4|*.m4v) ct=video/mp4 ;;
+			*.webm) ct=video/webm ;; *.ogv) ct=video/ogg ;; *.mkv) ct=video/x-matroska ;;
+			*.png) ct=image/png ;; *.jpg|*.jpeg) ct=image/jpeg ;; *.gif) ct=image/gif ;; *.webp) ct=image/webp ;;
+			*) ct=application/octet-stream ;;
+		esac
+		status='200 OK'; from=0; len=$size; extra=
+		r=${HTTP_RANGE:-}
+		case "$r" in
+			bytes=*-*)
+				a=${r#bytes=}; b=${a#*-}; a=${a%%-*}
+				case "$a$b" in *[!0-9]*) a=; b=x ;; esac   # several ranges or garbage: whole file
+				if [ -z "$a" ] && [ -n "$b" ] && [ "$b" != x ]; then   # the last b bytes
+					[ "$b" -gt "$size" ] && b=$size
+					a=$((size - b)); b=$((size - 1))
+				elif [ -n "$a" ] && [ "$b" != x ]; then
+					[ -z "$b" ] || [ "$b" -ge "$size" ] && b=$((size - 1))
+				fi
+				if [ -n "$a" ] && [ "$b" != x ]; then
+					if [ "$a" -ge "$size" ] || [ "$a" -gt "$b" ]; then
+						printf 'Status: 416 Range Not Satisfiable\r\nContent-Range: bytes */%s\r\nContent-Length: 0\r\n\r\n' "$size"
+						exit 0
+					fi
+					status='206 Partial Content'; from=$a; len=$((b - a + 1))
+					extra="Content-Range: bytes $a-$b/$size\r\n"
+				fi
+				;;
+		esac
+		printf 'Status: %s\r\nContent-Type: %s\r\nContent-Length: %s\r\nAccept-Ranges: bytes\r\n' "$status" "$ct" "$len"
+		printf "${extra}Cache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nContent-Security-Policy: sandbox\r\n\r\n"
+		[ "$REQUEST_METHOD" = HEAD ] && exit 0
+		if [ "$from" -eq 0 ] && [ "$len" -eq "$size" ]; then as_user "cat -- $P"
+		else as_user "dd if=$P bs=65536 iflag=skip_bytes,count_bytes skip=$from count=$len 2>/dev/null"; fi
 		;;
 	PUT|POST)
 		[ "$mode" = edit ] || reply '403 Forbidden' '{"error":"opened read-only"}'
