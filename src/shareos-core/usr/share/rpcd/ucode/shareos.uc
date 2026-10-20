@@ -42,7 +42,8 @@ const SERVICES = {
 	ubus:     { proc: 'ubusd',    label: 'Systembus (ubus)', desc: 'Nachrichten zwischen den Diensten' },
 	syslogd:  { proc: 'syslogd',  label: 'Systemprotokoll', desc: 'syslogd, im RAM' },
 	'avahi-daemon': { proc: 'avahi-daemon', label: 'Netzwerkname (mDNS)', desc: 'macht die Box als <name>.local erreichbar' },
-	board:    { proc: 'dns320l-daemon', label: 'Gerätesteuerung', desc: 'Lüfter, Temperatur, Taster, MCU-Uhr' }
+	board:    { proc: 'dns320l-daemon', label: 'Gerätesteuerung', desc: 'Lüfter, Temperatur, Taster, MCU-Uhr' },
+	transmission: { proc: 'transmission-daemon', label: 'BitTorrent (Transmission)', desc: 'P2P-Download, Port 9091' }
 };
 // services that must not be stopped from the UI (it would cut itself off)
 const ESSENTIAL = { uhttpd: true, rpcd: true, ubus: true, board: true };

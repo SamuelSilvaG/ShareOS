@@ -1,0 +1,17 @@
+{
+	"id": "transmission",
+	"name": "Transmission",
+	"version": "3.00",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "BitTorrent-Hintergrunddienst und Kommandozeilenwerkzeuge: transmission-daemon und transmission-remote.",
+		"en": "BitTorrent background daemon and command-line tools: transmission-daemon and transmission-remote."
+	},
+	"type": "system",
+	"commands": [ "transmission-daemon", "transmission-remote" ],
+	"icon": "icon.svg",
+	"category": "network",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://transmissionbt.com/",
+	"min_shareos": "0.2.0-beta.1"
+}

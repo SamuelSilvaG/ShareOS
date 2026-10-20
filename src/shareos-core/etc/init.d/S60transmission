@@ -1,0 +1,122 @@
+#!/bin/sh
+# BitTorrent daemon (Transmission)
+# Port: 9091 (RPC & Web UI), 51413 (peer traffic)
+
+CONF_DIR="/etc/transmission"
+PID_FILE="/var/run/transmission-daemon.pid"
+
+find_daemon() {
+	if [ -x /usr/bin/transmission-daemon ]; then
+		echo /usr/bin/transmission-daemon
+	elif [ -x /opt/shareos/bin/transmission-daemon ]; then
+		echo /opt/shareos/bin/transmission-daemon
+	elif [ -x /opt/shareos/sysapps/transmission/bin/transmission-daemon ]; then
+		echo /opt/shareos/sysapps/transmission/bin/transmission-daemon
+	fi
+}
+
+find_download_dir() {
+	for d in /mnt/*; do
+		if [ -d "$d" ] && [ "$d" != "/mnt/*" ] && [ "$d" != "/mnt/root" ]; then
+			mkdir -p "$d/downloads" 2>/dev/null
+			if [ -w "$d/downloads" ]; then
+				echo "$d/downloads"
+				return
+			fi
+		fi
+	done
+	mkdir -p /tmp/downloads
+	echo /tmp/downloads
+}
+
+ensure_config() {
+	mkdir -p "$CONF_DIR"
+	if [ ! -f "$CONF_DIR/settings.json" ]; then
+		dl=$(find_download_dir)
+		cat > "$CONF_DIR/settings.json" <<EOF
+{
+    "alt-speed-down": 50,
+    "alt-speed-enabled": false,
+    "alt-speed-time-begin": 540,
+    "alt-speed-time-day": 127,
+    "alt-speed-time-enabled": false,
+    "alt-speed-time-end": 1020,
+    "alt-speed-up": 50,
+    "bind-address-ipv4": "0.0.0.0",
+    "bind-address-ipv6": "::",
+    "blocklist-enabled": false,
+    "dht-enabled": true,
+    "download-dir": "$dl",
+    "download-queue-enabled": true,
+    "download-queue-size": 5,
+    "encryption": 1,
+    "idle-seeding-limit": 30,
+    "idle-seeding-limit-enabled": false,
+    "incomplete-dir": "$dl/.incomplete",
+    "incomplete-dir-enabled": false,
+    "lpd-enabled": false,
+    "message-level": 1,
+    "peer-congestion-algorithm": "",
+    "peer-id-ttl-hours": 6,
+    "peer-limit-global": 200,
+    "peer-limit-per-torrent": 50,
+    "peer-port": 51413,
+    "peer-port-random-high": 65535,
+    "peer-port-random-low": 49152,
+    "peer-port-random-on-start": false,
+    "peer-socket-tos": "default",
+    "pex-enabled": true,
+    "port-forwarding-enabled": true,
+    "queue-stalled-enabled": true,
+    "queue-stalled-minutes": 30,
+    "ratio-limit": 2,
+    "ratio-limit-enabled": false,
+    "rename-partial-files": true,
+    "rpc-authentication-required": false,
+    "rpc-bind-address": "0.0.0.0",
+    "rpc-enabled": true,
+    "rpc-host-whitelist-enabled": false,
+    "rpc-port": 9091,
+    "rpc-url": "/transmission/",
+    "rpc-whitelist": "127.0.0.1,::1,192.168.*.*,10.*.*.*",
+    "rpc-whitelist-enabled": false,
+    "speed-limit-down": 100,
+    "speed-limit-down-enabled": false,
+    "speed-limit-up": 100,
+    "speed-limit-up-enabled": false,
+    "start-added-torrents": true,
+    "trash-original-torrent-files": false,
+    "umask": 18,
+    "upload-slots-per-torrent": 14,
+    "utp-enabled": true
+}
+EOF
+	fi
+}
+
+start() {
+	DAEMON=$(find_daemon)
+	if [ -z "$DAEMON" ]; then
+		echo "Transmission daemon not found (install via APPS or firmware)" >&2
+		exit 1
+	fi
+	ensure_config
+	printf "Starting Transmission: "
+	start-stop-daemon -S -q -b -m -p "$PID_FILE" -x "$DAEMON" -- -f -g "$CONF_DIR"
+	echo "OK"
+}
+
+stop() {
+	printf "Stopping Transmission: "
+	start-stop-daemon -K -q -p "$PID_FILE" 2>/dev/null
+	rm -f "$PID_FILE"
+	killall -q transmission-daemon 2>/dev/null
+	echo "OK"
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	restart|reload) stop; sleep 1; start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

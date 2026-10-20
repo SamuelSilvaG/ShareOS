@@ -1,0 +1,16 @@
+#!/bin/sh
+# Transmission RPC proxy for ShareOS apps
+TARGET="http://127.0.0.1:9091/transmission/rpc"
+
+H_AUTH=""
+[ -n "$HTTP_X_TRANSMISSION_SESSION_ID" ] && H_AUTH="-H X-Transmission-Session-Id: $HTTP_X_TRANSMISSION_SESSION_ID"
+
+RES=$(curl -s -i -m 15 -X "${REQUEST_METHOD:-POST}" "$TARGET" $H_AUTH -H "Content-Type: ${CONTENT_TYPE:-application/json}" --data-binary @- 2>/dev/null)
+
+if [ -z "$RES" ]; then
+	printf "Status: 503 Service Unavailable\r\nContent-Type: application/json\r\nCache-Control: no-store\r\n\r\n"
+	printf '{"result":"transmission-daemon is not reachable","arguments":{}}\n'
+	exit 0
+fi
+
+printf '%s' "$RES" | sed '1s/^HTTP\/[0-9.]* /Status: /'
