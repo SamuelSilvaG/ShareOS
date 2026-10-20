@@ -22,6 +22,7 @@ make dns320l                    # full build
 make dns320l-menuconfig         # buildroot options
 make dns320l-linux-menuconfig   # kernel options
 make dns320l-savedefconfig      # write changes back to configs/
+make sysapps-pack               # system apps (nano, htop …) as .sapp – after make dns320l
 make clean                      # drop output/, keep downloads in dl/
 ```
 
@@ -34,6 +35,12 @@ Output in `output/dns320l/images/`:
 | `uImage`, `urootfs` | the two parts on their own |
 | `zImage.kirkwood-dns320l` | kernel with appended device tree |
 | `modules.tar.xz` | kernel modules (not part of the phase-1 image) |
+
+System apps: `make sysapps-pack` runs a second buildroot in `output/sysapps`
+(`configs/shareos_sysapps_defconfig`) that uses the toolchain of
+`output/dns320l/host` as an external toolchain, and packs every recipe in
+`sysapps/` into `output/sysapps/sapp/<id>-<version>.sapp` – see
+[sysapps/README.md](../sysapps/README.md).
 
 ## Size limits
 

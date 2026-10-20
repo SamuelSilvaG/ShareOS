@@ -2105,11 +2105,13 @@ const SYS = {
 
 	terminal() {
 		const t = S.term;
+		if (!S.sysapps) { S.sysapps = []; rpc('shareos.apps', 'installed', {}).then((r) => { S.sysapps = (r.apps || []).filter((a) => a.type === 'system'); if (S.sysapps.length && !S.term) renderMain(); }).catch(() => {}); }
 		return html`<div class="panel">
 			<div class="ph"><span class="pt">TERMINAL</span><span class="tag warn ml">root</span>
 				${t ? html`<a class="btn sm ghost" href="${termUrl(t)}" target="_blank" rel="noopener">In eigenem Fenster ↗</a><button class="btn sm ghost" type="button" data-act="term-close">Beenden</button>` : ''}</div>
 			${t ? html`<iframe class="termframe" src="${termUrl(t)}" title="Terminal"></iframe>`
 				: html`<p class="mut" style="margin:0 0 12px">Eine Shell als <b>root</b> direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).</p>
+				${sysApps().length ? html`<p class="mut" style="margin:0 0 12px"><span>Aus System-Apps:</span> ${sysApps().map((a, i) => html`${i ? ' · ' : ''}${sysCmds(a)}`)}</p>` : ''}
 				<div class="acts"><button class="btn primary" type="button" data-act="term-open">Terminal öffnen</button></div>`}
 			<p class="note">Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.</p>
 		</div>`;
@@ -2190,7 +2192,7 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'logs') loadLog();
-		if (sub !== 'terminal' && S.term) S.term = null;
+		if (sub !== 'terminal') { if (S.term) S.term = null; S.sysapps = null; }
 		if (sub === 'notifications') {
 			if (!S.noteCfg) loadNoteCfg();
 			if (!S.notes) loadNotes();
@@ -3612,6 +3614,8 @@ const findApp = (id) => (S.apps?.installed?.apps || []).find((x) => x.id === id)
 	|| (S.fbApps?.apps || []).find((x) => x.id === id);
 const appSrv = () => S.apps?.installed || S.me?.apps_server || S.fbApps;
 
+const sysApps = () => S.sysapps || [];
+
 // web terminal (ttyd on its own port, secret path)
 const termUrl = (t) => `${location.protocol}//${location.hostname}:${t.port}/${t.path}/`;
 
@@ -3720,6 +3724,7 @@ function appsView() {
 }
 
 function appUsersTxt(a) {
+	if (a.type === 'system') return 'Terminal (Administratoren)';
 	if (a.users.includes('*')) return 'alle Benutzer';
 	if (!a.users.length) return 'nur Administratoren';
 	return a.users.join(', ');
@@ -3744,30 +3749,37 @@ function appInstalled() {
 				<div class="desc">${txtOf(a.description)}</div>
 				<div class="desc" style="margin-top:6px"><span class="tag ${a.verified ? 'ok' : 'warn'}">${a.verified ? 'aus dem Store' : 'eigene / ungeprüft'}</span> ${upd(a) ? html`<span class="tag warn">Update ${upd(a).latest}</span>` : ''}</div>
 				${permTags(appPerms(a))}
-				<div class="ip">${a.publisher} · sichtbar für ${appUsersTxt(a)}</div>
+				<div class="ip">${a.publisher} · ${a.type === 'system' ? html`<span>Befehl</span> ${sysCmds(a)}` : 'sichtbar für ' + appUsersTxt(a)}</div>
 				<div class="acts" style="margin-top:10px">${appActions(a, upd(a))}</div></div></div>`)}</div>`}
 		<p class="note">Web-Apps laufen auf einem eigenen Port (${A.installed.port}${A.installed.https ? ' / ' + A.installed.https_port + ' für HTTPS' : ''}) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.</p>
 	</section>`;
 }
 
+// commands of a system app, e.g. "nano"
+const sysCmds = (a) => (a.commands || []).map((c, i) => html`${i ? ', ' : ''}<code style="white-space:nowrap">${c}</code>`);
+
 function appActions(a, upd) {
 	const busy = !!(S.apps.job && JOB_TXT[S.apps.job.state]);
-	return html`<button class="btn sm" type="button" data-act="app-launch" data-id="${a.id}">${(a.permissions || []).includes('embed') ? 'Öffnen' : 'Öffnen ↗'}</button>
+	const sys = a.type === 'system';
+	return html`${sys ? html`<a class="btn sm" href="#/system/terminal">${svg(I.term)}Terminal</a>`
+		: html`<button class="btn sm" type="button" data-act="app-launch" data-id="${a.id}">${(a.permissions || []).includes('embed') ? 'Öffnen' : 'Öffnen ↗'}</button>`}
 		${upd ? html`<button class="btn sm primary" type="button" data-act="app-install" data-id="${a.id}" data-v="${upd.latest}" ${busy ? 'disabled' : ''}>${svg(I.dl)}Aktualisieren</button>` : ''}
 		${(a.jobs || []).length ? html`<button class="btn sm ghost" type="button" data-act="app-jobs" data-id="${a.id}">${svg(I.clock)}Aufgaben</button>` : ''}
-		<button class="btn sm ghost" type="button" data-act="app-users" data-id="${a.id}">${svg(I.users)}Benutzer</button>
+		${sys ? '' : html`<button class="btn sm ghost" type="button" data-act="app-users" data-id="${a.id}">${svg(I.users)}Benutzer</button>`}
 		<button class="btn sm ghost" type="button" data-act="app-remove" data-id="${a.id}">${svg(I.trash)}Entfernen</button>`;
 }
 
 // permissions an app can ask for (app.json "permissions")
-const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', internet: 'Nutzt das Internet' };
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', internet: 'Nutzt das Internet', system: 'System-App · Terminal' };
 // permissions plus "internet" (manifest field: the app loads data from the internet – not a restriction, shown for transparency)
-const appPerms = (x) => [...(x?.permissions || []), ...(x?.internet ? ['internet'] : [])];
+// and "system" for system apps (programs for the terminal)
+const appPerms = (x) => [...(x?.type === 'system' ? ['system'] : []), ...(x?.permissions || []), ...(x?.internet ? ['internet'] : [])];
 const permTags = (perms) => (perms.length ? html`<div class="desc" style="margin-top:6px">${perms.map((p) => html`<span class="tag" title="${PERM_TXT[p] || p}">${PERM_TAG[p] || p}</span> `)}</div>` : '');
 const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.',
 	embed: 'Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).',
 	files: 'Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.',
-	internet: 'Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.' };
+	internet: 'Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.',
+	system: 'Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.' };
 
 function appJobsEditor(id) {
 	const a = (S.apps.installed.apps || []).find((x) => x.id === id);
@@ -3817,7 +3829,7 @@ function appStore() {
 	for (const a of c.apps || []) {
 		const v = a.versions[0];
 		rows.push(html`<tr><td style="width:44px">${appIcon(a)}</td>
-			<td><b>${a.name}</b>${a.category ? html` <span class="tag">${APP_CAT[a.category] || a.category}</span>` : ''}<div class="mut" style="font-size:12px;max-width:420px">${txtOf(a.description)}</div>${permTags(appPerms(v))}</td>
+			<td><b>${a.name}</b>${a.category ? html` <span class="tag">${APP_CAT[a.category] || a.category}</span>` : ''}<div class="mut" style="font-size:12px;max-width:420px">${txtOf(a.description)}</div>${permTags(appPerms({ ...v, type: a.type }))}</td>
 			<td><b>${v.version}</b>${v.prerelease ? html` <span class="tag">BETA</span>` : ''}</td>
 			<td class="mut">${a.publisher}</td><td class="mut">${fmtDate(v.date)}</td><td class="mut">${fmtBytes(v.size)}</td>
 			<td style="white-space:nowrap">${a.installed && !a.update_available ? html`<span class="tag ok">installiert</span>`

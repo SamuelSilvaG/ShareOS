@@ -4,6 +4,11 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.13 (not released yet)
+
+- **System apps (new app type `"system"`):** native programs for the terminal, from the same store and as `.sapp` like the web apps. They go to `/opt/shareos/sysapps/<id>` (flash, kept across updates); a starter per command in `/opt/shareos/bin` (in `PATH`) brings the app's own libraries and terminal descriptions along, so the base system stays small. A command the firmware has or another app provides is refused. In the store marked "System app · terminal", in the list with "Terminal" instead of "Open"; System → Terminal lists their commands. First ones: **nano 8.7** (text editor) and **htop 3.4.1** (processes, CPU, memory), each about 270 KB.
+- Build: `make sysapps-pack` builds them with the firmware's toolchain (`configs/shareos_sysapps_defconfig`, recipes in `sysapps/`); the CI attaches them to the release.
+
 ## 0.1.0-beta.12
 
 - **Terminal (System → Terminal):** a root shell in the browser (ttyd), in the look of the interface. One window per start, secret address, ends when the window is closed (or after 90 seconds without anyone connecting); over HTTPS with the certificate of the box.

@@ -1001,7 +1001,13 @@
 		"2. ADRESSE NACH DER ANMELDUNG": "2. साइन इन के बाद का पता",
 		"Erst anmelden (Schritt 1 und 2).": "पहले साइन इन करें (चरण 1 और 2)।",
 		"Die Box läuft gerade nicht aus dem Flash (": "बॉक्स अभी फ़्लैश से नहीं चल रहा (",
-		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": ")। इस पेज से अपडेट केवल फ़्लैश से सामान्य शुरुआत पर ही होते हैं।"
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": ")। इस पेज से अपडेट केवल फ़्लैश से सामान्य शुरुआत पर ही होते हैं।",
+		"Befehl": "कमांड",
+		"Aus System-Apps:": "सिस्टम ऐप्स से:",
+		"Terminal (Administratoren)": "टर्मिनल (व्यवस्थापक)",
+		"System-App · Terminal": "सिस्टम ऐप · टर्मिनल",
+		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "बॉक्स की कमांड लाइन के लिए प्रोग्राम (सिस्टम → टर्मिनल या SSH)। यह उसे शुरू करने वाले के अधिकारों से चलता है – टर्मिनल में root के रूप में।",
+		"Terminal": "टर्मिनल"
 	},
 	"patterns": [
 		[

@@ -125,6 +125,8 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 08:34 | Jan: ShareCommander und Webpad sollen auf die Box zugreifen. Claude baut die App-Berechtigung `files` (`ShareOS.fs`): ein Schlüssel je App und Konto, alle Prüfungen in rpcd mit den Rechten des Benutzers. ShareCommander zeigt jetzt Ordner der Box, Webpad speichert dort. |
 | 08:52 | Jans nächste Liste: Internet für Apps, Webpad-Absturz beim Schließen, Umstiegsanleitung, Löt-Korrektur, Übersetzungen, Web-Terminal, Bereiche abschaltbar, Jahreszahl, Cloud-Anbieter, Telegram. Claude arbeitet sie der Reihe nach ab: Telegram-Bot, Google-Anmeldung über die Box (rclone authorize, die Adresse aus der Browserzeile wird zurückgegeben), Bereiche, ttyd als Terminal, rund 90 Übersetzungen mit einem neuen Prüfskript. Nebenbei gefunden: In ucode-Regex-Klassen ist `\s` kein Leerraum, sondern ein „s“ – ntfy-Adressen wurden abgelehnt. |
 
+| 10:00 | Jan: „nano, htop – ich will erstmal die Umsetzung sehen. Ist ja eine eigene App-Art.“ Claude baut den App-Typ `system`: native Programme, gebaut mit der Toolchain der Firmware in einem zweiten buildroot (externe Toolchain = die der Firmware), gepackt mit eigenen Bibliotheken (ncurses) und Terminal-Beschreibungen; auf der Box unter `/opt/shareos/sysapps`, ein Starter je Befehl im `PATH`. nano und htop laufen im Emulator; ein Test bedient htop in einem Pseudo-Terminal. |
+
 ## Bemerkenswerte Problemlösungen
 
 - **3-MB-Grenze des Bootloaders:** Der Kernel ist von 4,2 auf 2,4 MB geschrumpft, Treiber wurden in Module ausgelagert. Das Start-System umfasst nur 0,9 MB.

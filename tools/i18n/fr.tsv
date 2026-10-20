@@ -1283,3 +1283,9 @@ P242	Connexion : $1
 P243	– $1. Ne pas éteindre le boîtier.
 E997	Le boîtier ne tourne pas actuellement depuis la flash (
 E998	). Les mises à jour depuis cette page ne fonctionnent qu’après un démarrage normal depuis la flash.
+E999	Commande
+E1000	Des applis système :
+E1001	Terminal (administrateurs)
+E1002	Appli système · terminal
+E1003	Programme pour la ligne de commande de la box (Système → Terminal ou SSH). Il s’exécute avec les droits de celui qui le lance – dans le terminal en tant que root.
+E1004	Terminal

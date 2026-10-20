@@ -1283,3 +1283,9 @@ P242	Inicio de sesión: $1
 P243	– $1. No apagues el equipo.
 E997	El equipo no se está ejecutando desde la flash (
 E998	). Las actualizaciones desde esta página solo funcionan tras un arranque normal desde la flash.
+E999	Comando
+E1000	De apps del sistema:
+E1001	Terminal (administradores)
+E1002	App del sistema · terminal
+E1003	Programa para la línea de comandos de la caja (Sistema → Terminal o SSH). Se ejecuta con los permisos de quien lo inicia – en el terminal como root.
+E1004	Terminal
