@@ -1001,7 +1001,13 @@
 		"2. ADRESSE NACH DER ANMELDUNG": "2. ADDRESS AFTER SIGNING IN",
 		"Erst anmelden (Schritt 1 und 2).": "Sign in first (step 1 and 2).",
 		"Die Box läuft gerade nicht aus dem Flash (": "The box is not running from the flash right now (",
-		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Updates on this page only work after a normal start from the flash."
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Updates on this page only work after a normal start from the flash.",
+		"Befehl": "Command",
+		"Aus System-Apps:": "From system apps:",
+		"Terminal (Administratoren)": "Terminal (administrators)",
+		"System-App · Terminal": "System app · terminal",
+		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "A program for the command line of the box (System → Terminal or SSH). It runs with the rights of whoever starts it – in the terminal as root.",
+		"Terminal": "Terminal"
 	},
 	"patterns": [
 		[

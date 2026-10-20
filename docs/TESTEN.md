@@ -265,6 +265,18 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **Cloud:** Cloud → Konto hinzufügen → *Google Drive*: „Bei Google Drive anmelden ↗“, anmelden, die Adresse aus der Browserzeile (http://127.0.0.1:53682/…) einfügen, *Übernehmen*, *Hinzufügen*, *Prüfen*.
 - **Sprache:** System → Darstellung → Sprache *English*: alle Seiten durchklicken – es sollte kein Deutsch mehr zu sehen sein (sonst Bildschirmfoto an Claude).
 
+## 14d. System-Apps (beta.13)
+
+1. Apps → Store → *Paket installieren*: `nano-8.7.0.sapp` wählen, *Hochladen & installieren*. Genauso `htop-3.4.1.sapp`.
+2. Apps → Installiert: beide mit dem Kennzeichen „System-App · Terminal“ und dem Knopf *Terminal* (kein *Öffnen*, kein *Benutzer*).
+3. System → Terminal zeigt „Aus System-Apps: nano · htop“. *Terminal öffnen*:
+   - `htop` – Prozesse, CPU und Speicher erscheinen farbig; beenden mit `q`.
+   - `nano /tmp/test.txt` – etwas tippen, speichern mit Strg+O, Enter, beenden mit Strg+X; `cat /tmp/test.txt`. Umlaute (äöü) müssen richtig aussehen.
+   - `which nano` → `/opt/shareos/bin/nano`.
+4. Dasselbe per SSH (`ssh root@<box>`, dann `htop`).
+5. Firmware-Update (oder Neustart): nano und htop sind noch da.
+6. Apps → Installiert → htop → *Entfernen*: `htop` im Terminal → „not found“.
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

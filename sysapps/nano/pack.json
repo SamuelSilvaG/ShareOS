@@ -1,0 +1,1 @@
+{ "bin": [ "usr/bin/nano" ], "share": [ "usr/share/terminfo" ] }

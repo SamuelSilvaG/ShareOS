@@ -9,6 +9,9 @@
 # shutdown/boot and the status call. The mirror layout needs the md driver
 # in the host kernel and is skipped when /proc/mdstat is missing.
 #
+# own UTS name space: start scripts of the box set the host name, which
+# would otherwise change the host name of the build machine
+[ -n "${SHAREOS_TEST_UTS:-}" ] || exec unshare --uts env SHAREOS_TEST_UTS=1 "$0" "$@"
 set -u
 OUT=${1:-output/dns320l}
 TOP=$(cd "$(dirname "$0")/.." && pwd)

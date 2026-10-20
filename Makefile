@@ -3,6 +3,7 @@
 #   make dns320l            build the DNS-320L firmware
 #   make dns320l-menuconfig change buildroot options of that board
 #   make dns320l-linux-menuconfig
+#   make sysapps-pack       build the system apps (nano, htop …) as .sapp
 #   make clean              remove build output (keeps downloads)
 #
 # Variables:
@@ -18,8 +19,10 @@ TOP   := $(CURDIR)
 BR    := $(TOP)/buildroot/buildroot-$(BR_VERSION)
 DL    ?= $(if $(BR2_DL_DIR),$(BR2_DL_DIR),$(TOP)/dl)
 BOARDS := dns320l
+# not a board: native programs packed as system apps (see tools/sysapps)
+EXTRA := sysapps
 
-.PHONY: all clean distclean $(BOARDS) buildroot
+.PHONY: all clean distclean $(BOARDS) sysapps sysapps-pack buildroot
 
 all: $(BOARDS)
 
@@ -43,7 +46,11 @@ $(1): $$($(1)_O)/.config
 $(1)-%: $$($(1)_O)/.config
 	$$(MAKE) -C $$(BR) O=$$($(1)_O) BR2_DL_DIR=$$(DL) $$*
 endef
-$(foreach b,$(BOARDS),$(eval $(call board_rules,$(b))))
+$(foreach b,$(BOARDS) $(EXTRA),$(eval $(call board_rules,$(b))))
+
+# system apps (.sapp) for the app store: needs the toolchain of make dns320l
+sysapps-pack: sysapps
+	python3 $(TOP)/tools/sysapps/pack.py $(sysapps_O)/target $(sysapps_O)/sapp
 
 clean:
 	rm -rf $(TOP)/output

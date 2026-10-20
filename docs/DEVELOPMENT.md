@@ -124,6 +124,8 @@ the box for why the web server was not running.
 | 08:34 | Jan: ShareCommander and Webpad should access the box. Claude builds the app permission `files` (`ShareOS.fs`): one grant per app and account, every check in rpcd with the user's rights. ShareCommander now shows folders of the box, Webpad saves there. |
 | 08:52 | Jan's next list: internet for apps, Webpad crash on close, switching guide, soldering correction, translations, web terminal, switchable areas, year in dates, cloud services, Telegram. Claude works through it: Telegram bot, Google sign-in through the box (rclone authorize, the address from the browser bar is handed back), areas, ttyd as terminal, about 90 translations with a new check. Found on the way: inside ucode regex classes `\s` is not whitespace but the letter "s" – ntfy addresses were refused. |
 
+| 10:00 | Jan: "nano, htop – I want to see the implementation first. It's an app type of its own." Claude builds the app type `system`: native programs, built with the firmware's toolchain in a second buildroot (external toolchain = the firmware's), packed with their own libraries (ncurses) and terminal descriptions; on the box under `/opt/shareos/sysapps`, a starter per command in `PATH`. nano and htop run in the emulator; a test drives htop in a pseudo terminal. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

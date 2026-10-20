@@ -261,6 +261,18 @@ their permissions.
 - **Cloud:** Cloud → add account → *Google Drive*: "Sign in at Google Drive ↗", sign in, paste the address from the browser bar (http://127.0.0.1:53682/…), *Apply*, *Add*, *Check*.
 - **Language:** System → Appearance → language *English*: click through all pages – no German should be visible.
 
+## 14d. System apps (beta.13)
+
+1. Apps → Store → *Install package*: choose `nano-8.7.0.sapp`, *Upload & install*. Same with `htop-3.4.1.sapp`.
+2. Apps → Installed: both with the tag "System app · terminal" and the button *Terminal* (no *Open*, no *Users*).
+3. System → Terminal shows "From system apps: nano · htop". *Open terminal*:
+   - `htop` – processes, CPU and memory appear in colour; quit with `q`.
+   - `nano /tmp/test.txt` – type something, save with Ctrl+O, Enter, quit with Ctrl+X; `cat /tmp/test.txt`. Umlauts (äöü) must look right.
+   - `which nano` → `/opt/shareos/bin/nano`.
+4. The same over SSH (`ssh root@<box>`, then `htop`).
+5. Firmware update (or reboot): nano and htop are still there.
+6. Apps → Installed → htop → *Remove*: `htop` in the terminal → "not found".
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:

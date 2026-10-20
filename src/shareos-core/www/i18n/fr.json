@@ -1001,7 +1001,13 @@
 		"2. ADRESSE NACH DER ANMELDUNG": "2. ADRESSE APRÈS LA CONNEXION",
 		"Erst anmelden (Schritt 1 und 2).": "Connectez-vous d’abord (étapes 1 et 2).",
 		"Die Box läuft gerade nicht aus dem Flash (": "Le boîtier ne tourne pas actuellement depuis la flash (",
-		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Les mises à jour depuis cette page ne fonctionnent qu’après un démarrage normal depuis la flash."
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Les mises à jour depuis cette page ne fonctionnent qu’après un démarrage normal depuis la flash.",
+		"Befehl": "Commande",
+		"Aus System-Apps:": "Des applis système :",
+		"Terminal (Administratoren)": "Terminal (administrateurs)",
+		"System-App · Terminal": "Appli système · terminal",
+		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "Programme pour la ligne de commande de la box (Système → Terminal ou SSH). Il s’exécute avec les droits de celui qui le lance – dans le terminal en tant que root.",
+		"Terminal": "Terminal"
 	},
 	"patterns": [
 		[

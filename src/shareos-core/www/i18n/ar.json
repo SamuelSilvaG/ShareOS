@@ -1001,7 +1001,13 @@
 		"2. ADRESSE NACH DER ANMELDUNG": "2. العنوان بعد تسجيل الدخول",
 		"Erst anmelden (Schritt 1 und 2).": "سجّل الدخول أولاً (الخطوتان 1 و2).",
 		"Die Box läuft gerade nicht aus dem Flash (": "الجهاز لا يعمل حالياً من الذاكرة الوميضية (",
-		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). التحديثات عبر هذه الصفحة تعمل فقط بعد إقلاع عادي من الذاكرة الوميضية."
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). التحديثات عبر هذه الصفحة تعمل فقط بعد إقلاع عادي من الذاكرة الوميضية.",
+		"Befehl": "الأمر",
+		"Aus System-Apps:": "من تطبيقات النظام:",
+		"Terminal (Administratoren)": "الطرفية (المسؤولون)",
+		"System-App · Terminal": "تطبيق نظام · طرفية",
+		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "برنامج لسطر أوامر الجهاز (النظام ← الطرفية أو SSH). يعمل بصلاحيات من يشغّله – في الطرفية كمستخدم root.",
+		"Terminal": "الطرفية"
 	},
 	"patterns": [
 		[

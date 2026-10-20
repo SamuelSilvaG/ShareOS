@@ -126,7 +126,7 @@ def me(user):
             'cloud': x.get('cloud', False), 'paperless': bool(x['home']), 'files': x.get('files', False) and x['role'] == 'user',
             'ui': x.get('ui', {'theme': None, 'accent': None}),
             'apps': [{'id': a['id'], 'name': a['name'], 'entry': a['entry'], 'icon': a['icon'], 'description': a['description']}
-                     for a in APPS['installed'].values() if '*' in a['users'] or user in a['users']],
+                     for a in APPS['installed'].values() if a.get('type') != 'system' and ('*' in a['users'] or user in a['users'])],
             'apps_server': {'port': 8081, 'https_port': 8444, 'https': True}}
 
 
@@ -230,7 +230,10 @@ APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Back
                                   'opens': [{'ext': ['.txt', '.md', '.log', '.json', '.conf'], 'mode': 'edit', 'label': None}]},
                        'fan-tuner': {'id': 'fan-tuner', 'name': 'Fan Tuner', 'version': '0.1.0', 'publisher': 'Jan', 'description': {'de': 'Nur Einstellungen – wird in ShareOS angezeigt', 'en': 'settings only'},
                                      'type': 'webapp', 'entry': 'index.html', 'icon': None, 'category': 'system', 'permissions': ['embed'], 'verified': False, 'source': 'upload',
-                                     'installed': 0, 'users': ['*'], 'jobs': [], 'window': None, 'opens': []}},
+                                     'installed': 0, 'users': ['*'], 'jobs': [], 'window': None, 'opens': []},
+                       'nano': {'id': 'nano', 'name': 'nano', 'version': '8.7.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Einfacher Texteditor für das Terminal (System → Terminal oder SSH): „nano datei“. Mit Rückgängig, Suchen und Ersetzen und UTF-8.', 'en': 'text editor for the terminal'},
+                                'type': 'system', 'commands': ['nano'], 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': [], 'verified': True, 'source': 'store',
+                                'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []}},
         'job': None, 'channel': 'stable',
         'sources': ['https://github.com/UniqueDroid/ShareOS-Apps/releases/download/catalog/index.json'], 'refreshed': 0}
 CATALOG = [
@@ -240,6 +243,12 @@ CATALOG = [
      'icon_url': None, 'entry': 'index.html', 'icon': 'icon.svg',
      'versions': [{'version': '1.0.0', 'date': '2026-10-18T10:28:46Z', 'prerelease': False, 'url': 'https://example/webpad.sapp', 'sha256': '0' * 64,
                    'size': 513577, 'min_shareos': '0.1.0', 'notes_url': 'https://github.com/UniqueDroid/ShareOS-Apps/releases/tag/webpad-v1.0.0'}]},
+    {'id': 'htop', 'name': 'htop', 'publisher': 'UniqueDroid', 'category': 'system', 'type': 'system',
+     'description': {'de': 'Zeigt im Terminal (System → Terminal oder SSH) laufende Prozesse, CPU- und Speicherauslastung live an: „htop“. Beenden mit F10 oder q.',
+                     'en': 'Shows running processes, CPU and memory use live in the terminal.'},
+     'icon_url': None, 'entry': 'index.html',
+     'versions': [{'version': '3.4.1', 'date': '2026-10-20T08:30:00Z', 'prerelease': False, 'url': 'https://example/htop.sapp', 'sha256': '0' * 64,
+                   'size': 263644, 'min_shareos': '0.1.0-beta.13', 'notes_url': ''}]},
     {'id': 'mediathek', 'name': 'Mediathek', 'publisher': 'Beispiel', 'category': 'media', 'type': 'webapp',
      'description': {'de': 'Fotos und Videos der Freigaben im Browser ansehen (Beispiel-Eintrag).', 'en': 'Browse photos and videos (sample entry).'},
      'icon_url': None, 'entry': 'index.html',
@@ -292,8 +301,9 @@ def apps_call(method, args):
             return {'state': 'verifying', 'id': j['id']}
         a = next(x for x in CATALOG if x['id'] == j['id'])
         APPS['installed'][a['id']] = {'id': a['id'], 'name': a['name'], 'version': j['version'], 'publisher': a['publisher'], 'description': a['description'],
-                                      'type': 'webapp', 'entry': 'index.html', 'icon': a.get('icon'), 'category': a['category'], 'permissions': [],
-                                      'verified': True, 'source': APPS['sources'][0], 'installed': int(time.time()), 'users': ['*']}
+                                      'type': a['type'], 'entry': 'index.html', 'icon': a.get('icon'), 'category': a['category'], 'permissions': [],
+                                      'commands': [a['id']] if a['type'] == 'system' else [],
+                                      'verified': True, 'source': APPS['sources'][0], 'installed': int(time.time()), 'users': [] if a['type'] == 'system' else ['*']}
         APPS['job'] = None
         return {'state': 'done', 'id': a['id'], 'version': j['version']}
     if method == 'remove':

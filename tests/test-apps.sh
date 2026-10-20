@@ -6,6 +6,9 @@
 #
 #   sudo tests/test-apps.sh [output/dns320l] [webpad.sapp]
 #
+# own UTS name space: start scripts of the box set the host name, which
+# would otherwise change the host name of the build machine
+[ -n "${SHAREOS_TEST_UTS:-}" ] || exec unshare --uts env SHAREOS_TEST_UTS=1 "$0" "$@"
 set -u
 OUT=${1:-output/dns320l}
 TOP=$(cd "$(dirname "$0")/.." && pwd)
@@ -93,6 +96,47 @@ check "package with a symlink rejected" "run 'shareos-apps install-file /tmp/pkg
 check "native apps are refused (not supported yet)" "run 'shareos-apps install-file /tmp/pkg/native.sapp' | grep -q 'not supported'"
 check "missing entry file rejected" "run 'shareos-apps install-file /tmp/pkg/noentry.sapp' | grep -q 'entry file' && [ ! -e $R/www-apps/noentry ]"
 check "no leftovers from failed installs" "[ -z \"\$(ls -A $R/www-apps | grep '^\.new')\" ]"
+
+# --- system apps (type "system"): programs for the terminal
+mksys() {   # dir id command [extra python for the manifest]
+	mkdir -p "$1/bin" "$1/lib" "$1/share/terminfo/x"
+	printf '#!/bin/sh\necho "run $0 lib=$LD_LIBRARY_PATH ti=$TERMINFO_DIRS args=$*"\n' > "$1/bin/$3"; chmod 755 "$1/bin/$3"
+	echo x > "$1/lib/libdemo.so.1"; echo t > "$1/share/terminfo/x/xterm"
+	python3 - "$1" "$2" "$3" "${4:-}" <<'PY'
+import json, sys
+d, i, c, extra = sys.argv[1:5]
+a = {"id": i, "name": "Sys " + i, "version": "1.0.0", "publisher": "Test", "type": "system", "commands": [c]}
+exec(extra)
+json.dump(a, open(d + "/app.json", "w"))
+PY
+	(cd "$1" && tar -czf "$P/$2.sapp" app.json bin lib share)
+}
+mksys $T/s1 demo-sys demo-cmd
+mksys $T/s2 other-sys demo-cmd
+mksys $T/s3 ls-sys ls
+mksys $T/s4 nobin-sys ghost "a['commands']=['missing-cmd']"
+mksys $T/s5 cron-sys cron-cmd "a['permissions']=['cron']"
+check "system app installs to /opt/shareos/sysapps" "run 'shareos-apps install-file /tmp/pkg/demo-sys.sapp' | js \"d['ok']\" && [ -x $R/opt/shareos/sysapps/demo-sys/bin/demo-cmd ] && [ ! -e $R/www-apps/demo-sys ]"
+check "system app: starter in /opt/shareos/bin" "grep -q 'shareos-sysapp: demo-sys' $R/opt/shareos/bin/demo-cmd && [ -x $R/opt/shareos/bin/demo-cmd ]"
+check "system app: command in PATH of a login shell, with lib and terminfo" "run '. /etc/profile; demo-cmd a b' | grep -q 'run /opt/shareos/sysapps/demo-sys/bin/demo-cmd lib=/opt/shareos/sysapps/demo-sys/lib ti=/opt/shareos/sysapps/demo-sys/share/terminfo args=a b'"
+check "system app: listed with type and commands" "run 'shareos-apps list' | js \"[(a['type'],a['commands'],a['users']) for a in d['apps'] if a['id']=='demo-sys']==[('system',['demo-cmd'],[])]\""
+check "system app: not served by the apps web server" "[ ! -e $R/www-apps/demo-sys ]"
+check "system app: a command of another app is refused" "run 'shareos-apps install-file /tmp/pkg/other-sys.sapp' | grep -q 'comes from the app demo-sys' && [ ! -e $R/opt/shareos/sysapps/other-sys ]"
+check "system app: a command of the firmware is refused" "run 'shareos-apps install-file /tmp/pkg/ls-sys.sapp' | grep -q 'part of ShareOS already'"
+check "system app: a missing program is refused" "run 'shareos-apps install-file /tmp/pkg/nobin-sys.sapp' | grep -q 'bin/missing-cmd missing'"
+check "system app: permissions are refused" "run 'shareos-apps install-file /tmp/pkg/cron-sys.sapp' | grep -q 'only for web apps'"
+check "system app: no leftovers from failed installs" "[ -z \"\$(ls -A $R/opt/shareos/sysapps | grep '^\.new')\" ] && [ -z \"\$(ls -A $R/www-apps | grep '^\.new')\" ]"
+check "system app: reinstall keeps one starter" "run 'shareos-apps install-file /tmp/pkg/demo-sys.sapp' | js \"d['ok']\" && [ \"\$(ls $R/opt/shareos/bin)\" = demo-cmd ]"
+SYSDIR=${SHAREOS_TEST_SYSAPPS:-$TOP/output/sysapps/sapp}
+if ls $SYSDIR/nano-*.sapp $SYSDIR/htop-*.sapp >/dev/null 2>&1; then
+	cp $SYSDIR/nano-*.sapp $P/nano.sapp; cp $SYSDIR/htop-*.sapp $P/htop.sapp
+	check "nano (real package) installs and runs" "run 'shareos-apps install-file /tmp/pkg/nano.sapp' | js \"d['ok']\" && run '. /etc/profile; nano --version' | grep -q 'GNU nano'"
+	check "htop (real package) installs and runs" "run 'shareos-apps install-file /tmp/pkg/htop.sapp' | js \"d['ok']\" && run '. /etc/profile; htop --version' | grep -q '^htop 3'"
+	check "htop draws its screen in a terminal (ncurses, terminfo)" "python3 $TOP/tests/pty-run.py 25 q chroot $R /bin/sh -c '. /etc/profile; TERM=xterm-256color htop' | grep -q 'Load average'"
+	run 'shareos-apps remove nano; shareos-apps remove htop' >/dev/null
+else
+	echo "SKIP  nano/htop packages (make sysapps-pack)"
+fi
 if [ -f $P/webpad.sapp ]; then
 	check "Webpad package from the app repo installs (own upload)" "run 'shareos-apps install-file /tmp/pkg/webpad.sapp' | js \"d['id']=='webpad' and not d['verified']\" && [ -f $R/www-apps/webpad/vendor/codemirror/lib/codemirror.js ]"
 fi
@@ -125,6 +169,8 @@ L1=$(rpc session login '{"username":"lisa","password":"lisa1234"}' | python3 -c 
 L2=$(rpc session login '{"username":"bert","password":"bert1234"}' | python3 -c 'import json,sys; print(json.load(sys.stdin)["ubus_rpc_session"])')
 check "allowed user sees the app in My ShareOS" "rpc shareos.me bind '{\"username\":\"lisa\",\"password\":\"lisa1234\",\"ubus_rpc_session\":\"$L1\"}' | js \"'hello' in [a['id'] for a in d['apps']] and d['apps_server']['port']==$PORT\""
 check "other users do not" "rpc shareos.me bind '{\"username\":\"bert\",\"password\":\"bert1234\",\"ubus_rpc_session\":\"$L2\"}' | js \"'hello' not in [a['id'] for a in d['apps']]\""
+check "system apps are not offered in My ShareOS" "rpc shareos.me bind '{\"username\":\"lisa\",\"password\":\"lisa1234\",\"ubus_rpc_session\":\"$L1\"}' | js \"'demo-sys' not in [a['id'] for a in d['apps']]\""
+check "system app: remove takes the starter along" "run 'shareos-apps remove demo-sys' | js \"d['ok']\" && [ ! -e $R/opt/shareos/bin/demo-cmd ] && [ ! -e $R/opt/shareos/sysapps/demo-sys ]"
 TK=$(rpc shareos.apps upload_ticket '{}' | python3 -c 'import json,sys; print(json.load(sys.stdin)["url"].split("t=")[1])')
 cp $P/hello-1.0.0.sapp $R/tmp/up.sapp
 o=$(run "QUERY_STRING=t=$TK REQUEST_METHOD=POST CONTENT_LENGTH=$(stat -c %s $R/tmp/up.sapp) /www/cgi-bin/files < /tmp/up.sapp")

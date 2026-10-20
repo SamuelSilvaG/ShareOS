@@ -1,0 +1,17 @@
+{
+	"id": "nano",
+	"name": "nano",
+	"version": "8.7.0",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Einfacher Texteditor für das Terminal (System → Terminal oder SSH): „nano datei“. Mit Rückgängig, Suchen und Ersetzen und UTF-8.",
+		"en": "Simple text editor for the terminal (System → Terminal or SSH): “nano file”. With undo, find and replace and UTF-8."
+	},
+	"type": "system",
+	"commands": [ "nano" ],
+	"icon": "icon.svg",
+	"category": "tools",
+	"license": "GPL-3.0-or-later (nano), MIT-like (ncurses)",
+	"homepage": "https://www.nano-editor.org/",
+	"min_shareos": "0.1.0-beta.13"
+}
