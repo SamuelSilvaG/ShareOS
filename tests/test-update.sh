@@ -169,6 +169,8 @@ o=$(run local "$ROOT/tmp/up.tar" "$(cat "$WEB/dl/$TB.sha256")")
 check "local: verified with its .sha256, ready to install" "$o" "d['state']=='ready' and d['release']['tag']=='local' and d['release']['version']=='0.2.0-beta.1' and d['release']['sha_checked'] and not __import__('os').path.exists('$ROOT/tmp/up.tar')"
 cp "$WEB/dl/$TB" "$ROOT/tmp/up.tar"
 o=$(run local "$ROOT/tmp/up.tar"); check "local: works without .sha256" "$o" "d['state']=='ready' and 'sha_checked' not in d['release']"
+o=$(run local "$ROOT/tmp/up.tar"); check "local: run again without a file keeps the verified package" "$o" "d['state']=='ready' and 'no uploaded file' in d['error']"
+check "local: still ready afterwards" "$(run status)" "d['state']=='ready' and 'error' not in d"
 o=$(run apply local);    check "local: apply flashes the uploaded version" "$o" "d['state']=='flashed' and d['flashed']['tag']=='local'"
 check "local: staged version is the uploaded one" "{\"v\":\"$(cat "$ROOT/overlay/upgrade/version")\"}" "d['v']=='0.2.0-beta.1'"
 run cancel >/dev/null

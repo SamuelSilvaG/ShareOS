@@ -374,15 +374,22 @@ function cmd_local(file, sha) {
 	if (s.state == 'downloading' || s.state == 'verifying' || s.state == 'flashing')
 		return out({ ...s, error: 'busy: ' + s.state });
 	let dir = STATE_DIR + '/dl';
+	let st = file ? stat(file) : null;
+	if (!st || st.type != 'file') {
+		// e.g. the same command run twice: keep a package verified before
+		if (s.state == 'ready') {
+			out({ ...s, error: 'no uploaded file' });
+			exit(1);
+		}
+		s.release = { tag: 'local', version: '?', local: true, size: 0 };
+		fail(s, 'no uploaded file');
+	}
 	mkdir(STATE_DIR);
 	mkdir(dir);
 	unlink(dir + '/fw.tar');
 	unlink(dir + '/fw.tar.part');
-	let st = file ? stat(file) : null;
-	s.release = { tag: 'local', version: '?', local: true, size: st?.size ?? 0 };
+	s.release = { tag: 'local', version: '?', local: true, size: st.size };
 	delete s.error;
-	if (!st || st.type != 'file')
-		fail(s, 'no uploaded file');
 	if (!rename(file, dir + '/fw.tar') && capture([ 'mv', file, dir + '/fw.tar' ]).rc != 0)
 		fail(s, 'cannot move the uploaded file');
 
