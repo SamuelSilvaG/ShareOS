@@ -247,6 +247,8 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
 - **Spulen (beta.11):** Eine große MP3- oder MP4-Datei im Dateibrowser mit **WinWeb Player ↗** öffnen: Sie startet sofort, der Schieberegler springt an jede Stelle.
 
+- **Dateizugriff für Apps (beta.11):** ShareCommander 1.1 und Webpad 1.3 aus dem Store installieren – vor dem Installieren steht „Zugriff auf Dateien“. ShareCommander öffnen: das rechte Panel zeigt `BOX:// <Volume>`. Eine Datei aus dem linken Panel (Browser) mit **F5** auf die Box kopieren, **F7** Ordner anlegen, **F2** umbenennen, **Entf** löschen – alles erscheint im ShareOS-Dateibrowser. Eine Textdatei der Box mit **F4** in Webpad öffnen, ändern, Strg+S: die Datei auf der Box ist geändert. In Webpad *Datei → Auf der Box speichern…* testen. Als Benutzer ohne persönlichen Ordner zeigt ShareCommander nur das Browser-Dateisystem.
+
 ## 14b. Meldungen
 
 - **System → Meldungen**: E-Mail (Mailserver, STARTTLS/SSL, Benutzer, Passwort, Absender, Empfänger) und/oder Push (ntfy: `https://ntfy.sh/<thema>`, das Thema in der ntfy-App abonnieren; Gotify: Server und App-Token; Webhook). **Speichern**, dann **Testnachricht** – sie muss ankommen.

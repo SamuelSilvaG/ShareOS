@@ -1168,3 +1168,6 @@ E929	Guardar nome
 E930	Nome guardado.
 P199	Esta página está aberta através de $1. Sem aviso de certificado:
 P200	Nome: $1
+E931	Acesso a ficheiros
+E932	Pode ler, alterar e apagar os ficheiros a que o utilizador com sessão iniciada chega no explorador – com os seus direitos, enquanto a app estiver aberta.
+P201	Acesso a ficheiros: $1

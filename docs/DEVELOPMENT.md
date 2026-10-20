@@ -115,6 +115,14 @@ the box for why the web server was not running.
 | 07:08 | Jan merged WebTerm 1.0.0 and Webpad 1.2.0; the app store released both on its own. |
 | 09:10 | Jan's test of beta.9: installed apps without icon, links with the IP instead of `shareos.skynet.lan`. Cause: the interface was opened by IP, apps and icons came from `https://<IP>:8444` – the wildcard certificate does not cover that, and browsers do not ask about images. Fix: icons come with the app list, links use the certificate's name (or one set by hand), the apps web server gets the same supervisor as the interface. |
 
+### Tuesday, 20 Oct 2026 – apps with access to the box
+
+| Time | What happened |
+|---|---|
+| 08:20 | Jan sends four apps (ShareCommander, WinWeb Player, SheetOS, DevBox). Claude adapts them to the app platform, fixes bugs (SheetOS did not compute formulas, ZIPs were JSON) and tests all of them in the emulator with Chromium. |
+| 08:30 | So the player can seek in large files: a small uhttpd patch (Range header to CGI scripts) and byte ranges in the file CGI. |
+| 08:34 | Jan: ShareCommander and Webpad should access the box. Claude builds the app permission `files` (`ShareOS.fs`): one grant per app and account, every check in rpcd with the user's rights. ShareCommander now shows folders of the box, Webpad saves there. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

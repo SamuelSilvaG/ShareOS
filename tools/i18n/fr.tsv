@@ -1168,3 +1168,6 @@ E929	Enregistrer le nom
 E930	Nom enregistré.
 P199	Cette page est ouverte via $1. Sans avertissement de certificat :
 P200	Nom : $1
+E931	Accès aux fichiers
+E932	Peut lire, modifier et supprimer les fichiers que l'utilisateur connecté atteint dans l'explorateur – avec ses droits, tant que l'app est ouverte.
+P201	Accès aux fichiers : $1

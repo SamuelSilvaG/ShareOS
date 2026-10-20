@@ -244,6 +244,8 @@ their permissions.
 
 - **Seeking (beta.11):** open a large MP3 or MP4 file with **WinWeb Player ↗** in the file browser: it starts at once and the slider jumps to any position.
 
+- **File access for apps (beta.11):** install ShareCommander 1.1 and Webpad 1.3 from the store – before installing it says "Access to files". Open ShareCommander: the right pane shows `BOX:// <volume>`. Copy a file from the left pane (browser) to the box with **F5**, **F7** new folder, **F2** rename, **Del** delete – everything shows up in the ShareOS file browser. Open a text file of the box with **F4** in Webpad, change it, Ctrl+S: the file on the box is changed. Try *File → Save to the Box…* in Webpad. As a user without a personal folder ShareCommander only shows the browser file system.
+
 ## 14b. Messages
 
 - **System → Messages**: e-mail (mail server, STARTTLS/SSL, user, password, sender, recipients) and/or push (ntfy: `https://ntfy.sh/<topic>`, subscribe to the topic in the ntfy app; Gotify: server and app token; webhook). **Save**, then **Test message** – it must arrive.

@@ -933,7 +933,9 @@
 		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "用于链接的设备名称（例如指向应用）",
 		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "留空：使用自有证书时从证书中获取名称，否则使用打开本页的地址。该名称必须能在网络中解析（DNS）。",
 		"Name speichern": "保存名称",
-		"Name gespeichert.": "名称已保存。"
+		"Name gespeichert.": "名称已保存。",
+		"Zugriff auf Dateien": "访问文件",
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "可以读取、修改和删除已登录用户在文件浏览器中可访问的文件——使用其权限，仅在应用打开期间。"
 	},
 	"patterns": [
 		[
@@ -1739,6 +1741,10 @@
 		[
 			"^Name: (.+)$",
 			"名称：$1"
+		],
+		[
+			"^Dateizugriff: (.+)$",
+			"文件访问：$1"
 		]
 	],
 	"words": [

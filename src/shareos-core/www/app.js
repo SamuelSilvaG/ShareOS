@@ -3360,7 +3360,7 @@ async function fbOpenIn(appId, name) {
 	const w = window.open('about:blank', a.window ? 'sosfile-' + Date.now() : '_blank', winFeatures(a));
 	try {
 		const r = await rpc('shareos.files', 'app_ticket', { root: S.fb.root, path: S.fb.path, name, app: appId });
-		const url = `${appBase(r)}/${r.app}/${r.entry || 'index.html'}?${appParams({ file: r.ticket, name })}`;
+		const url = `${appBase(r)}/${r.app}/${r.entry || 'index.html'}?${appParams({ file: r.ticket, name, ...(r.grant ? { fs: r.grant } : {}) })}`;
 		if (w) { w.location.href = url; appWins.add(w); } else location.href = url;
 	} catch (e) { w?.close(); toast('Öffnen: ' + e.message, true); }
 }
@@ -3514,16 +3514,34 @@ const findApp = (id) => (S.apps?.installed?.apps || []).find((x) => x.id === id)
 	|| (S.fbApps?.apps || []).find((x) => x.id === id);
 const appSrv = () => S.apps?.installed || S.me?.apps_server || S.fbApps;
 
+// apps with the permission "files" get a grant for the user's folders (ShareOS.fs)
+async function appGrant(a) {
+	if (!(a.permissions || []).includes('files')) return null;
+	try { return (await rpc('shareos.files', 'app_grant', { app: a.id })).grant; }
+	catch (e) { if (e.message !== 'not allowed') toast('Dateizugriff: ' + e.message, true); return null; }
+}
+
 // apps with the permission "embed" are shown inside ShareOS, the others get their own window
 function launchApp(a) {
 	if ((a.permissions || []).includes('embed')) { embedApp(a); return; }
-	const w = window.open(appLaunchUrl(a, appSrv()), a.window ? 'sosapp-' + a.id : '_blank', winFeatures(a));
-	if (w) appWins.add(w);
+	const name = a.window ? 'sosapp-' + a.id : '_blank';
+	if (!(a.permissions || []).includes('files')) {
+		const w = window.open(appLaunchUrl(a, appSrv()), name, winFeatures(a));
+		if (w) appWins.add(w);
+		return;
+	}
+	// the window must open right away (popup blockers), the address follows with the grant
+	const w = window.open('about:blank', name, winFeatures(a));
+	appGrant(a).then((g) => {
+		const url = appLaunchUrl(a, appSrv(), g ? { fs: g } : {});
+		if (w) { w.location.href = url; appWins.add(w); } else location.href = url;
+	});
 }
 
-function embedApp(a) {
+async function embedApp(a) {
 	closeEmbed();
-	const url = appLaunchUrl(a, appSrv());
+	const g = await appGrant(a);
+	const url = appLaunchUrl(a, appSrv(), g ? { fs: g } : {});
 	const box = document.createElement('div');
 	box.className = 'embedwrap';
 	box.innerHTML = html`<div class="embedbox panel" role="dialog" aria-label="${a.name}"><div class="ph"><span class="pt">${a.name}</span>
@@ -3641,9 +3659,10 @@ function appActions(a, upd) {
 }
 
 // permissions an app can ask for (app.json "permissions")
-const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen' };
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien' };
 const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.',
-	embed: 'Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).' };
+	embed: 'Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).',
+	files: 'Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.' };
 
 function appJobsEditor(id) {
 	const a = (S.apps.installed.apps || []).find((x) => x.id === id);

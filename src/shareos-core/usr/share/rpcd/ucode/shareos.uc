@@ -1125,7 +1125,8 @@ function me_info(u) {
 	info.host = read_trim('/proc/sys/kernel/hostname');
 	info.cloud = me_cloud_allowed(u);
 	info.files = u != 'root' && role != 'admin' && files_allowed(u);
-	info.apps = role == 'admin' ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, description: a.description }));
+	info.apps = role == 'admin' ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, icon_data: a.icon_data, description: a.description,
+		permissions: a.permissions ?? [], window: a.window }));
 	info.apps_server = apps_server();
 	info.ui = u == 'root' ? null : { theme: c.get('accounts', u, 'theme') ?? null, accent: c.get('accounts', u, 'accent') ?? null };
 	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
@@ -1139,6 +1140,32 @@ function new_token() {
 	let t = '';
 	for (let i = 0; i < length(r); i++) t += sprintf('%02x', ord(r, i));
 	return t;
+}
+
+// apps with the permission "files": a grant for the apps web server
+// (/_shareos/cgi/fs), bound to one app and one account, 8 hours; the app may
+// then do in the account's folders what the account may do in the file browser
+const APP_GRANTS = '/tmp/shareos-appgrants';
+
+function app_has_files(app) { return index(app?.permissions ?? [], 'files') >= 0; }
+
+function app_grant_new(u, app) {
+	system('mkdir -p ' + APP_GRANTS + ' && chmod 700 ' + APP_GRANTS);
+	system('find ' + APP_GRANTS + ' -type f -mmin +480 -delete 2>/dev/null');
+	let t = new_token();
+	writefile(APP_GRANTS + '/' + t, sprintf('%s\n%s\n%d\n', u, app.id, time() + 8 * 3600));
+	return t;
+}
+
+// grant -> account, while the app is installed, has "files" and is visible to the account
+function app_grant_user(g) {
+	if (type(g) != 'string' || !match(g, /^[0-9a-f]{32}$/)) return null;
+	let l = split(readfile(APP_GRANTS + '/' + g) ?? '', '\n');
+	if (length(l) < 3 || +l[2] < time()) return null;
+	let u = l[0], id = l[1];
+	if (!(u == 'root' || acc_name_ok(u)) || !files_allowed(u)) return null;
+	let app = filter(apps_for(u), (x) => x.id == id)[0];
+	return app && app_has_files(app) ? { u, app } : null;
 }
 
 // compares without stopping at the first wrong character
@@ -2478,7 +2505,127 @@ return {
 				system('find ' + APP_TICKETS + ' -type f -mmin +480 -delete 2>/dev/null');
 				let t = new_token();
 				writefile(APP_TICKETS + '/' + t, sprintf('%s\n%s\n%s\n%d\n%s\n%s\n', mode, acc_role(u) == 'admin' ? 'root' : u, target, time() + 8 * 3600, app.id, pct_enc(a.name)));
-				return { ticket: t, mode, app: app.id, entry: app.entry, window: app.window, ...apps_server() };
+				return { ticket: t, mode, app: app.id, entry: app.entry, window: app.window, ...apps_server(),
+					grant: app_has_files(app) ? app_grant_new(u, app) : null };
+			}
+		},
+
+		// an app with the permission "files" is opened: its grant for /_shareos/cgi/fs
+		app_grant: {
+			args: { app: '' },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !files_allowed(u)) return { error: 'not allowed' };
+				let app = filter(apps_for(u), (x) => x.id == req.args.app)[0];
+				if (!app) return { error: 'app not available' };
+				if (!app_has_files(app)) return { error: 'the app has no access to files' };
+				return { grant: app_grant_new(u, app) };
+			}
+		}
+	},
+
+	// called only by /_shareos/cgi/fs on the apps web server (as root, over the
+	// local ubus socket); no web session has this object in its ACL
+	'shareos.appfs': {
+		roots: {
+			args: { grant: '' },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant);
+				if (!g) return { error: 'no access' };
+				return { roots: map(files_roots(g.u), (r) => ({ name: r.name, home: r.home, usb: !!r.usb })), user: g.u };
+			}
+		},
+
+		list: {
+			args: { grant: '', root: '', path: '', hidden: false },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant);
+				if (!g) return { error: 'no access' };
+				return files_list(g.u, req.args.root, req.args.path, req.args.hidden === true);
+			}
+		},
+
+		mkdir: {
+			args: { grant: '', root: '', path: '', name: '' },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant), a = req.args;
+				if (!g) return { error: 'no access' };
+				if (!name_ok(a.name)) return { error: 'invalid name' };
+				let p = files_path(g.u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let r = files_sh(g.u, 'mkdir -- ' + shq(p.abs + '/' + a.name));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		rename: {
+			args: { grant: '', root: '', path: '', name: '', to: '' },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant), a = req.args;
+				if (!g) return { error: 'no access' };
+				if (!name_ok(a.name) || !name_ok(a.to)) return { error: 'invalid name' };
+				let p = files_path(g.u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				if (!lstat(p.abs + '/' + a.name)) return { error: 'not found' };
+				if (lstat(p.abs + '/' + a.to)) return { error: 'already exists' };
+				let r = files_sh(g.u, sprintf('mv -- %s %s', shq(p.abs + '/' + a.name), shq(p.abs + '/' + a.to)));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		// names from one folder into another (also of another root); copy keeps the originals
+		move: {
+			args: { grant: '', root: '', path: '', names: [], dest_root: '', dest: '', copy: false },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant), a = req.args;
+				if (!g) return { error: 'no access' };
+				if (type(a.names) != 'array' || !length(a.names) || length(a.names) > 1000) return { error: 'nothing selected' };
+				for (let n in a.names) if (!name_ok(n)) return { error: 'invalid name' };
+				let droot = a.dest_root || a.root;
+				let p = files_path(g.u, a.root, a.path, 'dir'), d = files_path(g.u, droot, a.dest, 'dir');
+				if (p.error) return p;
+				if (d.error) return d;
+				for (let n in a.names) {
+					if (!lstat(p.abs + '/' + n)) return { error: 'not found: ' + n };
+					let src = (p.rel != '' ? p.rel + '/' : '') + n;
+					if (droot == a.root && (d.rel == src || index(d.rel + '/', src + '/') == 0)) return { error: 'a folder cannot be moved into itself' };
+					if (lstat(d.abs + '/' + n)) return { error: 'already exists: ' + n };
+				}
+				let r = files_sh(g.u, sprintf('%s -- %s %s', a.copy ? 'cp -a' : 'mv', join(' ', map(a.names, (n) => shq(p.abs + '/' + n))), shq(d.abs + '/')));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		delete: {
+			args: { grant: '', root: '', path: '', names: [] },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant), a = req.args;
+				if (!g) return { error: 'no access' };
+				if (type(a.names) != 'array' || !length(a.names) || length(a.names) > 1000) return { error: 'nothing selected' };
+				for (let n in a.names) if (!name_ok(n)) return { error: 'invalid name' };
+				let p = files_path(g.u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let r = files_sh(g.u, 'rm -rf -- ' + join(' ', map(a.names, (n) => shq(p.abs + '/' + n))));
+				return r.rc == 0 ? { ok: true } : { error: files_err(r) };
+			}
+		},
+
+		// a file ticket for /_shareos/cgi/file: read, or write (create: also a new file)
+		open: {
+			args: { grant: '', root: '', path: '', name: '', write: false, create: false },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant), a = req.args;
+				if (!g) return { error: 'no access' };
+				if (!name_ok(a.name)) return { error: 'invalid name' };
+				let p = files_path(g.u, a.root, a.path, 'dir');
+				if (p.error) return p;
+				let target = p.abs + '/' + a.name, st = lstat(target);
+				if (st ? st.type != 'file' : !(a.write && a.create)) return { error: st ? 'not a file' : 'not found' };
+				system('mkdir -p ' + APP_TICKETS + ' && chmod 700 ' + APP_TICKETS);
+				system('find ' + APP_TICKETS + ' -type f -mmin +480 -delete 2>/dev/null');
+				let t = new_token(), mode = a.write ? 'edit' : 'view';
+				writefile(APP_TICKETS + '/' + t, sprintf('%s\n%s\n%s\n%d\n%s\n%s\n', mode, acc_role(g.u) == 'admin' ? 'root' : g.u, target, time() + 8 * 3600, g.app.id, pct_enc(a.name)));
+				return { ticket: t, mode, name: a.name, size: st ? st.size : 0, exists: !!st };
 			}
 		}
 	},

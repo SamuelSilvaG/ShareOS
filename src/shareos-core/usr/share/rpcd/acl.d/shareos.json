@@ -223,7 +223,8 @@
 					"move",
 					"delete",
 					"ticket",
-					"app_ticket"
+					"app_ticket",
+					"app_grant"
 				],
 				"shareos.apps": [
 					"install",
@@ -290,7 +291,8 @@
 					"move",
 					"delete",
 					"ticket",
-					"app_ticket"
+					"app_ticket",
+					"app_grant"
 				]
 			}
 		}

@@ -933,7 +933,9 @@
 		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "NOM DU BOÎTIER POUR LES LIENS (P. EX. VERS LES APPS)",
 		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Laisser vide : avec votre propre certificat, le nom en est tiré, sinon l'adresse avec laquelle cette page est ouverte. Le nom doit être résolu dans le réseau (DNS).",
 		"Name speichern": "Enregistrer le nom",
-		"Name gespeichert.": "Nom enregistré."
+		"Name gespeichert.": "Nom enregistré.",
+		"Zugriff auf Dateien": "Accès aux fichiers",
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Peut lire, modifier et supprimer les fichiers que l'utilisateur connecté atteint dans l'explorateur – avec ses droits, tant que l'app est ouverte."
 	},
 	"patterns": [
 		[
@@ -1739,6 +1741,10 @@
 		[
 			"^Name: (.+)$",
 			"Nom : $1"
+		],
+		[
+			"^Dateizugriff: (.+)$",
+			"Accès aux fichiers : $1"
 		]
 	],
 	"words": [

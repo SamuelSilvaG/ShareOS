@@ -213,6 +213,26 @@ check "view ticket cannot save" "curl -s -X PUT --data-binary 'evil' '$F?t=$TV' 
 check "invalid ticket refused" "curl -s '$F?t=ffffffffffffffffffffffffffffffff' | grep -q 'invalid ticket' && curl -s '$F?t=../../etc/shadow' | grep -q 'invalid ticket'"
 sed -i '4s/.*/1/' "$R/tmp/shareos-appfiles/$TK"
 check "expired ticket refused" "curl -s '$F?t=$TK' | grep -q 'expired'"
+# permission "files": the user's folders through /_shareos/cgi/fs
+mkapp $T/fm filer 1.0.0 && python3 -c "import json; f='$T/fm/app.json'; d=json.load(open(f)); d['permissions']=['files']; json.dump(d,open(f,'w'))" && pack $T/fm $P/filer.sapp
+check "app with permission files installs" "run 'shareos-apps install-file /tmp/pkg/filer.sapp' | js \"d.get('ok')\""
+check "grant refused for an app without files" "rpc shareos.files app_grant '$(s ',"app":"editor"')' | grep -q 'no access to files'"
+G=$(rpc shareos.files app_grant "$(s ',"app":"filer"')" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("grant",""))')
+FS="http://127.0.0.1:$PORT/_shareos/cgi/fs?g=$G"
+fs() { curl -s -X POST --data-binary "$1" "${2:-$FS}"; }
+check "fs: grant for the app" "[ \${#G} -eq 32 ]"
+check "fs: roots and list" "fs '{\"op\":\"roots\"}' | js \"[r['name'] for r in d['roots']]==['daten']\" && fs '{\"op\":\"list\",\"root\":\"daten\",\"path\":\"\"}' | js \"'notiz.txt' in [e['name'] for e in d['entries']]\""
+check "fs: mkdir, copy into it, rename, move back" "fs '{\"op\":\"mkdir\",\"root\":\"daten\",\"path\":\"\",\"name\":\"ablage\"}' | js \"d['ok']\" && fs '{\"op\":\"move\",\"root\":\"daten\",\"path\":\"\",\"names\":[\"notiz.txt\"],\"dest\":\"ablage\",\"copy\":true}' | js \"d['ok']\" && fs '{\"op\":\"rename\",\"root\":\"daten\",\"path\":\"ablage\",\"name\":\"notiz.txt\",\"to\":\"kopie.txt\"}' | js \"d['ok']\" && [ -f $R/mnt/daten/ablage/kopie.txt ] && [ -f $R/mnt/daten/notiz.txt ]"
+check "fs: folder not moved into itself, no overwrite" "fs '{\"op\":\"move\",\"root\":\"daten\",\"path\":\"\",\"names\":[\"ablage\"],\"dest\":\"ablage\"}' | grep -q 'into itself' && fs '{\"op\":\"move\",\"root\":\"daten\",\"path\":\"ablage\",\"names\":[\"kopie.txt\"],\"dest\":\"ablage\",\"copy\":true}' | grep -q 'already exists'"
+check "fs: no way out of the folders" "fs '{\"op\":\"list\",\"root\":\"daten\",\"path\":\"../../etc\"}' | grep -q 'invalid path' && fs '{\"op\":\"list\",\"root\":\"etc\",\"path\":\"\"}' | grep -q 'unknown folder'"
+TN=$(fs '{"op":"open","root":"daten","path":"ablage","name":"neu.txt","write":true,"create":true}' | python3 -c 'import json,sys; print(json.load(sys.stdin).get("ticket",""))')
+check "fs: open a new file for writing, save it with the ticket" "[ \${#TN} -eq 32 ] && curl -s -X PUT --data-binary 'aus der App' '$F?t=$TN' | js \"d['ok']\" && [ \"\$(cat $R/mnt/daten/ablage/neu.txt)\" = 'aus der App' ]"
+check "fs: open read-only cannot save, missing file needs create" "T2=\$(fs '{\"op\":\"open\",\"root\":\"daten\",\"path\":\"ablage\",\"name\":\"neu.txt\"}' | python3 -c 'import json,sys; print(json.load(sys.stdin)[\"ticket\"])') && curl -s -X PUT --data-binary x \"$F?t=\$T2\" | grep -q 'read-only' && fs '{\"op\":\"open\",\"root\":\"daten\",\"path\":\"\",\"name\":\"fehlt.txt\",\"write\":true}' | grep -q 'not found'"
+check "fs: delete" "fs '{\"op\":\"delete\",\"root\":\"daten\",\"path\":\"\",\"names\":[\"ablage\"]}' | js \"d['ok']\" && [ ! -e $R/mnt/daten/ablage ]"
+check "fs: unknown op, wrong grant, GET refused" "fs '{\"op\":\"exec\"}' | grep -q 'invalid request' && fs '{\"op\":\"roots\"}' 'http://127.0.0.1:$PORT/_shareos/cgi/fs?g=ffffffffffffffffffffffffffffffff' | grep -q 'no access' && curl -s '$FS' | grep -q 'not allowed'"
+check "fs: no web session may call shareos.appfs (ACL)" "! grep -q 'shareos.appfs' $R/usr/share/rpcd/acl.d/shareos.json"
+run 'shareos-apps remove filer' >/dev/null
+check "fs: grant ends with the app" "fs '{\"op\":\"roots\"}' | grep -q 'no access'"
 check "only ShareOS scripts run as CGI on the app server" "[ \"\$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$PORT/cgi-bin/x)\" != 200 ]"
 umount -l "$R/mnt/daten"
 
