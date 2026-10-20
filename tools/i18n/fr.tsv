@@ -1271,3 +1271,15 @@ E989	Un shell en tant que
 E990	directement sur le boîtier – pour le diagnostic et les manipulations (BusyBox, uci, logread, mdadm, smartctl …).
 E991	La session vaut pour une fenêtre et se termine à sa fermeture. Attention : les commandes en root agissent immédiatement, sans corbeille.
 P238	Terminal : $1
+E992	Les dossiers d’entrée personnels nécessitent un utilisateur avec dossier personnel.
+P239	(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox et plus). Le programme (environ 20 Mo) va dans la zone d’apps du disque$1.
+E993	La synchronisation cloud n’est pas encore configurée sur ce boîtier – demandez à l’administrateur.
+P240	Pour $1, vous vous connectez dans le navigateur ; le boîtier ne stocke qu’un jeton d’accès, aucun mot de passe.
+P241	1. Se connecter à $1 ↗
+E994	connecté ✓
+E995	2. ADRESSE APRÈS LA CONNEXION
+E996	Connectez-vous d’abord (étapes 1 et 2).
+P242	Connexion : $1
+P243	– $1. Ne pas éteindre le boîtier.
+E997	Le boîtier ne tourne pas actuellement depuis la flash (
+E998	). Les mises à jour depuis cette page ne fonctionnent qu’après un démarrage normal depuis la flash.

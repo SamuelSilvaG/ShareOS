@@ -123,6 +123,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 08:20 | Jan schickt vier Apps (ShareCommander, WinWeb Player, SheetOS, DevBox). Claude passt sie an die App-Plattform an, korrigiert Fehler (SheetOS rechnete keine Formeln, ZIPs waren JSON) und testet alle im Emulator mit Chromium. |
 | 08:30 | Damit der Player in großen Dateien spulen kann: ein kleiner Patch für uhttpd (Range-Header an CGI-Skripte) und Byte-Bereiche im Datei-CGI. |
 | 08:34 | Jan: ShareCommander und Webpad sollen auf die Box zugreifen. Claude baut die App-Berechtigung `files` (`ShareOS.fs`): ein Schlüssel je App und Konto, alle Prüfungen in rpcd mit den Rechten des Benutzers. ShareCommander zeigt jetzt Ordner der Box, Webpad speichert dort. |
+| 08:52 | Jans nächste Liste: Internet für Apps, Webpad-Absturz beim Schließen, Umstiegsanleitung, Löt-Korrektur, Übersetzungen, Web-Terminal, Bereiche abschaltbar, Jahreszahl, Cloud-Anbieter, Telegram. Claude arbeitet sie der Reihe nach ab: Telegram-Bot, Google-Anmeldung über die Box (rclone authorize, die Adresse aus der Browserzeile wird zurückgegeben), Bereiche, ttyd als Terminal, rund 90 Übersetzungen mit einem neuen Prüfskript. Nebenbei gefunden: In ucode-Regex-Klassen ist `\s` kein Leerraum, sondern ein „s“ – ntfy-Adressen wurden abgelehnt. |
 
 ## Bemerkenswerte Problemlösungen
 

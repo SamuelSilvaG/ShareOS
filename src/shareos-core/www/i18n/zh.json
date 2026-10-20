@@ -994,7 +994,14 @@
 		"Beenden": "结束",
 		"Eine Shell als": "以",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "身份直接在设备上运行的 Shell——用于诊断和手动操作（BusyBox、uci、logread、mdadm、smartctl …）。",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "会话仅用于一个窗口，关闭窗口即结束。注意：以 root 运行的命令立即生效，且没有回收站。"
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "会话仅用于一个窗口，关闭窗口即结束。注意：以 root 运行的命令立即生效，且没有回收站。",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "个人收件夹需要有个人文件夹的用户。",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "此设备尚未设置云同步——请联系管理员。",
+		"angemeldet ✓": "已登录 ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. 登录后的地址",
+		"Erst anmelden (Schritt 1 und 2).": "请先登录（第 1 和第 2 步）。",
+		"Die Box läuft gerade nicht aus dem Flash (": "设备当前不是从闪存运行（",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "）。只有从闪存正常启动时才能通过本页面更新。"
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"终端：$1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"（Nextcloud、WebDAV、S3、SFTP、Google Drive、OneDrive、Dropbox 等）。该程序（约 20 MB）放在磁盘的应用区$1。"
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"$1 需在浏览器中登录；设备只保存访问令牌，不保存密码。"
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. 登录 $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"登录：$1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1。请勿关闭设备。"
 		]
 	],
 	"words": [

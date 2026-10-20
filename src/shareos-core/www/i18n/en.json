@@ -994,7 +994,14 @@
 		"Beenden": "End",
 		"Eine Shell als": "A shell as",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "right on the box – for diagnosis and manual work (BusyBox, uci, logread, mdadm, smartctl …).",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "The session is for one window and ends when it is closed. Careful: commands as root take effect at once and without a recycle bin."
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "The session is for one window and ends when it is closed. Careful: commands as root take effect at once and without a recycle bin.",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "Personal inboxes need a user with a personal folder.",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "Cloud sync is not set up on this box yet – please ask the administrator.",
+		"angemeldet ✓": "signed in ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. ADDRESS AFTER SIGNING IN",
+		"Erst anmelden (Schritt 1 und 2).": "Sign in first (step 1 and 2).",
+		"Die Box läuft gerade nicht aus dem Flash (": "The box is not running from the flash right now (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Updates on this page only work after a normal start from the flash."
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"Terminal: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox and more). The program (about 20 MB) goes into the apps area on the disk$1."
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"For $1 you sign in in the browser; the box only stores an access token, no password."
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. Sign in at $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"Sign in: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1. Do not switch the box off."
 		]
 	],
 	"words": [

@@ -994,7 +994,14 @@
 		"Beenden": "শেষ করুন",
 		"Eine Shell als": "একটি শেল,",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "হিসেবে সরাসরি বক্সে – ডায়াগনস্টিক ও হাতে কাজের জন্য (BusyBox, uci, logread, mdadm, smartctl …)।",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "সেশন একটি উইন্ডোর জন্য এবং বন্ধ করলে শেষ হয়। সাবধান: root হিসেবে কমান্ড সঙ্গে সঙ্গে ও রিসাইকেল বিন ছাড়াই কাজ করে।"
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "সেশন একটি উইন্ডোর জন্য এবং বন্ধ করলে শেষ হয়। সাবধান: root হিসেবে কমান্ড সঙ্গে সঙ্গে ও রিসাইকেল বিন ছাড়াই কাজ করে।",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "ব্যক্তিগত ইনবক্সের জন্য ব্যক্তিগত ফোল্ডারসহ ব্যবহারকারী দরকার।",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "এই বক্সে ক্লাউড সিঙ্ক এখনো সেট নেই – প্রশাসককে জিজ্ঞেস করুন।",
+		"angemeldet ✓": "সাইন ইন হয়েছে ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. সাইন ইনের পরের ঠিকানা",
+		"Erst anmelden (Schritt 1 und 2).": "আগে সাইন ইন করুন (ধাপ ১ ও ২)।",
+		"Die Box läuft gerade nicht aus dem Flash (": "বক্সটি এখন ফ্ল্যাশ থেকে চলছে না (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": ")। এই পেজ থেকে আপডেট কেবল ফ্ল্যাশ থেকে স্বাভাবিকভাবে চালু হলে হয়।"
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"টার্মিনাল: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox ও আরও)। প্রোগ্রামটি (প্রায় ২০ MB) ডিস্কের অ্যাপ এলাকায় যায়$1।"
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"$1-এ ব্রাউজারে সাইন ইন করবেন; বক্স শুধু একটি অ্যাক্সেস টোকেন রাখে, পাসওয়ার্ড নয়।"
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. $1-এ সাইন ইন করুন ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"সাইন ইন: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1। বক্স বন্ধ করবেন না।"
 		]
 	],
 	"words": [

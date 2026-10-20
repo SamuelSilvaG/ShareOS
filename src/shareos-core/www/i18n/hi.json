@@ -994,7 +994,14 @@
 		"Beenden": "समाप्त करें",
 		"Eine Shell als": "एक शेल",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "के रूप में सीधे बॉक्स पर – जाँच और हाथ से काम के लिए (BusyBox, uci, logread, mdadm, smartctl …)।",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "सत्र एक विंडो के लिए है और उसे बंद करने पर खत्म हो जाता है। सावधान: root के रूप में कमांड तुरंत और बिना रीसायकल बिन के असर करती हैं।"
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "सत्र एक विंडो के लिए है और उसे बंद करने पर खत्म हो जाता है। सावधान: root के रूप में कमांड तुरंत और बिना रीसायकल बिन के असर करती हैं।",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "निजी इनबॉक्स के लिए निजी फ़ोल्डर वाला उपयोगकर्ता चाहिए।",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "इस बॉक्स पर क्लाउड सिंक अभी सेट नहीं है – कृपया व्यवस्थापक से पूछें।",
+		"angemeldet ✓": "साइन इन ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. साइन इन के बाद का पता",
+		"Erst anmelden (Schritt 1 und 2).": "पहले साइन इन करें (चरण 1 और 2)।",
+		"Die Box läuft gerade nicht aus dem Flash (": "बॉक्स अभी फ़्लैश से नहीं चल रहा (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": ")। इस पेज से अपडेट केवल फ़्लैश से सामान्य शुरुआत पर ही होते हैं।"
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"टर्मिनल: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox और अधिक)। प्रोग्राम (लगभग 20 MB) डिस्क के ऐप क्षेत्र में जाता है$1।"
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"$1 में आप ब्राउज़र में साइन इन करते हैं; बॉक्स केवल एक्सेस टोकन रखता है, पासवर्ड नहीं।"
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. $1 में साइन इन करें ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"साइन इन: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1। बॉक्स बंद न करें।"
 		]
 	],
 	"words": [

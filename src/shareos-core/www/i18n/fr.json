@@ -994,7 +994,14 @@
 		"Beenden": "Terminer",
 		"Eine Shell als": "Un shell en tant que",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "directement sur le boîtier – pour le diagnostic et les manipulations (BusyBox, uci, logread, mdadm, smartctl …).",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "La session vaut pour une fenêtre et se termine à sa fermeture. Attention : les commandes en root agissent immédiatement, sans corbeille."
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "La session vaut pour une fenêtre et se termine à sa fermeture. Attention : les commandes en root agissent immédiatement, sans corbeille.",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "Les dossiers d’entrée personnels nécessitent un utilisateur avec dossier personnel.",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "La synchronisation cloud n’est pas encore configurée sur ce boîtier – demandez à l’administrateur.",
+		"angemeldet ✓": "connecté ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. ADRESSE APRÈS LA CONNEXION",
+		"Erst anmelden (Schritt 1 und 2).": "Connectez-vous d’abord (étapes 1 et 2).",
+		"Die Box läuft gerade nicht aus dem Flash (": "Le boîtier ne tourne pas actuellement depuis la flash (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Les mises à jour depuis cette page ne fonctionnent qu’après un démarrage normal depuis la flash."
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"Terminal : $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox et plus). Le programme (environ 20 Mo) va dans la zone d’apps du disque$1."
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"Pour $1, vous vous connectez dans le navigateur ; le boîtier ne stocke qu’un jeton d’accès, aucun mot de passe."
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. Se connecter à $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"Connexion : $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1. Ne pas éteindre le boîtier."
 		]
 	],
 	"words": [

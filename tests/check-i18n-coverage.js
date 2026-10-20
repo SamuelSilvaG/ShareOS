@@ -39,12 +39,22 @@ const add = (t, line) => {
 };
 const lineOf = (i) => src.slice(0, i).split('\n').length;
 // 1. template literals: text between tags, ${} -> X
-const tpl = /`((?:\\.|\$\{(?:[^{}]|\{[^{}]*\})*\}|[^`\\])*)`/g;
+const tpl = /`((?:\\.|\$\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}|[^`\\])*)`/g;
 let m;
-while ((m = tpl.exec(src))) {
-  const body = m[1];
+// templates nested in ${…} of other templates are scanned as well
+const bodies = [];
+(function scan(text, base) {
+  const re = new RegExp(tpl.source, 'g');
+  let x;
+  while ((x = re.exec(text))) {
+    bodies.push([x[1], base + x.index]);
+    for (const e of x[1].matchAll(/\$\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}/g)) if (e[1].includes('`')) scan(e[1], base + x.index + 1 + e.index + 2);
+  }
+})(src, 0);
+for (const [body, at] of bodies) {
+  m = { 1: body, index: at };
   // nested templates inside ${} are found by the outer loop too (they are separate matches only at top level), so also scan them
-  const flat = body.replace(/\$\{(?:[^{}]|\{[^{}]*\})*\}/g, 'X');
+  const flat = body.replace(/\$\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}/g, 'X');
   if (!/[<>]/.test(flat)) { add(flat, lineOf(m.index)); continue; }
   for (const part of flat.split(/<[^>]*>/)) add(part, lineOf(m.index));
   // attributes

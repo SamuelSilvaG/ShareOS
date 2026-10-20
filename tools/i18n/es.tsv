@@ -1271,3 +1271,15 @@ E989	Una shell como
 E990	directamente en el equipo – para diagnóstico y trabajo manual (BusyBox, uci, logread, mdadm, smartctl …).
 E991	La sesión es para una ventana y termina al cerrarla. Cuidado: los comandos como root actúan al instante y sin papelera.
 P238	Terminal: $1
+E992	Las entradas personales necesitan un usuario con carpeta personal.
+P239	(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox y más). El programa (unos 20 MB) va a la zona de apps del disco$1.
+E993	La sincronización en la nube aún no está configurada en este equipo; pregunta al administrador.
+P240	En $1 inicias sesión en el navegador; el equipo solo guarda un token de acceso, ninguna contraseña.
+P241	1. Iniciar sesión en $1 ↗
+E994	sesión iniciada ✓
+E995	2. DIRECCIÓN TRAS INICIAR SESIÓN
+E996	Inicia sesión primero (pasos 1 y 2).
+P242	Inicio de sesión: $1
+P243	– $1. No apagues el equipo.
+E997	El equipo no se está ejecutando desde la flash (
+E998	). Las actualizaciones desde esta página solo funcionan tras un arranque normal desde la flash.

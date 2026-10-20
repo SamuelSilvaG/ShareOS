@@ -1271,3 +1271,15 @@ E989	Uma shell como
 E990	diretamente na caixa – para diagnóstico e trabalho manual (BusyBox, uci, logread, mdadm, smartctl …).
 E991	A sessão é para uma janela e termina quando esta é fechada. Cuidado: comandos como root atuam de imediato e sem reciclagem.
 P238	Terminal: $1
+E992	As entradas pessoais precisam de um utilizador com pasta pessoal.
+P239	(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox e mais). O programa (cerca de 20 MB) vai para a área de apps do disco$1.
+E993	A sincronização na nuvem ainda não está configurada nesta caixa – pergunte ao administrador.
+P240	No $1 inicia sessão no navegador; a caixa guarda apenas um token de acesso, nenhuma palavra-passe.
+P241	1. Iniciar sessão em $1 ↗
+E994	sessão iniciada ✓
+E995	2. ENDEREÇO APÓS INICIAR SESSÃO
+E996	Inicie sessão primeiro (passos 1 e 2).
+P242	Início de sessão: $1
+P243	– $1. Não desligue a caixa.
+E997	A caixa não está a correr a partir da flash (
+E998	). As atualizações nesta página só funcionam após um arranque normal a partir da flash.

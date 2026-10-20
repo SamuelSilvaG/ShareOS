@@ -1,5 +1,6 @@
 [
  "${x.token_hint || 'aus Paperless: Profil → API-Token'}",
+ "(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr). Das Programm (rund 20 MB) kommt in den Apps-Bereich auf der PlatteX.",
  "Benutzer „X“ X.",
  "Datei(en) warten",
  "Dateien lassen sich auch einfach hierher ziehen. X",
@@ -8,6 +9,7 @@
  "Geprüft: SHA-256, Prüfsummen aller Teile, passend für dieses Gerät.",
  "Hochgeladene Datei – geprüft: Prüfsummen aller Teile, passend für dieses Gerät (ohne .sha256-Datei).",
  "Hochgeladene Datei – geprüft: SHA-256 laut .sha256-Datei, Prüfsummen aller Teile, passend für dieses Gerät.",
+ "Je Platte X Swap,",
  "Web-Apps laufen auf einem eigenen Port (XX) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.",
  "X Einstellungen und Pakete bleiben erhalten.",
  "Zuerst oben die Adresse von Paperless eintragen.",

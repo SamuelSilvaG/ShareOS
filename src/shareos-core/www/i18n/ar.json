@@ -994,7 +994,14 @@
 		"Beenden": "إنهاء",
 		"Eine Shell als": "واجهة أوامر بصلاحية",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "مباشرةً على الجهاز – للتشخيص والعمل اليدوي (BusyBox وuci وlogread وmdadm وsmartctl …).",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "الجلسة لنافذة واحدة وتنتهي عند إغلاقها. تنبيه: أوامر root تُنفَّذ فوراً وبلا سلة محذوفات."
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "الجلسة لنافذة واحدة وتنتهي عند إغلاقها. تنبيه: أوامر root تُنفَّذ فوراً وبلا سلة محذوفات.",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "الوارد الشخصي يحتاج مستخدماً لديه مجلد شخصي.",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "لم تُعَدّ مزامنة السحابة على هذا الجهاز بعد – اسأل المسؤول.",
+		"angemeldet ✓": "تم تسجيل الدخول ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. العنوان بعد تسجيل الدخول",
+		"Erst anmelden (Schritt 1 und 2).": "سجّل الدخول أولاً (الخطوتان 1 و2).",
+		"Die Box läuft gerade nicht aus dem Flash (": "الجهاز لا يعمل حالياً من الذاكرة الوميضية (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). التحديثات عبر هذه الصفحة تعمل فقط بعد إقلاع عادي من الذاكرة الوميضية."
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"الطرفية: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud وWebDAV وS3 وSFTP وGoogle Drive وOneDrive وDropbox وغيرها). يوضع البرنامج (نحو 20 MB) في منطقة التطبيقات على القرص$1."
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"في $1 تسجّل الدخول في المتصفح؛ ويحفظ الجهاز رمز وصول فقط، لا كلمة مرور."
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. تسجيل الدخول إلى $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"تسجيل الدخول: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1. لا تطفئ الجهاز."
 		]
 	],
 	"words": [

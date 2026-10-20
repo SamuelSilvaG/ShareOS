@@ -994,7 +994,14 @@
 		"Beenden": "Terminar",
 		"Eine Shell als": "Uma shell como",
 		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "diretamente na caixa – para diagnóstico e trabalho manual (BusyBox, uci, logread, mdadm, smartctl …).",
-		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "A sessão é para uma janela e termina quando esta é fechada. Cuidado: comandos como root atuam de imediato e sem reciclagem."
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "A sessão é para uma janela e termina quando esta é fechada. Cuidado: comandos como root atuam de imediato e sem reciclagem.",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "As entradas pessoais precisam de um utilizador com pasta pessoal.",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "A sincronização na nuvem ainda não está configurada nesta caixa – pergunte ao administrador.",
+		"angemeldet ✓": "sessão iniciada ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. ENDEREÇO APÓS INICIAR SESSÃO",
+		"Erst anmelden (Schritt 1 und 2).": "Inicie sessão primeiro (passos 1 e 2).",
+		"Die Box läuft gerade nicht aus dem Flash (": "A caixa não está a correr a partir da flash (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). As atualizações nesta página só funcionam após um arranque normal a partir da flash."
 	},
 	"patterns": [
 		[
@@ -1952,6 +1959,26 @@
 		[
 			"^Terminal: (.+)$",
 			"Terminal: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox e mais). O programa (cerca de 20 MB) vai para a área de apps do disco$1."
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"No $1 inicia sessão no navegador; a caixa guarda apenas um token de acesso, nenhuma palavra-passe."
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. Iniciar sessão em $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"Início de sessão: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1. Não desligue a caixa."
 		]
 	],
 	"words": [
