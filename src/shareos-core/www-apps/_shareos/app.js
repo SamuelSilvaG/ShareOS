@@ -10,6 +10,8 @@
  *   .name, .mode ('view'|'edit')   (after await ShareOS.file.info())
  *   await .text() / .blob()        content
  *   await .save(textOrBlob)        write back (mode 'edit' only)
+ *   .url                           address of the content (byte ranges work,
+ *                                  e.g. <audio>/<video src> for seeking)
  * ShareOS.menu(el, spec)      classic menu bar (File | Edit | View …):
  *   spec = [{ label: 'Datei', items: [{ label: 'Speichern', kbd: 'Ctrl+S',
  *            action: fn, disabled: bool, checked: bool }, '-', …] }, …]
@@ -73,6 +75,7 @@
 	}
 	var file = fileUrl ? {
 		name: q.get('name') || '',
+		url: fileUrl,
 		mode: null,
 		info: function () {
 			return fetch(fileUrl + '&info=1', { cache: 'no-store' }).then(check).then(function (r) { return r.json(); }).then(function (j) {
