@@ -409,6 +409,7 @@ async function loadUiSettings() {
 	try {
 		const r = await rpc('shareos.ui', 'get', {}, ZERO_SID);
 		if (r.logo !== S.logo) { S.logo = r.logo; store.set('logo', r.logo ? '1' : '0'); }
+		if (r.areas) S.areas = r.areas;
 		if (r.theme) { S.theme = r.theme; store.set('theme', r.theme); }
 		if (r.accent) { S.accent = r.accent; store.set('accent', r.accent); }
 		S.sysLook = { theme: r.theme || S.theme, accent: r.accent || S.accent };
@@ -493,14 +494,16 @@ function renderHeader(offline = false) {
 		<span>Last ${(i.load || []).map((x) => x.toFixed(2)).join(' ')} · <a href="https://github.com/UniqueDroid/ShareOS" target="_blank" rel="noopener">github.com/UniqueDroid/ShareOS</a></span>`.s;
 }
 
+// areas switched off under System -> Appearance are not shown
+const tabOn = (id) => !S.areas || S.areas[id] !== false;
 function renderTabs() {
-	$('#tabs').innerHTML = TABS.map(([id, label, isNew]) =>
+	$('#tabs').innerHTML = TABS.filter(([id]) => tabOn(id)).map(([id, label, isNew]) =>
 		html`<a class="tab${S.route.tab === id ? ' on' : ''}" href="#/${id}"${S.route.tab === id ? raw(' aria-current="page"') : ''}><span class="tl">${label}</span>${isNew ? html` <span class="nb">NEU</span>` : ''}</a>`.s).join('');
 }
 
 function parseRoute() {
 	const [tab, sub] = routeParts();
-	S.route = { tab: TABS.some((t) => t[0] === tab) ? tab : 'overview', sub: SUB_MOVED[sub] || sub || '' };
+	S.route = { tab: TABS.some((t) => t[0] === tab) && tabOn(tab) ? tab : 'overview', sub: SUB_MOVED[sub] || sub || '' };
 	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'firmware';
 	if (S.route.tab === 'services' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
 	if (S.route.tab === 'shares' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'shares';
@@ -2131,6 +2134,14 @@ const SYS = {
 			<p class="note">Weitere Sprachen: eine Datei in <code>/www/i18n/</code> – siehe docs/TRANSLATING.md.</p>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
+			<div class="ph"><span class="pt">BEREICHE</span><span class="tag ml">gilt für alle</span></div>
+			<div style="display:grid;gap:6px">
+				${[['apps', 'Apps (App-Store, Web-Apps, Aufgaben der Apps)'], ['cloud', 'Cloud (Abgleich mit Cloud-Speichern)'], ['paperless', 'Paperless (Eingangsordner für Paperless-ngx)']].map(([k, t]) =>
+					html`<label class="chk"><input type="checkbox" class="opt-area" data-area="${k}"${tabOn(k) ? raw(' checked') : ''}>${t}</label>`)}
+			</div>
+			<p class="note">Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.</p>
+		</div>
+		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
 			<label class="chk"><input type="checkbox" id="opt-logo"${S.logo ? raw(' checked') : ''}>ShareOS-Logo anzeigen (aus: nur Schriftzug)</label>
 			<div style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)">${brand()}</div>
@@ -2407,6 +2418,13 @@ const VIEWS_AFTER = {
 				} catch (err) { e.target.checked = !on; toast('Logo: ' + err.message, true); }
 			});
 			$('#opt-scan').addEventListener('change', (e) => { S.scan = e.target.checked; store.set('scan', S.scan ? '1' : '0'); applyTheme(); });
+			document.querySelectorAll('.opt-area').forEach((cb) => cb.addEventListener('change', async (e) => {
+				const k = e.target.dataset.area, on = e.target.checked;
+				try {
+					const r = await rpc('shareos.ui', 'set', { areas: { [k]: on } });
+					S.areas = r.areas; renderTabs(); toast(on ? 'Bereich eingeschaltet.' : 'Bereich ausgeschaltet.');
+				} catch (err) { e.target.checked = !on; toast('Bereich: ' + err.message, true); }
+			}));
 		}
 		if (sub === 'firmware') {
 			$('#channel')?.addEventListener('change', async (e) => {

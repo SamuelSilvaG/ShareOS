@@ -329,12 +329,21 @@ const CERT = '/usr/sbin/shareos-cert';
 const THEMES = { dark: 1, light: 1, system: 1 };
 const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
 
+// areas that can be switched off under System -> Appearance (tab hidden,
+// background work stopped): apps (apps web server, app tasks), cloud
+// (scheduled jobs), paperless (inboxes)
+const AREAS = [ 'apps', 'cloud', 'paperless' ];
+function area_on(a) { return cursor().get('shareos', 'ui', 'area_' + a) != '0'; }
+
 function ui_settings() {
 	let c = cursor();
 	let theme = c.get('shareos', 'ui', 'theme'), accent = c.get('shareos', 'ui', 'accent');
+	let areas = {};
+	for (let a in AREAS) areas[a] = c.get('shareos', 'ui', 'area_' + a) != '0';
 	return {
 		lang: c.get('shareos', 'ui', 'lang') ?? 'en',
 		logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0',
+		areas,
 		theme: THEMES[theme] ? theme : 'dark',
 		accent: ACCENTS[accent] ? accent : 'blue'
 	};
@@ -1144,13 +1153,13 @@ function me_info(u) {
 	});
 	info.shares = mine;
 	info.host = read_trim('/proc/sys/kernel/hostname');
-	info.cloud = me_cloud_allowed(u);
+	info.cloud = area_on('cloud') && me_cloud_allowed(u);
 	info.files = u != 'root' && role != 'admin' && files_allowed(u);
-	info.apps = role == 'admin' ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, icon_data: a.icon_data, description: a.description,
+	info.apps = role == 'admin' || !area_on('apps') ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, icon_data: a.icon_data, description: a.description,
 		permissions: a.permissions ?? [], window: a.window }));
 	info.apps_server = apps_server();
 	info.ui = u == 'root' ? null : { theme: c.get('accounts', u, 'theme') ?? null, accent: c.get('accounts', u, 'accent') ?? null };
-	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
+	info.paperless = area_on('paperless') && !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
 	return info;
 }
 
@@ -1246,10 +1255,17 @@ return {
 		},
 
 		set: {
-			args: { lang: '', logo: false, theme: '', accent: '' },
+			args: { lang: '', logo: false, theme: '', accent: '', areas: {} },
 			call: function(req) {
 				let c = cursor();
 				c.set('shareos', 'ui', 'ui');   // section may be missing in configs from older versions
+				let changed = {};
+				if (type(req.args.areas) == 'object')
+					for (let a in AREAS) if (req.args.areas[a] != null) {
+						let v = req.args.areas[a] ? '1' : '0';
+						if ((c.get('shareos', 'ui', 'area_' + a) ?? '1') != v) changed[a] = v;
+						c.set('shareos', 'ui', 'area_' + a, v);
+					}
 				if (req.args.lang != null && req.args.lang != '') {
 					if (!match(req.args.lang, /^[a-z]{2}(-[A-Za-z]{2})?$/)) return { error: 'invalid language' };
 					c.set('shareos', 'ui', 'lang', req.args.lang);
@@ -1265,6 +1281,10 @@ return {
 					c.set('shareos', 'ui', 'accent', req.args.accent);
 				}
 				c.commit('shareos');
+				if (length(changed)) {
+					system('/usr/sbin/shareos-cron sync >/dev/null 2>&1');
+					if (changed.apps) system('/etc/init.d/S51apps ' + (changed.apps == '1' ? 'start' : 'stop') + ' >/dev/null 2>&1');
+				}
 				return ui_settings();
 			}
 		}
