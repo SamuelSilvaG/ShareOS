@@ -13,5 +13,5 @@
 	"category": "system",
 	"license": "GPL-2.0-or-later (htop), MIT-like (ncurses)",
 	"homepage": "https://htop.dev/",
-	"min_shareos": "0.1.0-beta.13"
+	"min_shareos": "0.2.0-beta.1"
 }

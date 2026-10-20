@@ -60,6 +60,27 @@ function shq(s) {
 	return "'" + replace(s, "'", "'\\''") + "'";
 }
 
+/* ---------- results kept between calls ----------
+ * rpcd keeps this plugin loaded, so results of expensive steps (programs
+ * started with sh(), other ucode tools) are kept here: valid while their
+ * stamp (sizes and times of the files they depend on) is unchanged and,
+ * with a ttl, for at most ttl seconds. rpcd answers one call at a time –
+ * every program it does not start makes the interface faster.
+ */
+let MEMO = {};
+function memo(key, stamp, ttl, fn) {
+	let m = MEMO[key], now = time();
+	if (m && m.stamp == stamp && (!ttl || now - m.at < ttl)) return m.val;
+	let v = fn();
+	MEMO[key] = { stamp, at: now, val: v };
+	return v;
+}
+function forget(key) { delete MEMO[key]; }
+// stamp of files: size and modification time (missing files count too)
+function fstamp(...paths) {
+	return join('|', map(paths, (p) => { let st = stat(p); return st ? st.size + ':' + st.mtime : '-'; }));
+}
+
 function sh(cmd) {
 	let p = popen(cmd + ' 2>&1', 'r');
 	if (!p)
@@ -177,8 +198,22 @@ function spawn_updater(args) {
 	return { started: true };
 }
 
-function running(proc) {
-	return sh('pidof ' + shq(proc)).rc == 0;
+// names of the running processes (one look at /proc instead of a pidof per name)
+function proc_names() {
+	let n = {};
+	for (let pid in lsdir('/proc') ?? []) {
+		if (!match(pid, /^[0-9]+$/)) continue;
+		let c = trim(readfile('/proc/' + pid + '/comm') ?? '');
+		if (c != '') n[c] = true;
+		// comm is cut to 15 characters: the program name from the command line too
+		let a = readfile('/proc/' + pid + '/cmdline', 256);
+		if (a) { let a0 = split(a, '\x00')[0]; if (a0 != '') n[replace(a0, /^.*\//, '')] = true; }
+	}
+	return n;
+}
+
+function running(proc, names) {
+	return !!(names ?? proc_names())[proc];
 }
 
 function init_script(name) {
@@ -402,7 +437,7 @@ function net_state() {
 	};
 }
 
-function cert_info() {
+function cert_info_read() {
 	let r = sh(CERT + ' info');
 	let i = { san: [] };
 	for (let line in split(r.out, '\n')) {
@@ -414,6 +449,10 @@ function cert_info() {
 	i.selfsigned = !!(i.issuer && i.issuer == i.subject);
 	return i;
 }
+function cert_info() {
+	let c = cursor(), crt = c.get('shareos', 'web', 'cert') ?? '/etc/ssl/shareos/server.crt';
+	return memo('cert', crt + '|' + fstamp(crt), 0, cert_info_read);
+}
 
 // both web servers (admin interface and apps) run under shareos-uhttpd,
 // which starts them again and reads settings and certificate anew
@@ -424,7 +463,7 @@ function restart_uhttpd() {
 // our self-signed certificate names hostname and IP: renew it after a change
 function cert_refresh() {
 	if (cursor().get('shareos', 'web', 'https') == '0') return false;
-	let r = sh(CERT + ' ensure');
+	let r = sh(CERT + ' ensure'); forget('cert');
 	if (!match(r.out, /renewed/)) return false;
 	restart_uhttpd();
 	return true;
@@ -588,7 +627,7 @@ function opt_args(a) {
 	return join(' ', map(o, shq));
 }
 
-function quota_usage() {   // user -> [{volume, used, limit}] in bytes
+function quota_read() {
 	let u = {};
 	for (let line in split(sh(QUOTA + ' report').out, '\n')) {
 		let m = match(line, /^user=([^:]+):([^:]+):([0-9]+):([0-9]+)$/);
@@ -597,6 +636,10 @@ function quota_usage() {   // user -> [{volume, used, limit}] in bytes
 		push(u[m[1]], { volume: m[2], used: +m[3] * 1024, limit: +m[4] * 1024 });
 	}
 	return u;
+}
+function quota_usage() {   // user -> [{volume, used, limit}] in bytes
+	// a new limit shows at once (accounts file), used space within 30 s
+	return memo('quota', fstamp('/etc/config/accounts', '/etc/config/storage'), 30, quota_read);
 }
 
 function list_of(v) { return v == null ? [] : (type(v) == 'array' ? v : split(v, ' ')); }
@@ -620,8 +663,8 @@ function accounts() {
 
 function share_list() {
 	let c = cursor(), list = [];
-	let st = {};
-	for (let line in split(sh(SHARES + ' status').out, '\n')) {
+	let st = {}, svc = sh(SHARES + ' status').out;
+	for (let line in split(svc, '\n')) {
 		let m = match(line, /^share=([^:]*):([^:]*):([01])$/);
 		if (m) st[m[1]] = { path: m[2], mounted: m[3] == '1' };
 	}
@@ -634,7 +677,6 @@ function share_list() {
 			fullpath: st[n]?.path ?? null, mounted: st[n]?.mounted ?? false
 		});
 	});
-	let svc = sh(SHARES + ' status').out;
 	return {
 		shares: sort(list, (a, b) => a.name < b.name ? -1 : 1),
 		workgroup: c.get('shares', 'global', 'workgroup') ?? 'WORKGROUP',
@@ -976,11 +1018,18 @@ const NOTIFY = '/usr/sbin/shareos-notify';
 const NOTIFY_KEYS = [ 'email', 'smtp_host', 'smtp_tls', 'smtp_port', 'smtp_user', 'mail_from', 'mail_to', 'email_level',
 	'push', 'push_type', 'push_url', 'push_chat', 'push_level', 'temp_max', 'disk_full' ];
 
-function notify_json(args) {
+function notify_run(args) {
 	let r = sh(NOTIFY + ' ' + join(' ', map(args, shq)));
 	let j = null;
 	try { j = json(trim(r.out) || 'null'); } catch (e) { }
 	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
+}
+// the list only when the messages changed; anything else changes them
+function notify_json(args) {
+	if (args[0] == 'list')
+		return memo('notes', fstamp('/etc/shareos/notifications.json'), 60, () => notify_run(args));
+	forget('notes');
+	return notify_run(args);
 }
 
 // settings without the secrets (only whether they are set)
@@ -998,6 +1047,15 @@ function apps_json(args) {
 	let r = sh(APPS_TOOL + ' ' + join(' ', map(args, shq)));
 	let j = json(trim(r.out) || 'null');
 	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
+}
+
+// the installed apps (shareos-apps list): new when an app, its settings or
+// the task states change
+function apps_list() {
+	let jobs = lsdir('/tmp/shareos-apps/jobs') ?? [];
+	return memo('apps', fstamp('/www-apps', '/opt/shareos/sysapps', '/etc/config/apps', '/tmp/shareos-apps/jobs')
+		+ '|' + join(',', sort(jobs)) + '|' + join(',', map(sort(jobs), (j) => fstamp('/tmp/shareos-apps/jobs/' + j))), 30,
+		() => apps_json([ 'list' ]));
 }
 
 // the name under which the box is reached in links to apps: set by hand
@@ -1034,7 +1092,7 @@ function apps_for(u) {
 	let c = cursor(), groups = list_of(c.get('accounts', u, 'groups'));
 	let admin = u == 'root' || c.get('accounts', u, 'role') == 'admin';
 	// system apps are programs for the terminal, nothing to open in a browser
-	return filter(apps_json([ 'list' ]).apps ?? [], (a) => a.type != 'system' && (admin || index(a.users, '*') >= 0 || index(a.users, u) >= 0
+	return filter(apps_list().apps ?? [], (a) => a.type != 'system' && (admin || index(a.users, '*') >= 0 || index(a.users, u) >= 0
 		|| length(filter(groups, (g) => index(a.users, '@' + g) >= 0)) > 0));
 }
 
@@ -1322,7 +1380,7 @@ return {
 
 		selfsigned: {
 			call: function() {
-				let r = sh(CERT + ' selfsigned');
+				let r = sh(CERT + ' selfsigned'); forget('cert');
 				if (r.rc != 0) return { error: trim(r.out) };
 				restart_uhttpd();
 				return { ok: true, cert: cert_info() };
@@ -1338,7 +1396,7 @@ return {
 				let d = trim(sh('mktemp -d').out);
 				writefile(d + '/crt', crt);
 				writefile(d + '/key', key);
-				let r = sh(CERT + ' install ' + shq(d + '/crt') + ' ' + shq(d + '/key'));
+				let r = sh(CERT + ' install ' + shq(d + '/crt') + ' ' + shq(d + '/key')); forget('cert');
 				system('rm -rf ' + shq(d));
 				if (r.rc != 0) return { error: replace(trim(r.out), 'shareos-cert: ', '') };
 				restart_uhttpd();
@@ -1384,8 +1442,8 @@ return {
 					fan_pwm: read_int('/tmp/sys/pwm1'),
 					network: {
 						eth0: {
-							ipv4: ipv4('eth0'),
-							gateway: gateway(),
+							ipv4: memo('ipv4', fstamp('/etc/resolv.conf'), 30, () => ipv4('eth0')),
+							gateway: memo('gw', fstamp('/etc/resolv.conf'), 30, gateway),
 							dns: dns(),
 							speed: read_int(net + 'speed'),
 							mac: read_trim(net + 'address'),
@@ -1393,7 +1451,7 @@ return {
 							tx_bytes: read_int(net + 'statistics/tx_bytes')
 						}
 					},
-					filesystems: filesystems(),
+					filesystems: memo('df', '', 30, filesystems),
 					disks: disks()
 				};
 			}
@@ -1475,13 +1533,13 @@ return {
 	'shareos.service': {
 		list: {
 			call: function() {
-				let list = [];
+				let list = [], names = proc_names(), off = autostart_off();
 				for (let name in sort(keys(SERVICES))) {
 					let s = SERVICES[name];
 					if (!init_script(name))
 						continue;
-					push(list, { name, label: s.label, desc: s.desc, running: running(s.proc), essential: !!ESSENTIAL[name],
-						autostart: !(name in autostart_off()) });
+					push(list, { name, label: s.label, desc: s.desc, running: running(s.proc, names), essential: !!ESSENTIAL[name],
+						autostart: !(name in off) });
 				}
 				return { services: list };
 			}
@@ -2718,13 +2776,29 @@ return {
 
 	'shareos.apps': {
 		installed: {
-			call: function() { return { ...apps_server(), apps: apps_json([ 'list' ]).apps ?? [] }; }
+			call: function() { return { ...apps_server(), apps: apps_list().apps ?? [] }; }
 		},
 
 		catalog: {
-			// refresh: ask the catalog sources now (network), otherwise the last result
+			// refresh: ask the catalog sources (network) in the background – rpcd
+			// answers one call at a time and a slow source would block the whole
+			// interface. The answer is the last result; "refreshing" stays true
+			// until the new one is there (the interface asks again).
 			args: { refresh: false },
-			call: function(req) { return apps_json([ req.args.refresh ? 'catalog' : 'cached' ]); }
+			call: function(req) {
+				let lock = '/tmp/shareos-apps/catalog.lock', st = stat(lock);
+				if (st && time() - st.mtime > 120) { unlink(lock); st = null; }     // left over
+				if (req.args.refresh && !st) {
+					system('mkdir -p /tmp/shareos-apps');
+					writefile(lock, '' + time());
+					system(sprintf('(%s catalog; rm -f %s) >/dev/null 2>&1 </dev/null &', APPS_TOOL, lock));
+				}
+				let A = '/tmp/shareos-apps/';
+				let r = memo('catalog', fstamp(A + 'catalogs.json', A + 'catalog-time', A + 'catalog-errors.json', '/etc/config/apps', '/etc/shareos-release')
+					+ '|' + fstamp('/www-apps', '/opt/shareos/sysapps'), 30, () => apps_json([ 'cached' ]));
+				r = { ...r, refreshing: !!stat(lock) };
+				return r;
+			}
 		},
 
 		install: {
@@ -2960,8 +3034,12 @@ return {
 		},
 
 		status: {
+			// asked every few seconds by the interface: only when the update state changed
 			call: function() {
-				return run_updater([ 'status' ]);
+				let d = '/tmp/shareos-update';
+				return memo('update', fstamp(d + '/state.json', d + '/dl/fw.tar.part', d + '/dl/fw.tar',
+					'/overlay/upgrade-result', '/overlay/upgrade/rootfs.squashfs', '/etc/shareos-release'), 60,
+					() => run_updater([ 'status' ]));
 			}
 		},
 

@@ -1,0 +1,17 @@
+{
+	"id": "iperf3",
+	"name": "iperf3",
+	"version": "3.20.0",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Misst im Terminal die Netzwerkgeschwindigkeit zwischen Box und Rechner: auf der Box „iperf3 -s“, am Rechner „iperf3 -c <Box>“. Bis ShareOS 0.1 war es fest eingebaut.",
+		"en": "Measures the network speed between the box and a computer in the terminal: “iperf3 -s” on the box, “iperf3 -c <box>” on the computer. Built in up to ShareOS 0.1."
+	},
+	"type": "system",
+	"commands": [ "iperf3" ],
+	"icon": "icon.svg",
+	"category": "system",
+	"license": "BSD-3-Clause",
+	"homepage": "https://github.com/esnet/iperf",
+	"min_shareos": "0.2.0-beta.1"
+}

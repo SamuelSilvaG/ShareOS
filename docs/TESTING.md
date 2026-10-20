@@ -261,7 +261,7 @@ their permissions.
 - **Cloud:** Cloud → add account → *Google Drive*: "Sign in at Google Drive ↗", sign in, paste the address from the browser bar (http://127.0.0.1:53682/…), *Apply*, *Add*, *Check*.
 - **Language:** System → Appearance → language *English*: click through all pages – no German should be visible.
 
-## 14d. System apps (beta.13)
+## 14d. System apps (0.2.0-beta.1)
 
 1. Apps → Store → *Install package*: choose `nano-8.7.0.sapp`, *Upload & install*. Same with `htop-3.4.1.sapp`.
 2. Apps → Installed: both with the tag "System app · terminal" and the button *Terminal* (no *Open*, no *Users*).
@@ -273,14 +273,25 @@ their permissions.
 5. Firmware update (or reboot): nano and htop are still there.
 6. Apps → Installed → htop → *Remove*: `htop` in the terminal → "not found".
 
-## 14e. Apps per account and files of the box (beta.13)
+## 14e. Apps per account and files of the box (0.2.0-beta.1)
 
 1. Install Webpad 1.4 and WinWeb Player 1.1 (store, or the `.sapp` files).
 2. As **root**: open Webpad, type "secret of root", close the window.
 3. Sign out, sign in as a **user** (with web access), open Webpad from *My ShareOS*: the text of root is **not** there. Type something, close.
 4. As root again: Webpad shows "secret of root".
 5. WinWeb Player → **+ From the box**: a dialog with your folders (user: personal folder; root: volumes and USB drives). Choose a folder with MP3s, select several with Ctrl+click, *Open*: they are in the playlist, play at once, the slider seeks. **+ From this computer** still works.
-6. System → Terminal over **HTTPS** (`https://<box>/`): the shell appears (no "Press ↵ to Reconnect").
+6. WebTerm: `webpad <file>` while Webpad is closed – Webpad opens in its **own window** (not a tab) with the file.
+7. System → Terminal over **HTTPS** (`https://<box>/`): the shell appears (no "Press ↵ to Reconnect").
+
+## 14f. Feature lock (0.2.0-beta.2)
+
+1. Click through all pages: everything as before, pages appear faster (above all *Apps*, *System → Services*, the overview after signing in).
+2. Apps → Store → *Refresh now*: the interface stays usable while the store asks its sources; the list updates by itself.
+3. System → Terminal over HTTPS: works (now with mbedtls instead of OpenSSL).
+4. Install `strace-6.19.0.sapp` and `iperf3-3.20.0.sapp` if needed: `strace -V`, `iperf3 -s` in the terminal.
+5. Time zone, certificate (System → General), users and storage limits, messages: unchanged.
+
+Telegram (14c) has been tested on the real box on 20 Oct 2026: bot, chat ID and test message work.
 
 ## 15. Buttons
 

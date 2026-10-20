@@ -248,7 +248,7 @@ CATALOG = [
                      'en': 'Shows running processes, CPU and memory use live in the terminal.'},
      'icon_url': None, 'entry': 'index.html',
      'versions': [{'version': '3.4.1', 'date': '2026-10-20T08:30:00Z', 'prerelease': False, 'url': 'https://example/htop.sapp', 'sha256': '0' * 64,
-                   'size': 263644, 'min_shareos': '0.1.0-beta.13', 'notes_url': ''}]},
+                   'size': 263644, 'min_shareos': '0.2.0-beta.1', 'notes_url': ''}]},
     {'id': 'mediathek', 'name': 'Mediathek', 'publisher': 'Beispiel', 'category': 'media', 'type': 'webapp',
      'description': {'de': 'Fotos und Videos der Freigaben im Browser ansehen (Beispiel-Eintrag).', 'en': 'Browse photos and videos (sample entry).'},
      'icon_url': None, 'entry': 'index.html',

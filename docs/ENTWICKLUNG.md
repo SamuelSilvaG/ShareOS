@@ -129,6 +129,11 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 
 | 13:13 | Jan hat beta.12 getestet: Das Terminal zeigt sofort „Press ↵ to Reconnect“; App-Daten des Admins (Webpad) sieht jeder Benutzer; Apps sollen Dateien der Box öffnen. Claude findet die Terminal-Ursache über HTTPS (HTTP/2 ohne Host-Header gegen ttyds Herkunftsprüfung; über HTTP lief es im Emulator), baut Browser-Speicher je Konto ins App-SDK und einen Dateidialog der Box; WinWeb Player spielt Musik von der Box. Nebenbei: PR #4 von ShareOS-Apps war in einem Nebenzweig statt in `main` gelandet. |
 
+| 15:08 | Jan hat die neue Firmware und die Apps getestet: Terminal, nano, htop, Webpad und WebTerm laufen. Nur: WebTerm öffnet ein geschlossenes Webpad in einem Tab statt in einem Fenster. Claude ergänzt `ShareOS.openApp` im SDK. Jan wählt die nächste Version: **0.2.0-beta.1**. |
+
+| 16:06 | Jan: Telegram funktioniert auf der Box. |
+| 16:12 | Jan: „Feature Lock – aufräumen, optimieren.“ Claude misst zuerst: Im Emulator wartete jeder Seitenaufruf 1,1 s auf Anfragen, ein Store-Aktualisieren blockierte die Oberfläche 8 s (rpcd beantwortet eine Anfrage nach der anderen), der 5-Sekunden-Status startete jedes Mal drei Programme. Ergebnisse teurer Schritte werden jetzt zwischen den Aufrufen behalten, der Store aktualisiert im Hintergrund. Das System verliert OpenSSL (ttyd auf mbedtls), ungenutzte Teile von GLib/libevent/libnl und Werkzeuge – 16,2 → 11,6 MB; strace und iperf3 werden System-Apps. |
+
 ## Bemerkenswerte Problemlösungen
 
 - **3-MB-Grenze des Bootloaders:** Der Kernel ist von 4,2 auf 2,4 MB geschrumpft, Treiber wurden in Module ausgelagert. Das Start-System umfasst nur 0,9 MB.

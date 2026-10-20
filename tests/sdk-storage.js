@@ -73,6 +73,18 @@ function check(name, ok) { console.log((ok ? 'PASS  ' : 'FAIL  ') + name); ok ? 
 	check('without ShareOS: guest, no data of others', await guest.evaluate(() => ShareOS.user + ':' + localStorage.getItem('note')) === 'guest:null');
 	check('invalid account names are ignored', await (await open('?user=a%2Fb')).evaluate(() => ShareOS.user) === 'guest');
 
+	// ShareOS.openApp: a window (popup) named like the ShareOS one, with the account
+	fs.mkdirSync(path.join(dir, 'other'), { recursive: true });
+	fs.writeFileSync(path.join(dir, 'other/index.html'), '<!doctype html><script src="/_shareos/app.js"></script><title>other</title>');
+	const opener = await open('?user=jan&theme=light&accent=green');
+	const [win] = await Promise.all([ctx.waitForEvent('page'), opener.evaluate(() => { window.__w = ShareOS.openApp('other', { width: 700, height: 500 }); })]);
+	await win.waitForLoadState();
+	const u = new URL(win.url());
+	check('openApp opens the app with account and look', u.pathname === '/other/index.html' && u.searchParams.get('user') === 'jan' && u.searchParams.get('theme') === 'light' && u.searchParams.get('accent') === 'green');
+	check('openApp: a window of its own, named sosapp-<id>', await win.evaluate(() => window.name) === 'sosapp-other' && await opener.evaluate(() => !!window.__w));
+	check('openApp: the other app sees the same account', await win.evaluate(() => ShareOS.user) === 'jan');
+	check('openApp refuses invalid ids', await opener.evaluate(() => ShareOS.openApp('../x')) === null);
+
 	await b.close();
 	srv.kill();
 	fs.rmSync(dir, { recursive: true, force: true });

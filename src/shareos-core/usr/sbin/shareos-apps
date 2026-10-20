@@ -41,7 +41,7 @@
 //          file types the app opens from the file browser; "edit" may save
 //          back, "view" only reads. The app gets the file through the
 //          ShareOS app SDK (/_shareos/app.js) with a ticket bound to it.
-// System apps ("type": "system", ShareOS 0.1.0-beta.13+): native programs for
+// System apps ("type": "system", ShareOS 0.2.0-beta.1+): native programs for
 // the terminal (System -> Terminal, SSH), e.g. nano or htop, built with the
 // firmware's toolchain (ShareOS repository: sysapps/, make sysapps-pack).
 //   { "id": "nano", "type": "system", "commands": [ "nano" ], … }
@@ -356,6 +356,7 @@ function cmd_catalog() {
 	mkdir(ST);
 	writefile(ST + '/catalogs.json', sprintf('%J', cats));
 	let res = { time: time(), channel, sources, errors, apps: merge(cats, channel) };
+	writefile(ST + '/catalog-errors.json', sprintf('%J', errors));
 	writefile(ST + '/catalog-time', '' + res.time);
 	return out(res);
 }
@@ -363,7 +364,8 @@ function cmd_catalog() {
 function cmd_cached() {
 	let K = conf(), channel = K.channel, sources = K.sources;
 	let cats = json(readfile(ST + '/catalogs.json') ?? '[]') ?? [];
-	return out({ time: +(readfile(ST + '/catalog-time') ?? 0), channel, sources, errors: [], apps: merge(cats, channel) });
+	let errors = json(readfile(ST + '/catalog-errors.json') ?? '[]') ?? [];
+	return out({ time: +(readfile(ST + '/catalog-time') ?? 0), channel, sources, errors, apps: merge(cats, channel) });
 }
 
 /* ---------- install ---------- */

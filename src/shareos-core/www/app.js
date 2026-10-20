@@ -3690,7 +3690,13 @@ async function loadApps(what = ['installed', 'catalog', 'store']) {
 async function refreshCatalog(quiet = false) {
 	S.apps.busy = true; if (S.route.tab === 'apps') renderMain();
 	try {
-		S.apps.catalog = await rpc('shareos.apps', 'catalog', { refresh: true });
+		// the box asks the sources in the background; wait for the new result
+		let c = await rpc('shareos.apps', 'catalog', { refresh: true });
+		for (let i = 0; c.refreshing && i < 60; i++) {
+			await new Promise((r) => setTimeout(r, 1500));
+			c = await rpc('shareos.apps', 'catalog', { refresh: false });
+		}
+		S.apps.catalog = c;
 		if (!quiet) toast(S.apps.catalog.errors?.length ? 'Store: ' + S.apps.catalog.errors[0].error : 'Store aktualisiert.', !!S.apps.catalog.errors?.length);
 	} catch (e) { if (!quiet) toast('Store: ' + e.message, true); }
 	S.apps.busy = false;
