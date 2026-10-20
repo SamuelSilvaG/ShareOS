@@ -15,6 +15,8 @@ Feature lock: the system is cleaned up and the interface is faster; the only add
 - Pictures of the interface (logos, app icons) are 84 KB instead of 340 KB, with the same look.
 - Fix: storing the shares list called the share tool twice.
 - **Apps open apps in a window:** `ShareOS.openApp(id)` in the app SDK opens another app of the box in its own window (the same one ShareOS uses), with look, language and account – e.g. `webpad <file>` in WebTerm when Webpad is not open yet (WebTerm 1.2 and ShareCommander 1.2 already open a pop-up window on 0.2.0-beta.1; before, a browser tab).
+- **Fix: uploading an update package over HTTPS** (System → Firmware, `.sysupgrade.tar`) ended with "HTTP 413": uhttpd took the last part of a request body for an oversized header when it arrived as exactly one full read buffer – over TLS nearly every larger upload. Fixed in uhttpd (`patches/uhttpd/0004`); the emulator test uploads the full package over HTTPS.
+- `shareos-update local` run a second time without a file (e.g. over SSH) no longer throws away the package it verified before.
 
 ## 0.2.0-beta.1
 
