@@ -128,6 +128,8 @@ the box for why the web server was not running.
 
 | 13:13 | Jan tested beta.12: the terminal shows "Press ↵ to Reconnect" at once; app data of the admin (Webpad) is visible to every user; apps should open files of the box. Claude finds the terminal cause over HTTPS (HTTP/2 without Host header against ttyd's origin check; it worked over HTTP in the emulator), builds per-account browser storage into the app SDK and a file dialog of the box; WinWeb Player plays music from the box. On the way: ShareOS-Apps PR #4 had landed in a side branch instead of `main`. |
 
+| 15:08 | Jan tested the new firmware and apps: terminal, nano, htop, Webpad and WebTerm work. Only: WebTerm opens a closed Webpad in a tab instead of a window. Claude adds `ShareOS.openApp` to the SDK. Jan picks the next version: **0.2.0-beta.1**. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

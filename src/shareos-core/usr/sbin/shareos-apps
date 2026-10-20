@@ -41,7 +41,7 @@
 //          file types the app opens from the file browser; "edit" may save
 //          back, "view" only reads. The app gets the file through the
 //          ShareOS app SDK (/_shareos/app.js) with a ticket bound to it.
-// System apps ("type": "system", ShareOS 0.1.0-beta.13+): native programs for
+// System apps ("type": "system", ShareOS 0.2.0-beta.1+): native programs for
 // the terminal (System -> Terminal, SSH), e.g. nano or htop, built with the
 // firmware's toolchain (ShareOS repository: sysapps/, make sysapps-pack).
 //   { "id": "nano", "type": "system", "commands": [ "nano" ], … }

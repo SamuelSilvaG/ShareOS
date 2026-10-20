@@ -15,6 +15,10 @@
  * ShareOS.menu(el, spec)      classic menu bar (File | Edit | View …):
  *   spec = [{ label: 'Datei', items: [{ label: 'Speichern', kbd: 'Ctrl+S',
  *            action: fn, disabled: bool, checked: bool }, '-', …] }, …]
+ * ShareOS.openApp(id, {width, height})
+ *                             open another app of the box in its own window
+ *                             (the same window ShareOS uses for it), with the
+ *                             look, language and account of this one
  * ShareOS.on(type, fn) / ShareOS.emit(type, data)
  *                             messages between the apps (BroadcastChannel
  *                             'shareos'; every app hears them – no secrets)
@@ -362,8 +366,20 @@
 		return { close: close };
 	}
 
+	// another app in its own window; returns the window (null: pop-up blocked)
+	function openApp(id, size) {
+		if (!/^[a-z][a-z0-9-]{1,31}$/.test(id || '')) return null;
+		size = size || {};
+		var p = new URLSearchParams({ theme: (api.theme || {}).theme || '', accent: (api.theme || {}).accent || '', user: user, lang: de ? 'de' : (q.get('lang') || '') });
+		if (adminOrigin) p.set('origin', adminOrigin);
+		var w = Math.max(400, Math.min(+size.width || 1000, screen.availWidth || 4000));
+		var h = Math.max(300, Math.min(+size.height || 700, screen.availHeight || 4000));
+		return window.open('/' + id + '/index.html?' + p.toString(), 'sosapp-' + id, 'popup,width=' + w + ',height=' + h);
+	}
+
 	var api = {
 		app: appId,
+		openApp: openApp,
 		user: user,
 		embedded: embedded,
 		theme: null,

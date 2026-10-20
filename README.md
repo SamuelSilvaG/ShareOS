@@ -24,7 +24,8 @@ years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
 
 ShareOS runs from flash on the DNS-320L (kernel, initramfs and the system in
 UBI with a persistent overlay for settings and packages). Test releases
-(`v0.1.0-beta.x`, pre-releases, for test devices only) are published on
+(`v0.2.0-beta.x`, before that `v0.1.0-beta.x`; pre-releases, for test devices
+only) are published on
 [GitHub Releases](https://github.com/UniqueDroid/ShareOS/releases); a running
 ShareOS updates itself from there.
 
@@ -52,8 +53,8 @@ Version in brackets = first release with the feature.
 - App permissions: scheduled tasks (`cron`) as a restricted app user, schedule editable in the interface (beta.7)
 - Open files from the file browser in apps (e.g. Webpad), save back; app SDK and ShareOS look for apps (`/_shareos/theme.css`, `/_shareos/app.js`), apps inside the interface (permission `embed`) (beta.9)
 - App permission `files`: apps work with the folders of the box with the user's rights – ShareCommander (two-pane file manager), Webpad saves on the box; music and videos stream with seeking (beta.11)
-- System apps: native programs for the terminal from the store – nano, htop (beta.13)
-- App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (beta.13)
+- System apps: native programs for the terminal from the store – nano, htop (0.2.0-beta.1)
+- App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (0.2.0-beta.1)
 - Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)
@@ -117,7 +118,7 @@ sample data via `tests/mock-ubus.py`.
 ## Roadmap
 
 - Hardware tests of the current betas, then a public beta
-- More native apps in the same store: system apps for the terminal are there (beta.13); next services with a start script (MiniDLNA, Transmission, Syncthing …)
+- More native apps in the same store: system apps for the terminal are there (0.2.0-beta.1); next services with a start script (MiniDLNA, Transmission, Syncthing …)
 - More of the app platform: "open with" defaults per file type
 - Storage: **LVM2**; RAID 5 only makes sense with three or more disks (the DNS-320L has two bays)
 - More devices (DNS-320/325/327L)
