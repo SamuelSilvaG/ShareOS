@@ -935,7 +935,66 @@
 		"Name speichern": "حفظ الاسم",
 		"Name gespeichert.": "تم حفظ الاسم.",
 		"Zugriff auf Dateien": "الوصول إلى الملفات",
-		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "يمكنه قراءة الملفات التي يصل إليها المستخدم المسجّل في مستعرض الملفات وتغييرها وحذفها – بصلاحياته، طالما التطبيق مفتوح."
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "يمكنه قراءة الملفات التي يصل إليها المستخدم المسجّل في مستعرض الملفات وتغييرها وحذفها – بصلاحياته، طالما التطبيق مفتوح.",
+		"Box nicht erreichbar": "الجهاز غير متاح",
+		"Netzwerkverkehr der letzten 10 Minuten": "حركة الشبكة في آخر 10 دقائق",
+		"noch nicht verbunden": "غير متصل بعد",
+		"Noch kein Eingangsordner. Zuerst oben die Adresse von Paperless eintragen.": "لا يوجد مجلد وارد بعد. أدخل أولاً عنوان Paperless في الأعلى.",
+		"gemeinsam · aus": "مشترك · متوقف",
+		"Noch nichts übertragen.": "لم يُنقل شيء بعد.",
+		"keine Tags gefunden": "لم يُعثر على وسوم",
+		"Windows-Freigabe (SMB)": "مشاركة Windows (SMB)",
+		"Google Fotos": "صور Google",
+		"DOMÄNE (OPTIONAL)": "النطاق (اختياري)",
+		"APP-PASSWORT": "كلمة مرور التطبيق",
+		"noch nicht gelaufen": "لم يُشغَّل بعد",
+		"rclone nicht installiert": "rclone غير مثبت",
+		"wird geladen und geprüft …": "جارٍ التنزيل والتحقق …",
+		"Zuerst unter": "أولاً، ضمن",
+		"ein Laufwerk einrichten.": "قم بإعداد محرك أقراص.",
+		"Zugangsdaten bleiben verschlüsselt auf der Box.": "تبقى بيانات الدخول مشفّرة على الجهاز.",
+		"Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.": "في Google Drive وOneDrive وDropbox والخدمات المشابهة تسجّل الدخول في المتصفح؛ ولغيرها ألصق القسم الجاهز من «rclone config».",
+		"Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "تعمل المهام بذاكرة قليلة (عمليتا نقل في وقت واحد)؛ وحدّ للنطاق الترددي مثل",
+		"Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.": "بيانات دخولك محفوظة في مجلدك الشخصي؛ وما تنزّله يُحسب ضمن حدّ التخزين الخاص بك.",
+		"Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie": "بعد تسجيل الدخول يعرض المتصفح «لا يمكن الوصول إلى الصفحة» بعنوان مثل",
+		". Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:": ". انسخ هذا العنوان كاملاً من شريط العنوان وألصقه هنا:",
+		"Paket wird erneut geprüft": "إعادة فحص الحزمة",
+		"System wird für den Neustart bereitgelegt": "تجهيز النظام لإعادة التشغيل",
+		"Startsystem: Flash wird gelöscht": "نظام الإقلاع: مسح الذاكرة الوميضية",
+		"Startsystem wird geschrieben": "كتابة نظام الإقلاع",
+		"Startsystem wird geprüft": "فحص نظام الإقلاع",
+		"Kernel: Flash wird gelöscht": "النواة: مسح الذاكرة الوميضية",
+		"Kernel wird geschrieben": "كتابة النواة",
+		"Kernel wird geprüft": "فحص النواة",
+		"Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.": "Telegram: أنشئ بوتاً عبر @BotFather في Telegram ‏(/newbot)، وأدخل الرمز هنا واحفظ. ثم أرسل رسالة إلى البوت (أو أضفه إلى مجموعة) وانقر «البحث عن معرّف الدردشة».",
+		"Chat-ID suchen": "البحث عن معرّف الدردشة",
+		"CHAT-ID": "معرّف الدردشة",
+		"BOT-TOKEN (VON @BOTFATHER)": "رمز البوت (من @BOTFATHER)",
+		"Telegram (Bot)": "Telegram (بوت)",
+		"BEREICHE": "الأقسام",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "عند الإيقاف: يختفي التبويب، حتى للمستخدمين في «ShareOS الخاص بي»، ويتوقف العمل في الخلفية (خادم ويب التطبيقات ومهامها، ومهام السحابة المجدولة، ووارد Paperless). تبقى الإعدادات والبيانات؛ والتشغيل يعيد كل شيء.",
+		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "التطبيقات (المتجر، تطبيقات الويب، مهام التطبيقات)",
+		"Cloud (Abgleich mit Cloud-Speichern)": "السحابة (مزامنة مع التخزين السحابي)",
+		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (مجلدات وارد لـ Paperless-ngx)",
+		"Bereich eingeschaltet.": "تم تشغيل القسم.",
+		"Bereich ausgeschaltet.": "تم إيقاف القسم.",
+		"Angemeldet – jetzt „Hinzufügen“.": "تم تسجيل الدخول – الآن «إضافة».",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen.": "يُحذف الحساب؛ وتسقط الصلاحيات على المشاركات.",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen. Der persönliche Ordner bleibt erhalten.": "يُحذف الحساب؛ وتسقط الصلاحيات على المشاركات. يبقى المجلد الشخصي.",
+		"Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.": "يُفصل المحرك ويُزال من الإعدادات. تبقى البيانات على القرص حتى يُعاد إعداده.",
+		"Laufwerk": "المحرك",
+		"Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.": "لا توجد رسائل إلى البوت بعد – احفظ الرمز أولاً ثم راسل البوت في Telegram.",
+		"wird geladen": "جارٍ التنزيل",
+		"wird geprüft": "جارٍ التحقق",
+		"wird installiert": "جارٍ التثبيت",
+		"Nutzt das Internet": "يستخدم الإنترنت",
+		"Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.": "يحمّل بيانات من الإنترنت (مثل الخدمات عبر الإنترنت والبث والخرائط). بدون اتصال بالإنترنت لا تعمل هذه الأجزاء من التطبيق.",
+		"TERMINAL": "الطرفية",
+		"Terminal öffnen": "فتح الطرفية",
+		"Beenden": "إنهاء",
+		"Eine Shell als": "واجهة أوامر بصلاحية",
+		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "مباشرةً على الجهاز – للتشخيص والعمل اليدوي (BusyBox وuci وlogread وmdadm وsmartctl …).",
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "الجلسة لنافذة واحدة وتنتهي عند إغلاقها. تنبيه: أوامر root تُنفَّذ فوراً وبلا سلة محذوفات."
 	},
 	"patterns": [
 		[
@@ -1745,6 +1804,154 @@
 		[
 			"^Dateizugriff: (.+)$",
 			"الوصول إلى الملفات: $1"
+		],
+		[
+			"^ubus-Fehler (.+)$",
+			"خطأ ubus $1"
+		],
+		[
+			"^persönlich: (.+) · aus$",
+			"شخصي: $1 · متوقف"
+		],
+		[
+			"^persönlicher Eingang von (.+) · Token (.+)$",
+			"وارد شخصي لـ $1 · رمز $2"
+		],
+		[
+			"^Freigabe (.+)$",
+			"المشاركة $1"
+		],
+		[
+			"^Fehler: (.+)$",
+			"خطأ: $1"
+		],
+		[
+			"^von (.+)$",
+			"بواسطة $1"
+		],
+		[
+			"^Konto „(.+)“ hinzugefügt\\.$",
+			"أُضيف الحساب «$1»."
+		],
+		[
+			"^Konto: (.+)$",
+			"الحساب: $1"
+		],
+		[
+			"^Auftrag „(.+)“ gespeichert\\.$",
+			"حُفظت المهمة «$1»."
+		],
+		[
+			"^Auftrag: (.+)$",
+			"المهمة: $1"
+		],
+		[
+			"^Passwort: (.+)$",
+			"كلمة المرور: $1"
+		],
+		[
+			"^(.+) · nicht eingehängt$",
+			"$1 · غير موصول"
+		],
+		[
+			"^(.+) · Dateisystem nicht gefunden$",
+			"$1 · لم يُعثر على نظام الملفات"
+		],
+		[
+			"^enthält: (.+)$",
+			"يحتوي: $1"
+		],
+		[
+			"^Der Name „(.+)“ ist schon vergeben\\.$",
+			"الاسم «$1» مستخدم بالفعل."
+		],
+		[
+			"^([0-9.,]+ [KMGT]?B) von ([0-9.,]+ [KMGT]?B)$",
+			"$1 من $2"
+		],
+		[
+			"^Bereich: (.+)$",
+			"القسم: $1"
+		],
+		[
+			"^Lüfter: (.+)$",
+			"المروحة: $1"
+		],
+		[
+			"^Firmware-Datei: (.+)$",
+			"ملف البرنامج الثابت: $1"
+		],
+		[
+			"^Sprache: (.+)$",
+			"اللغة: $1"
+		],
+		[
+			"^Freigabe: (.+)$",
+			"المشاركة: $1"
+		],
+		[
+			"^Benutzer: (.+)$",
+			"المستخدم: $1"
+		],
+		[
+			"^(.+): startet nicht mehr beim Einschalten$",
+			"$1: لم يعد يبدأ عند التشغيل"
+		],
+		[
+			"^(.+): startet beim Einschalten$",
+			"$1: يبدأ عند التشغيل"
+		],
+		[
+			"^Die Box wechselt auf (.+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"ينتقل الجهاز إلى $1. ثم تفتح هذه الصفحة العنوان الجديد وتؤكد التغيير. وإن فشل ذلك تعود الإعدادات السابقة بعد $2 ثانية."
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.+)$",
+			"فشل التحقق: $1"
+		],
+		[
+			"^Konto „(.+)“ entfernt\\.$",
+			"أُزيل الحساب «$1»."
+		],
+		[
+			"^Auftrag „(.+)“ gestartet\\.$",
+			"بدأت المهمة «$1»."
+		],
+		[
+			"^Auftrag „(.+)“ entfernt\\.$",
+			"أُزيلت المهمة «$1»."
+		],
+		[
+			"^(.+): eingehängt$",
+			"$1: موصول"
+		],
+		[
+			"^(.+): ausgehängt$",
+			"$1: مفصول"
+		],
+		[
+			"^(.+): entfernt$",
+			"$1: أُزيل"
+		],
+		[
+			"^Chat gefunden: (.+) – jetzt speichern\\.$",
+			"عُثر على الدردشة: $1 – احفظ الآن."
+		],
+		[
+			"^Telegram: (.+)$",
+			"Telegram: $1"
+		],
+		[
+			"^Ordner: (.+)$",
+			"المجلد: $1"
+		],
+		[
+			"^Löschen: (.+)$",
+			"الحذف: $1"
+		],
+		[
+			"^Terminal: (.+)$",
+			"الطرفية: $1"
 		]
 	],
 	"words": [
@@ -1941,6 +2148,25 @@
 		[
 			"\\bGruppe\\b",
 			"مجموعة",
+			"g"
+		],
+		[
+			" · noch ([0-9][^ ]* [a-zA-Z]+)$",
+			" · متبقٍ $1"
+		],
+		[
+			"\\bUSB-Laufwerk\\b",
+			"محرك USB",
+			"g"
+		],
+		[
+			"\\bEintrag/Einträge\\b",
+			"عنصر/عناصر",
+			"g"
+		],
+		[
+			"\\balle Benutzer\\b",
+			"كل المستخدمين",
 			"g"
 		]
 	]

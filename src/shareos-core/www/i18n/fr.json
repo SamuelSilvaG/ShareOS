@@ -935,7 +935,66 @@
 		"Name speichern": "Enregistrer le nom",
 		"Name gespeichert.": "Nom enregistré.",
 		"Zugriff auf Dateien": "Accès aux fichiers",
-		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Peut lire, modifier et supprimer les fichiers que l'utilisateur connecté atteint dans l'explorateur – avec ses droits, tant que l'app est ouverte."
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Peut lire, modifier et supprimer les fichiers que l'utilisateur connecté atteint dans l'explorateur – avec ses droits, tant que l'app est ouverte.",
+		"Box nicht erreichbar": "Boîtier injoignable",
+		"Netzwerkverkehr der letzten 10 Minuten": "Trafic réseau des 10 dernières minutes",
+		"noch nicht verbunden": "pas encore connecté",
+		"Noch kein Eingangsordner. Zuerst oben die Adresse von Paperless eintragen.": "Pas encore de dossier d’entrée. Saisissez d’abord l’adresse de Paperless ci-dessus.",
+		"gemeinsam · aus": "commun · désactivé",
+		"Noch nichts übertragen.": "Rien de transféré pour l’instant.",
+		"keine Tags gefunden": "aucune étiquette trouvée",
+		"Windows-Freigabe (SMB)": "Partage Windows (SMB)",
+		"Google Fotos": "Google Photos",
+		"DOMÄNE (OPTIONAL)": "DOMAINE (FACULTATIF)",
+		"APP-PASSWORT": "MOT DE PASSE D’APPLICATION",
+		"noch nicht gelaufen": "pas encore exécuté",
+		"rclone nicht installiert": "rclone non installé",
+		"wird geladen und geprüft …": "téléchargement et vérification …",
+		"Zuerst unter": "D’abord, sous",
+		"ein Laufwerk einrichten.": "configurez un disque.",
+		"Zugangsdaten bleiben verschlüsselt auf der Box.": "Les identifiants restent chiffrés sur le boîtier.",
+		"Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.": "Pour Google Drive, OneDrive, Dropbox et services similaires, connectez-vous dans le navigateur ; pour les autres, collez la section produite par « rclone config ».",
+		"Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "Les tâches utilisent peu de mémoire (2 transferts à la fois) ; une limite de bande passante comme",
+		"Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.": "Vos identifiants sont dans votre dossier personnel ; ce que vous téléchargez compte dans votre quota.",
+		"Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie": "Après la connexion, le navigateur affiche « page inaccessible » avec une adresse comme",
+		". Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:": ". Copiez cette adresse complète depuis la barre d’adresse et collez-la ici :",
+		"Paket wird erneut geprüft": "Nouvelle vérification du paquet",
+		"System wird für den Neustart bereitgelegt": "Préparation du système pour le redémarrage",
+		"Startsystem: Flash wird gelöscht": "Système de démarrage : effacement de la flash",
+		"Startsystem wird geschrieben": "Écriture du système de démarrage",
+		"Startsystem wird geprüft": "Vérification du système de démarrage",
+		"Kernel: Flash wird gelöscht": "Noyau : effacement de la flash",
+		"Kernel wird geschrieben": "Écriture du noyau",
+		"Kernel wird geprüft": "Vérification du noyau",
+		"Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.": "Telegram : créez un bot avec @BotFather dans Telegram (/newbot), saisissez le jeton ici et enregistrez. Puis envoyez un message à votre bot (ou ajoutez-le à un groupe) et cliquez sur « Trouver l’ID du chat ».",
+		"Chat-ID suchen": "Trouver l’ID du chat",
+		"CHAT-ID": "ID DU CHAT",
+		"BOT-TOKEN (VON @BOTFATHER)": "JETON DU BOT (DE @BOTFATHER)",
+		"Telegram (Bot)": "Telegram (bot)",
+		"BEREICHE": "ZONES",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées, dossiers d’entrée Paperless). Réglages et données sont conservés ; réactiver remet tout en marche.",
+		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (boutique, apps web, tâches des apps)",
+		"Cloud (Abgleich mit Cloud-Speichern)": "Cloud (synchronisation avec le stockage en ligne)",
+		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (dossiers d’entrée pour Paperless-ngx)",
+		"Bereich eingeschaltet.": "Zone activée.",
+		"Bereich ausgeschaltet.": "Zone désactivée.",
+		"Angemeldet – jetzt „Hinzufügen“.": "Connecté – maintenant « Ajouter ».",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen.": "Le compte est supprimé ; les droits sur les partages disparaissent.",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen. Der persönliche Ordner bleibt erhalten.": "Le compte est supprimé ; les droits sur les partages disparaissent. Le dossier personnel est conservé.",
+		"Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.": "Le disque est démonté et retiré de la configuration. Les données du disque restent jusqu’à sa reconfiguration.",
+		"Laufwerk": "Disque",
+		"Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.": "Pas encore de message au bot – enregistrez d’abord le jeton, puis écrivez au bot dans Telegram.",
+		"wird geladen": "téléchargement",
+		"wird geprüft": "vérification",
+		"wird installiert": "installation",
+		"Nutzt das Internet": "Utilise Internet",
+		"Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.": "Charge des données depuis Internet (p. ex. services en ligne, flux, cartes). Sans connexion Internet, ces parties de l’app ne fonctionnent pas.",
+		"TERMINAL": "TERMINAL",
+		"Terminal öffnen": "Ouvrir le terminal",
+		"Beenden": "Terminer",
+		"Eine Shell als": "Un shell en tant que",
+		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "directement sur le boîtier – pour le diagnostic et les manipulations (BusyBox, uci, logread, mdadm, smartctl …).",
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "La session vaut pour une fenêtre et se termine à sa fermeture. Attention : les commandes en root agissent immédiatement, sans corbeille."
 	},
 	"patterns": [
 		[
@@ -1745,6 +1804,154 @@
 		[
 			"^Dateizugriff: (.+)$",
 			"Accès aux fichiers : $1"
+		],
+		[
+			"^ubus-Fehler (.+)$",
+			"Erreur ubus $1"
+		],
+		[
+			"^persönlich: (.+) · aus$",
+			"personnel : $1 · désactivé"
+		],
+		[
+			"^persönlicher Eingang von (.+) · Token (.+)$",
+			"dossier d’entrée personnel de $1 · jeton $2"
+		],
+		[
+			"^Freigabe (.+)$",
+			"Partage $1"
+		],
+		[
+			"^Fehler: (.+)$",
+			"Erreur : $1"
+		],
+		[
+			"^von (.+)$",
+			"par $1"
+		],
+		[
+			"^Konto „(.+)“ hinzugefügt\\.$",
+			"Compte « $1 » ajouté."
+		],
+		[
+			"^Konto: (.+)$",
+			"Compte : $1"
+		],
+		[
+			"^Auftrag „(.+)“ gespeichert\\.$",
+			"Tâche « $1 » enregistrée."
+		],
+		[
+			"^Auftrag: (.+)$",
+			"Tâche : $1"
+		],
+		[
+			"^Passwort: (.+)$",
+			"Mot de passe : $1"
+		],
+		[
+			"^(.+) · nicht eingehängt$",
+			"$1 · non monté"
+		],
+		[
+			"^(.+) · Dateisystem nicht gefunden$",
+			"$1 · système de fichiers introuvable"
+		],
+		[
+			"^enthält: (.+)$",
+			"contient : $1"
+		],
+		[
+			"^Der Name „(.+)“ ist schon vergeben\\.$",
+			"Le nom « $1 » est déjà pris."
+		],
+		[
+			"^([0-9.,]+ [KMGT]?B) von ([0-9.,]+ [KMGT]?B)$",
+			"$1 sur $2"
+		],
+		[
+			"^Bereich: (.+)$",
+			"Zone : $1"
+		],
+		[
+			"^Lüfter: (.+)$",
+			"Ventilateur : $1"
+		],
+		[
+			"^Firmware-Datei: (.+)$",
+			"Fichier de firmware : $1"
+		],
+		[
+			"^Sprache: (.+)$",
+			"Langue : $1"
+		],
+		[
+			"^Freigabe: (.+)$",
+			"Partage : $1"
+		],
+		[
+			"^Benutzer: (.+)$",
+			"Utilisateur : $1"
+		],
+		[
+			"^(.+): startet nicht mehr beim Einschalten$",
+			"$1 : ne démarre plus à l’allumage"
+		],
+		[
+			"^(.+): startet beim Einschalten$",
+			"$1 : démarre à l’allumage"
+		],
+		[
+			"^Die Box wechselt auf (.+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Le boîtier passe à $1. Cette page ouvre ensuite la nouvelle adresse et confirme le changement. En cas d’échec, les réglages précédents reviennent après $2 secondes."
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.+)$",
+			"Échec de la vérification : $1"
+		],
+		[
+			"^Konto „(.+)“ entfernt\\.$",
+			"Compte « $1 » supprimé."
+		],
+		[
+			"^Auftrag „(.+)“ gestartet\\.$",
+			"Tâche « $1 » lancée."
+		],
+		[
+			"^Auftrag „(.+)“ entfernt\\.$",
+			"Tâche « $1 » supprimée."
+		],
+		[
+			"^(.+): eingehängt$",
+			"$1 : monté"
+		],
+		[
+			"^(.+): ausgehängt$",
+			"$1 : démonté"
+		],
+		[
+			"^(.+): entfernt$",
+			"$1 : supprimé"
+		],
+		[
+			"^Chat gefunden: (.+) – jetzt speichern\\.$",
+			"Chat trouvé : $1 – enregistrez maintenant."
+		],
+		[
+			"^Telegram: (.+)$",
+			"Telegram : $1"
+		],
+		[
+			"^Ordner: (.+)$",
+			"Dossier : $1"
+		],
+		[
+			"^Löschen: (.+)$",
+			"Supprimer : $1"
+		],
+		[
+			"^Terminal: (.+)$",
+			"Terminal : $1"
 		]
 	],
 	"words": [
@@ -1941,6 +2148,25 @@
 		[
 			"\\bGruppe\\b",
 			"groupe",
+			"g"
+		],
+		[
+			" · noch ([0-9][^ ]* [a-zA-Z]+)$",
+			" · encore $1"
+		],
+		[
+			"\\bUSB-Laufwerk\\b",
+			"disque USB",
+			"g"
+		],
+		[
+			"\\bEintrag/Einträge\\b",
+			"élément(s)",
+			"g"
+		],
+		[
+			"\\balle Benutzer\\b",
+			"tous les utilisateurs",
 			"g"
 		]
 	]

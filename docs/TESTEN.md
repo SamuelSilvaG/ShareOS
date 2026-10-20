@@ -257,6 +257,14 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - Eine Meldung auslösen: eine Platte des Spiegels ziehen (oder auf eine echte warten) – innerhalb von 10 Minuten erscheint „RAID md0 unvollständig“, oben steht „1 MELDUNG“, und sie wird verschickt. Nach der Reparatur erscheint sie als erledigt.
 - Von Hand prüfen: `shareos-notify check`, Liste: `shareos-notify list`.
 
+## 14c. Neu in beta.12
+
+- **Terminal:** System → Terminal → *Terminal öffnen*: eine Shell als root erscheint im Fenster (z. B. `uptime`, `logread | tail`). *Beenden* oder Seite verlassen beendet sie.
+- **Bereiche:** System → Darstellung → Bereiche: *Cloud* ausschalten – der Reiter CLOUD verschwindet, geplante Cloud-Aufträge laufen nicht mehr. Wieder einschalten.
+- **Telegram:** System → Meldungen → Push → Dienst *Telegram (Bot)*: Bot-Token von @BotFather eintragen, speichern, dem Bot schreiben, *Chat-ID suchen*, speichern, *Testnachricht*.
+- **Cloud:** Cloud → Konto hinzufügen → *Google Drive*: „Bei Google Drive anmelden ↗“, anmelden, die Adresse aus der Browserzeile (http://127.0.0.1:53682/…) einfügen, *Übernehmen*, *Hinzufügen*, *Prüfen*.
+- **Sprache:** System → Darstellung → Sprache *English*: alle Seiten durchklicken – es sollte kein Deutsch mehr zu sehen sein (sonst Bildschirmfoto an Claude).
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

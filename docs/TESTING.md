@@ -253,6 +253,14 @@ their permissions.
 - Provoke a message: pull a disk of a mirror (or wait for a real one) – within 10 minutes "RAID md0 degraded" appears, the header shows "1 MESSAGE" and it is sent. After the repair it is shown as resolved.
 - Check by hand: `shareos-notify check`, list: `shareos-notify list`.
 
+## 14c. New in beta.12
+
+- **Terminal:** System → Terminal → *Open terminal*: a root shell appears in the window (e.g. `uptime`, `logread | tail`). *End* or leaving the page ends it.
+- **Areas:** System → Appearance → Areas: switch *Cloud* off – the CLOUD tab disappears, scheduled cloud jobs no longer run. Switch it on again.
+- **Telegram:** System → Messages → Push → service *Telegram (bot)*: enter the bot token from @BotFather, save, write to the bot, *Find chat ID*, save, *Test message*.
+- **Cloud:** Cloud → add account → *Google Drive*: "Sign in at Google Drive ↗", sign in, paste the address from the browser bar (http://127.0.0.1:53682/…), *Apply*, *Add*, *Check*.
+- **Language:** System → Appearance → language *English*: click through all pages – no German should be visible.
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:

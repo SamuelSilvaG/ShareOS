@@ -1347,6 +1347,22 @@ return {
 	},
 
 	'shareos.system': {
+		// a root shell in the browser (admins only): ttyd on its own port with
+		// a secret path, for one client, ends when that client leaves
+		terminal: {
+			args: { tls: false, theme: {} },
+			call: function(req) {
+				let th = req.args.theme, t = {};
+				if (type(th) == 'object')
+					for (let k in [ 'background', 'foreground', 'cursor', 'selectionBackground' ])
+						if (match(th[k] ?? '', /^#[0-9a-fA-F]{3,8}$/)) t[k] = th[k];
+				let r = sh(sprintf('/usr/sbin/shareos-terminal start %s %s', req.args.tls ? 'tls' : 'plain', shq(length(t) ? sprintf('%J', t) : '')));
+				let m = match(r.out, /port=([0-9]+) path=([0-9a-f]{32})/);
+				if (!m) return { error: trim(replace(r.out, /^error: /, '')) || 'terminal did not start' };
+				return { port: +m[1], path: m[2] };
+			}
+		},
+
 		info: {
 			call: function() {
 				let up = split(read_trim('/proc/uptime') ?? '0', ' ');

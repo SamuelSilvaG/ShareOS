@@ -935,7 +935,66 @@
 		"Name speichern": "Guardar nome",
 		"Name gespeichert.": "Nome guardado.",
 		"Zugriff auf Dateien": "Acesso a ficheiros",
-		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Pode ler, alterar e apagar os ficheiros a que o utilizador com sessão iniciada chega no explorador – com os seus direitos, enquanto a app estiver aberta."
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Pode ler, alterar e apagar os ficheiros a que o utilizador com sessão iniciada chega no explorador – com os seus direitos, enquanto a app estiver aberta.",
+		"Box nicht erreichbar": "Caixa inacessível",
+		"Netzwerkverkehr der letzten 10 Minuten": "Tráfego de rede dos últimos 10 minutos",
+		"noch nicht verbunden": "ainda não ligado",
+		"Noch kein Eingangsordner. Zuerst oben die Adresse von Paperless eintragen.": "Ainda não há pasta de entrada. Primeiro indique acima o endereço do Paperless.",
+		"gemeinsam · aus": "partilhado · desligado",
+		"Noch nichts übertragen.": "Ainda nada transferido.",
+		"keine Tags gefunden": "nenhuma etiqueta encontrada",
+		"Windows-Freigabe (SMB)": "Partilha Windows (SMB)",
+		"Google Fotos": "Google Fotos",
+		"DOMÄNE (OPTIONAL)": "DOMÍNIO (OPCIONAL)",
+		"APP-PASSWORT": "PALAVRA-PASSE DE APLICAÇÃO",
+		"noch nicht gelaufen": "ainda não executado",
+		"rclone nicht installiert": "rclone não instalado",
+		"wird geladen und geprüft …": "a transferir e verificar …",
+		"Zuerst unter": "Primeiro, em",
+		"ein Laufwerk einrichten.": "configure uma unidade.",
+		"Zugangsdaten bleiben verschlüsselt auf der Box.": "As credenciais ficam encriptadas na caixa.",
+		"Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.": "No Google Drive, OneDrive, Dropbox e serviços semelhantes inicia sessão no navegador; para outros serviços cole a secção pronta do «rclone config».",
+		"Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "As tarefas usam pouca memória (2 transferências em simultâneo); um limite de largura de banda como",
+		"Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.": "As suas credenciais ficam na sua pasta pessoal; o que transfere conta para o seu limite de armazenamento.",
+		"Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie": "Depois de iniciar sessão, o navegador mostra «página inacessível» com um endereço como",
+		". Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:": ". Copie este endereço completo da barra de endereços e cole-o aqui:",
+		"Paket wird erneut geprüft": "A verificar o pacote novamente",
+		"System wird für den Neustart bereitgelegt": "A preparar o sistema para o reinício",
+		"Startsystem: Flash wird gelöscht": "Sistema de arranque: a apagar a flash",
+		"Startsystem wird geschrieben": "A escrever o sistema de arranque",
+		"Startsystem wird geprüft": "A verificar o sistema de arranque",
+		"Kernel: Flash wird gelöscht": "Kernel: a apagar a flash",
+		"Kernel wird geschrieben": "A escrever o kernel",
+		"Kernel wird geprüft": "A verificar o kernel",
+		"Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.": "Telegram: crie um bot com o @BotFather no Telegram (/newbot), introduza aqui o token e guarde. Depois envie uma mensagem ao seu bot (ou adicione-o a um grupo) e clique em «Procurar ID do chat».",
+		"Chat-ID suchen": "Procurar ID do chat",
+		"CHAT-ID": "ID DO CHAT",
+		"BOT-TOKEN (VON @BOTFATHER)": "TOKEN DO BOT (DO @BOTFATHER)",
+		"Telegram (Bot)": "Telegram (bot)",
+		"BEREICHE": "ÁREAS",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas, entradas do Paperless). Definições e dados mantêm-se; ligar repõe tudo.",
+		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (loja, apps web, tarefas das apps)",
+		"Cloud (Abgleich mit Cloud-Speichern)": "Nuvem (sincronização com armazenamento na nuvem)",
+		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (pastas de entrada para o Paperless-ngx)",
+		"Bereich eingeschaltet.": "Área ligada.",
+		"Bereich ausgeschaltet.": "Área desligada.",
+		"Angemeldet – jetzt „Hinzufügen“.": "Sessão iniciada – agora «Adicionar».",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen.": "A conta é removida; os direitos nas partilhas deixam de existir.",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen. Der persönliche Ordner bleibt erhalten.": "A conta é removida; os direitos nas partilhas deixam de existir. A pasta pessoal mantém-se.",
+		"Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.": "A unidade é desmontada e retirada da configuração. Os dados do disco mantêm-se até ser configurado de novo.",
+		"Laufwerk": "Unidade",
+		"Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.": "Ainda nenhuma mensagem para o bot – guarde primeiro o token e depois escreva ao bot no Telegram.",
+		"wird geladen": "a transferir",
+		"wird geprüft": "a verificar",
+		"wird installiert": "a instalar",
+		"Nutzt das Internet": "Usa a internet",
+		"Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.": "Carrega dados da internet (p. ex. serviços online, streams, mapas). Sem ligação à internet essas partes da app não funcionam.",
+		"TERMINAL": "TERMINAL",
+		"Terminal öffnen": "Abrir terminal",
+		"Beenden": "Terminar",
+		"Eine Shell als": "Uma shell como",
+		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "diretamente na caixa – para diagnóstico e trabalho manual (BusyBox, uci, logread, mdadm, smartctl …).",
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "A sessão é para uma janela e termina quando esta é fechada. Cuidado: comandos como root atuam de imediato e sem reciclagem."
 	},
 	"patterns": [
 		[
@@ -1745,6 +1804,154 @@
 		[
 			"^Dateizugriff: (.+)$",
 			"Acesso a ficheiros: $1"
+		],
+		[
+			"^ubus-Fehler (.+)$",
+			"Erro ubus $1"
+		],
+		[
+			"^persönlich: (.+) · aus$",
+			"pessoal: $1 · desligado"
+		],
+		[
+			"^persönlicher Eingang von (.+) · Token (.+)$",
+			"entrada pessoal de $1 · token $2"
+		],
+		[
+			"^Freigabe (.+)$",
+			"Partilha $1"
+		],
+		[
+			"^Fehler: (.+)$",
+			"Erro: $1"
+		],
+		[
+			"^von (.+)$",
+			"de $1"
+		],
+		[
+			"^Konto „(.+)“ hinzugefügt\\.$",
+			"Conta «$1» adicionada."
+		],
+		[
+			"^Konto: (.+)$",
+			"Conta: $1"
+		],
+		[
+			"^Auftrag „(.+)“ gespeichert\\.$",
+			"Tarefa «$1» guardada."
+		],
+		[
+			"^Auftrag: (.+)$",
+			"Tarefa: $1"
+		],
+		[
+			"^Passwort: (.+)$",
+			"Palavra-passe: $1"
+		],
+		[
+			"^(.+) · nicht eingehängt$",
+			"$1 · não montado"
+		],
+		[
+			"^(.+) · Dateisystem nicht gefunden$",
+			"$1 · sistema de ficheiros não encontrado"
+		],
+		[
+			"^enthält: (.+)$",
+			"contém: $1"
+		],
+		[
+			"^Der Name „(.+)“ ist schon vergeben\\.$",
+			"O nome «$1» já está em uso."
+		],
+		[
+			"^([0-9.,]+ [KMGT]?B) von ([0-9.,]+ [KMGT]?B)$",
+			"$1 de $2"
+		],
+		[
+			"^Bereich: (.+)$",
+			"Área: $1"
+		],
+		[
+			"^Lüfter: (.+)$",
+			"Ventoinha: $1"
+		],
+		[
+			"^Firmware-Datei: (.+)$",
+			"Ficheiro de firmware: $1"
+		],
+		[
+			"^Sprache: (.+)$",
+			"Idioma: $1"
+		],
+		[
+			"^Freigabe: (.+)$",
+			"Partilha: $1"
+		],
+		[
+			"^Benutzer: (.+)$",
+			"Utilizador: $1"
+		],
+		[
+			"^(.+): startet nicht mehr beim Einschalten$",
+			"$1: já não arranca ao ligar"
+		],
+		[
+			"^(.+): startet beim Einschalten$",
+			"$1: arranca ao ligar"
+		],
+		[
+			"^Die Box wechselt auf (.+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"A caixa muda para $1. Esta página abre depois o novo endereço e confirma a alteração. Se falhar, voltam as definições anteriores após $2 segundos."
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.+)$",
+			"Verificação falhou: $1"
+		],
+		[
+			"^Konto „(.+)“ entfernt\\.$",
+			"Conta «$1» removida."
+		],
+		[
+			"^Auftrag „(.+)“ gestartet\\.$",
+			"Tarefa «$1» iniciada."
+		],
+		[
+			"^Auftrag „(.+)“ entfernt\\.$",
+			"Tarefa «$1» removida."
+		],
+		[
+			"^(.+): eingehängt$",
+			"$1: montado"
+		],
+		[
+			"^(.+): ausgehängt$",
+			"$1: desmontado"
+		],
+		[
+			"^(.+): entfernt$",
+			"$1: removido"
+		],
+		[
+			"^Chat gefunden: (.+) – jetzt speichern\\.$",
+			"Chat encontrado: $1 – agora guarde."
+		],
+		[
+			"^Telegram: (.+)$",
+			"Telegram: $1"
+		],
+		[
+			"^Ordner: (.+)$",
+			"Pasta: $1"
+		],
+		[
+			"^Löschen: (.+)$",
+			"Apagar: $1"
+		],
+		[
+			"^Terminal: (.+)$",
+			"Terminal: $1"
 		]
 	],
 	"words": [
@@ -1941,6 +2148,25 @@
 		[
 			"\\bGruppe\\b",
 			"grupo",
+			"g"
+		],
+		[
+			" · noch ([0-9][^ ]* [a-zA-Z]+)$",
+			" · faltam $1"
+		],
+		[
+			"\\bUSB-Laufwerk\\b",
+			"unidade USB",
+			"g"
+		],
+		[
+			"\\bEintrag/Einträge\\b",
+			"item(ns)",
+			"g"
+		],
+		[
+			"\\balle Benutzer\\b",
+			"todos os utilizadores",
 			"g"
 		]
 	]

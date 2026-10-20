@@ -935,7 +935,66 @@
 		"Name speichern": "নাম সংরক্ষণ করুন",
 		"Name gespeichert.": "নাম সংরক্ষিত।",
 		"Zugriff auf Dateien": "ফাইলে অ্যাক্সেস",
-		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "সাইন-ইন করা ব্যবহারকারী ফাইল ব্রাউজারে যে ফাইলগুলোতে পৌঁছায় সেগুলো পড়তে, বদলাতে ও মুছতে পারে – তার অধিকারে, যতক্ষণ অ্যাপ খোলা।"
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "সাইন-ইন করা ব্যবহারকারী ফাইল ব্রাউজারে যে ফাইলগুলোতে পৌঁছায় সেগুলো পড়তে, বদলাতে ও মুছতে পারে – তার অধিকারে, যতক্ষণ অ্যাপ খোলা।",
+		"Box nicht erreichbar": "বক্সে পৌঁছানো যাচ্ছে না",
+		"Netzwerkverkehr der letzten 10 Minuten": "শেষ ১০ মিনিটের নেটওয়ার্ক ট্রাফিক",
+		"noch nicht verbunden": "এখনো সংযুক্ত নয়",
+		"Noch kein Eingangsordner. Zuerst oben die Adresse von Paperless eintragen.": "এখনো কোনো ইনবক্স নেই। আগে ওপরে Paperless-এর ঠিকানা লিখুন।",
+		"gemeinsam · aus": "যৌথ · বন্ধ",
+		"Noch nichts übertragen.": "এখনো কিছু পাঠানো হয়নি।",
+		"keine Tags gefunden": "কোনো ট্যাগ পাওয়া যায়নি",
+		"Windows-Freigabe (SMB)": "Windows শেয়ার (SMB)",
+		"Google Fotos": "Google Photos",
+		"DOMÄNE (OPTIONAL)": "ডোমেইন (ঐচ্ছিক)",
+		"APP-PASSWORT": "অ্যাপ পাসওয়ার্ড",
+		"noch nicht gelaufen": "এখনো চলেনি",
+		"rclone nicht installiert": "rclone ইনস্টল নেই",
+		"wird geladen und geprüft …": "ডাউনলোড ও যাচাই চলছে …",
+		"Zuerst unter": "প্রথমে",
+		"ein Laufwerk einrichten.": "-এ একটি ড্রাইভ সেট করুন।",
+		"Zugangsdaten bleiben verschlüsselt auf der Box.": "লগইন তথ্য বক্সে এনক্রিপ্ট করা থাকে।",
+		"Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.": "Google Drive, OneDrive, Dropbox ও এমন সেবায় ব্রাউজারে সাইন ইন করুন; অন্য সেবার জন্য „rclone config“-এর তৈরি অংশটি পেস্ট করুন।",
+		"Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "কাজগুলো অল্প মেমোরিতে চলে (একসাথে ২টি ট্রান্সফার); ব্যান্ডউইথ সীমা যেমন",
+		"Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.": "আপনার লগইন তথ্য আপনার ব্যক্তিগত ফোল্ডারে থাকে; যা ডাউনলোড করেন তা আপনার স্টোরেজ সীমায় গোনা হয়।",
+		"Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie": "সাইন ইনের পর ব্রাউজার „পেজে পৌঁছানো যাচ্ছে না“ দেখায়, ঠিকানাটি এমন",
+		". Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:": "। এই পুরো ঠিকানাটি অ্যাড্রেস বার থেকে কপি করে এখানে পেস্ট করুন:",
+		"Paket wird erneut geprüft": "প্যাকেজ আবার যাচাই হচ্ছে",
+		"System wird für den Neustart bereitgelegt": "রিস্টার্টের জন্য সিস্টেম প্রস্তুত হচ্ছে",
+		"Startsystem: Flash wird gelöscht": "বুট সিস্টেম: ফ্ল্যাশ মোছা হচ্ছে",
+		"Startsystem wird geschrieben": "বুট সিস্টেম লেখা হচ্ছে",
+		"Startsystem wird geprüft": "বুট সিস্টেম যাচাই হচ্ছে",
+		"Kernel: Flash wird gelöscht": "কার্নেল: ফ্ল্যাশ মোছা হচ্ছে",
+		"Kernel wird geschrieben": "কার্নেল লেখা হচ্ছে",
+		"Kernel wird geprüft": "কার্নেল যাচাই হচ্ছে",
+		"Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.": "Telegram: Telegram-এ @BotFather দিয়ে একটি বট বানান (/newbot), টোকেন এখানে লিখে সংরক্ষণ করুন। তারপর বটকে একটি বার্তা পাঠান (বা গ্রুপে যোগ করুন) এবং „চ্যাট-ID খুঁজুন“ ক্লিক করুন।",
+		"Chat-ID suchen": "চ্যাট-ID খুঁজুন",
+		"CHAT-ID": "চ্যাট ID",
+		"BOT-TOKEN (VON @BOTFATHER)": "বট টোকেন (@BOTFATHER থেকে)",
+		"Telegram (Bot)": "Telegram (বট)",
+		"BEREICHE": "এলাকা",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "বন্ধ করলে: ট্যাবটি সরে যায়, „আমার ShareOS“-এ ব্যবহারকারীদের জন্যও, এবং পটভূমির কাজ থেমে থাকে (অ্যাপ ওয়েব সার্ভার ও অ্যাপ কাজ, নির্ধারিত ক্লাউড কাজ, Paperless ইনবক্স)। সেটিংস ও ডেটা থাকে; চালু করলে সব ফিরে আসে।",
+		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "অ্যাপ (অ্যাপ স্টোর, ওয়েব অ্যাপ, অ্যাপের কাজ)",
+		"Cloud (Abgleich mit Cloud-Speichern)": "ক্লাউড (ক্লাউড স্টোরেজের সাথে সিঙ্ক)",
+		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (Paperless-ngx-এর ইনবক্স)",
+		"Bereich eingeschaltet.": "এলাকা চালু হয়েছে।",
+		"Bereich ausgeschaltet.": "এলাকা বন্ধ হয়েছে।",
+		"Angemeldet – jetzt „Hinzufügen“.": "সাইন ইন হয়েছে – এখন „যোগ করুন“।",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen.": "অ্যাকাউন্ট সরানো হবে; শেয়ারের অধিকার বাদ যাবে।",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen. Der persönliche Ordner bleibt erhalten.": "অ্যাকাউন্ট সরানো হবে; শেয়ারের অধিকার বাদ যাবে। ব্যক্তিগত ফোল্ডার থেকে যাবে।",
+		"Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.": "ড্রাইভ আনমাউন্ট হয়ে কনফিগারেশন থেকে সরবে। আবার সেট আপ না করা পর্যন্ত ডিস্কের ডেটা থাকবে।",
+		"Laufwerk": "ড্রাইভ",
+		"Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.": "বটকে এখনো কোনো বার্তা নেই – আগে টোকেন সংরক্ষণ করুন, তারপর Telegram-এ বটকে লিখুন।",
+		"wird geladen": "ডাউনলোড হচ্ছে",
+		"wird geprüft": "যাচাই হচ্ছে",
+		"wird installiert": "ইনস্টল হচ্ছে",
+		"Nutzt das Internet": "ইন্টারনেট ব্যবহার করে",
+		"Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.": "ইন্টারনেট থেকে ডেটা আনে (যেমন অনলাইন সেবা, স্ট্রিম, মানচিত্র)। ইন্টারনেট সংযোগ ছাড়া অ্যাপের এই অংশগুলো কাজ করে না।",
+		"TERMINAL": "টার্মিনাল",
+		"Terminal öffnen": "টার্মিনাল খুলুন",
+		"Beenden": "শেষ করুন",
+		"Eine Shell als": "একটি শেল,",
+		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "হিসেবে সরাসরি বক্সে – ডায়াগনস্টিক ও হাতে কাজের জন্য (BusyBox, uci, logread, mdadm, smartctl …)।",
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "সেশন একটি উইন্ডোর জন্য এবং বন্ধ করলে শেষ হয়। সাবধান: root হিসেবে কমান্ড সঙ্গে সঙ্গে ও রিসাইকেল বিন ছাড়াই কাজ করে।"
 	},
 	"patterns": [
 		[
@@ -1745,6 +1804,154 @@
 		[
 			"^Dateizugriff: (.+)$",
 			"ফাইল অ্যাক্সেস: $1"
+		],
+		[
+			"^ubus-Fehler (.+)$",
+			"ubus ত্রুটি $1"
+		],
+		[
+			"^persönlich: (.+) · aus$",
+			"ব্যক্তিগত: $1 · বন্ধ"
+		],
+		[
+			"^persönlicher Eingang von (.+) · Token (.+)$",
+			"$1-এর ব্যক্তিগত ইনবক্স · টোকেন $2"
+		],
+		[
+			"^Freigabe (.+)$",
+			"শেয়ার $1"
+		],
+		[
+			"^Fehler: (.+)$",
+			"ত্রুটি: $1"
+		],
+		[
+			"^von (.+)$",
+			"$1-এর"
+		],
+		[
+			"^Konto „(.+)“ hinzugefügt\\.$",
+			"অ্যাকাউন্ট „$1“ যোগ হয়েছে।"
+		],
+		[
+			"^Konto: (.+)$",
+			"অ্যাকাউন্ট: $1"
+		],
+		[
+			"^Auftrag „(.+)“ gespeichert\\.$",
+			"কাজ „$1“ সংরক্ষিত।"
+		],
+		[
+			"^Auftrag: (.+)$",
+			"কাজ: $1"
+		],
+		[
+			"^Passwort: (.+)$",
+			"পাসওয়ার্ড: $1"
+		],
+		[
+			"^(.+) · nicht eingehängt$",
+			"$1 · মাউন্ট করা নেই"
+		],
+		[
+			"^(.+) · Dateisystem nicht gefunden$",
+			"$1 · ফাইল সিস্টেম পাওয়া যায়নি"
+		],
+		[
+			"^enthält: (.+)$",
+			"রয়েছে: $1"
+		],
+		[
+			"^Der Name „(.+)“ ist schon vergeben\\.$",
+			"নাম „$1“ আগেই নেওয়া হয়েছে।"
+		],
+		[
+			"^([0-9.,]+ [KMGT]?B) von ([0-9.,]+ [KMGT]?B)$",
+			"$2-এর মধ্যে $1"
+		],
+		[
+			"^Bereich: (.+)$",
+			"এলাকা: $1"
+		],
+		[
+			"^Lüfter: (.+)$",
+			"ফ্যান: $1"
+		],
+		[
+			"^Firmware-Datei: (.+)$",
+			"ফার্মওয়্যার ফাইল: $1"
+		],
+		[
+			"^Sprache: (.+)$",
+			"ভাষা: $1"
+		],
+		[
+			"^Freigabe: (.+)$",
+			"শেয়ার: $1"
+		],
+		[
+			"^Benutzer: (.+)$",
+			"ব্যবহারকারী: $1"
+		],
+		[
+			"^(.+): startet nicht mehr beim Einschalten$",
+			"$1: চালু হলে আর শুরু হবে না"
+		],
+		[
+			"^(.+): startet beim Einschalten$",
+			"$1: চালু হলে শুরু হবে"
+		],
+		[
+			"^Die Box wechselt auf (.+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"বক্স $1-এ যায়। তারপর এই পেজ নতুন ঠিকানা খুলে পরিবর্তন নিশ্চিত করে। না হলে $2 সেকেন্ড পরে আগের সেটিংস ফিরে আসবে।"
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.+)$",
+			"যাচাই ব্যর্থ: $1"
+		],
+		[
+			"^Konto „(.+)“ entfernt\\.$",
+			"অ্যাকাউন্ট „$1“ সরানো হয়েছে।"
+		],
+		[
+			"^Auftrag „(.+)“ gestartet\\.$",
+			"কাজ „$1“ শুরু হয়েছে।"
+		],
+		[
+			"^Auftrag „(.+)“ entfernt\\.$",
+			"কাজ „$1“ সরানো হয়েছে।"
+		],
+		[
+			"^(.+): eingehängt$",
+			"$1: মাউন্ট হয়েছে"
+		],
+		[
+			"^(.+): ausgehängt$",
+			"$1: আনমাউন্ট হয়েছে"
+		],
+		[
+			"^(.+): entfernt$",
+			"$1: সরানো হয়েছে"
+		],
+		[
+			"^Chat gefunden: (.+) – jetzt speichern\\.$",
+			"চ্যাট পাওয়া গেছে: $1 – এখন সংরক্ষণ করুন।"
+		],
+		[
+			"^Telegram: (.+)$",
+			"Telegram: $1"
+		],
+		[
+			"^Ordner: (.+)$",
+			"ফোল্ডার: $1"
+		],
+		[
+			"^Löschen: (.+)$",
+			"মুছুন: $1"
+		],
+		[
+			"^Terminal: (.+)$",
+			"টার্মিনাল: $1"
 		]
 	],
 	"words": [
@@ -1941,6 +2148,25 @@
 		[
 			"\\bGruppe\\b",
 			"গ্রুপ",
+			"g"
+		],
+		[
+			" · noch ([0-9][^ ]* [a-zA-Z]+)$",
+			" · আর $1"
+		],
+		[
+			"\\bUSB-Laufwerk\\b",
+			"USB ড্রাইভ",
+			"g"
+		],
+		[
+			"\\bEintrag/Einträge\\b",
+			"এন্ট্রি",
+			"g"
+		],
+		[
+			"\\balle Benutzer\\b",
+			"সব ব্যবহারকারী",
 			"g"
 		]
 	]

@@ -1171,3 +1171,103 @@ P200	Nombre: $1
 E931	Acceso a archivos
 E932	Puede leer, cambiar y borrar los archivos a los que el usuario conectado llega en el explorador, con sus permisos, mientras la app esté abierta.
 P201	Acceso a archivos: $1
+E933	Equipo no accesible
+P202	Error de ubus $1
+E934	Tráfico de red de los últimos 10 minutos
+E935	aún no conectado
+E936	Aún no hay carpeta de entrada. Primero introduce arriba la dirección de Paperless.
+P203	personal: $1 · desactivado
+E937	compartido · desactivado
+P204	entrada personal de $1 · token $2
+E938	Aún no se ha transferido nada.
+E939	no se encontraron etiquetas
+E940	Recurso compartido de Windows (SMB)
+E941	Google Fotos
+E942	DOMINIO (OPCIONAL)
+E943	CONTRASEÑA DE APLICACIÓN
+P205	Recurso $1
+E944	aún no ejecutado
+E945	rclone no instalado
+E946	descargando y comprobando …
+P206	Error: $1
+E947	Primero, en
+E948	configura una unidad.
+E949	Las credenciales permanecen cifradas en el equipo.
+E950	Para Google Drive, OneDrive, Dropbox y servicios similares inicias sesión en el navegador; para otros servicios pega la sección terminada de «rclone config».
+E951	Las tareas usan poca memoria (2 transferencias a la vez); un límite de ancho de banda como
+E952	Tus credenciales están en tu carpeta personal; lo que descargas cuenta para tu límite de almacenamiento.
+P207	de $1
+E953	Tras iniciar sesión, el navegador muestra «página no accesible» con una dirección como
+E954	. Copia esta dirección completa de la barra de direcciones y pégala aquí:
+P208	Cuenta «$1» añadida.
+P209	Cuenta: $1
+P210	Tarea «$1» guardada.
+P211	Tarea: $1
+P212	Contraseña: $1
+P213	$1 · no montado
+W39	 · quedan $1
+P214	$1 · sistema de archivos no encontrado
+P215	contiene: $1
+P216	El nombre «$1» ya está en uso.
+E955	Comprobando el paquete de nuevo
+E956	Preparando el sistema para el reinicio
+E957	Sistema de arranque: borrando la flash
+E958	Escribiendo el sistema de arranque
+E959	Comprobando el sistema de arranque
+E960	Kernel: borrando la flash
+E961	Escribiendo el kernel
+E962	Comprobando el kernel
+P217	$1 de $2
+E963	Telegram: crea un bot con @BotFather en Telegram (/newbot), introduce aquí el token y guarda. Después envía un mensaje a tu bot (o añádelo a un grupo) y pulsa «Buscar ID de chat».
+E964	Buscar ID de chat
+E965	ID DE CHAT
+E966	TOKEN DEL BOT (DE @BOTFATHER)
+E967	Telegram (bot)
+E968	ÁREAS
+E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas, entradas de Paperless). Ajustes y datos se conservan; al activar vuelve todo.
+E970	Apps (tienda, apps web, tareas de las apps)
+E971	Nube (sincronización con almacenamiento en la nube)
+E972	Paperless (carpetas de entrada para Paperless-ngx)
+E973	Área activada.
+E974	Área desactivada.
+P218	Área: $1
+P219	Ventilador: $1
+P220	Archivo de firmware: $1
+P221	Idioma: $1
+P222	Recurso: $1
+P223	Usuario: $1
+P224	$1: ya no arranca al encender
+P225	$1: arranca al encender
+P226	El equipo cambia a $1. Esta página abre después la nueva dirección y confirma el cambio. Si falla, vuelven los ajustes anteriores tras $2 segundos.
+P227	Comprobación fallida: $1
+E975	Sesión iniciada – ahora «Añadir».
+P228	Cuenta «$1» eliminada.
+P229	Tarea «$1» iniciada.
+P230	Tarea «$1» eliminada.
+E976	La cuenta se elimina; se pierden los permisos en los recursos compartidos.
+E977	La cuenta se elimina; se pierden los permisos en los recursos compartidos. La carpeta personal se conserva.
+W40	unidad USB
+W41	elemento(s)
+E978	La unidad se desmonta y se quita de la configuración. Los datos del disco se conservan hasta que se vuelva a configurar.
+P231	$1: montado
+P232	$1: desmontado
+P233	$1: eliminado
+E979	Unidad
+E980	Aún no hay mensajes al bot: guarda primero el token y luego escribe al bot en Telegram.
+P234	Chat encontrado: $1 – ahora guarda.
+P235	Telegram: $1
+P236	Carpeta: $1
+P237	Borrar: $1
+E981	descargando
+E982	comprobando
+E983	instalando
+E984	Usa internet
+E985	Carga datos de internet (p. ej. servicios en línea, streams, mapas). Sin conexión a internet esas partes de la app no funcionan.
+W42	todos los usuarios
+E986	TERMINAL
+E987	Abrir terminal
+E988	Terminar
+E989	Una shell como
+E990	directamente en el equipo – para diagnóstico y trabajo manual (BusyBox, uci, logread, mdadm, smartctl …).
+E991	La sesión es para una ventana y termina al cerrarla. Cuidado: los comandos como root actúan al instante y sin papelera.
+P238	Terminal: $1

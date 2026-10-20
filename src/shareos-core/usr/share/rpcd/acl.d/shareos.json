@@ -113,7 +113,8 @@
 					"poweroff",
 					"factory_reset",
 					"set_password",
-					"set_hostname"
+					"set_hostname",
+					"terminal"
 				],
 				"shareos.service": [
 					"action",

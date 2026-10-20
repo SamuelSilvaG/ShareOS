@@ -1171,3 +1171,103 @@ P200	Nom : $1
 E931	Accès aux fichiers
 E932	Peut lire, modifier et supprimer les fichiers que l'utilisateur connecté atteint dans l'explorateur – avec ses droits, tant que l'app est ouverte.
 P201	Accès aux fichiers : $1
+E933	Boîtier injoignable
+P202	Erreur ubus $1
+E934	Trafic réseau des 10 dernières minutes
+E935	pas encore connecté
+E936	Pas encore de dossier d’entrée. Saisissez d’abord l’adresse de Paperless ci-dessus.
+P203	personnel : $1 · désactivé
+E937	commun · désactivé
+P204	dossier d’entrée personnel de $1 · jeton $2
+E938	Rien de transféré pour l’instant.
+E939	aucune étiquette trouvée
+E940	Partage Windows (SMB)
+E941	Google Photos
+E942	DOMAINE (FACULTATIF)
+E943	MOT DE PASSE D’APPLICATION
+P205	Partage $1
+E944	pas encore exécuté
+E945	rclone non installé
+E946	téléchargement et vérification …
+P206	Erreur : $1
+E947	D’abord, sous
+E948	configurez un disque.
+E949	Les identifiants restent chiffrés sur le boîtier.
+E950	Pour Google Drive, OneDrive, Dropbox et services similaires, connectez-vous dans le navigateur ; pour les autres, collez la section produite par « rclone config ».
+E951	Les tâches utilisent peu de mémoire (2 transferts à la fois) ; une limite de bande passante comme
+E952	Vos identifiants sont dans votre dossier personnel ; ce que vous téléchargez compte dans votre quota.
+P207	par $1
+E953	Après la connexion, le navigateur affiche « page inaccessible » avec une adresse comme
+E954	. Copiez cette adresse complète depuis la barre d’adresse et collez-la ici :
+P208	Compte « $1 » ajouté.
+P209	Compte : $1
+P210	Tâche « $1 » enregistrée.
+P211	Tâche : $1
+P212	Mot de passe : $1
+P213	$1 · non monté
+W39	 · encore $1
+P214	$1 · système de fichiers introuvable
+P215	contient : $1
+P216	Le nom « $1 » est déjà pris.
+E955	Nouvelle vérification du paquet
+E956	Préparation du système pour le redémarrage
+E957	Système de démarrage : effacement de la flash
+E958	Écriture du système de démarrage
+E959	Vérification du système de démarrage
+E960	Noyau : effacement de la flash
+E961	Écriture du noyau
+E962	Vérification du noyau
+P217	$1 sur $2
+E963	Telegram : créez un bot avec @BotFather dans Telegram (/newbot), saisissez le jeton ici et enregistrez. Puis envoyez un message à votre bot (ou ajoutez-le à un groupe) et cliquez sur « Trouver l’ID du chat ».
+E964	Trouver l’ID du chat
+E965	ID DU CHAT
+E966	JETON DU BOT (DE @BOTFATHER)
+E967	Telegram (bot)
+E968	ZONES
+E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées, dossiers d’entrée Paperless). Réglages et données sont conservés ; réactiver remet tout en marche.
+E970	Apps (boutique, apps web, tâches des apps)
+E971	Cloud (synchronisation avec le stockage en ligne)
+E972	Paperless (dossiers d’entrée pour Paperless-ngx)
+E973	Zone activée.
+E974	Zone désactivée.
+P218	Zone : $1
+P219	Ventilateur : $1
+P220	Fichier de firmware : $1
+P221	Langue : $1
+P222	Partage : $1
+P223	Utilisateur : $1
+P224	$1 : ne démarre plus à l’allumage
+P225	$1 : démarre à l’allumage
+P226	Le boîtier passe à $1. Cette page ouvre ensuite la nouvelle adresse et confirme le changement. En cas d’échec, les réglages précédents reviennent après $2 secondes.
+P227	Échec de la vérification : $1
+E975	Connecté – maintenant « Ajouter ».
+P228	Compte « $1 » supprimé.
+P229	Tâche « $1 » lancée.
+P230	Tâche « $1 » supprimée.
+E976	Le compte est supprimé ; les droits sur les partages disparaissent.
+E977	Le compte est supprimé ; les droits sur les partages disparaissent. Le dossier personnel est conservé.
+W40	disque USB
+W41	élément(s)
+E978	Le disque est démonté et retiré de la configuration. Les données du disque restent jusqu’à sa reconfiguration.
+P231	$1 : monté
+P232	$1 : démonté
+P233	$1 : supprimé
+E979	Disque
+E980	Pas encore de message au bot – enregistrez d’abord le jeton, puis écrivez au bot dans Telegram.
+P234	Chat trouvé : $1 – enregistrez maintenant.
+P235	Telegram : $1
+P236	Dossier : $1
+P237	Supprimer : $1
+E981	téléchargement
+E982	vérification
+E983	installation
+E984	Utilise Internet
+E985	Charge des données depuis Internet (p. ex. services en ligne, flux, cartes). Sans connexion Internet, ces parties de l’app ne fonctionnent pas.
+W42	tous les utilisateurs
+E986	TERMINAL
+E987	Ouvrir le terminal
+E988	Terminer
+E989	Un shell en tant que
+E990	directement sur le boîtier – pour le diagnostic et les manipulations (BusyBox, uci, logread, mdadm, smartctl …).
+E991	La session vaut pour une fenêtre et se termine à sa fermeture. Attention : les commandes en root agissent immédiatement, sans corbeille.
+P238	Terminal : $1

@@ -567,6 +567,8 @@ def call(obj, method, args):
             'subject': 'CN=skynet-nas, O=ShareOS', 'issuer': 'CN=skynet-nas, O=ShareOS', 'from': '2026-10-17 00:00:00',
             'until': '2036-10-17 23:59:59', 'san': ['dNSName:skynet-nas', 'dNSName:skynet-nas.local', 'iPAddress:10.241.1.106'], 'selfsigned': True}}
     if obj == 'shareos.system':
+        if method == 'terminal':
+            return {'port': 7681, 'path': '0123456789abcdef0123456789abcdef'}
         if method == 'info':
             return info()
         if method == 'log':

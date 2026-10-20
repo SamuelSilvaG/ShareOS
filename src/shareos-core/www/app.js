@@ -154,7 +154,7 @@ const TABS = [
 	['overview', 'ÜBERSICHT'], ['storage', 'SPEICHER'], ['shares', 'FREIGABEN'], ['services', 'DIENSTE'],
 	['apps', 'APPS', true], ['cloud', 'CLOUD', true], ['paperless', 'PAPERLESS', true], ['system', 'SYSTEM']
 ];
-const SYS_SUBS = [['firmware', 'FIRMWARE'], ['notifications', 'MELDUNGEN'], ['general', 'ALLGEMEIN'], ['time', 'ZEIT'], ['network', 'NETZWERK'], ['power', 'ENERGIE & RESET'], ['logs', 'PROTOKOLLE'], ['appearance', 'DARSTELLUNG'], ['about', 'ÜBER']];
+const SYS_SUBS = [['firmware', 'FIRMWARE'], ['notifications', 'MELDUNGEN'], ['general', 'ALLGEMEIN'], ['time', 'ZEIT'], ['network', 'NETZWERK'], ['power', 'ENERGIE & RESET'], ['logs', 'PROTOKOLLE'], ['terminal', 'TERMINAL'], ['appearance', 'DARSTELLUNG'], ['about', 'ÜBER']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART']];
 const SHR_SUBS = [['shares', 'FREIGABEN'], ['files', 'DATEIEN'], ['users', 'BENUTZER'], ['groups', 'GRUPPEN']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
@@ -1092,7 +1092,7 @@ function cloudSection(scope) {
 			</div>
 			<div class="panel">
 				<div class="ph"><span class="pt">HINWEISE</span></div>
-				<p class="mut" style="margin:0;font-size:13px;line-height:1.6">Zugangsdaten bleiben verschlüsselt auf der Box${scope === 'me' ? ' in deinem persönlichen Ordner' : ''}. Für Google Drive, OneDrive oder Dropbox auf dem PC <code>rclone config</code> ausführen und den fertigen Abschnitt hier einfügen. Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie <code>2M</code> hält das Netz frei.${scope === 'me' ? ' Was du herunterlädst, zählt zu deinem Speicherlimit.' : ''}</p>
+				<p class="mut" style="margin:0;font-size:13px;line-height:1.6"><span>Zugangsdaten bleiben verschlüsselt auf der Box.</span> <span>Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.</span> <span>Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie</span> <code>2M</code> <span>hält das Netz frei.</span>${scope === 'me' ? html` <span>Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.</span>` : ''}</p>
 			</div>
 		</div>
 		${re ? remoteEditor(scope, re) : ''}
@@ -1109,7 +1109,7 @@ function cloudSection(scope) {
 				<div class="icon">${svg(I.cloud)}<span class="dot ${j.state === 'error' ? 'down' : j.state === 'running' ? 'warn' : 'up'}"></span></div>
 				<div class="info"><div class="name">${j.name}</div>
 					<div class="desc" style="font-size:12px">${jobRoute(d, j)}</div>
-					<div class="desc" style="margin-top:6px">${schedTxt(j.schedule)}${scope === 'admin' && j.owner ? ' · von ' + j.owner : ''}</div>
+					<div class="desc" style="margin-top:6px">${schedTxt(j.schedule)}${scope === 'admin' && j.owner ? html` · <span>${'von ' + j.owner}</span>` : ''}</div>
 					<div class="desc" style="margin-top:6px">${jobState(j)}</div>
 					${j.state === 'error' && j.error ? html`<div class="desc" style="margin-top:4px;font-size:12px;color:var(--red)">${j.error}</div>` : j.summary ? html`<div class="desc mut" style="margin-top:4px;font-size:12px">${j.summary}</div>` : ''}
 					<div class="acts" style="margin-top:12px">${jobActions(scope, j)}</div></div></div>`)}</div>`}
@@ -1898,7 +1898,7 @@ const SYS = {
 						<label class="f"><span>SCHICKEN</span>${lvSel('push_level', c.push_level)}</label>
 					</div>
 					<p class="note">ntfy: Adresse mit Thema, z. B. <code>https://ntfy.sh/mein-nas-7f3k</code> (eigener ntfy-Server geht auch), in der ntfy-App dasselbe Thema abonnieren. Gotify: Serveradresse und App-Token.</p>
-					<p class="note">Telegram: In Telegram mit <code>@BotFather</code> einen Bot anlegen (<code>/newbot</code>) und den Token hier eintragen, speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.</p>
+					<p class="note">Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.</p>
 					<div class="ph" style="margin-top:18px"><span class="pt">GRENZEN</span></div>
 					<div class="fields">
 						<label class="f"><span>TEMPERATUR AB (°C)</span><input name="temp_max" type="number" min="40" max="70" value="${c.temp_max}"></label>
@@ -2103,6 +2103,18 @@ const SYS = {
 		${SYS.https()}`;
 	},
 
+	terminal() {
+		const t = S.term;
+		return html`<div class="panel">
+			<div class="ph"><span class="pt">TERMINAL</span><span class="tag warn ml">root</span>
+				${t ? html`<a class="btn sm ghost" href="${termUrl(t)}" target="_blank" rel="noopener">In eigenem Fenster ↗</a><button class="btn sm ghost" type="button" data-act="term-close">Beenden</button>` : ''}</div>
+			${t ? html`<iframe class="termframe" src="${termUrl(t)}" title="Terminal"></iframe>`
+				: html`<p class="mut" style="margin:0 0 12px">Eine Shell als <b>root</b> direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).</p>
+				<div class="acts"><button class="btn primary" type="button" data-act="term-open">Terminal öffnen</button></div>`}
+			<p class="note">Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.</p>
+		</div>`;
+	},
+
 	logs() {
 		return html`<div class="panel">
 			<div class="ph"><span class="pt">PROTOKOLL</span>
@@ -2178,6 +2190,7 @@ const VIEWS_AFTER = {
 	system() {
 		const sub = S.route.sub;
 		if (sub === 'logs') loadLog();
+		if (sub !== 'terminal' && S.term) S.term = null;
 		if (sub === 'notifications') {
 			if (!S.noteCfg) loadNoteCfg();
 			if (!S.notes) loadNotes();
@@ -3496,6 +3509,16 @@ Object.assign(ACTIONS, {
 		try { await rpc('shareos.notify', 'delete', { id: el.dataset.id }); } catch (e) { toast(e.message, true); }
 		loadNotes();
 	},
+	async 'term-open'(el) {
+		el.disabled = true;
+		const css = getComputedStyle($('#app') || document.body), v = (k) => css.getPropertyValue(k).trim();
+		try {
+			S.term = await rpc('shareos.system', 'terminal', { tls: location.protocol === 'https:',
+				theme: { background: v('--bg'), foreground: v('--text'), cursor: v('--accent'), selectionBackground: v('--dim') } });
+			renderMain();
+		} catch (e) { toast('Terminal: ' + e.message, true); el.disabled = false; }
+	},
+	'term-close'() { S.term = null; renderMain(); },
 	async 'tg-chats'(el) {
 		el.disabled = true;
 		try {
@@ -3588,6 +3611,9 @@ const winFeatures = (a) => (a.window ? `popup,width=${a.window.width || 900},hei
 const findApp = (id) => (S.apps?.installed?.apps || []).find((x) => x.id === id) || (S.me?.apps || []).find((x) => x.id === id)
 	|| (S.fbApps?.apps || []).find((x) => x.id === id);
 const appSrv = () => S.apps?.installed || S.me?.apps_server || S.fbApps;
+
+// web terminal (ttyd on its own port, secret path)
+const termUrl = (t) => `${location.protocol}//${location.hostname}:${t.port}/${t.path}/`;
 
 // apps with the permission "files" get a grant for the user's folders (ShareOS.fs)
 async function appGrant(a) {

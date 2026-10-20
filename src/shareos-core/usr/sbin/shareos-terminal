@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# shareos-terminal – a root shell in the browser (System -> Terminal), with ttyd
+#
+#   shareos-terminal start [tls] [theme-json]
+#                          start a terminal for one browser: prints
+#                          port=<port> path=<secret path>; an older one stops
+#   shareos-terminal stop
+#
+# Only the admin interface starts it (rpcd shareos.system terminal). The
+# address contains a random secret path, takes one client only (-m 1) and the
+# terminal ends when that client disconnects (-o); nobody connecting within
+# 90 seconds or 8 hours in all end it as well. With "tls" it uses the
+# certificate of the web interface.
+#
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+PORT=${SHAREOS_TERMINAL_PORT:-7681}
+PIDF=/var/run/shareos-terminal.pid
+
+stop() {
+	[ -f $PIDF ] && { p=$(cat $PIDF); pkill -P "$p" 2>/dev/null; kill "$p" 2>/dev/null; }
+	rm -f $PIDF
+	pkill -f "ttyd -p $PORT " 2>/dev/null
+	return 0
+}
+
+start() {
+	command -v ttyd >/dev/null || { echo "error: ttyd is not installed" >&2; exit 1; }
+	stop
+	tok=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n')
+	set -- -p "$PORT" -b "/$tok" -o -W -m 1 -O -t titleFixed="ShareOS Terminal" -t fontSize=14 -t disableLeaveAlert=true
+	[ -n "$THEME" ] && set -- "$@" -t "theme=$THEME"
+	if [ "$TLS" = tls ]; then
+		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
+		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
+		[ -s "$crt" ] && [ -s "$key" ] || { echo "error: no certificate" >&2; exit 1; }
+		set -- "$@" -S -C "$crt" -K "$key"
+	fi
+	(
+		cd /root 2>/dev/null || cd /
+		HOME=/root TERM=xterm-256color exec timeout 28800 ttyd "$@" /bin/sh -l
+	) > /dev/null 2>&1 < /dev/null &
+	pid=$!
+	echo $pid > $PIDF
+	# nobody came: end it
+	(
+		sleep 90
+		netstat -tn 2>/dev/null | grep -q ":$PORT .*ESTABLISHED" || { [ "$(cat $PIDF 2>/dev/null)" = "$pid" ] && "$0" stop; }
+	) > /dev/null 2>&1 < /dev/null &
+	i=0
+	while [ $i -lt 20 ] && ! netstat -tln 2>/dev/null | grep -q ":$PORT "; do sleep 0.25; i=$((i + 1)); done
+	echo "port=$PORT path=$tok"
+}
+
+case "$1" in
+	start) TLS=$2; THEME=$3; start ;;
+	stop) stop ;;
+	*) sed -n '3,15s/^# \{0,1\}//p' "$0"; exit 2 ;;
+esac
