@@ -16,7 +16,7 @@ pre-releases for test devices only.
 - Fix: addresses containing an "s" were refused in some fields (ntfy push address, e-mail addresses, store sources, Paperless URL) – a regex class problem; a new check prevents it.
 - Docs: switching Alt-F ↔ ShareOS step by step ([SWITCHING.md](docs/SWITCHING.md)), tested on real hardware; the serial console needs three soldered wires.
 
-## 0.1.0-beta.11
+Also in this release (0.1.0-beta.11 was not published on its own):
 
 - **App permission `files`:** an app may work with the folders of the box – exactly those the signed-in user reaches in the file browser (personal folder; admins: all volumes and USB drives), with his rights: list, new folder, rename, copy, move, delete, read and write files. ShareOS shows the permission before installing ("Access to files") and hands the app a grant when it is opened (bound to the app and the account, 8 hours, ends when the app is removed). For apps: `ShareOS.fs` in the app SDK. First users: ShareCommander 1.1 (two-pane file manager on the box) and Webpad 1.3 (open and save on the box).
 - **Media files in apps:** files opened in an app (e.g. a video in WinWeb Player) are served in parts on request (HTTP range requests), so a player starts at once and can seek in large files; audio, video and pictures come with their media type. Other files stay a plain download.
