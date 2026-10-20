@@ -245,6 +245,8 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
 - **Name und Symbole (beta.10):** ShareOS über die IP öffnen (`https://10.241.1.106`). Unter **Apps → Installiert** haben Webpad und WebTerm ihr Symbol. **Öffnen** startet die App unter dem Namen des Zertifikats (`https://shareos.skynet.lan:8444/…`), ohne Zertifikatswarnung. **System → Netzwerk → Name der Box für Links** zeigt den Namen aus dem Zertifikat als Vorschlag; ein eigener Name wird dort gespeichert, leer = automatisch.
 
+- **Spulen (beta.11):** Eine große MP3- oder MP4-Datei im Dateibrowser mit **WinWeb Player ↗** öffnen: Sie startet sofort, der Schieberegler springt an jede Stelle.
+
 ## 14b. Meldungen
 
 - **System → Meldungen**: E-Mail (Mailserver, STARTTLS/SSL, Benutzer, Passwort, Absender, Empfänger) und/oder Push (ntfy: `https://ntfy.sh/<thema>`, das Thema in der ntfy-App abonnieren; Gotify: Server und App-Token; Webhook). **Speichern**, dann **Testnachricht** – sie muss ankommen.

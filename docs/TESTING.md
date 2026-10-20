@@ -242,6 +242,8 @@ their permissions.
 
 - **Name and icons (beta.10):** open ShareOS by its IP (`https://10.241.1.106`). Under **Apps → Installed** Webpad and WebTerm show their icon. **Open** starts the app under the certificate's name (`https://shareos.skynet.lan:8444/…`) without a certificate warning. **System → Network → Box name for links** shows the name from the certificate as suggestion; a name of your own is saved there, empty = automatic.
 
+- **Seeking (beta.11):** open a large MP3 or MP4 file with **WinWeb Player ↗** in the file browser: it starts at once and the slider jumps to any position.
+
 ## 14b. Messages
 
 - **System → Messages**: e-mail (mail server, STARTTLS/SSL, user, password, sender, recipients) and/or push (ntfy: `https://ntfy.sh/<topic>`, subscribe to the topic in the ntfy app; Gotify: server and app token; webhook). **Save**, then **Test message** – it must arrive.
