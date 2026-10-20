@@ -1001,7 +1001,13 @@
 		"2. ADRESSE NACH DER ANMELDUNG": "2. DIRECCIÓN TRAS INICIAR SESIÓN",
 		"Erst anmelden (Schritt 1 und 2).": "Inicia sesión primero (pasos 1 y 2).",
 		"Die Box läuft gerade nicht aus dem Flash (": "El equipo no se está ejecutando desde la flash (",
-		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Las actualizaciones desde esta página solo funcionan tras un arranque normal desde la flash."
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Las actualizaciones desde esta página solo funcionan tras un arranque normal desde la flash.",
+		"Befehl": "Comando",
+		"Aus System-Apps:": "De apps del sistema:",
+		"Terminal (Administratoren)": "Terminal (administradores)",
+		"System-App · Terminal": "App del sistema · terminal",
+		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "Programa para la línea de comandos de la caja (Sistema → Terminal o SSH). Se ejecuta con los permisos de quien lo inicia – en el terminal como root.",
+		"Terminal": "Terminal"
 	},
 	"patterns": [
 		[

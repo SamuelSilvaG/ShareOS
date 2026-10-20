@@ -1283,3 +1283,9 @@ P242	Início de sessão: $1
 P243	– $1. Não desligue a caixa.
 E997	A caixa não está a correr a partir da flash (
 E998	). As atualizações nesta página só funcionam após um arranque normal a partir da flash.
+E999	Comando
+E1000	De apps do sistema:
+E1001	Terminal (administradores)
+E1002	App do sistema · terminal
+E1003	Programa para a linha de comando da caixa (Sistema → Terminal ou SSH). É executado com os direitos de quem o inicia – no terminal como root.
+E1004	Terminal

@@ -1001,7 +1001,13 @@
 		"2. ADRESSE NACH DER ANMELDUNG": "2. 登录后的地址",
 		"Erst anmelden (Schritt 1 und 2).": "请先登录（第 1 和第 2 步）。",
 		"Die Box läuft gerade nicht aus dem Flash (": "设备当前不是从闪存运行（",
-		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "）。只有从闪存正常启动时才能通过本页面更新。"
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "）。只有从闪存正常启动时才能通过本页面更新。",
+		"Befehl": "命令",
+		"Aus System-Apps:": "来自系统应用：",
+		"Terminal (Administratoren)": "终端（管理员）",
+		"System-App · Terminal": "系统应用 · 终端",
+		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "用于设备命令行的程序（系统 → 终端或 SSH）。它以启动者的权限运行——在终端中为 root。",
+		"Terminal": "终端"
 	},
 	"patterns": [
 		[

@@ -1,0 +1,1 @@
+{ "bin": [ "usr/bin/htop" ], "share": [ "usr/share/terminfo" ] }

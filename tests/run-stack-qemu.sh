@@ -11,6 +11,9 @@
 #
 # Needs root (chroot, mounts), qemu-user-static and binfmt_misc.
 #
+# own UTS name space: start scripts of the box set the host name, which
+# would otherwise change the host name of the build machine
+[ -n "${SHAREOS_TEST_UTS:-}" ] || exec unshare --uts env SHAREOS_TEST_UTS=1 "$0" "$@"
 set -euo pipefail
 OUT=${1:-output/dns320l}
 PORT=${2:-8080}

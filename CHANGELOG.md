@@ -4,6 +4,11 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.13 (not released yet)
+
+- **System apps (new app type `"system"`):** native programs for the terminal, from the same store and as `.sapp` like the web apps. They go to `/opt/shareos/sysapps/<id>` (flash, kept across updates); a starter per command in `/opt/shareos/bin` (in `PATH`) brings the app's own libraries and terminal descriptions along, so the base system stays small. A command the firmware has or another app provides is refused. In the store marked "System app · terminal", in the list with "Terminal" instead of "Open"; System → Terminal lists their commands. First ones: **nano 8.7** (text editor) and **htop 3.4.1** (processes, CPU, memory), each about 270 KB.
+- Build: `make sysapps-pack` builds them with the firmware's toolchain (`configs/shareos_sysapps_defconfig`, recipes in `sysapps/`); the CI attaches them to the release.
+
 ## 0.1.0-beta.12
 
 - **Terminal (System → Terminal):** a root shell in the browser (ttyd), in the look of the interface. One window per start, secret address, ends when the window is closed (or after 90 seconds without anyone connecting); over HTTPS with the certificate of the box.
@@ -16,7 +21,7 @@ pre-releases for test devices only.
 - Fix: addresses containing an "s" were refused in some fields (ntfy push address, e-mail addresses, store sources, Paperless URL) – a regex class problem; a new check prevents it.
 - Docs: switching Alt-F ↔ ShareOS step by step ([SWITCHING.md](docs/SWITCHING.md)), tested on real hardware; the serial console needs three soldered wires.
 
-## 0.1.0-beta.11
+Also in this release (0.1.0-beta.11 was not published on its own):
 
 - **App permission `files`:** an app may work with the folders of the box – exactly those the signed-in user reaches in the file browser (personal folder; admins: all volumes and USB drives), with his rights: list, new folder, rename, copy, move, delete, read and write files. ShareOS shows the permission before installing ("Access to files") and hands the app a grant when it is opened (bound to the app and the account, 8 hours, ends when the app is removed). For apps: `ShareOS.fs` in the app SDK. First users: ShareCommander 1.1 (two-pane file manager on the box) and Webpad 1.3 (open and save on the box).
 - **Media files in apps:** files opened in an app (e.g. a video in WinWeb Player) are served in parts on request (HTTP range requests), so a player starts at once and can seek in large files; audio, video and pictures come with their media type. Other files stay a plain download.

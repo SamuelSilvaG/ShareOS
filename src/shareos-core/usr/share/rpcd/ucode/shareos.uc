@@ -1033,8 +1033,9 @@ function apps_for(u) {
 	if (!u) return [];
 	let c = cursor(), groups = list_of(c.get('accounts', u, 'groups'));
 	let admin = u == 'root' || c.get('accounts', u, 'role') == 'admin';
-	return filter(apps_json([ 'list' ]).apps ?? [], (a) => admin || index(a.users, '*') >= 0 || index(a.users, u) >= 0
-		|| length(filter(groups, (g) => index(a.users, '@' + g) >= 0)) > 0);
+	// system apps are programs for the terminal, nothing to open in a browser
+	return filter(apps_json([ 'list' ]).apps ?? [], (a) => a.type != 'system' && (admin || index(a.users, '*') >= 0 || index(a.users, u) >= 0
+		|| length(filter(groups, (g) => index(a.users, '@' + g) >= 0)) > 0));
 }
 
 /* ---------- file browser ---------- */

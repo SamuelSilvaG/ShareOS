@@ -1,0 +1,17 @@
+{
+	"id": "htop",
+	"name": "htop",
+	"version": "3.4.1",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Zeigt im Terminal (System → Terminal oder SSH) laufende Prozesse, CPU- und Speicherauslastung live an: „htop“. Beenden mit F10 oder q.",
+		"en": "Shows running processes, CPU and memory use live in the terminal (System → Terminal or SSH): “htop”. Quit with F10 or q."
+	},
+	"type": "system",
+	"commands": [ "htop" ],
+	"icon": "icon.svg",
+	"category": "system",
+	"license": "GPL-2.0-or-later (htop), MIT-like (ncurses)",
+	"homepage": "https://htop.dev/",
+	"min_shareos": "0.1.0-beta.13"
+}

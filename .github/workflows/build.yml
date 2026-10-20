@@ -82,10 +82,15 @@ jobs:
       - name: Test writing .bin files (rollback to Alt-F)
         run: tests/test-flash-bin.sh output/${{ matrix.board }}/host/bin
 
+      - name: Build system apps (nano, htop … as .sapp, with this toolchain)
+        if: matrix.board == 'dns320l'
+        run: make sysapps-pack
+
       - name: Collect images
         run: |
           mkdir -p artifacts
           cp output/${{ matrix.board }}/images/ShareOS-*.bin* output/${{ matrix.board }}/images/ShareOS-*.sha1 output/${{ matrix.board }}/images/ShareOS-*.sysupgrade.tar* artifacts/
+          if [ -d output/sysapps/sapp ]; then cp output/sysapps/sapp/*.sapp output/sysapps/sapp/*.sapp.sha256 artifacts/; fi
           ls -l artifacts
 
       - uses: actions/upload-artifact@v4

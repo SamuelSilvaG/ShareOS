@@ -9,6 +9,9 @@
 # and v<version>/SHA256SUMS (from the rclone GitHub release); without it the
 # cloud part is skipped.
 #
+# own UTS name space: start scripts of the box set the host name, which
+# would otherwise change the host name of the build machine
+[ -n "${SHAREOS_TEST_UTS:-}" ] || exec unshare --uts env SHAREOS_TEST_UTS=1 "$0" "$@"
 set -u
 OUT=${1:-output/dns320l}
 RDL=${2:-}
