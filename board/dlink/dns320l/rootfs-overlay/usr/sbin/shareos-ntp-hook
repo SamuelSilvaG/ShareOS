@@ -3,7 +3,14 @@
 mkdir -p /tmp/shareos-ntp
 case "$1" in
 	step|stratum)
-		[ "$(date +%Y)" -ge 2025 ] && /usr/sbin/dns320l-daemon -x systohc >/dev/null 2>&1
+		if [ "$(date +%Y)" -ge 2025 ]; then
+			# the RTC of this box: the MCU (dns320l-daemon) or the kernel's
+			if grep -q '^BOARD_RTC="mcu"' /tmp/sys/board.env 2>/dev/null; then
+				/usr/sbin/dns320l-daemon -x systohc >/dev/null 2>&1
+			elif [ -e /dev/rtc0 ]; then
+				hwclock -w -u 2>/dev/null
+			fi
+		fi
 		logger -t ntpd "clock $1, RTC updated: $(date '+%F %T')"
 		echo "$(date +%s) $1" > /tmp/shareos-ntp/last
 		;;

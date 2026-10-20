@@ -293,6 +293,17 @@ their permissions.
 
 Telegram (14c) has been tested on the real box on 20 Oct 2026: bot, chat ID and test message work.
 
+## 14g. Models (0.2.0-beta.3)
+
+On the DNS-320L everything must work as before:
+1. System → About: device "D-Link DNS-320L rev A", firmware name `DNS-320L-rev-Ax`, no "not tested yet".
+2. System → Terminal: `shareos-boardinfo` lists `BOARD_ID="dns320l"`, `BOARD_CONTROL="mcu"`; `cat /tmp/sys/board.env`.
+3. Fan presets, temperature, status LED, disk LEDs, power button, reset and USB button, time after a restart without network – as before.
+4. System → Firmware → *Install firmware file* with `ShareOS-<ver>-DNS-325-rev-Ax.bin`: refused ("the file is for another device …").
+5. An update from GitHub picks the `DNS-320L-rev-Ax` files.
+
+Other models: [DEVICES.md](DEVICES.md) (tester guide).
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:

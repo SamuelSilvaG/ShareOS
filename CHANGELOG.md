@@ -4,6 +4,14 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.2.0-beta.3
+
+- **More models: DNS-320 rev B, DNS-325 rev A, DNS-320 rev A** (not tested on hardware yet – testers wanted, see [DEVICES.md](docs/DEVICES.md)). One kernel, initramfs and system for all Kirkwood boxes; a `.bin` and a `.sysupgrade.tar` per model with its D-Link signature (`ShareOS-<ver>-<model>.*`). The DNS-320L works as before.
+- **Model descriptions instead of DNS-320L wiring:** `/usr/lib/shareos/board.sh` describes each model (fan and temperature through the MCU or kernel sensors, power button polled or as a key, LED names, power-off, RTC, firmware name and signature); the box finds its model in the device tree (`shareos-boardinfo`). Fan control, LEDs, buttons, clock, flashing `.bin` files, updates and the first installation use it.
+- `.bin` files for another model are refused on every box, and only a box of a known model writes one.
+- System → About shows the model and "not tested yet" on models without a hardware test.
+- Kernel: lm75 temperature sensor, gpio-fan and gpio-poweroff built in (DNS-325, DNS-320 rev A).
+
 ## 0.2.0-beta.2
 
 Feature lock: the system is cleaned up and the interface is faster; the only addition is `ShareOS.openApp` for apps (below).

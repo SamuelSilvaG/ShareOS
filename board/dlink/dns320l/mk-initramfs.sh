@@ -22,6 +22,7 @@ usr/bin/curl
 "
 FILES="
 etc/passwd etc/group etc/shadow etc/shells etc/shareos-release
+usr/lib/shareos/board.sh
 usr/share/udhcpc/default.script
 etc/ssl/certs/ca-certificates.crt
 "

@@ -51,6 +51,7 @@ def info():
     return {
         'model': 'D-Link DNS-320L-rev-Ax NAS', 'hostname': 'skynet-nas', 'kernel': '6.18.57', 'boot': 'flash',
         'release': {'version': '0.1.0-beta.1', 'board': 'dns320l', 'fwname': 'DNS-320L-rev-Ax', 'stage': 'beta'},
+        'board': {'id': 'dns320l', 'name': 'D-Link DNS-320L rev A', 'fwname': 'DNS-320L-rev-Ax', 'tested': True},
         'time': int(time.time()), 'uptime': up, 'load': [0.42, 0.38, 0.35],
         'cpu': {'total': int(up * 100), 'idle': int(up * 85)},
         'memory': {'memtotal': 253092 * 1024, 'memavailable': 160000 * 1024},

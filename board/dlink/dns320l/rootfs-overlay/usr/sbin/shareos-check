@@ -10,8 +10,8 @@ section() { echo; echo "=== $* ==="; }
 
 {
 	echo "ShareOS hardware check – $(date)"
-	echo "MCU RTC: $(dns320l-daemon -x ReadRtc 2>/dev/null)"
 	cat /etc/shareos-release 2>/dev/null
+	cat /tmp/sys/board.env 2>/dev/null || shareos-boardinfo
 
 	section "Board"
 	tr -d '\0' < /proc/device-tree/model; echo
@@ -31,10 +31,18 @@ section() { echo; echo "=== $* ==="; }
 	done
 	ip -4 addr show eth0 | grep inet
 
-	section "MCU / fan / temperature"
+	section "Board control / fan / temperature / RTC"
 	echo "temperature: $(cat /tmp/sys/temp1_input 2>/dev/null) m°C"
 	echo "fan pwm:     $(cat /tmp/sys/pwm1 2>/dev/null)"
-	pidof dns320l-daemon >/dev/null && echo "dns320l-daemon: running" || echo "dns320l-daemon: NOT running"
+	pidof shareos-board >/dev/null && echo "shareos-board: running" || echo "shareos-board: NOT running"
+	if grep -q '^BOARD_CONTROL="mcu"' /tmp/sys/board.env 2>/dev/null; then
+		pidof dns320l-daemon >/dev/null && echo "dns320l-daemon: running" || echo "dns320l-daemon: NOT running"
+		echo "MCU RTC: $(dns320l-daemon -x ReadRtc 2>/dev/null)"
+	else
+		for d in /sys/class/hwmon/hwmon*; do [ -e "$d/name" ] && echo "hwmon $(basename "$d"): $(cat "$d/name") $(cat "$d"/temp1_input "$d"/pwm1 2>/dev/null | tr '\n' ' ')"; done
+		echo "RTC: $(hwclock -r -u 2>&1)"
+	fi
+	ls /sys/class/leds/ 2>/dev/null | tr '\n' ' '; echo
 
 	section "Flash (MTD)"
 	cat /proc/mtd

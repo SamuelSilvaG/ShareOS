@@ -1,31 +1,37 @@
 #!/bin/sh
 #
-# Applies the LED settings from UCI shareos.led (S05board, web interface).
+# Applies the LED settings from UCI shareos.led (S05board, web interface)
+# to the LEDs of this box (/usr/lib/shareos/board.sh).
 #
-led() {   # name trigger [brightness]
-	d=/sys/class/leds/$1
-	[ -e $d/trigger ] || return
-	echo "$2" > $d/trigger 2>/dev/null
-	[ -n "$3" ] && echo "$3" > $d/brightness
-}
+. "${SHAREOS_BOARD_LIB:-/usr/lib/shareos/board.sh}"
+board_detect
 
 case "$(uci -q get shareos.led.status || echo heartbeat)" in
-	on)  led dns320l:blue:usb none 1 ;;
-	off) led dns320l:blue:usb none 0 ;;
-	*)   led dns320l:blue:usb heartbeat ;;
+	on)  board_led "$BOARD_LED_STATUS" none 1 ;;
+	off) board_led "$BOARD_LED_STATUS" none 0 ;;
+	*)   board_led "$BOARD_LED_STATUS" heartbeat ;;
 esac
 
 case "$(uci -q get shareos.led.disks || echo off)" in
-	activity) led dns320l:red:sata0 disk-activity; led dns320l:red:sata1 disk-activity ;;
-	*)        led dns320l:red:sata0 none 0; led dns320l:red:sata1 none 0 ;;
+	activity) board_led "$BOARD_LED_DISK1" disk-activity; board_led "$BOARD_LED_DISK2" disk-activity ;;
+	*)        board_led "$BOARD_LED_DISK1" none 0; board_led "$BOARD_LED_DISK2" none 0 ;;
 esac
 
-# power LED is driven by the MCU through dns320l-daemon
-if [ -d /tmp/sys/power_led ]; then
-	case "$(uci -q get shareos.led.power || echo on)" in
-		off)   echo none > /tmp/sys/power_led/trigger; echo 0 > /tmp/sys/power_led/brightness ;;
-		blink) echo timer > /tmp/sys/power_led/trigger ;;
-		*)     echo none > /tmp/sys/power_led/trigger; echo 1 > /tmp/sys/power_led/brightness ;;
+power=$(uci -q get shareos.led.power || echo on)
+if [ -n "$BOARD_LED_POWER" ]; then
+	# power LED on a GPIO
+	case "$power" in
+		off)   board_led "$BOARD_LED_POWER" none 0 ;;
+		blink) board_led "$BOARD_LED_POWER" timer ;;
+		*)     board_led "$BOARD_LED_POWER" none 1 ;;
+	esac
+elif [ -d ${SHAREOS_ROOT:-}/tmp/sys/power_led ]; then
+	# power LED driven by the MCU through dns320l-daemon
+	PL=${SHAREOS_ROOT:-}/tmp/sys/power_led
+	case "$power" in
+		off)   echo none > $PL/trigger; echo 0 > $PL/brightness ;;
+		blink) echo timer > $PL/trigger ;;
+		*)     echo none > $PL/trigger; echo 1 > $PL/brightness ;;
 	esac
 fi
 exit 0

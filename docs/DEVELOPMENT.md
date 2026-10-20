@@ -133,6 +133,8 @@ the box for why the web server was not running.
 | 16:06 | Jan: Telegram works on the box. |
 | 16:12 | Jan: "Feature lock – clean up, optimize." Claude measures first: in the emulator every page load waited 1.1 s on requests, a store refresh blocked the interface for 8 s (rpcd answers one request at a time), the 5-second status started three programs each time. Results of expensive steps are now kept between calls, the store refreshes in the background. The system loses OpenSSL (ttyd on mbedtls), unused GLib/libevent/libnl parts and tools – 16.2 → 11.6 MB; strace and iperf3 become system apps. |
 
+| 18:48 | Jan: "first the device control per model, then the common Kirkwood build" – and he looks for testers. Claude replaces the DNS-320L wiring with model descriptions (`board.sh`: MCU or kernel sensors, polled or interrupt buttons, LED names, power-off, RTC, firmware name/signature) and builds one kernel with four device trees: a `.bin` and a bundle each for DNS-320L, DNS-320 rev B, DNS-320 rev A and DNS-325. Tester guide: DEVICES.md. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

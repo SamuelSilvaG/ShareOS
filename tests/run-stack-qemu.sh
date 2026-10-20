@@ -159,7 +159,7 @@ if [ "$CHECK" = "--check" ]; then
 	t "bin: upload through the ticket" "$(curl -s -o /dev/null -w '{"c":%{http_code}}' --data-binary @"$BIN" -H 'Content-Type: application/octet-stream' "http://127.0.0.1:$PORT$U")" "d['c']==200"
 	t "bin: ShareOS .bin recognised" "$(rpc $SID shareos.update bin_info)" "d['result'][1]['kind']=='shareos' and d['result'][1]['kernel'].startswith('ShareOS-')"
 	t "bin: write needs confirm" "$(rpc $SID shareos.update bin_write)" "'confirm' in d['result'][1]['error']"
-	t "bin: write refused outside a DNS-320L" "$(rpc $SID shareos.update bin_write '{"confirm":true}')" "'not a DNS-320L' in d['result'][1]['error']"
+	t "bin: write refused on a box of unknown model" "$(rpc $SID shareos.update bin_write '{"confirm":true}')" "'not supported' in d['result'][1]['error']"
 	t "bin: upload removed after the attempt" "$(rpc $SID shareos.update bin_info)" "'no uploaded' in d['result'][1]['error']"
 	st() { curl -s -w '\n%{http_code}' "http://127.0.0.1:$PORT/cgi-bin/status$1" | python3 -c "import json,sys; b,c=sys.stdin.read().rsplit('\n',1); print(json.dumps({'c':int(c),'b':json.loads(b) if b.strip() else None}))"; }
 	t "widget status off by default" "$(st '?token=0123456789abcdef0123456789abcdef')" "d['c']==404"

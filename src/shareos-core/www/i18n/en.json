@@ -1007,7 +1007,9 @@
 		"Terminal (Administratoren)": "Terminal (administrators)",
 		"System-App · Terminal": "System app · terminal",
 		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "A program for the command line of the box (System → Terminal or SSH). It runs with the rights of whoever starts it – in the terminal as root.",
-		"Terminal": "Terminal"
+		"Terminal": "Terminal",
+		"noch ungetestet": "not tested yet",
+		"ShareOS wurde auf diesem Modell noch nicht auf echter Hardware getestet.": "ShareOS has not been tested on real hardware of this model yet."
 	},
 	"patterns": [
 		[

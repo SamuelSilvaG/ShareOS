@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Device Tree file for D-Link DNS-320 rev Bx
+ *
+ * The board of the DNS-320L rev A (same SoC, MCU, LEDs, buttons and flash
+ * layout) with 128 MB RAM – see Alt-F's dns320-b and the Alt-F mailing list.
+ * The memory size from U-Boot (ATAGs) wins anyway.
+ */
+
+#include "kirkwood-dns320l.dts"
+
+/ {
+	model = "D-Link DNS-320-rev-Bx NAS";
+	compatible = "dlink,dns-320-b", "dlink,dns-320l",
+		     "marvell,kirkwood-88f6702", "marvell,kirkwood";
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x00000000 0x8000000>;	/* 128 MB */
+	};
+};

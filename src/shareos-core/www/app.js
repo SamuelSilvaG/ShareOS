@@ -2170,8 +2170,8 @@ const SYS = {
 				<dl class="kv">
 					<dt>Version</dt><dd>${r.version || '–'}</dd>
 					<dt>Stufe</dt><dd>${r.stage || '–'}</dd>
-					<dt>Gerät</dt><dd>${i.model || '–'}</dd>
-					<dt>Firmware-Name</dt><dd>${r.fwname || '–'}</dd>
+					<dt>Gerät</dt><dd>${i.board?.name || i.model || '–'}${i.board?.id && i.board.id !== 'unknown' && !i.board.tested ? html` <span class="tag warn" title="ShareOS wurde auf diesem Modell noch nicht auf echter Hardware getestet.">noch ungetestet</span>` : ''}</dd>
+					<dt>Firmware-Name</dt><dd>${i.board?.fwname || r.fwname || '–'}</dd>
 					<dt>Kernel</dt><dd>Linux ${i.kernel || '–'}</dd>
 					<dt>Start aus</dt><dd>${i.boot || '–'}</dd>
 				</dl>

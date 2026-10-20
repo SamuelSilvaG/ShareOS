@@ -537,6 +537,23 @@ function set_timezone(tz) {
 const NTP_DEFAULT = [ '0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org' ];
 const RTC_TOOL = '/usr/sbin/dns320l-daemon';
 
+// which box this is: S05board writes /tmp/sys/board.env (/usr/lib/shareos/board.sh)
+function board_read() {
+	let b = {};
+	for (let line in split(readfile('/tmp/sys/board.env') ?? '', '\n')) {
+		let m = match(line, /^BOARD_([A-Z0-9_]+)="(.*)"$/);
+		if (m) b[lc(m[1])] = m[2];
+	}
+	return b;
+}
+function board() { return memo('board', fstamp('/tmp/sys/board.env'), 0, board_read); }
+// the RTC: the MCU's battery clock (dns320l-daemon) or the kernel's /dev/rtc0
+function rtc_kind() {
+	let k = board().rtc ?? (stat(RTC_TOOL) ? 'mcu' : 'kernel');
+	if (k == 'mcu') return stat(RTC_TOOL) ? 'mcu' : null;
+	return stat('/dev/rtc0') ? 'kernel' : null;
+}
+
 function ntp_servers(c) {
 	let l = c.get('shareos', 'time', 'server');
 	if (type(l) == 'string') l = [ l ];
@@ -553,13 +570,15 @@ function time_info() {
 		servers: ntp_servers(c),
 		last_sync: last[0] && match(last[0], /^[0-9]+$/) ? +last[0] : null,
 		ntp_running: system('pidof ntpd >/dev/null 2>&1') == 0,
-		rtc: !!stat(RTC_TOOL)
+		rtc: !!rtc_kind()
 	};
 }
 
 // clock -> the MCU's battery clock, so the time survives a power cut
 function rtc_save() {
-	if (stat(RTC_TOOL)) system(RTC_TOOL + ' -x systohc >/dev/null 2>&1');
+	let k = rtc_kind();
+	if (k == 'mcu') system(RTC_TOOL + ' -x systohc >/dev/null 2>&1');
+	else if (k == 'kernel') system('hwclock -w -u >/dev/null 2>&1');
 }
 
 function altf_scan() {
@@ -1429,6 +1448,7 @@ return {
 				let net = '/sys/class/net/eth0/';
 				return {
 					model: read_trim('/proc/device-tree/model'),
+					board: { id: board().id ?? null, name: board().name ?? null, fwname: board().fwname ?? null, tested: board().tested == '1' },
 					release: release(),
 					hostname: read_trim('/proc/sys/kernel/hostname'),
 					kernel: read_trim('/proc/sys/kernel/osrelease'),
@@ -1538,7 +1558,9 @@ return {
 					let s = SERVICES[name];
 					if (!init_script(name))
 						continue;
-					push(list, { name, label: s.label, desc: s.desc, running: running(s.proc, names), essential: !!ESSENTIAL[name],
+					// the board service is the MCU daemon only on boxes with that MCU
+					let proc = name == 'board' && board().control && board().control != 'mcu' ? 'shareos-board' : s.proc;
+					push(list, { name, label: s.label, desc: s.desc, running: running(proc, names), essential: !!ESSENTIAL[name],
 						autostart: !(name in off) });
 				}
 				return { services: list };

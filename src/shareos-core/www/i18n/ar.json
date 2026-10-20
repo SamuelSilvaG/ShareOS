@@ -1007,7 +1007,9 @@
 		"Terminal (Administratoren)": "الطرفية (المسؤولون)",
 		"System-App · Terminal": "تطبيق نظام · طرفية",
 		"Programm für die Kommandozeile der Box (System → Terminal oder SSH). Es läuft mit den Rechten dessen, der es startet – im Terminal als root.": "برنامج لسطر أوامر الجهاز (النظام ← الطرفية أو SSH). يعمل بصلاحيات من يشغّله – في الطرفية كمستخدم root.",
-		"Terminal": "الطرفية"
+		"Terminal": "الطرفية",
+		"noch ungetestet": "لم يُختبر بعد",
+		"ShareOS wurde auf diesem Modell noch nicht auf echter Hardware getestet.": "لم يُختبر ShareOS بعد على جهاز حقيقي من هذا الطراز."
 	},
 	"patterns": [
 		[
