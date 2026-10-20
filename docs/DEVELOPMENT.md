@@ -126,6 +126,8 @@ the box for why the web server was not running.
 
 | 10:00 | Jan: "nano, htop – I want to see the implementation first. It's an app type of its own." Claude builds the app type `system`: native programs, built with the firmware's toolchain in a second buildroot (external toolchain = the firmware's), packed with their own libraries (ncurses) and terminal descriptions; on the box under `/opt/shareos/sysapps`, a starter per command in `PATH`. nano and htop run in the emulator; a test drives htop in a pseudo terminal. |
 
+| 13:13 | Jan tested beta.12: the terminal shows "Press ↵ to Reconnect" at once; app data of the admin (Webpad) is visible to every user; apps should open files of the box. Claude finds the terminal cause over HTTPS (HTTP/2 without Host header against ttyd's origin check; it worked over HTTP in the emulator), builds per-account browser storage into the app SDK and a file dialog of the box; WinWeb Player plays music from the box. On the way: ShareOS-Apps PR #4 had landed in a side branch instead of `main`. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

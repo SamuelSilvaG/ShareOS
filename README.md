@@ -53,6 +53,7 @@ Version in brackets = first release with the feature.
 - Open files from the file browser in apps (e.g. Webpad), save back; app SDK and ShareOS look for apps (`/_shareos/theme.css`, `/_shareos/app.js`), apps inside the interface (permission `embed`) (beta.9)
 - App permission `files`: apps work with the folders of the box with the user's rights – ShareCommander (two-pane file manager), Webpad saves on the box; music and videos stream with seeking (beta.11)
 - System apps: native programs for the terminal from the store – nano, htop (beta.13)
+- App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (beta.13)
 - Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)

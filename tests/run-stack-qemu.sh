@@ -28,7 +28,7 @@ QEMU=$(command -v qemu-arm-static) || { echo "install qemu-user-static"; exit 1;
 R=$(mktemp -d /tmp/shareos-qemu.XXXX)
 cleanup() {
 	chroot "$R" /bin/sh -c '/etc/init.d/S50avahi-daemon stop; /etc/init.d/S50uhttpd stop; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1 || true
-	umount -l "$R/dev" 2>/dev/null; umount -l "$R/proc" 2>/dev/null
+	umount -l "$R/dev/pts" 2>/dev/null; umount -l "$R/dev" 2>/dev/null; umount -l "$R/proc" 2>/dev/null
 	# never delete through a mount that is still there (it would be the host's /dev)
 	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2
 	else rm -rf "$R"; fi
@@ -47,6 +47,8 @@ rmdir "$R" && "$UNSQ" -q -d "$R" "$SQFS" >/dev/null
 mkdir -p "$R/proc" "$R/dev"
 mount -t proc proc "$R/proc"
 mount --bind /dev "$R/dev"
+# terminals (ttyd, System -> Terminal) need pseudo terminals
+mount --bind /dev/pts "$R/dev/pts"
 sed -i "s/^PORT=.*/PORT=$PORT/; s/\${SHAREOS_HTTPS_PORT:-443}/$((PORT+363))/" "$R/usr/sbin/shareos-uhttpd"
 
 chroot "$R" /bin/sh -c '/etc/init.d/S12ubus start && /etc/init.d/S13rpcd start && /etc/init.d/S50uhttpd start'
@@ -93,7 +95,8 @@ if [ "$CHECK" = "--check" ]; then
 	certreq() { python3 -c "import json,sys; print(json.dumps({'cert':open(sys.argv[1]).read(),'key':open(sys.argv[2]).read()}))" "$1" "$2"; }
 	t "own certificate: wrong key rejected" "$(rpc $SID shareos.web install "$(certreq $CT/w.crt $CT/ca.key)")" "'error' in d['result'][1]"
 	t "own wildcard certificate installed" "$(rpc $SID shareos.web install "$(certreq $CT/w.crt $CT/w.key)")" "d['result'][1].get('ok') and 'skynet.lan' in d['result'][1]['cert']['subject']"
-	rpc $SID shareos.web selfsigned >/dev/null
+	# the web server restarts while answering – the reply may be cut off
+	rpc $SID shareos.web selfsigned >/dev/null || true
 	rm -rf $CT
 	# the web server restarts after a certificate change
 	sleep 2; for i in $(seq 50); do curl -s -o /dev/null "http://127.0.0.1:$PORT/" && break; sleep 0.2; done
@@ -180,6 +183,14 @@ if [ "$CHECK" = "--check" ]; then
 	chroot "$R" /etc/init.d/S50avahi-daemon start >/dev/null 2>&1; sleep 3
 	t "mDNS: <hostname>.local answers with the box address" "$(python3 "$TOP/tests/mdns-query.py" "$(cat /proc/sys/kernel/hostname).local" | python3 -c 'import json,sys; print(json.dumps({"ip":sys.stdin.read().strip()}))')" "d['ip'].count('.')==3"
 	t "mDNS: avahi user exists after an upgrade (overlay passwd)" "$(grep -c '^avahi:' "$R/etc/passwd" | python3 -c 'import json,sys; print(json.dumps({"n":int(sys.stdin.read())}))')" "d['n']==1"
+	# terminal over HTTPS: HTTP/1.1 only (h2 has no Host header – ttyd's origin check refused the WebSocket)
+	TM=$(rpc $SID shareos.system terminal '{"tls":true}')
+	TP=$(printf '%s' "$TM" | python3 -c "import json,sys; r=json.load(sys.stdin)['result'][1]; print(r['port'], r['path'])")
+	set -- $TP
+	t "terminal over HTTPS speaks HTTP/1.1 (no h2)" "$(curl -sk --http2 -o /dev/null -w '{"v":"%{http_version}","c":%{http_code}}' --max-time 20 https://127.0.0.1:$1/$2/)" "d['v']=='1.1' and d['c']==200"
+	t "terminal refuses a WebSocket from another origin" "$(curl -sk --http1.1 -o /dev/null -w '{"c":"%{http_code}"}' --max-time 5 -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==' -H 'Sec-WebSocket-Protocol: tty' -H 'Origin: https://evil.example' https://127.0.0.1:$1/$2/ws)" "d['c']!='101'"
+	t "terminal WebSocket accepted from its own origin" "$(curl -sk --http1.1 -o /dev/null -w '{"c":"%{http_code}"}' --max-time 5 -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==' -H 'Sec-WebSocket-Protocol: tty' -H "Origin: https://127.0.0.1:$1" https://127.0.0.1:$1/$2/ws)" "d['c']=='101'"
+	chroot "$R" /usr/sbin/shareos-terminal stop
 	t "GUI assets served" "$(curl -s -o /dev/null -w '{"a":%{http_code},' http://127.0.0.1:$PORT/app.js; curl -s -o /dev/null -w '"c":%{http_code}}' http://127.0.0.1:$PORT/shareos.css)" "d['a']==200 and d['c']==200"
 	echo; [ $fails -eq 0 ] && echo "all checks passed" || { echo "$fails check(s) failed"; exit 1; }
 	exit 0

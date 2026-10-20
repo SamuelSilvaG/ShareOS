@@ -127,6 +127,8 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 
 | 10:00 | Jan: „nano, htop – ich will erstmal die Umsetzung sehen. Ist ja eine eigene App-Art.“ Claude baut den App-Typ `system`: native Programme, gebaut mit der Toolchain der Firmware in einem zweiten buildroot (externe Toolchain = die der Firmware), gepackt mit eigenen Bibliotheken (ncurses) und Terminal-Beschreibungen; auf der Box unter `/opt/shareos/sysapps`, ein Starter je Befehl im `PATH`. nano und htop laufen im Emulator; ein Test bedient htop in einem Pseudo-Terminal. |
 
+| 13:13 | Jan hat beta.12 getestet: Das Terminal zeigt sofort „Press ↵ to Reconnect“; App-Daten des Admins (Webpad) sieht jeder Benutzer; Apps sollen Dateien der Box öffnen. Claude findet die Terminal-Ursache über HTTPS (HTTP/2 ohne Host-Header gegen ttyds Herkunftsprüfung; über HTTP lief es im Emulator), baut Browser-Speicher je Konto ins App-SDK und einen Dateidialog der Box; WinWeb Player spielt Musik von der Box. Nebenbei: PR #4 von ShareOS-Apps war in einem Nebenzweig statt in `main` gelandet. |
+
 ## Bemerkenswerte Problemlösungen
 
 - **3-MB-Grenze des Bootloaders:** Der Kernel ist von 4,2 auf 2,4 MB geschrumpft, Treiber wurden in Module ausgelagert. Das Start-System umfasst nur 0,9 MB.

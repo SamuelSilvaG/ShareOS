@@ -18,6 +18,8 @@
  * ShareOS.on(type, fn) / ShareOS.emit(type, data)
  *                             messages between the apps (BroadcastChannel
  *                             'shareos'; every app hears them – no secrets)
+ * ShareOS.user                the account the app was opened by ('guest' when
+ *                             opened without ShareOS)
  * ShareOS.embedded            true when shown inside the ShareOS interface
  * ShareOS.fs                  folders of the user, for apps with the permission
  *                             "files" (null otherwise); all calls return promises:
@@ -27,9 +29,21 @@
  *   .copy(root, path, names, destRoot, dest)   .move(…same…)
  *   .remove(root, path, names)
  *   .open(root, path, name, {write, create})   a file like ShareOS.file
+ *   .pick({ title, ext: ['.mp3', …], multiple, save, name })
+ *                                  file dialog of the box: resolves to
+ *                                  [{ root, path, name }] (save: the chosen
+ *                                  folder and file name) or null (cancelled)
+ *
+ * Storage per account: the apps share one web origin, so ShareOS keeps the
+ * browser storage of the accounts apart – localStorage and IndexedDB of an
+ * app see only the data of the account that opened it (key and database
+ * names get the prefix "u:<account>:" behind the scenes; root keeps the
+ * plain names). Load this script before the app's own scripts. In one
+ * browser this separates, it does not protect: what must stay private goes
+ * to the user's folders on the box (ShareOS.fs), checked by the box.
  *
  * URL parameters set by ShareOS: theme, accent, file (ticket), name, origin,
- * fs (grant for ShareOS.fs).
+ * fs (grant for ShareOS.fs), user (account), lang.
  */
 (function () {
 	'use strict';
@@ -39,8 +53,67 @@
 	var adminOrigin = q.get('origin') || '';
 	var embedded = window.parent !== window;
 	var themeFns = [];
+	var de = /^de/i.test(q.get('lang') || document.documentElement.lang || navigator.language || '');
 
-	function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+	/* browser storage per account (see above) */
+	var NAME_RE = /^[a-z0-9][a-z0-9._-]{0,31}$/i;
+	var user = q.get('user');
+	try {
+		if (user && NAME_RE.test(user)) sessionStorage.setItem('sos-user', user);
+		else user = sessionStorage.getItem('sos-user');
+	} catch (e) { }
+	if (!user || !NAME_RE.test(user)) user = 'guest';
+	var prefix = user === 'root' ? '' : 'u:' + user + ':';
+	var nativeLS = null;
+	try { nativeLS = window.localStorage; } catch (e) { }
+	function mine(k) { return prefix ? k.indexOf(prefix) === 0 : k.indexOf('u:') !== 0; }
+	function scoped(ls) {
+		function keys() {
+			var out = [];
+			for (var i = 0; i < ls.length; i++) { var k = ls.key(i); if (k !== null && mine(k)) out.push(k.slice(prefix.length)); }
+			return out;
+		}
+		// methods on the prototype: the proxy target itself has no own keys
+		var proto = {
+			getItem: function (k) { return ls.getItem(prefix + k); },
+			setItem: function (k, v) { ls.setItem(prefix + k, String(v)); },
+			removeItem: function (k) { ls.removeItem(prefix + k); },
+			clear: function () { keys().forEach(function (k) { ls.removeItem(prefix + k); }); },
+			key: function (i) { var l = keys(); return i < l.length ? l[i] : null; }
+		};
+		Object.defineProperty(proto, 'length', { get: function () { return keys().length; } });
+		var st = Object.create(proto);
+		return new Proxy(st, {
+			get: function (t, p) { if (p in t || typeof p === 'symbol') return t[p]; var v = ls.getItem(prefix + p); return v === null ? undefined : v; },
+			set: function (t, p, v) { if (p in t) return false; ls.setItem(prefix + p, String(v)); return true; },
+			deleteProperty: function (t, p) { ls.removeItem(prefix + p); return true; },
+			has: function (t, p) { return p in t || ls.getItem(prefix + p) !== null; },
+			ownKeys: function () { return keys(); },
+			getOwnPropertyDescriptor: function (t, p) {
+				var v = typeof p === 'string' ? ls.getItem(prefix + p) : null;
+				return v === null ? undefined : { value: v, enumerable: true, configurable: true, writable: true };
+			}
+		});
+	}
+	if (nativeLS && window.Proxy) {
+		var mineLS = scoped(nativeLS);
+		try { Object.defineProperty(window, 'localStorage', { configurable: true, enumerable: true, get: function () { return mineLS; } }); } catch (e) { }
+	}
+	if (window.IDBFactory && IDBFactory.prototype.open) {
+		var F = IDBFactory.prototype, idbOpen = F.open, idbDel = F.deleteDatabase, idbList = F.databases;
+		if (prefix) {
+			F.open = function (name, v) { return v === undefined ? idbOpen.call(this, prefix + name) : idbOpen.call(this, prefix + name, v); };
+			F.deleteDatabase = function (name) { return idbDel.call(this, prefix + name); };
+		}
+		if (idbList) F.databases = function () {
+			return idbList.call(this).then(function (l) {
+				return l.filter(function (d) { return mine(d.name); }).map(function (d) { return { name: d.name.slice(prefix.length), version: d.version }; });
+			});
+		};
+	}
+
+	// the look is the same for everybody in this browser: plain keys
+	function store(k, v) { try { if (v === undefined) return nativeLS.getItem(k); nativeLS.setItem(k, v); } catch (e) { return null; } }
 
 	function applyTheme(theme, accent) {
 		if (theme !== 'light' && theme !== 'dark')
@@ -134,6 +207,114 @@
 		}
 	} : null;
 
+	/* file dialog of the box (ShareOS.fs.pick) */
+	var T = de ? { open: 'Öffnen', save: 'Speichern', cancel: 'Abbrechen', name: 'Dateiname', empty: 'Keine passenden Dateien',
+			up: 'Übergeordneter Ordner', title: 'Datei von der Box', titleSave: 'Auf der Box speichern', exists: 'überschreiben?', all: 'Alle markieren' }
+		: { open: 'Open', save: 'Save', cancel: 'Cancel', name: 'File name', empty: 'No matching files',
+			up: 'Parent folder', title: 'File from the box', titleSave: 'Save to the box', exists: 'overwrite?', all: 'Select all' };
+	var PICK_CSS = '.sos-pick{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);font:13px var(--sos-font,system-ui,sans-serif)}'
+		+ '.sos-pick>div{width:min(640px,94vw);max-height:84vh;display:flex;flex-direction:column;gap:10px;padding:16px 18px;border:1px solid var(--sos-line,#15253b);border-radius:12px;background:var(--sos-panel,#0b111a);color:var(--sos-text,#c6dff5);box-shadow:0 16px 48px rgba(0,0,0,.45)}'
+		+ '.sos-pick h2{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--sos-accent,#3da5ff)}'
+		+ '.sos-pick .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sos-pick .path{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sos-muted,#6f90ad)}'
+		+ '.sos-pick ul{list-style:none;margin:0;padding:0;overflow:auto;min-height:160px;flex:1;border:1px solid var(--sos-line,#15253b);border-radius:8px;background:var(--sos-bg,#06090d)}'
+		+ '.sos-pick li{display:flex;gap:10px;align-items:center;padding:6px 10px;cursor:pointer;border-bottom:1px solid var(--sos-line,#15253b)}.sos-pick li:hover{background:var(--sos-bar,#0e1726)}'
+		+ '.sos-pick li.sel{background:var(--sos-dim,#1d4f80);color:#fff}.sos-pick li .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sos-pick li .s{color:var(--sos-muted,#6f90ad);font-size:12px}'
+		+ '.sos-pick .empty{padding:20px;text-align:center;color:var(--sos-muted,#6f90ad);cursor:default}'
+		+ '.sos-pick select,.sos-pick input{min-height:32px;padding:0 10px;border:1px solid var(--sos-line,#15253b);border-radius:8px;background:var(--sos-bg,#06090d);color:var(--sos-text,#c6dff5);font:inherit}.sos-pick input{flex:1}'
+		+ '.sos-pick button{min-height:32px;padding:0 12px;border:1px solid var(--sos-line,#15253b);border-radius:8px;background:var(--sos-panel,#0b111a);color:var(--sos-text,#c6dff5);font:600 12px inherit;cursor:pointer}'
+		+ '.sos-pick button.primary{background:var(--sos-accent,#3da5ff);border-color:var(--sos-accent,#3da5ff);color:var(--sos-bg,#06090d)}.sos-pick button:disabled{opacity:.5;cursor:default}'
+		+ '.sos-pick .err{color:var(--sos-err,#ff5f5f)}';
+	function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+	function fmtSize(b) { var u = ['B', 'KB', 'MB', 'GB', 'TB'], i = 0; while (b >= 1000 && i < 4) { b /= 1000; i++; } return (i ? b.toFixed(1) : b) + ' ' + u[i]; }
+	function pick(o) {
+		o = o || {};
+		var exts = (o.ext || []).map(function (x) { return String(x).toLowerCase(); });
+		if (!document.getElementById('sos-pick-css')) { var st = el('style'); st.id = 'sos-pick-css'; st.textContent = PICK_CSS; document.head.appendChild(st); }
+		return new Promise(function (resolve) {
+			var wrap = el('div', 'sos-pick'), box = el('div');
+			wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+			var h = el('h2', null, o.title || (o.save ? T.titleSave : T.title));
+			var top = el('div', 'row'), rootSel = el('select'), upB = el('button', null, '↑'), pathEl = el('span', 'path');
+			upB.type = 'button'; upB.title = T.up; rootSel.setAttribute('aria-label', 'Volume');
+			top.appendChild(rootSel); top.appendChild(upB); top.appendChild(pathEl);
+			var list = el('ul'), msg = el('div', 'err');
+			var bottom = el('div', 'row'), nameIn = el('input');
+			nameIn.placeholder = T.name; nameIn.value = o.name || '';
+			var cancelB = el('button', null, T.cancel), okB = el('button', 'primary', o.save ? T.save : T.open);
+			cancelB.type = okB.type = 'button';
+			if (o.save) bottom.appendChild(nameIn); else bottom.appendChild(el('span', 'path'));
+			bottom.appendChild(cancelB); bottom.appendChild(okB);
+			[h, top, list, msg, bottom].forEach(function (x) { box.appendChild(x); });
+			wrap.appendChild(box); document.body.appendChild(wrap);
+			var cur = { root: '', path: '' }, entries = [], sel = {};
+			function done(v) { document.removeEventListener('keydown', onKey, true); wrap.remove(); resolve(v); }
+			function onKey(ev) { if (ev.key === 'Escape') { ev.stopPropagation(); done(null); } }
+			document.addEventListener('keydown', onKey, true);
+			function chosen() { return Object.keys(sel).map(function (n) { return { root: cur.root, path: cur.path, name: n }; }); }
+			function update() {
+				okB.disabled = o.save ? !nameIn.value.trim() || /[\/]/.test(nameIn.value) : !Object.keys(sel).length;
+				[].forEach.call(list.children, function (li) { li.classList.toggle('sel', !!sel[li.dataset.name] && li.dataset.type === 'file'); });
+			}
+			function load() {
+				msg.textContent = ''; sel = {};
+				pathEl.textContent = '/' + cur.path; upB.disabled = !cur.path;
+				fs.list(cur.root, cur.path).then(function (r) {
+					entries = (r.entries || []).filter(function (e) {
+						if (e.type === 'dir' || e.type === 'dirlink') return true;
+						if (e.type !== 'file') return false;
+						if (!exts.length) return true;
+						var n = e.name.toLowerCase();
+						return exts.some(function (x) { return n.slice(-x.length) === x; });
+					});
+					list.innerHTML = '';
+					if (!entries.length) list.appendChild(el('li', 'empty', T.empty));
+					entries.forEach(function (e) {
+						var dir = e.type !== 'file', li = el('li');
+						li.dataset.name = e.name; li.dataset.type = dir ? 'dir' : 'file';
+						li.appendChild(el('span', null, dir ? '📁' : '📄'));
+						li.appendChild(el('span', 'n', e.name));
+						li.appendChild(el('span', 's', dir ? '' : fmtSize(e.size || 0)));
+						li.addEventListener('click', function (ev) {
+							if (dir) { cur.path = (cur.path ? cur.path + '/' : '') + e.name; load(); return; }
+							if (o.save) { nameIn.value = e.name; update(); return; }
+							if (!(o.multiple && (ev.ctrlKey || ev.metaKey || ev.shiftKey))) sel = {};
+							if (sel[e.name]) delete sel[e.name]; else sel[e.name] = true;
+							update();
+						});
+						li.addEventListener('dblclick', function () { if (!dir && !o.save) { sel = {}; sel[e.name] = true; done(chosen()); } });
+						list.appendChild(li);
+					});
+					update();
+				}).catch(function (err) { msg.textContent = err.message; });
+			}
+			upB.addEventListener('click', function () { cur.path = cur.path.split('/').slice(0, -1).join('/'); load(); });
+			rootSel.addEventListener('change', function () { cur.root = rootSel.value; cur.path = ''; load(); });
+			nameIn.addEventListener('input', update);
+			nameIn.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && !okB.disabled) okB.click(); });
+			cancelB.addEventListener('click', function () { done(null); });
+			wrap.addEventListener('click', function (ev) { if (ev.target === wrap) done(null); });
+			okB.addEventListener('click', function () {
+				if (!o.save) { done(chosen()); return; }
+				var n = nameIn.value.trim();
+				var hit = entries.some(function (e) { return e.name === n && e.type === 'file'; });
+				if (hit && !confirm('„' + n + '“ ' + T.exists)) return;
+				done([{ root: cur.root, path: cur.path, name: n, exists: hit }]);
+			});
+			if (o.multiple && !o.save) {
+				var allB = el('button', null, T.all); allB.type = 'button';
+				allB.addEventListener('click', function () { sel = {}; entries.forEach(function (e) { if (e.type === 'file') sel[e.name] = true; }); update(); });
+				bottom.insertBefore(allB, cancelB);
+			}
+			fs.roots().then(function (roots) {
+				roots.forEach(function (r) { var op = el('option', null, r.home ? (de ? 'Mein Ordner' : 'My folder') : r.name); op.value = r.name; rootSel.appendChild(op); });
+				if (!roots.length) { msg.textContent = de ? 'Kein Ordner auf der Box erreichbar.' : 'No folder on the box available.'; return; }
+				cur.root = roots[0].name; load();
+			}).catch(function (err) { msg.textContent = err.message; });
+			update();
+		});
+	}
+	if (fs) fs.pick = pick;
+
 	/* classic menu bar */
 	function keyOf(ev) {
 		var k = ev.key.length === 1 ? ev.key.toUpperCase() : ev.key;
@@ -183,6 +364,7 @@
 
 	var api = {
 		app: appId,
+		user: user,
 		embedded: embedded,
 		theme: null,
 		onTheme: function (fn) { themeFns.push(fn); if (api.theme) fn(api.theme); },
