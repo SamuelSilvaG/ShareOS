@@ -113,6 +113,10 @@ check "rpc: box name cleared again" "rpc shareos.web set '{\"host\":\"\"}' | js 
 run 'killall uhttpd'
 i=0; until curl -s -o /dev/null "http://127.0.0.1:$PORT/" || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
 check "apps server comes back after killall uhttpd (supervisor)" "[ \"\$(curl -s http://127.0.0.1:$PORT/hello/index.html)\" = '<!doctype html><title>ok</title>' ]"
+run "uci set shareos.ui=ui; uci set shareos.ui.area_apps=0; uci commit shareos; /etc/init.d/S51apps stop; /etc/init.d/S51apps start" >/dev/null; sleep 2
+check "area Apps off: apps web server does not start" "! curl -s -o /dev/null http://127.0.0.1:$PORT/"
+run "uci set shareos.ui.area_apps=1; uci commit shareos; /etc/init.d/S51apps start" >/dev/null
+i=0; until curl -s -o /dev/null "http://127.0.0.1:$PORT/" || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
 check "rpc: store sources must be https" "rpc shareos.apps store_set '{\"sources\":[\"http://x/index.json\"]}' | grep -q 'https'"
 check "rpc: unknown user in visibility rejected" "rpc shareos.apps set '{\"id\":\"hello\",\"users\":[\"ghost\"]}' | grep -q 'unknown user'"
 mkdir -p "$R/mnt/daten"; run "uci set storage.daten=volume; uci commit storage; echo lisa1234 | shareos-users add lisa user; echo bert1234 | shareos-users add bert user" >/dev/null

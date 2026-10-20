@@ -510,7 +510,10 @@ def call(obj, method, args):
             for k in ('theme', 'accent'):
                 if args.get(k):
                     STATE[k] = args[k]
-        return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent']}
+            for k, v in (args.get('areas') or {}).items():
+                STATE.setdefault('areas', {'apps': True, 'cloud': True, 'paperless': True})[k] = bool(v)
+        return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent'],
+                'areas': STATE.get('areas', {'apps': True, 'cloud': True, 'paperless': True})}
     if obj == 'shareos.net':
         if method == 'set':
             STATE['net'] = {k: args.get(k, STATE['net'][k]) for k in STATE['net']}
@@ -564,6 +567,8 @@ def call(obj, method, args):
             'subject': 'CN=skynet-nas, O=ShareOS', 'issuer': 'CN=skynet-nas, O=ShareOS', 'from': '2026-10-17 00:00:00',
             'until': '2036-10-17 23:59:59', 'san': ['dNSName:skynet-nas', 'dNSName:skynet-nas.local', 'iPAddress:10.241.1.106'], 'selfsigned': True}}
     if obj == 'shareos.system':
+        if method == 'terminal':
+            return {'port': 7681, 'path': '0123456789abcdef0123456789abcdef'}
         if method == 'info':
             return info()
         if method == 'log':

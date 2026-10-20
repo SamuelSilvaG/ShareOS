@@ -142,6 +142,20 @@ if [ -n "$RDL" ] && [ -d "$RDL" ]; then
 	check "remote: test" "run 'shareos-cloud remote-test - target' | grep -q '^ok'"
 	o=$(run "echo 'pass=geheim' | shareos-cloud remote-add - dav webdav url=https://dav.example.com vendor=nextcloud user=jan")
 	check "remote: webdav with obscured password" "grep -A5 '^\[dav\]' $R/etc/shareos/cloud/rclone.conf | grep -q '^pass = ' && ! grep -q geheim $R/etc/shareos/cloud/rclone.conf"
+	o=$(run "echo 'pass=geheim2' | shareos-cloud remote-add - ftpbox ftp host=ftp.example.com user=jan")
+	check "remote: FTP from the list of services" "grep -A4 '^\[ftpbox\]' $R/etc/shareos/cloud/rclone.conf | grep -q '^type = ftp' && ! grep -q geheim2 $R/etc/shareos/cloud/rclone.conf"
+	o=$(run "shareos-cloud remote-add - gd gdrive < /dev/null" 2>&1)
+	check "remote: Google Drive needs the sign-in first" "echo \"\$o\" | grep -q 'sign in first'" "$o"
+	o=$(run "shareos-cloud auth-start - gdrive")
+	check "sign-in: rclone gives the Google sign-in address" "echo \"\$o\" | grep -q '^url=https://accounts.google.com/'" "$o"
+	o=$(run "shareos-cloud auth-finish - 'https://example.com/?code=x'" 2>&1)
+	check "sign-in: only the local address is taken" "echo \"\$o\" | grep -q 'paste the whole address'" "$o"
+	st=$(echo "$o" | head -1)
+	o=$(run "shareos-cloud auth-finish - 'http://127.0.0.1:53682/?state=falsch&code=x'" 2>&1)
+	check "sign-in: wrong state ends with an error, no token" "echo \"\$o\" | grep -q 'sign-in failed' && [ ! -s $R/tmp/shareos-cloud/auth.token ]" "$o"
+	o=$(run "ubus call shareos.cloud auth_start '{\"type\":\"onedrive\"}'")
+	check "rpc: sign-in address for OneDrive" "echo '$o' | js \"d['url'].startswith('https://login.microsoftonline.com/')\"" "$o"
+	run "shareos-cloud auth-finish - x" >/dev/null 2>&1; pkill -f 'rclone authorize' 2>/dev/null
 	run "uci set shares.fotos=share; uci set shares.fotos.volume=daten; uci set shares.fotos.path=Fotos; uci commit shares" >/dev/null
 	mkdir -p $R/mnt/daten/Fotos/2026; echo bild1 > $R/mnt/daten/Fotos/2026/a.jpg; echo bild2 > $R/mnt/daten/Fotos/b.jpg
 	run "uci set cloud.fotos=job; uci set cloud.fotos.owner=''; uci set cloud.fotos.remote=target; uci set cloud.fotos.remote_path=/mnt/daten/cloud/fotos; uci set cloud.fotos.local=share:fotos; uci set cloud.fotos.mode=upload; uci set cloud.fotos.schedule='30 2 * * *'; uci commit cloud" >/dev/null

@@ -935,7 +935,73 @@
 		"Name speichern": "Сохранить имя",
 		"Name gespeichert.": "Имя сохранено.",
 		"Zugriff auf Dateien": "Доступ к файлам",
-		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Может читать, изменять и удалять файлы, доступные вошедшему пользователю в файловом браузере, — с его правами, пока приложение открыто."
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Может читать, изменять и удалять файлы, доступные вошедшему пользователю в файловом браузере, — с его правами, пока приложение открыто.",
+		"Box nicht erreichbar": "Устройство недоступно",
+		"Netzwerkverkehr der letzten 10 Minuten": "Сетевой трафик за последние 10 минут",
+		"noch nicht verbunden": "ещё не подключено",
+		"Noch kein Eingangsordner. Zuerst oben die Adresse von Paperless eintragen.": "Входящей папки ещё нет. Сначала укажите выше адрес Paperless.",
+		"gemeinsam · aus": "общий · выкл.",
+		"Noch nichts übertragen.": "Пока ничего не передано.",
+		"keine Tags gefunden": "теги не найдены",
+		"Windows-Freigabe (SMB)": "Общая папка Windows (SMB)",
+		"Google Fotos": "Google Фото",
+		"DOMÄNE (OPTIONAL)": "ДОМЕН (НЕОБЯЗАТЕЛЬНО)",
+		"APP-PASSWORT": "ПАРОЛЬ ПРИЛОЖЕНИЯ",
+		"noch nicht gelaufen": "ещё не запускалось",
+		"rclone nicht installiert": "rclone не установлен",
+		"wird geladen und geprüft …": "загрузка и проверка …",
+		"Zuerst unter": "Сначала в разделе",
+		"ein Laufwerk einrichten.": "настройте диск.",
+		"Zugangsdaten bleiben verschlüsselt auf der Box.": "Учётные данные хранятся на устройстве в зашифрованном виде.",
+		"Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.": "Для Google Drive, OneDrive, Dropbox и похожих сервисов вход выполняется в браузере; для других вставьте готовый раздел из «rclone config».",
+		"Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "Задания используют мало памяти (2 передачи одновременно); ограничение скорости, например",
+		"Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.": "Ваши учётные данные лежат в личной папке; загруженное учитывается в вашей квоте.",
+		"Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie": "После входа браузер покажет «страница недоступна» с адресом вида",
+		". Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:": ". Скопируйте этот адрес целиком из адресной строки и вставьте сюда:",
+		"Paket wird erneut geprüft": "Повторная проверка пакета",
+		"System wird für den Neustart bereitgelegt": "Подготовка системы к перезапуску",
+		"Startsystem: Flash wird gelöscht": "Загрузочная система: очистка flash",
+		"Startsystem wird geschrieben": "Запись загрузочной системы",
+		"Startsystem wird geprüft": "Проверка загрузочной системы",
+		"Kernel: Flash wird gelöscht": "Ядро: очистка flash",
+		"Kernel wird geschrieben": "Запись ядра",
+		"Kernel wird geprüft": "Проверка ядра",
+		"Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.": "Telegram: создайте бота через @BotFather (/newbot), введите токен здесь и сохраните. Затем напишите своему боту (или добавьте его в группу) и нажмите «Найти ID чата».",
+		"Chat-ID suchen": "Найти ID чата",
+		"CHAT-ID": "ID ЧАТА",
+		"BOT-TOKEN (VON @BOTFATHER)": "ТОКЕН БОТА (ОТ @BOTFATHER)",
+		"Telegram (Bot)": "Telegram (бот)",
+		"BEREICHE": "РАЗДЕЛЫ",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Выключено: вкладка исчезает, в том числе у пользователей в «Мой ShareOS», и фоновая работа останавливается (веб-сервер и задачи приложений, плановые облачные задания, входящие Paperless). Настройки и данные сохраняются; при включении всё возвращается.",
+		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Приложения (магазин, веб-приложения, задачи приложений)",
+		"Cloud (Abgleich mit Cloud-Speichern)": "Облако (синхронизация с облачными хранилищами)",
+		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (входящие папки для Paperless-ngx)",
+		"Bereich eingeschaltet.": "Раздел включён.",
+		"Bereich ausgeschaltet.": "Раздел выключен.",
+		"Angemeldet – jetzt „Hinzufügen“.": "Вход выполнен – теперь «Добавить».",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen.": "Учётная запись удаляется; права на общие папки пропадают.",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen. Der persönliche Ordner bleibt erhalten.": "Учётная запись удаляется; права на общие папки пропадают. Личная папка сохраняется.",
+		"Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.": "Диск отмонтируется и удаляется из конфигурации. Данные на нём сохраняются, пока его не настроят заново.",
+		"Laufwerk": "Диск",
+		"Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.": "Сообщений боту пока нет – сначала сохраните токен, затем напишите боту в Telegram.",
+		"wird geladen": "загрузка",
+		"wird geprüft": "проверка",
+		"wird installiert": "установка",
+		"Nutzt das Internet": "Использует интернет",
+		"Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.": "Загружает данные из интернета (например, онлайн-сервисы, потоки, карты). Без подключения к интернету эти части приложения не работают.",
+		"TERMINAL": "ТЕРМИНАЛ",
+		"Terminal öffnen": "Открыть терминал",
+		"Beenden": "Завершить",
+		"Eine Shell als": "Оболочка от имени",
+		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "прямо на устройстве – для диагностики и ручной работы (BusyBox, uci, logread, mdadm, smartctl …).",
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "Сеанс действует для одного окна и завершается при его закрытии. Осторожно: команды от root выполняются сразу и без корзины.",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "Личным входящим нужен пользователь с личной папкой.",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "Облачная синхронизация на этом устройстве ещё не настроена – обратитесь к администратору.",
+		"angemeldet ✓": "вход выполнен ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. АДРЕС ПОСЛЕ ВХОДА",
+		"Erst anmelden (Schritt 1 und 2).": "Сначала войдите (шаги 1 и 2).",
+		"Die Box läuft gerade nicht aus dem Flash (": "Устройство сейчас запущено не из flash (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Обновления через эту страницу работают только при обычном запуске из flash."
 	},
 	"patterns": [
 		[
@@ -1745,6 +1811,174 @@
 		[
 			"^Dateizugriff: (.+)$",
 			"Доступ к файлам: $1"
+		],
+		[
+			"^ubus-Fehler (.+)$",
+			"Ошибка ubus $1"
+		],
+		[
+			"^persönlich: (.+) · aus$",
+			"личный: $1 · выкл."
+		],
+		[
+			"^persönlicher Eingang von (.+) · Token (.+)$",
+			"личная входящая папка $1 · токен $2"
+		],
+		[
+			"^Freigabe (.+)$",
+			"Общая папка $1"
+		],
+		[
+			"^Fehler: (.+)$",
+			"Ошибка: $1"
+		],
+		[
+			"^von (.+)$",
+			"владелец: $1"
+		],
+		[
+			"^Konto „(.+)“ hinzugefügt\\.$",
+			"Учётная запись «$1» добавлена."
+		],
+		[
+			"^Konto: (.+)$",
+			"Учётная запись: $1"
+		],
+		[
+			"^Auftrag „(.+)“ gespeichert\\.$",
+			"Задание «$1» сохранено."
+		],
+		[
+			"^Auftrag: (.+)$",
+			"Задание: $1"
+		],
+		[
+			"^Passwort: (.+)$",
+			"Пароль: $1"
+		],
+		[
+			"^(.+) · nicht eingehängt$",
+			"$1 · не смонтирован"
+		],
+		[
+			"^(.+) · Dateisystem nicht gefunden$",
+			"$1 · файловая система не найдена"
+		],
+		[
+			"^enthält: (.+)$",
+			"содержит: $1"
+		],
+		[
+			"^Der Name „(.+)“ ist schon vergeben\\.$",
+			"Имя «$1» уже занято."
+		],
+		[
+			"^([0-9.,]+ [KMGT]?B) von ([0-9.,]+ [KMGT]?B)$",
+			"$1 из $2"
+		],
+		[
+			"^Bereich: (.+)$",
+			"Раздел: $1"
+		],
+		[
+			"^Lüfter: (.+)$",
+			"Вентилятор: $1"
+		],
+		[
+			"^Firmware-Datei: (.+)$",
+			"Файл прошивки: $1"
+		],
+		[
+			"^Sprache: (.+)$",
+			"Язык: $1"
+		],
+		[
+			"^Freigabe: (.+)$",
+			"Общая папка: $1"
+		],
+		[
+			"^Benutzer: (.+)$",
+			"Пользователь: $1"
+		],
+		[
+			"^(.+): startet nicht mehr beim Einschalten$",
+			"$1: больше не запускается при включении"
+		],
+		[
+			"^(.+): startet beim Einschalten$",
+			"$1: запускается при включении"
+		],
+		[
+			"^Die Box wechselt auf (.+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"Устройство переходит на $1. Затем эта страница откроет новый адрес и подтвердит изменение. Если не получится, через $2 секунд вернутся прежние настройки."
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.+)$",
+			"Проверка не удалась: $1"
+		],
+		[
+			"^Konto „(.+)“ entfernt\\.$",
+			"Учётная запись «$1» удалена."
+		],
+		[
+			"^Auftrag „(.+)“ gestartet\\.$",
+			"Задание «$1» запущено."
+		],
+		[
+			"^Auftrag „(.+)“ entfernt\\.$",
+			"Задание «$1» удалено."
+		],
+		[
+			"^(.+): eingehängt$",
+			"$1: смонтирован"
+		],
+		[
+			"^(.+): ausgehängt$",
+			"$1: отмонтирован"
+		],
+		[
+			"^(.+): entfernt$",
+			"$1: удалён"
+		],
+		[
+			"^Chat gefunden: (.+) – jetzt speichern\\.$",
+			"Чат найден: $1 – теперь сохраните."
+		],
+		[
+			"^Telegram: (.+)$",
+			"Telegram: $1"
+		],
+		[
+			"^Ordner: (.+)$",
+			"Папка: $1"
+		],
+		[
+			"^Löschen: (.+)$",
+			"Удаление: $1"
+		],
+		[
+			"^Terminal: (.+)$",
+			"Терминал: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox и другие). Программа (около 20 МБ) помещается в область приложений на диске$1."
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"Для $1 вход выполняется в браузере; устройство хранит только токен доступа, без пароля."
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. Войти в $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"Вход: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1. Не выключайте устройство."
 		]
 	],
 	"words": [
@@ -1941,6 +2175,25 @@
 		[
 			"\\bGruppe\\b",
 			"группа",
+			"g"
+		],
+		[
+			" · noch ([0-9][^ ]* [a-zA-Z]+)$",
+			" · осталось $1"
+		],
+		[
+			"\\bUSB-Laufwerk\\b",
+			"USB-накопитель",
+			"g"
+		],
+		[
+			"\\bEintrag/Einträge\\b",
+			"элемент(ы)",
+			"g"
+		],
+		[
+			"\\balle Benutzer\\b",
+			"все пользователи",
 			"g"
 		]
 	]

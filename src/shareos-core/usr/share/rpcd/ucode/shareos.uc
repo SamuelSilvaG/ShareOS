@@ -329,12 +329,21 @@ const CERT = '/usr/sbin/shareos-cert';
 const THEMES = { dark: 1, light: 1, system: 1 };
 const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
 
+// areas that can be switched off under System -> Appearance (tab hidden,
+// background work stopped): apps (apps web server, app tasks), cloud
+// (scheduled jobs), paperless (inboxes)
+const AREAS = [ 'apps', 'cloud', 'paperless' ];
+function area_on(a) { return cursor().get('shareos', 'ui', 'area_' + a) != '0'; }
+
 function ui_settings() {
 	let c = cursor();
 	let theme = c.get('shareos', 'ui', 'theme'), accent = c.get('shareos', 'ui', 'accent');
+	let areas = {};
+	for (let a in AREAS) areas[a] = c.get('shareos', 'ui', 'area_' + a) != '0';
 	return {
 		lang: c.get('shareos', 'ui', 'lang') ?? 'en',
 		logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0',
+		areas,
 		theme: THEMES[theme] ? theme : 'dark',
 		accent: ACCENTS[accent] ? accent : 'blue'
 	};
@@ -825,8 +834,29 @@ const CLOUD_ST = '/tmp/shareos-cloud';
 const REMOTE_KEYS = {
 	webdav: { plain: [ 'url', 'vendor', 'user' ], secret: [ 'pass' ] },
 	s3: { plain: [ 'provider', 'endpoint', 'region', 'access_key_id' ], secret: [ 'secret_access_key' ] },
-	sftp: { plain: [ 'host', 'port', 'user' ], secret: [ 'pass' ] }
+	sftp: { plain: [ 'host', 'port', 'user' ], secret: [ 'pass' ] },
+	ftp: { plain: [ 'host', 'port', 'user' ], secret: [ 'pass' ] },
+	smb: { plain: [ 'host', 'user', 'domain' ], secret: [ 'pass' ] },
+	mega: { plain: [ 'user' ], secret: [ 'pass' ] },
+	b2: { plain: [ 'account' ], secret: [ 'key' ] },
+	koofr: { plain: [ 'provider', 'user' ], secret: [ 'password' ] },
+	// signed in with OAuth first (shareos-cloud auth-start/auth-finish)
+	gdrive: { plain: [], secret: [] }, gphotos: { plain: [], secret: [] }, onedrive: { plain: [], secret: [] },
+	dropbox: { plain: [], secret: [] }, box: { plain: [], secret: [] }, pcloud: { plain: [], secret: [] }, yandex: { plain: [], secret: [] }
 };
+const OAUTH_TYPES = { gdrive: 1, gphotos: 1, onedrive: 1, dropbox: 1, box: 1, pcloud: 1, yandex: 1 };
+
+function cloud_auth_start(owner, type) {
+	if (!OAUTH_TYPES[type]) return { error: 'no sign-in for this type' };
+	let r = tool_result(sh(sprintf('%s auth-start %s %s', CLOUD, shq(owner == '' ? '-' : owner), shq(type))));
+	if (r.error) return r;
+	let m = match(r.output, /url=(https?:\/\/[^ \t\n]+)/);
+	return m ? { url: m[1] } : { error: 'no sign-in address' };
+}
+function cloud_auth_finish(owner, url) {
+	if (type(url) != 'string' || length(url) > 4096) return { error: 'invalid address' };
+	return tool_result(sh(sprintf('%s auth-finish %s %s', CLOUD, shq(owner == '' ? '-' : owner), shq(url))));
+}
 const CLOUD_MODES = { upload: 1, download: 1, mirror_up: 1, mirror_down: 1 };
 
 function kv_file(path) {
@@ -944,7 +974,7 @@ function me_cloud_allowed(u) { return u != 'root' && cursor().get('accounts', u,
 const APPS_TOOL = '/usr/sbin/shareos-apps';
 const NOTIFY = '/usr/sbin/shareos-notify';
 const NOTIFY_KEYS = [ 'email', 'smtp_host', 'smtp_tls', 'smtp_port', 'smtp_user', 'mail_from', 'mail_to', 'email_level',
-	'push', 'push_type', 'push_url', 'push_level', 'temp_max', 'disk_full' ];
+	'push', 'push_type', 'push_url', 'push_chat', 'push_level', 'temp_max', 'disk_full' ];
 
 function notify_json(args) {
 	let r = sh(NOTIFY + ' ' + join(' ', map(args, shq)));
@@ -1123,13 +1153,13 @@ function me_info(u) {
 	});
 	info.shares = mine;
 	info.host = read_trim('/proc/sys/kernel/hostname');
-	info.cloud = me_cloud_allowed(u);
+	info.cloud = area_on('cloud') && me_cloud_allowed(u);
 	info.files = u != 'root' && role != 'admin' && files_allowed(u);
-	info.apps = role == 'admin' ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, icon_data: a.icon_data, description: a.description,
+	info.apps = role == 'admin' || !area_on('apps') ? [] : map(apps_for(u), (a) => ({ id: a.id, name: a.name, entry: a.entry, icon: a.icon, icon_data: a.icon_data, description: a.description,
 		permissions: a.permissions ?? [], window: a.window }));
 	info.apps_server = apps_server();
 	info.ui = u == 'root' ? null : { theme: c.get('accounts', u, 'theme') ?? null, accent: c.get('accounts', u, 'accent') ?? null };
-	info.paperless = !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
+	info.paperless = area_on('paperless') && !!c.get('paperless', 'global', 'url') && c.get('paperless', 'global', 'enabled') != '0' && !!home;
 	return info;
 }
 
@@ -1225,10 +1255,17 @@ return {
 		},
 
 		set: {
-			args: { lang: '', logo: false, theme: '', accent: '' },
+			args: { lang: '', logo: false, theme: '', accent: '', areas: {} },
 			call: function(req) {
 				let c = cursor();
 				c.set('shareos', 'ui', 'ui');   // section may be missing in configs from older versions
+				let changed = {};
+				if (type(req.args.areas) == 'object')
+					for (let a in AREAS) if (req.args.areas[a] != null) {
+						let v = req.args.areas[a] ? '1' : '0';
+						if ((c.get('shareos', 'ui', 'area_' + a) ?? '1') != v) changed[a] = v;
+						c.set('shareos', 'ui', 'area_' + a, v);
+					}
 				if (req.args.lang != null && req.args.lang != '') {
 					if (!match(req.args.lang, /^[a-z]{2}(-[A-Za-z]{2})?$/)) return { error: 'invalid language' };
 					c.set('shareos', 'ui', 'lang', req.args.lang);
@@ -1244,6 +1281,10 @@ return {
 					c.set('shareos', 'ui', 'accent', req.args.accent);
 				}
 				c.commit('shareos');
+				if (length(changed)) {
+					system('/usr/sbin/shareos-cron sync >/dev/null 2>&1');
+					if (changed.apps) system('/etc/init.d/S51apps ' + (changed.apps == '1' ? 'start' : 'stop') + ' >/dev/null 2>&1');
+				}
 				return ui_settings();
 			}
 		}
@@ -1306,6 +1347,22 @@ return {
 	},
 
 	'shareos.system': {
+		// a root shell in the browser (admins only): ttyd on its own port with
+		// a secret path, for one client, ends when that client leaves
+		terminal: {
+			args: { tls: false, theme: {} },
+			call: function(req) {
+				let th = req.args.theme, t = {};
+				if (type(th) == 'object')
+					for (let k in [ 'background', 'foreground', 'cursor', 'selectionBackground' ])
+						if (match(th[k] ?? '', /^#[0-9a-fA-F]{3,8}$/)) t[k] = th[k];
+				let r = sh(sprintf('/usr/sbin/shareos-terminal start %s %s', req.args.tls ? 'tls' : 'plain', shq(length(t) ? sprintf('%J', t) : '')));
+				let m = match(r.out, /port=([0-9]+) path=([0-9a-f]{32})/);
+				if (!m) return { error: trim(replace(r.out, /^error: /, '')) || 'terminal did not start' };
+				return { port: +m[1], path: m[2] };
+			}
+		},
+
 		info: {
 			call: function() {
 				let up = split(read_trim('/proc/uptime') ?? '0', ' ');
@@ -2075,6 +2132,24 @@ return {
 			}
 		},
 
+		cloud_auth_start: {
+			args: { type: '' },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				return cloud_auth_start(u, req.args.type);
+			}
+		},
+
+		cloud_auth_finish: {
+			args: { url: '' },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
+				return cloud_auth_finish(u, req.args.url);
+			}
+		},
+
 		cloud_remote_del: {
 			args: { name: '' },
 			call: function(req) {
@@ -2198,7 +2273,7 @@ return {
 			args: { url: '', enabled: true, interval: 2, after: '' },
 			call: function(req) {
 				let a = req.args, c = cursor();
-				if (a.url != null && a.url != '' && !match(a.url, /^https?:\/\/[A-Za-z0-9.:\[\]_-]+(:[0-9]+)?(\/[^\s]*)?$/)) return { error: 'invalid URL (http://… or https://…)' };
+				if (a.url != null && a.url != '' && !match(a.url, /^https?:\/\/[A-Za-z0-9.:\[\]_-]+(:[0-9]+)?(\/[^[:space:]]*)?$/)) return { error: 'invalid URL (http://… or https://…)' };
 				if (a.interval != null && !(+a.interval >= 1 && +a.interval <= 60)) return { error: 'interval 1–60 minutes' };
 				if (a.after && !(a.after in { delete: 1, keep: 1 })) return { error: 'invalid value' };
 				c.set('paperless', 'global', 'global');
@@ -2298,6 +2373,16 @@ return {
 		remote_add: {
 			args: { name: '', type: '', params: {}, raw: '' },
 			call: function(req) { let r = cloud_remote_add('', req.args); return r.error ? r : { ok: true, remotes: cloud_remotes('-') }; }
+		},
+
+		auth_start: {
+			args: { type: '' },
+			call: function(req) { return cloud_auth_start('', req.args.type); }
+		},
+
+		auth_finish: {
+			args: { url: '' },
+			call: function(req) { return cloud_auth_finish('', req.args.url); }
 		},
 
 		remote_del: {
@@ -2756,7 +2841,7 @@ return {
 				if (a.sources != null) {
 					if (type(a.sources) != 'array' || length(a.sources) > 10) return { error: 'invalid sources' };
 					for (let u in a.sources)
-						if (!match(u, /^https:\/\/[A-Za-z0-9.:\[\]_-]+(\/[^\s"'<>]*)?$/)) return { error: 'invalid source (https://… only): ' + u };
+						if (!match(u, /^https:\/\/[A-Za-z0-9.:\[\]_-]+(\/[^[:space:]"'<>]*)?$/)) return { error: 'invalid source (https://… only): ' + u };
 				}
 				c.set('apps', 'store', 'store');
 				if (a.channel) c.set('apps', 'store', 'channel', a.channel);
@@ -2794,23 +2879,24 @@ return {
 		// smtp_pass / push_token: null = keep, '' = remove
 		set: {
 			args: { email: false, smtp_host: '', smtp_tls: '', smtp_port: '', smtp_user: '', smtp_pass: '', mail_from: '', mail_to: '', email_level: '',
-				push: false, push_type: '', push_url: '', push_token: '', push_level: '', temp_max: 55, disk_full: 90 },
+				push: false, push_type: '', push_url: '', push_token: '', push_chat: '', push_level: '', temp_max: 55, disk_full: 90 },
 			call: function(req) {
 				let a = req.args, c = cursor();
-				let mail = (x) => x == null || x == '' || match(x, /^[^@\s,;]+@[^@\s,;]+$/);
+				let mail = (x) => x == null || x == '' || match(x, /^[^@[:space:],;]+@[^@[:space:],;]+$/);
 				if (a.smtp_host != null && a.smtp_host != '' && !match(a.smtp_host, /^[A-Za-z0-9.-]{1,253}$/)) return { error: 'invalid mail server' };
 				if (a.smtp_tls != null && a.smtp_tls != '' && !(a.smtp_tls in { starttls: 1, ssl: 1, none: 1 })) return { error: 'invalid encryption' };
 				if (a.smtp_port != null && a.smtp_port != '' && !(match('' + a.smtp_port, /^[0-9]+$/) && +a.smtp_port >= 1 && +a.smtp_port <= 65535)) return { error: 'invalid port' };
 				if (!mail(a.mail_from)) return { error: 'invalid sender address' };
 				for (let r in split(a.mail_to ?? '', /[ ,;]+/)) if (length(r) && !mail(r)) return { error: 'invalid recipient: ' + r };
 				for (let k in [ 'email_level', 'push_level' ]) if (a[k] != null && a[k] != '' && !(a[k] in { info: 1, warn: 1, error: 1 })) return { error: 'invalid level' };
-				if (a.push_type != null && a.push_type != '' && !(a.push_type in { ntfy: 1, gotify: 1, webhook: 1 })) return { error: 'invalid push service' };
-				if (a.push_url != null && a.push_url != '' && !match(a.push_url, /^https?:\/\/[^\s'"]{3,250}$/)) return { error: 'invalid push address' };
+				if (a.push_type != null && a.push_type != '' && !(a.push_type in { ntfy: 1, gotify: 1, telegram: 1, webhook: 1 })) return { error: 'invalid push service' };
+				if (a.push_chat != null && a.push_chat != '' && !match('' + a.push_chat, /^-?[0-9]{1,20}$|^@[A-Za-z0-9_]{5,32}$/)) return { error: 'invalid chat ID' };
+				if (a.push_url != null && a.push_url != '' && !match(a.push_url, /^https?:\/\/[^[:space:]'"]{3,250}$/)) return { error: 'invalid push address' };
 				if (a.temp_max != null && !(+a.temp_max >= 40 && +a.temp_max <= 70)) return { error: 'temperature limit: 40 … 70 °C' };
 				if (a.disk_full != null && !(+a.disk_full >= 50 && +a.disk_full <= 99)) return { error: 'full limit: 50 … 99 %' };
 				for (let k in [ 'smtp_user', 'smtp_pass', 'push_token' ]) if (a[k] != null && match(a[k], /[\n\r]/)) return { error: 'invalid characters' };
 				if (c.get('shareos', 'notify') != 'notify') c.set('shareos', 'notify', 'notify');
-				for (let k in [ 'smtp_host', 'smtp_tls', 'smtp_port', 'smtp_user', 'mail_from', 'mail_to', 'email_level', 'push_type', 'push_url', 'push_level' ])
+				for (let k in [ 'smtp_host', 'smtp_tls', 'smtp_port', 'smtp_user', 'mail_from', 'mail_to', 'email_level', 'push_type', 'push_url', 'push_chat', 'push_level' ])
 					if (a[k] != null) c.set('shareos', 'notify', k, '' + a[k]);
 				for (let k in [ 'smtp_pass', 'push_token' ]) if (a[k] != null) c.set('shareos', 'notify', k, a[k]);
 				if (a.email != null) c.set('shareos', 'notify', 'email', a.email ? '1' : '0');
@@ -2823,6 +2909,9 @@ return {
 		},
 		test: {
 			call: function() { return notify_json([ 'test' ]); }
+		},
+		telegram_chats: {
+			call: function() { return notify_json([ 'telegram-chats' ]); }
 		}
 	},
 

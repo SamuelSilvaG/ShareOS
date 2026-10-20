@@ -80,10 +80,12 @@ config notify 'notify'
 	# lowest level sent: info, warn or error
 	option email_level 'warn'
 	option push '0'
-	# ntfy (https://ntfy.sh/<topic>), gotify (server address) or webhook (JSON POST)
+	# ntfy (https://ntfy.sh/<topic>), gotify (server address), telegram (bot
+	# token in push_token, chat ID in push_chat) or webhook (JSON POST)
 	option push_type 'ntfy'
 	option push_url ''
 	option push_token ''
+	option push_chat ''
 	option push_level 'warn'
 	# limits for the checks
 	option temp_max '55'

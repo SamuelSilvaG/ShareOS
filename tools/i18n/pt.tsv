@@ -1171,3 +1171,115 @@ P200	Nome: $1
 E931	Acesso a ficheiros
 E932	Pode ler, alterar e apagar os ficheiros a que o utilizador com sessão iniciada chega no explorador – com os seus direitos, enquanto a app estiver aberta.
 P201	Acesso a ficheiros: $1
+E933	Caixa inacessível
+P202	Erro ubus $1
+E934	Tráfego de rede dos últimos 10 minutos
+E935	ainda não ligado
+E936	Ainda não há pasta de entrada. Primeiro indique acima o endereço do Paperless.
+P203	pessoal: $1 · desligado
+E937	partilhado · desligado
+P204	entrada pessoal de $1 · token $2
+E938	Ainda nada transferido.
+E939	nenhuma etiqueta encontrada
+E940	Partilha Windows (SMB)
+E941	Google Fotos
+E942	DOMÍNIO (OPCIONAL)
+E943	PALAVRA-PASSE DE APLICAÇÃO
+P205	Partilha $1
+E944	ainda não executado
+E945	rclone não instalado
+E946	a transferir e verificar …
+P206	Erro: $1
+E947	Primeiro, em
+E948	configure uma unidade.
+E949	As credenciais ficam encriptadas na caixa.
+E950	No Google Drive, OneDrive, Dropbox e serviços semelhantes inicia sessão no navegador; para outros serviços cole a secção pronta do «rclone config».
+E951	As tarefas usam pouca memória (2 transferências em simultâneo); um limite de largura de banda como
+E952	As suas credenciais ficam na sua pasta pessoal; o que transfere conta para o seu limite de armazenamento.
+P207	de $1
+E953	Depois de iniciar sessão, o navegador mostra «página inacessível» com um endereço como
+E954	. Copie este endereço completo da barra de endereços e cole-o aqui:
+P208	Conta «$1» adicionada.
+P209	Conta: $1
+P210	Tarefa «$1» guardada.
+P211	Tarefa: $1
+P212	Palavra-passe: $1
+P213	$1 · não montado
+W39	 · faltam $1
+P214	$1 · sistema de ficheiros não encontrado
+P215	contém: $1
+P216	O nome «$1» já está em uso.
+E955	A verificar o pacote novamente
+E956	A preparar o sistema para o reinício
+E957	Sistema de arranque: a apagar a flash
+E958	A escrever o sistema de arranque
+E959	A verificar o sistema de arranque
+E960	Kernel: a apagar a flash
+E961	A escrever o kernel
+E962	A verificar o kernel
+P217	$1 de $2
+E963	Telegram: crie um bot com o @BotFather no Telegram (/newbot), introduza aqui o token e guarde. Depois envie uma mensagem ao seu bot (ou adicione-o a um grupo) e clique em «Procurar ID do chat».
+E964	Procurar ID do chat
+E965	ID DO CHAT
+E966	TOKEN DO BOT (DO @BOTFATHER)
+E967	Telegram (bot)
+E968	ÁREAS
+E969	Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas, entradas do Paperless). Definições e dados mantêm-se; ligar repõe tudo.
+E970	Apps (loja, apps web, tarefas das apps)
+E971	Nuvem (sincronização com armazenamento na nuvem)
+E972	Paperless (pastas de entrada para o Paperless-ngx)
+E973	Área ligada.
+E974	Área desligada.
+P218	Área: $1
+P219	Ventoinha: $1
+P220	Ficheiro de firmware: $1
+P221	Idioma: $1
+P222	Partilha: $1
+P223	Utilizador: $1
+P224	$1: já não arranca ao ligar
+P225	$1: arranca ao ligar
+P226	A caixa muda para $1. Esta página abre depois o novo endereço e confirma a alteração. Se falhar, voltam as definições anteriores após $2 segundos.
+P227	Verificação falhou: $1
+E975	Sessão iniciada – agora «Adicionar».
+P228	Conta «$1» removida.
+P229	Tarefa «$1» iniciada.
+P230	Tarefa «$1» removida.
+E976	A conta é removida; os direitos nas partilhas deixam de existir.
+E977	A conta é removida; os direitos nas partilhas deixam de existir. A pasta pessoal mantém-se.
+W40	unidade USB
+W41	item(ns)
+E978	A unidade é desmontada e retirada da configuração. Os dados do disco mantêm-se até ser configurado de novo.
+P231	$1: montado
+P232	$1: desmontado
+P233	$1: removido
+E979	Unidade
+E980	Ainda nenhuma mensagem para o bot – guarde primeiro o token e depois escreva ao bot no Telegram.
+P234	Chat encontrado: $1 – agora guarde.
+P235	Telegram: $1
+P236	Pasta: $1
+P237	Apagar: $1
+E981	a transferir
+E982	a verificar
+E983	a instalar
+E984	Usa a internet
+E985	Carrega dados da internet (p. ex. serviços online, streams, mapas). Sem ligação à internet essas partes da app não funcionam.
+W42	todos os utilizadores
+E986	TERMINAL
+E987	Abrir terminal
+E988	Terminar
+E989	Uma shell como
+E990	diretamente na caixa – para diagnóstico e trabalho manual (BusyBox, uci, logread, mdadm, smartctl …).
+E991	A sessão é para uma janela e termina quando esta é fechada. Cuidado: comandos como root atuam de imediato e sem reciclagem.
+P238	Terminal: $1
+E992	As entradas pessoais precisam de um utilizador com pasta pessoal.
+P239	(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox e mais). O programa (cerca de 20 MB) vai para a área de apps do disco$1.
+E993	A sincronização na nuvem ainda não está configurada nesta caixa – pergunte ao administrador.
+P240	No $1 inicia sessão no navegador; a caixa guarda apenas um token de acesso, nenhuma palavra-passe.
+P241	1. Iniciar sessão em $1 ↗
+E994	sessão iniciada ✓
+E995	2. ENDEREÇO APÓS INICIAR SESSÃO
+E996	Inicie sessão primeiro (passos 1 e 2).
+P242	Início de sessão: $1
+P243	– $1. Não desligue a caixa.
+E997	A caixa não está a correr a partir da flash (
+E998	). As atualizações nesta página só funcionam após um arranque normal a partir da flash.

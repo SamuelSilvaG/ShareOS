@@ -58,12 +58,13 @@ Version in brackets = first release with the feature.
 
 **Firmware and system**
 - Online updates from GitHub Releases: checked every 6 hours, SHA-256 verified, progress for download, check and installation (beta.1)
-- First installation from the Alt-F or D-Link web interface: the `.bin` fetches the system from a USB stick or from GitHub (beta.7)
+- First installation from the Alt-F or D-Link web interface: the `.bin` fetches the system from a USB stick or from GitHub (beta.7; tested on real hardware, step by step: [SWITCHING.md](docs/SWITCHING.md) · [UMSTIEG.md](docs/UMSTIEG.md))
 - Back to Alt-F (or any D-Link `.bin`) from the firmware page, checked and read back (beta.7)
 - First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP
 - HTTPS with a self-signed certificate that follows name and IP, own certificate possible
 - Reset button: access reset (5–10 s: network, root password, certificate) or factory reset (≥ 15 s), USB button removes USB drives (beta.9)
-- Messages: RAID, volumes, temperature, SMART, updates, failed cloud jobs and app tasks – in the interface, by e-mail (SMTP) and push (ntfy, Gotify, webhook) (beta.9)
+- Messages: RAID, volumes, temperature, SMART, updates, failed cloud jobs and app tasks – in the interface, by e-mail (SMTP) and push (ntfy, Gotify, webhook) (beta.9), Telegram bot (beta.12)
+- Terminal in the browser (System → Terminal, root shell, beta.12); Apps, Cloud and Paperless can be switched off (beta.12)
 - Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256), messages that can be closed
 - Look: light/dark/system, accent colours, tiles or tables, per user
 - 10 languages: English, German, Chinese, Hindi, Spanish, French, Arabic (right to left), Bengali, Portuguese, Russian (beta.7; more: [docs/TRANSLATING.md](docs/TRANSLATING.md))

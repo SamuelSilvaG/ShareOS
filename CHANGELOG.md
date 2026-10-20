@@ -4,6 +4,18 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.1.0-beta.12
+
+- **Terminal (System → Terminal):** a root shell in the browser (ttyd), in the look of the interface. One window per start, secret address, ends when the window is closed (or after 90 seconds without anyone connecting); over HTTPS with the certificate of the box.
+- **Switch areas off (System → Appearance):** Apps, Cloud and Paperless can be switched off – the tab disappears (also in "My ShareOS"), the background work rests (apps web server and app tasks, scheduled cloud jobs, Paperless inboxes); settings and data stay.
+- **Messages over Telegram:** bot from @BotFather, token and chat ID; "Find chat ID" reads it from the bot. The token is never on a command line.
+- **Cloud:** Google Drive, Google Photos, OneDrive, Dropbox, pCloud, Box and Yandex Disk directly in the list, with sign-in in the browser (no password stored, only a token; the address the browser ends up on after signing in is pasted back). Also Backblaze B2, MEGA, Koofr, FTP and Windows shares (SMB). Gmail is e-mail, not cloud storage – Google Drive or Google Photos are the storage services of Google.
+- **Apps may use the internet:** the store shows "Uses the internet" for apps that declare it (`"internet": true`).
+- **Translations:** about 90 texts that stayed German in all other languages are translated (cloud, Paperless, storage, update steps, network change, file browser, messages); a new check (`tests/check-i18n-coverage.js`) finds German texts without translation.
+- Dates with the year (e.g. "Store as of 20.10.2026, 08:45").
+- Fix: addresses containing an "s" were refused in some fields (ntfy push address, e-mail addresses, store sources, Paperless URL) – a regex class problem; a new check prevents it.
+- Docs: switching Alt-F ↔ ShareOS step by step ([SWITCHING.md](docs/SWITCHING.md)), tested on real hardware; the serial console needs three soldered wires.
+
 ## 0.1.0-beta.11
 
 - **App permission `files`:** an app may work with the folders of the box – exactly those the signed-in user reaches in the file browser (personal folder; admins: all volumes and USB drives), with his rights: list, new folder, rename, copy, move, delete, read and write files. ShareOS shows the permission before installing ("Access to files") and hands the app a grant when it is opened (bound to the app and the account, 8 hours, ends when the app is removed). For apps: `ShareOS.fs` in the app SDK. First users: ShareCommander 1.1 (two-pane file manager on the box) and Webpad 1.3 (open and save on the box).

@@ -6,9 +6,9 @@ Stand: 18.10.2026. ShareOS ist in der **Testphase**. Es gibt zwei Wege zur
 Installation:
 
 - **Weg A – über die Firmware-Seite von Alt-F oder D-Link** (ohne serielle
-  Konsole, ab 0.1.0-beta.7). Auf echter Hardware noch nicht erprobt: beim
-  ersten Mal am besten die serielle Konsole als Rückfallebene anschließen.
-- **Weg B – über die serielle Konsole** (Stiftleiste JP1, ohne Löten, siehe
+  Konsole, ab 0.1.0-beta.7). Auf echter Hardware erprobt (hin und zurück,
+  20.10.2026) – Schritt für Schritt in [UMSTIEG.md](UMSTIEG.md).
+- **Weg B – über die serielle Konsole** (Stiftleiste JP1, drei Kabel anlöten, siehe
   [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): erprobt, Schritte 1–3 unten.
 
 Ist ShareOS einmal installiert, laufen Updates über die Weboberfläche. Zurück
@@ -53,12 +53,14 @@ einschalten.
   Box; Pin 2 (3,3 V) bleibt frei. Einstellung 115200 8N1
 - einen PC mit TFTP-Server, zum Beispiel `dnsmasq`
 
-### Serielle Konsole anschließen (ohne Löten)
+### Serielle Konsole anschließen (drei Kabel anlöten)
 
-JP1 sitzt neben dem USB-Anschluss und ist nicht bestückt. Es reicht, die
-Drähte des Adapters (Dupont-Kabel) durch die Lötaugen zu stecken und mit etwas
-Heißkleber zu sichern. Pin 1 ist das eckige Lötauge (Pfeil auf der Platine),
-zwischen Pin 1 und Pin 2 ist eine Lücke.
+JP1 sitzt neben dem USB-Anschluss und ist nicht bestückt. Eine Stiftleiste
+lässt sich nicht einfach durchstecken: In den Lötaugen steckt noch Lötzinn, sie
+müssten erst freigemacht werden (Entlötlitze/-pumpe). Einfacher ist es, drei
+Kabel (TX, RX, GND) direkt an die Lötaugen anzulöten und den 3,3-V-Pin frei zu
+lassen. Pin 1 ist das eckige Lötauge (Pfeil auf der Platine), zwischen Pin 1
+und Pin 2 ist eine Lücke.
 
 | Belegung von JP1 | So sieht es angeschlossen aus |
 |---|---|
@@ -254,6 +256,14 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 - **System → Meldungen**: E-Mail (Mailserver, STARTTLS/SSL, Benutzer, Passwort, Absender, Empfänger) und/oder Push (ntfy: `https://ntfy.sh/<thema>`, das Thema in der ntfy-App abonnieren; Gotify: Server und App-Token; Webhook). **Speichern**, dann **Testnachricht** – sie muss ankommen.
 - Eine Meldung auslösen: eine Platte des Spiegels ziehen (oder auf eine echte warten) – innerhalb von 10 Minuten erscheint „RAID md0 unvollständig“, oben steht „1 MELDUNG“, und sie wird verschickt. Nach der Reparatur erscheint sie als erledigt.
 - Von Hand prüfen: `shareos-notify check`, Liste: `shareos-notify list`.
+
+## 14c. Neu in beta.12
+
+- **Terminal:** System → Terminal → *Terminal öffnen*: eine Shell als root erscheint im Fenster (z. B. `uptime`, `logread | tail`). *Beenden* oder Seite verlassen beendet sie.
+- **Bereiche:** System → Darstellung → Bereiche: *Cloud* ausschalten – der Reiter CLOUD verschwindet, geplante Cloud-Aufträge laufen nicht mehr. Wieder einschalten.
+- **Telegram:** System → Meldungen → Push → Dienst *Telegram (Bot)*: Bot-Token von @BotFather eintragen, speichern, dem Bot schreiben, *Chat-ID suchen*, speichern, *Testnachricht*.
+- **Cloud:** Cloud → Konto hinzufügen → *Google Drive*: „Bei Google Drive anmelden ↗“, anmelden, die Adresse aus der Browserzeile (http://127.0.0.1:53682/…) einfügen, *Übernehmen*, *Hinzufügen*, *Prüfen*.
+- **Sprache:** System → Darstellung → Sprache *English*: alle Seiten durchklicken – es sollte kein Deutsch mehr zu sehen sein (sonst Bildschirmfoto an Claude).
 
 ## 15. Tasten
 

@@ -6,9 +6,9 @@ As of 2026-10-18, ShareOS is in its **test phase**. There are two ways to
 install it:
 
 - **Way A – from the Alt-F or D-Link firmware page** (no serial console, from
-  0.1.0-beta.7 on). Not yet tried on real hardware: for the first time, best
-  keep the serial console connected as a safety net.
-- **Way B – over the serial console** (header JP1, no soldering, see
+  0.1.0-beta.7 on). Tested on real hardware (there and back, 20 Oct 2026) –
+  step by step in [SWITCHING.md](SWITCHING.md).
+- **Way B – over the serial console** (header JP1, three soldered wires, see
   [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): tested, steps 1–3 below.
 
 Once ShareOS is installed, updates go through the web interface. Going back to
@@ -50,12 +50,13 @@ bundle to a USB stick, plug it in, switch the box off and on again.
   pin 2 (3.3 V) unconnected. Settings: 115200 8N1
 - a PC with a TFTP server, for example `dnsmasq`
 
-### Connecting the serial console (no soldering)
+### Connecting the serial console (three soldered wires)
 
-JP1 sits next to the USB port and is not populated. It is enough to push the
-adapter's wires (Dupont cables) through the holes and secure them with a little
-hot glue. Pin 1 is the square pad (arrow on the board); there is a gap between
-pin 1 and pin 2.
+JP1 sits next to the USB port and is not populated. A pin header cannot simply
+be pushed in: the holes are still filled with solder and would have to be
+cleared first (desoldering wick or pump). It is easier to solder three wires
+(TX, RX, GND) straight to the pads and leave the 3.3 V pin free. Pin 1 is the
+square pad (arrow on the board); there is a gap between pin 1 and pin 2.
 
 | JP1 pinout | What it looks like connected |
 |---|---|
@@ -251,6 +252,14 @@ their permissions.
 - **System → Messages**: e-mail (mail server, STARTTLS/SSL, user, password, sender, recipients) and/or push (ntfy: `https://ntfy.sh/<topic>`, subscribe to the topic in the ntfy app; Gotify: server and app token; webhook). **Save**, then **Test message** – it must arrive.
 - Provoke a message: pull a disk of a mirror (or wait for a real one) – within 10 minutes "RAID md0 degraded" appears, the header shows "1 MESSAGE" and it is sent. After the repair it is shown as resolved.
 - Check by hand: `shareos-notify check`, list: `shareos-notify list`.
+
+## 14c. New in beta.12
+
+- **Terminal:** System → Terminal → *Open terminal*: a root shell appears in the window (e.g. `uptime`, `logread | tail`). *End* or leaving the page ends it.
+- **Areas:** System → Appearance → Areas: switch *Cloud* off – the CLOUD tab disappears, scheduled cloud jobs no longer run. Switch it on again.
+- **Telegram:** System → Messages → Push → service *Telegram (bot)*: enter the bot token from @BotFather, save, write to the bot, *Find chat ID*, save, *Test message*.
+- **Cloud:** Cloud → add account → *Google Drive*: "Sign in at Google Drive ↗", sign in, paste the address from the browser bar (http://127.0.0.1:53682/…), *Apply*, *Add*, *Check*.
+- **Language:** System → Appearance → language *English*: click through all pages – no German should be visible.
 
 ## 15. Buttons
 

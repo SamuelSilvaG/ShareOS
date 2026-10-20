@@ -935,7 +935,73 @@
 		"Name speichern": "Save name",
 		"Name gespeichert.": "Name saved.",
 		"Zugriff auf Dateien": "Access to files",
-		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "May read, change and delete the files the signed-in user reaches in the file browser – with his rights, while the app is open."
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "May read, change and delete the files the signed-in user reaches in the file browser – with his rights, while the app is open.",
+		"Box nicht erreichbar": "Box not reachable",
+		"Netzwerkverkehr der letzten 10 Minuten": "Network traffic of the last 10 minutes",
+		"noch nicht verbunden": "not connected yet",
+		"Noch kein Eingangsordner. Zuerst oben die Adresse von Paperless eintragen.": "No inbox yet. First enter the address of Paperless above.",
+		"gemeinsam · aus": "shared · off",
+		"Noch nichts übertragen.": "Nothing transferred yet.",
+		"keine Tags gefunden": "no tags found",
+		"Windows-Freigabe (SMB)": "Windows share (SMB)",
+		"Google Fotos": "Google Photos",
+		"DOMÄNE (OPTIONAL)": "DOMAIN (OPTIONAL)",
+		"APP-PASSWORT": "APP PASSWORD",
+		"noch nicht gelaufen": "not run yet",
+		"rclone nicht installiert": "rclone not installed",
+		"wird geladen und geprüft …": "downloading and checking …",
+		"Zuerst unter": "First, under",
+		"ein Laufwerk einrichten.": "set up a drive.",
+		"Zugangsdaten bleiben verschlüsselt auf der Box.": "Credentials stay encrypted on the box.",
+		"Bei Google Drive, OneDrive, Dropbox und ähnlichen Diensten meldest du dich im Browser an; für andere Dienste den fertigen Abschnitt aus „rclone config“ einfügen.": "For Google Drive, OneDrive, Dropbox and similar services you sign in in the browser; for other services paste the finished section from “rclone config”.",
+		"Aufträge laufen mit wenig Speicher (2 Übertragungen gleichzeitig); eine Bandbreitengrenze wie": "Jobs run with little memory (2 transfers at a time); a bandwidth limit like",
+		"Deine Zugangsdaten liegen in deinem persönlichen Ordner; was du herunterlädst, zählt zu deinem Speicherlimit.": "Your credentials are kept in your personal folder; what you download counts towards your storage limit.",
+		"Nach der Anmeldung zeigt der Browser „Seite nicht erreichbar“ mit einer Adresse wie": "After signing in, the browser shows “page not reachable” with an address like",
+		". Diese komplette Adresse aus der Adresszeile kopieren und hier einfügen:": ". Copy this whole address from the address bar and paste it here:",
+		"Paket wird erneut geprüft": "Checking the package again",
+		"System wird für den Neustart bereitgelegt": "Preparing the system for the restart",
+		"Startsystem: Flash wird gelöscht": "Boot system: erasing flash",
+		"Startsystem wird geschrieben": "Writing the boot system",
+		"Startsystem wird geprüft": "Checking the boot system",
+		"Kernel: Flash wird gelöscht": "Kernel: erasing flash",
+		"Kernel wird geschrieben": "Writing the kernel",
+		"Kernel wird geprüft": "Checking the kernel",
+		"Telegram: In Telegram mit @BotFather einen Bot anlegen (/newbot), den Token hier eintragen und speichern. Dann dem eigenen Bot eine Nachricht schreiben (oder ihn in eine Gruppe aufnehmen) und „Chat-ID suchen“ klicken.": "Telegram: create a bot with @BotFather in Telegram (/newbot), enter the token here and save. Then send your bot a message (or add it to a group) and click “Find chat ID”.",
+		"Chat-ID suchen": "Find chat ID",
+		"CHAT-ID": "CHAT ID",
+		"BOT-TOKEN (VON @BOTFATHER)": "BOT TOKEN (FROM @BOTFATHER)",
+		"Telegram (Bot)": "Telegram (bot)",
+		"BEREICHE": "AREAS",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Switched off: the tab disappears, also for users in “My ShareOS”, and the background work rests (apps web server and app tasks, scheduled cloud jobs, Paperless inboxes). Settings and data stay; switching on brings everything back.",
+		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (app store, web apps, app tasks)",
+		"Cloud (Abgleich mit Cloud-Speichern)": "Cloud (sync with cloud storage)",
+		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (inboxes for Paperless-ngx)",
+		"Bereich eingeschaltet.": "Area switched on.",
+		"Bereich ausgeschaltet.": "Area switched off.",
+		"Angemeldet – jetzt „Hinzufügen“.": "Signed in – now “Add”.",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen.": "The account is removed; rights on shares are dropped.",
+		"Das Konto wird entfernt; Rechte an Freigaben entfallen. Der persönliche Ordner bleibt erhalten.": "The account is removed; rights on shares are dropped. The personal folder stays.",
+		"Das Laufwerk wird ausgehängt und aus der Konfiguration genommen. Die Daten auf der Platte bleiben erhalten, bis sie neu eingerichtet wird.": "The drive is unmounted and removed from the configuration. The data on the disk stays until it is set up again.",
+		"Laufwerk": "Drive",
+		"Noch keine Nachricht an den Bot – erst den Token speichern, dann dem Bot in Telegram schreiben.": "No message to the bot yet – first save the token, then write to the bot in Telegram.",
+		"wird geladen": "downloading",
+		"wird geprüft": "checking",
+		"wird installiert": "installing",
+		"Nutzt das Internet": "Uses the internet",
+		"Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.": "Loads data from the internet (e.g. online services, streams, maps). Without an internet connection these parts of the app do not work.",
+		"TERMINAL": "TERMINAL",
+		"Terminal öffnen": "Open terminal",
+		"Beenden": "End",
+		"Eine Shell als": "A shell as",
+		"direkt auf der Box – für Diagnose und Handarbeit (BusyBox, uci, logread, mdadm, smartctl …).": "right on the box – for diagnosis and manual work (BusyBox, uci, logread, mdadm, smartctl …).",
+		"Die Sitzung gilt für ein Fenster und endet, wenn es geschlossen wird. Vorsicht: Befehle als root wirken sofort und ohne Papierkorb.": "The session is for one window and ends when it is closed. Careful: commands as root take effect at once and without a recycle bin.",
+		"Persönliche Eingänge brauchen einen Benutzer mit persönlichem Ordner.": "Personal inboxes need a user with a personal folder.",
+		"Cloud-Sync ist auf dieser Box noch nicht eingerichtet – bitte den Administrator fragen.": "Cloud sync is not set up on this box yet – please ask the administrator.",
+		"angemeldet ✓": "signed in ✓",
+		"2. ADRESSE NACH DER ANMELDUNG": "2. ADDRESS AFTER SIGNING IN",
+		"Erst anmelden (Schritt 1 und 2).": "Sign in first (step 1 and 2).",
+		"Die Box läuft gerade nicht aus dem Flash (": "The box is not running from the flash right now (",
+		"). Updates über diese Seite gehen nur beim normalen Start aus dem Flash.": "). Updates on this page only work after a normal start from the flash."
 	},
 	"patterns": [
 		[
@@ -1745,6 +1811,174 @@
 		[
 			"^Dateizugriff: (.+)$",
 			"File access: $1"
+		],
+		[
+			"^ubus-Fehler (.+)$",
+			"ubus error $1"
+		],
+		[
+			"^persönlich: (.+) · aus$",
+			"personal: $1 · off"
+		],
+		[
+			"^persönlicher Eingang von (.+) · Token (.+)$",
+			"personal inbox of $1 · token $2"
+		],
+		[
+			"^Freigabe (.+)$",
+			"Share $1"
+		],
+		[
+			"^Fehler: (.+)$",
+			"Error: $1"
+		],
+		[
+			"^von (.+)$",
+			"by $1"
+		],
+		[
+			"^Konto „(.+)“ hinzugefügt\\.$",
+			"Account “$1” added."
+		],
+		[
+			"^Konto: (.+)$",
+			"Account: $1"
+		],
+		[
+			"^Auftrag „(.+)“ gespeichert\\.$",
+			"Job “$1” saved."
+		],
+		[
+			"^Auftrag: (.+)$",
+			"Job: $1"
+		],
+		[
+			"^Passwort: (.+)$",
+			"Password: $1"
+		],
+		[
+			"^(.+) · nicht eingehängt$",
+			"$1 · not mounted"
+		],
+		[
+			"^(.+) · Dateisystem nicht gefunden$",
+			"$1 · file system not found"
+		],
+		[
+			"^enthält: (.+)$",
+			"contains: $1"
+		],
+		[
+			"^Der Name „(.+)“ ist schon vergeben\\.$",
+			"The name “$1” is already taken."
+		],
+		[
+			"^([0-9.,]+ [KMGT]?B) von ([0-9.,]+ [KMGT]?B)$",
+			"$1 of $2"
+		],
+		[
+			"^Bereich: (.+)$",
+			"Area: $1"
+		],
+		[
+			"^Lüfter: (.+)$",
+			"Fan: $1"
+		],
+		[
+			"^Firmware-Datei: (.+)$",
+			"Firmware file: $1"
+		],
+		[
+			"^Sprache: (.+)$",
+			"Language: $1"
+		],
+		[
+			"^Freigabe: (.+)$",
+			"Share: $1"
+		],
+		[
+			"^Benutzer: (.+)$",
+			"User: $1"
+		],
+		[
+			"^(.+): startet nicht mehr beim Einschalten$",
+			"$1: no longer starts at power-on"
+		],
+		[
+			"^(.+): startet beim Einschalten$",
+			"$1: starts at power-on"
+		],
+		[
+			"^Die Box wechselt auf (.+)\\. Diese Seite öffnet danach die neue Adresse und bestätigt die Änderung\\. Klappt das nicht, gelten nach (\\d+) Sekunden wieder die bisherigen Einstellungen\\.$",
+			"The box switches to $1. This page then opens the new address and confirms the change. If that fails, the previous settings apply again after $2 seconds."
+		],
+		[
+			"^Prüfen fehlgeschlagen: (.+)$",
+			"Check failed: $1"
+		],
+		[
+			"^Konto „(.+)“ entfernt\\.$",
+			"Account “$1” removed."
+		],
+		[
+			"^Auftrag „(.+)“ gestartet\\.$",
+			"Job “$1” started."
+		],
+		[
+			"^Auftrag „(.+)“ entfernt\\.$",
+			"Job “$1” removed."
+		],
+		[
+			"^(.+): eingehängt$",
+			"$1: mounted"
+		],
+		[
+			"^(.+): ausgehängt$",
+			"$1: unmounted"
+		],
+		[
+			"^(.+): entfernt$",
+			"$1: removed"
+		],
+		[
+			"^Chat gefunden: (.+) – jetzt speichern\\.$",
+			"Chat found: $1 – now save."
+		],
+		[
+			"^Telegram: (.+)$",
+			"Telegram: $1"
+		],
+		[
+			"^Ordner: (.+)$",
+			"Folder: $1"
+		],
+		[
+			"^Löschen: (.+)$",
+			"Delete: $1"
+		],
+		[
+			"^Terminal: (.+)$",
+			"Terminal: $1"
+		],
+		[
+			"^\\(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox und mehr\\)\\. Das Programm \\(rund 20 MB\\) kommt in den Apps-Bereich auf der Platte( \\(.+\\))?\\.$",
+			"(Nextcloud, WebDAV, S3, SFTP, Google Drive, OneDrive, Dropbox and more). The program (about 20 MB) goes into the apps area on the disk$1."
+		],
+		[
+			"^Bei (.+) meldest du dich im Browser an; auf der Box wird nur ein Zugangsschlüssel gespeichert, kein Passwort\\.$",
+			"For $1 you sign in in the browser; the box only stores an access token, no password."
+		],
+		[
+			"^1\\. Bei (.+) anmelden ↗$",
+			"1. Sign in at $1 ↗"
+		],
+		[
+			"^Anmelden: (.+)$",
+			"Sign in: $1"
+		],
+		[
+			"^– (.+)\\. Box nicht ausschalten\\.$",
+			"– $1. Do not switch the box off."
 		]
 	],
 	"words": [
@@ -1941,6 +2175,25 @@
 		[
 			"\\bGruppe\\b",
 			"group",
+			"g"
+		],
+		[
+			" · noch ([0-9][^ ]* [a-zA-Z]+)$",
+			" · $1 left"
+		],
+		[
+			"\\bUSB-Laufwerk\\b",
+			"USB drive",
+			"g"
+		],
+		[
+			"\\bEintrag/Einträge\\b",
+			"entry/entries",
+			"g"
+		],
+		[
+			"\\balle Benutzer\\b",
+			"all users",
 			"g"
 		]
 	]

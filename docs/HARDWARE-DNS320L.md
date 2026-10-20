@@ -54,7 +54,8 @@ Linux NAND driver expects. The rest of the dump is valid.
 
 There is no safe way to run an untested kernel without a serial console.
 The JP1 serial header is not populated (3.3 V TTL, 115200 8N1, GND/TX/RX);
-a pin header pressed into the holes works without soldering for diagnostics.
+the holes are filled with solder, so a pin header does not go in without
+clearing them first – soldering three wires (GND/TX/RX) to the pads is easier.
 With the console, ShareOS can be started from RAM via `rcvr`/TFTP or
 `tftpboot` + `bootm` without touching the flash.
 
@@ -85,8 +86,8 @@ nothing about whether the ShareOS kernel boots from U-Boot.
 
 JP1 next to the USB port, pins `[4 3 2 _ 1]`: 4 = TX (box), 3 = GND,
 1 = RX (box), 2 = 3.3 V (leave unconnected). 115200 8N1. Adapter RXD → pin 4,
-TXD → pin 1, GND → pin 3. Pin 1 is the square pad; no soldering needed – wires
-pushed through the holes and held with hot glue work fine.
+TXD → pin 1, GND → pin 3. Pin 1 is the square pad. The holes are filled with
+solder: three wires soldered to the pads (pin 3, 4 and 1) are the easy way.
 
 | JP1 pinout | Connected | Board (DNS-320L rev A3) |
 |---|---|---|

@@ -23,7 +23,7 @@ direkt aus der Git-Historie.*
 | | Jan (Initiator) | Claude (KI) |
 |---|---|---|
 | Ziele & Richtung | Alt-F modernisieren, GUI im Stil seines Intranets, Updates über GitHub, Cloud, Paperless | Vorschläge mit Abwägungen (OpenWrt vs. Alt-F-Basis, CGI vs. rpcd/ucode, Partitionierung) |
-| Entscheidungen | „Alte Oberfläche komplett ersetzen“, „erst das Fundament“, „kein OpenWrt“, „nicht löten“, Assistent *und* manueller Weg | – |
+| Entscheidungen | „Alte Oberfläche komplett ersetzen“, „erst das Fundament“, „kein OpenWrt“, so wenig löten wie möglich, Assistent *und* manueller Weg | – |
 | Code | 1 Commit: Import von Alt-F | 26 Commits, rund 5 500 neue Zeilen (Build-System, Device Tree, Init, Updater, Backend, GUI, Tests, Doku) |
 | Hardware | Seriellen Adapter angeschlossen, U-Boot bedient, Befehle ausgeführt, Logs zurückgeschickt, Platten eingebaut | Jeden Befehl vorgegeben, jedes Log ausgewertet, Ursachen gefunden |
 | Tests | Echte Box (DNS-320L rev A3) | Emulator (qemu-user), Testsuiten mit simulierter Box und virtuellen Platten |
@@ -49,7 +49,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 
 | Zeit | Ereignis |
 |---|---|
-| ~11:00 | Jan lötet einen USB-TTL-Adapter an die unbestückte Stiftleiste JP1 an. Claude führt durch: Pinbelegung, vertauschte RX/TX-Leitungen, eine wackelige Masse. |
+| ~11:00 | Jan lötet drei Kabel eines USB-TTL-Adapters an die unbestückte Stiftleiste JP1 (in den Lötaugen steckt Lötzinn, eine Stiftleiste passt nicht durch). Claude führt durch: Pinbelegung, vertauschte RX/TX-Leitungen, eine wackelige Masse. |
 | ~12:15 | Das Unterbrechen des Autoboots klappt nicht. Claude findet im U-Boot-Code die D-Link-Eigenheit: **Leertaste, dann 1**. |
 | ~12:30 | TFTP-Timeouts: Ursache ist die Firewall (ufw) auf Jans PC. |
 | 12:44 | **ShareOS startet zum ersten Mal auf der Box**, aus dem RAM, ohne etwas zu flashen. Gigabit, MAC-Adresse, Lüfter, Temperatur, Taster und Weboberfläche funktionieren. |
@@ -123,6 +123,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 08:20 | Jan schickt vier Apps (ShareCommander, WinWeb Player, SheetOS, DevBox). Claude passt sie an die App-Plattform an, korrigiert Fehler (SheetOS rechnete keine Formeln, ZIPs waren JSON) und testet alle im Emulator mit Chromium. |
 | 08:30 | Damit der Player in großen Dateien spulen kann: ein kleiner Patch für uhttpd (Range-Header an CGI-Skripte) und Byte-Bereiche im Datei-CGI. |
 | 08:34 | Jan: ShareCommander und Webpad sollen auf die Box zugreifen. Claude baut die App-Berechtigung `files` (`ShareOS.fs`): ein Schlüssel je App und Konto, alle Prüfungen in rpcd mit den Rechten des Benutzers. ShareCommander zeigt jetzt Ordner der Box, Webpad speichert dort. |
+| 08:52 | Jans nächste Liste: Internet für Apps, Webpad-Absturz beim Schließen, Umstiegsanleitung, Löt-Korrektur, Übersetzungen, Web-Terminal, Bereiche abschaltbar, Jahreszahl, Cloud-Anbieter, Telegram. Claude arbeitet sie der Reihe nach ab: Telegram-Bot, Google-Anmeldung über die Box (rclone authorize, die Adresse aus der Browserzeile wird zurückgegeben), Bereiche, ttyd als Terminal, rund 90 Übersetzungen mit einem neuen Prüfskript. Nebenbei gefunden: In ucode-Regex-Klassen ist `\s` kein Leerraum, sondern ein „s“ – ntfy-Adressen wurden abgelehnt. |
 
 ## Bemerkenswerte Problemlösungen
 
@@ -211,7 +212,7 @@ Spiegel und ein verfügbares Update.*
 - 27 Commits, davon 26 von Claude
 - rund 5 500 neue Zeilen: Build/Board 1 300, Backend + GUI 2 900, Tests 370, Doku 500
 - 18 Tests für den Updater (inklusive kompletter Installation auf einer simulierter Box), 21 Prüfungen der Schnittstelle im ARM-Emulator, Speicher-Tests mit virtuellen Platten
-- 0 Lötstellen, 0 unbrauchbare Boxen
+- 3 Lötstellen (die serielle Konsole), 0 unbrauchbare Boxen
 
 ## Wie gearbeitet wurde
 
