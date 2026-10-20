@@ -161,6 +161,17 @@ if [ "$CHECK" = "--check" ]; then
 	t "bin: write needs confirm" "$(rpc $SID shareos.update bin_write)" "'confirm' in d['result'][1]['error']"
 	t "bin: write refused outside a DNS-320L" "$(rpc $SID shareos.update bin_write '{"confirm":true}')" "'not a DNS-320L' in d['result'][1]['error']"
 	t "bin: upload removed after the attempt" "$(rpc $SID shareos.update bin_info)" "'no uploaded' in d['result'][1]['error']"
+	# update package (.sysupgrade.tar, ~16 MB) without internet: upload over
+	# HTTPS (uhttpd answered 413 when the body ended on a full read buffer,
+	# which TLS records make likely – patches/uhttpd/0004)
+	TAR=$(ls -t "$OUT"/images/ShareOS-*-DNS-320L-rev-Ax.sysupgrade.tar | head -1)
+	for i in 1 2; do
+		U=$(rpc $SID shareos.update local_ticket | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][1]['url'])")
+		t "tar: upload of the full package over HTTPS ($i)" "$(curl -sk -o /dev/null -w '{"c":%{http_code}}' -H 'Expect:' --data-binary @"$TAR" -H 'Content-Type: application/octet-stream' "https://127.0.0.1:$((PORT+363))$U")" "d['c']==200"
+		t "tar: uploaded file complete ($i)" "{\"n\":$(stat -c %s "$R/tmp/shareos-fw/upload.tar" 2>/dev/null || echo 0)}" "d['n']==$(stat -c %s "$TAR")"
+	done
+	rm -f "$R/tmp/shareos-fw/upload.tar"
+	t "a header larger than the buffer still gets 413" "$(curl -sk -o /dev/null -w '{"c":%{http_code}}' -H "X-Long: $(head -c 5000 /dev/zero | tr '\0' a)" "https://127.0.0.1:$((PORT+363))/")" "d['c']==413"
 	st() { curl -s -w '\n%{http_code}' "http://127.0.0.1:$PORT/cgi-bin/status$1" | python3 -c "import json,sys; b,c=sys.stdin.read().rsplit('\n',1); print(json.dumps({'c':int(c),'b':json.loads(b) if b.strip() else None}))"; }
 	t "widget status off by default" "$(st '?token=0123456789abcdef0123456789abcdef')" "d['c']==404"
 	W=$(rpc $SID shareos.widget set '{"enabled":true}')
