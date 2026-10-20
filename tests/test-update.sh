@@ -175,5 +175,14 @@ o=$(run apply local);    check "local: apply flashes the uploaded version" "$o" 
 check "local: staged version is the uploaded one" "{\"v\":\"$(cat "$ROOT/overlay/upgrade/version")\"}" "d['v']=='0.2.0-beta.1'"
 run cancel >/dev/null
 
+# the box from /tmp/sys/board.env (S05board): a DNS-325 takes DNS-325 release files
+sed -i "s|option api .*|option api '$API'|" "$ROOT/etc/config/shareos"
+mkdir -p "$ROOT/tmp/sys"
+printf 'BOARD_ID="dns325"\nBOARD_FWNAME="DNS-325-rev-Ax"\nBOARD_MODEL="DNS-325"\n' > "$ROOT/tmp/sys/board.env"
+o=$(run check);          check "board.env: a DNS-325 looks for DNS-325 files (none with checksum here), not DNS-320L ones" "$o" "d['fwname']=='DNS-325-rev-Ax' and d['releases']==[]"
+run download v0.1.0 >/dev/null
+o=$(run apply v0.1.0);   check "board.env: no DNS-325 bundle installed on it" "$o" "d['state']=='error'"
+rm -f "$ROOT/tmp/sys/board.env"
+
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

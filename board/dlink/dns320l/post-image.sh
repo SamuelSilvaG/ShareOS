@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-# ShareOS post-image (DNS-320L): builds the firmware file in the D-Link
-# container format, flashable / "TryIt"-able from the stock web UI, Alt-F
-# and ShareOS. Replaces Alt-F's mkfw.sh for this board.
+# ShareOS post-image (D-Link Kirkwood models: DNS-320L, DNS-320 rev A/B,
+# DNS-325): builds the firmware files in the D-Link container format,
+# flashable / "TryIt"-able from the stock web UI, Alt-F and ShareOS, and the
+# sysupgrade bundles. Replaces Alt-F's mkfw.sh for these boards.
 #
 # Layout and limits (stock U-Boot, see legacy/alt-f/mkfw.sh NOTE-2):
 #   uImage  partition 5 MB, U-Boot reads 0x300000 -> uImage   <= 3145728
@@ -17,26 +18,25 @@ MKIMAGE="$HOST_DIR/bin/mkimage"
 FW="$HOST_DIR/bin/dns323-fw"
 
 VERSION="$("$TOP_DIR/scripts/version.sh")"
-NAME="DNS-320L-rev-Ax"
-OUT="ShareOS-${VERSION}-${NAME}.bin"
-
 KERNEL_MAX=3145728
 INITRD_MAX=3145728
 
-# D-Link signature for the DNS-320L rev A (legacy/alt-f/mkfw.sh index 8)
-PROD=0 CUST=8 MODEL=11 SUB=1 NVER=1 TYPE=6
-
-ZIMAGE="$B/zImage.kirkwood-dns320l"     # zImage with appended DTB
-[ -f "$ZIMAGE" ] || { echo "post-image: $ZIMAGE missing"; exit 1; }
+# The Kirkwood models: one kernel, one initramfs and one system for all, a
+# uImage per model (zImage + its device tree, U-Boot passes none) and a .bin
+# with the D-Link signature of the model (legacy/alt-f/mkfw.sh).
+#   firmware name     device tree        product custom model sub nver type
+MODELS="
+DNS-320L-rev-Ax   kirkwood-dns320l   0 8 11 1 1 6
+DNS-320-rev-Bx    kirkwood-dns320b   0 8 12 1 1 5
+DNS-320-rev-Ax    kirkwood-dns320    0 8  7 2 0 4
+DNS-325-rev-Ax    kirkwood-dns325    0 8  5 2 0 3
+"
 
 KVER=$(sed -n 's/^BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="\(.*\)"/\1/p' "$BR2_CONFIG")
 
 # small initramfs (rescue system + UBI loader) for the 'ramdisk' partition
 "$BOARD_DIR/mk-initramfs.sh" "$TARGET_DIR" "$B" "$HOST_DIR" "$BOARD_DIR"
 [ -s "$B/rootfs.squashfs" ] || { echo "post-image: rootfs.squashfs missing"; exit 1; }
-
-"$MKIMAGE" -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 \
-	-n "ShareOS-${VERSION}, kernel ${KVER}" -d "$ZIMAGE" "$B/uImage"
 
 "$MKIMAGE" -A arm -O linux -T ramdisk -C none -a 0x00800000 -e 0x00800000 \
 	-n "ShareOS-${VERSION}, initrd" -d "$B/initramfs.cpio.xz" "$B/urootfs"
@@ -50,35 +50,55 @@ check_size() {
 	fi
 	echo "post-image: $(basename "$f") $sz bytes, $((max - sz)) bytes free"
 }
-check_size "$B/uImage" $KERNEL_MAX
 check_size "$B/urootfs" $INITRD_MAX
 
-rm -f "$B/$OUT"
-"$FW" -m -q -p $PROD -c $CUST -l $MODEL -u $SUB -v $NVER -t $TYPE \
-	-k "$B/uImage" -i "$B/urootfs" "$B/$OUT"
-
-# verify: split again and compare with the parts
 T=$(mktemp -d)
 trap 'rm -rf "$T"' EXIT
-"$FW" -s -q -k "$T/kernel" -i "$T/initramfs" "$B/$OUT"
-cmp "$T/kernel" "$B/uImage"
-cmp "$T/initramfs" "$B/urootfs"
-"$MKIMAGE" -l "$T/kernel" >/dev/null
-"$MKIMAGE" -l "$T/initramfs" >/dev/null
 
-(cd "$B" && sha256sum "$OUT" > "$OUT.sha256")
-# Alt-F's firmware page accepts an optional *.sha1 file next to the .bin
-(cd "$B" && sha1sum "$OUT" > "${OUT%.bin}.sha1")
-"$FW" -f "$B/$OUT" || true
-echo "post-image: created $B/$OUT"
+echo "$MODELS" | while read -r NAME DTB PROD CUST MODEL SUB NVER TYPE; do
+	[ -n "$NAME" ] || continue
+	ZIMAGE="$B/zImage.$DTB"
+	[ -f "$ZIMAGE" ] || { echo "post-image: $ZIMAGE missing"; exit 1; }
+	UIMAGE="$B/uImage.$NAME"
+	OUT="ShareOS-${VERSION}-${NAME}.bin"
 
-# sysupgrade bundle: everything for an update from ShareOS (shareos-update)
-# and for a netboot via TFTP (U-Boot loads uImage + urootfs, the initramfs
-# fetches rootfs.squashfs). Published in GitHub Releases with its .sha256.
-SU="ShareOS-${VERSION}-${NAME}.sysupgrade.tar"
-cp "$TARGET_DIR/etc/shareos-release" "$B/shareos-release"
-(cd "$B" && sha256sum uImage urootfs rootfs.squashfs > SHA256SUMS \
-	&& rm -f "$SU" && tar -cf "$SU" uImage urootfs rootfs.squashfs shareos-release SHA256SUMS \
-	&& sha256sum "$SU" > "$SU.sha256")
-echo "post-image: created $B/$SU"
+	"$MKIMAGE" -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 \
+		-n "ShareOS-${VERSION}, kernel ${KVER}" -d "$ZIMAGE" "$UIMAGE" >/dev/null
+	check_size "$UIMAGE" $KERNEL_MAX
+
+	rm -f "$B/$OUT"
+	"$FW" -m -q -p $PROD -c $CUST -l $MODEL -u $SUB -v $NVER -t $TYPE \
+		-k "$UIMAGE" -i "$B/urootfs" "$B/$OUT"
+
+	# verify: split again and compare with the parts
+	"$FW" -s -q -k "$T/kernel" -i "$T/initramfs" "$B/$OUT"
+	cmp "$T/kernel" "$UIMAGE"
+	cmp "$T/initramfs" "$B/urootfs"
+	"$MKIMAGE" -l "$T/kernel" >/dev/null
+	"$MKIMAGE" -l "$T/initramfs" >/dev/null
+
+	(cd "$B" && sha256sum "$OUT" > "$OUT.sha256")
+	# Alt-F's firmware page accepts an optional *.sha1 file next to the .bin
+	(cd "$B" && sha1sum "$OUT" > "${OUT%.bin}.sha1")
+	"$FW" -f "$B/$OUT" >/dev/null || true
+	echo "post-image: created $B/$OUT"
+
+	# sysupgrade bundle: everything for an update from ShareOS (shareos-update)
+	# and for a netboot via TFTP (U-Boot loads uImage + urootfs, the initramfs
+	# fetches rootfs.squashfs). Published in GitHub Releases with its .sha256.
+	# The bundle names its model in shareos-release (SHAREOS_FWNAME).
+	SU="ShareOS-${VERSION}-${NAME}.sysupgrade.tar"
+	P="$T/su-$NAME"; mkdir -p "$P"
+	cp "$UIMAGE" "$P/uImage"; ln -f "$B/urootfs" "$P/urootfs" 2>/dev/null || cp "$B/urootfs" "$P/urootfs"
+	ln -f "$B/rootfs.squashfs" "$P/rootfs.squashfs" 2>/dev/null || cp "$B/rootfs.squashfs" "$P/rootfs.squashfs"
+	sed "s/^SHAREOS_FWNAME=.*/SHAREOS_FWNAME=\"$NAME\"/" "$TARGET_DIR/etc/shareos-release" > "$P/shareos-release"
+	(cd "$P" && sha256sum uImage urootfs rootfs.squashfs > SHA256SUMS \
+		&& rm -f "$B/$SU" && tar -cf "$B/$SU" uImage urootfs rootfs.squashfs shareos-release SHA256SUMS)
+	(cd "$B" && sha256sum "$SU" > "$SU.sha256")
+	rm -rf "$P"
+	echo "post-image: created $B/$SU"
+done
+
+# the DNS-320L parts under their old names (netboot docs, tools)
+cp "$B/uImage.DNS-320L-rev-Ax" "$B/uImage"
 echo "post-image: rootfs.squashfs $(stat -c %s "$B/rootfs.squashfs") bytes (UBI volume 'rootfs')"

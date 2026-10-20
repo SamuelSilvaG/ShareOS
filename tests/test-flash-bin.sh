@@ -35,7 +35,7 @@ X
 printf '#!/bin/sh\nexit 0\n' > $S/logger
 chmod 755 $S/*
 ln -s "$H/dns323-fw" $S/dns323-fw
-export CALLS=$T/calls SHAREOS_ROOT=$R SHAREOS_TEST_PATH=$S
+export CALLS=$T/calls SHAREOS_ROOT=$R SHAREOS_TEST_PATH=$S SHAREOS_BOARD_LIB=$TOP/board/dlink/dns320l/rootfs-overlay/usr/lib/shareos/board.sh
 
 # mkbin <file> <kernel name> [kernel size] [type]
 mkbin() {
@@ -43,13 +43,13 @@ mkbin() {
 	head -c "${3:-1500000}" /dev/urandom > $d/z; head -c 900000 /dev/urandom > $d/i
 	"$H/mkimage" -A arm -O linux -T kernel -C none -a 0x8000 -e 0x8000 -n "$2" -d $d/z $d/k >/dev/null
 	"$H/mkimage" -A arm -O linux -T ramdisk -C none -a 0x800000 -e 0x800000 -n "${2%%,*}, initrd" -d $d/i $d/r >/dev/null
-	"$H/dns323-fw" -m -q -p 0 -c 8 -l 11 -u 1 -v 1 -t "${4:-6}" -k $d/k -i $d/r "$1" >/dev/null 2>&1
+	"$H/dns323-fw" -m -q -p 0 -c 8 -l "${5:-11}" -u 1 -v 1 -t "${4:-6}" -k $d/k -i $d/r "$1" >/dev/null 2>&1
 	cp $d/k "$1.kernel"; cp $d/r "$1.initramfs"
 }
 mkbin $T/shareos.bin "ShareOS-0.2.0, kernel 6.18"
 mkbin $T/altf.bin "Alt-F-1.0, kernel 4.4.86"
 mkbin $T/big.bin "Alt-F-1.0, kernel 4.4.86" 3200000
-mkbin $T/dns325.bin "Alt-F-1.0, kernel 4.4.86" 1500000 3
+mkbin $T/dns325.bin "Alt-F-1.0, kernel 4.4.86" 1500000 3 5
 head -c 2000000 /dev/urandom > $T/random.bin
 cp $T/altf.bin $T/damaged.bin; printf 'XXXX' | dd of=$T/damaged.bin bs=1 seek=200000 conv=notrunc 2>/dev/null
 
@@ -90,7 +90,12 @@ check "write refused while an update runs" "[ $rc = 1 ] && grep -q 'update is ru
 rm -rf $R/tmp/shareos-update
 printf 'D-Link DNS-325\0' > $R/proc/device-tree/model
 rc=$(run write $T/altf.bin --yes)
-check "write refused on another box" "[ $rc = 1 ] && grep -q 'not a DNS-320L' $T/out && [ ! -s $CALLS ]"
+check "write: a DNS-320L file refused on a DNS-325" "[ $rc = 1 ] && grep -q 'another device' $T/out && [ ! -s $CALLS ]"
+fresh; rc=$(run write $T/dns325.bin --yes)
+check "write: a DNS-325 file accepted on a DNS-325" "[ $rc = 0 ] && same $R/dev/mtd1 $T/dns325.bin.kernel"
+printf 'Some other NAS\0' > $R/proc/device-tree/model
+rc=$(run write $T/altf.bin --yes)
+check "write refused on an unknown box" "[ $rc = 1 ] && grep -q 'not supported' $T/out && [ ! -s $CALLS ]"
 printf 'D-Link DNS-320L\0' > $R/proc/device-tree/model
 # a nandwrite that writes garbage: the readback must catch it
 cp $S/nandwrite $T/nw.ok
@@ -98,10 +103,26 @@ printf '#!/bin/sh\nhead -c 4096 /dev/urandom | dd of="$3" conv=notrunc 2>/dev/nu
 rc=$(run write $T/altf.bin --yes)
 check "write: bad readback detected, kernel left alone" "[ $rc = 1 ] && grep -q 'ramdisk does not read back' $T/out && ! grep -q 'write mtd1' $CALLS"
 cp $T/nw.ok $S/nandwrite
-REAL=$(ls -t "$TOP"/output/dns320l/images/ShareOS-*.bin 2>/dev/null | head -1)
+REAL=$(ls -t "$TOP"/output/dns320l/images/ShareOS-*-DNS-320L-rev-Ax.bin 2>/dev/null | head -1)
 if [ -n "$REAL" ]; then
 	rc=$(run info "$REAL")
 	check "info: the built ShareOS .bin" "[ $rc = 0 ] && grep -qx kind=shareos $T/out"
+	# every model's .bin is accepted on its own model only
+	V=${REAL##*/ShareOS-}; V=${V%-DNS-320L-rev-Ax.bin}
+	for x in "DNS-320L-rev-Ax:D-Link DNS-320L-rev-Ax NAS:DNS320L" "DNS-320-rev-Bx:D-Link DNS-320-rev-Bx NAS:DNS320B" \
+		"DNS-320-rev-Ax:D-Link DNS-320 NAS (Rev A1):DNS323D1" "DNS-325-rev-Ax:D-Link DNS-325 NAS (Rev A1):DNS-325"; do
+		IFS=: read -r fw model sig <<< "$x"
+		f="$TOP/output/dns320l/images/ShareOS-$V-$fw.bin"
+		[ -f "$f" ] || continue
+		printf '%s\0' "$model" > $R/proc/device-tree/model
+		rc=$(run info "$f")
+		check "built $fw .bin: signature $sig, accepted on its model" "[ $rc = 0 ] && grep -qx signature=$sig $T/out"
+		printf 'D-Link DNS-320L-rev-Ax NAS\0' > $R/proc/device-tree/model
+		[ $fw = DNS-320L-rev-Ax ] && continue
+		rc=$(run info "$f")
+		check "built $fw .bin: refused on a DNS-320L" "[ $rc = 1 ] && grep -q 'another device' $T/out"
+	done
+	printf 'D-Link DNS-320L\0' > $R/proc/device-tree/model
 fi
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

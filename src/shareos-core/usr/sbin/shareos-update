@@ -41,6 +41,10 @@ const CA = '/etc/ssl/certs/ca-certificates.crt';
 const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10',
 	...(stat(CA) ? [ '--cacert', CA ] : []) ];
 
+// the box: /tmp/sys/board.env from S05board (/usr/lib/shareos/board.sh) –
+// BOARD_FWNAME picks the release files, BOARD_MODEL must be in the
+// device-tree model before flashing. Without it (old system, tests): the
+// firmware name of the release file and this table.
 const BOARDS = {                    // fwname -> string in the device-tree model
 	'DNS-320L-rev-Ax': 'DNS-320L'
 };
@@ -68,6 +72,26 @@ function release_info() {
 			r[m[1]] = m[2];
 	}
 	return r;
+}
+
+function board_env() {
+	let b = {};
+	for (let line in split(readfile(ROOT + '/tmp/sys/board.env') ?? '', '\n')) {
+		let m = match(line, /^BOARD_([A-Z0-9_]+)="(.*)"$/);
+		if (m) b[m[1]] = m[2];
+	}
+	return b;
+}
+
+// firmware name of this box (release files ShareOS-<version>-<fwname>.…)
+function box_fwname() {
+	return board_env().FWNAME || release_info().SHAREOS_FWNAME;
+}
+
+// text the device-tree model of this box must contain
+function box_model() {
+	let b = board_env();
+	return b.FWNAME ? b.MODEL : BOARDS[release_info().SHAREOS_FWNAME];
 }
 
 function config() {
@@ -190,8 +214,9 @@ function cmd_check(channel, auto) {
 
 	if (auto && (s.state in { downloading: 1, verifying: 1, flashing: 1 }))
 		exit(0);
-	if (!rel.SHAREOS_FWNAME)
-		fail(s, 'unknown firmware name (/etc/shareos-release)');
+	let fwname = box_fwname();
+	if (!fwname)
+		fail(s, 'unknown firmware name for this box (/tmp/sys/board.env, /etc/shareos-release)');
 
 	let list = fetch_releases(cfg);
 	if (type(list) != 'array') {
@@ -201,7 +226,7 @@ function cmd_check(channel, auto) {
 	// the state may have changed while asking GitHub (a download started)
 	s = load_state();
 
-	let found = releases_for_box(list, rel.SHAREOS_FWNAME, channel);
+	let found = releases_for_box(list, fwname, channel);
 	let latest = found[0];
 
 	s.check = {
@@ -219,7 +244,7 @@ function cmd_check(channel, auto) {
 	save_state(s);
 	return out({
 		current: rel.SHAREOS_VERSION,
-		fwname: rel.SHAREOS_FWNAME,
+		fwname,
 		...s.check
 	});
 }
@@ -262,7 +287,7 @@ function check_uimage(s, file, label) {
 }
 
 function verify_image(s, dir, rel) {
-	let fwname = release_info().SHAREOS_FWNAME;
+	let fwname = box_fwname();
 
 	// SHA-256 of the bundle from the release
 	let want = match(readfile(dir + '/fw.sha256') ?? '', /^([0-9a-f]{64})/);
@@ -445,8 +470,8 @@ function cmd_apply(tag) {
 		fail(s, 'release ' + (tag ?? '(none)') + ' is not downloaded and verified');
 
 	let model = trim(replace(readfile(ROOT + '/proc/device-tree/model') ?? '', '\0', ''));
-	let fwname = release_info().SHAREOS_FWNAME;
-	if (!BOARDS[fwname] || index(model, BOARDS[fwname]) < 0)
+	let board_model = box_model();
+	if (!board_model || index(model, board_model) < 0)
 		fail(s, 'refusing to flash: unexpected board "' + model + '"');
 
 	// the system is replaced on the next boot from /overlay/upgrade

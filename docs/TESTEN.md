@@ -297,6 +297,17 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
 Telegram (14c) wurde am 20.10.2026 auf der echten Box getestet: Bot, Chat-ID und Testnachricht funktionieren.
 
+## 14g. Modelle (0.2.0-beta.3)
+
+Auf dem DNS-320L muss alles wie vorher funktionieren:
+1. System → Über: Gerät „D-Link DNS-320L rev A“, Firmware-Name `DNS-320L-rev-Ax`, kein „noch ungetestet“.
+2. System → Terminal: `shareos-boardinfo` zeigt `BOARD_ID="dns320l"`, `BOARD_CONTROL="mcu"`; `cat /tmp/sys/board.env`.
+3. Lüfter-Voreinstellungen, Temperatur, Status-LED, Platten-LEDs, Ein/Aus-Taster, Reset- und USB-Taste, Uhrzeit nach Neustart ohne Netzwerk – wie vorher.
+4. System → Firmware → *Firmware-Datei installieren* mit `ShareOS-<ver>-DNS-325-rev-Ax.bin`: abgelehnt (Meldung „the file is for another device …“).
+5. Ein Update von GitHub nimmt die `DNS-320L-rev-Ax`-Dateien.
+
+Andere Modelle: [GERAETE.md](GERAETE.md) (Anleitung für Tester).
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

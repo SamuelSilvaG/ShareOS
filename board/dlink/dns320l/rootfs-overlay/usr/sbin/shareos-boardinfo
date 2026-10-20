@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# shareos-boardinfo – which box ShareOS runs on (see /usr/lib/shareos/board.sh)
+#
+#   shareos-boardinfo          BOARD_*="…" lines
+#   shareos-boardinfo <key>    one value, e.g. "shareos-boardinfo fwname"
+#
+# S05board writes the lines to /tmp/sys/board.env at boot.
+#
+. "${SHAREOS_BOARD_LIB:-/usr/lib/shareos/board.sh}"
+board_detect
+if [ -n "$1" ]; then
+	eval "echo \"\$BOARD_$(echo "$1" | tr a-z A-Z)\""
+else
+	board_env
+fi

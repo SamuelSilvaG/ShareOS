@@ -1289,3 +1289,5 @@ E1001	Terminal (administrateurs)
 E1002	Appli système · terminal
 E1003	Programme pour la ligne de commande de la box (Système → Terminal ou SSH). Il s’exécute avec les droits de celui qui le lance – dans le terminal en tant que root.
 E1004	Terminal
+E1005	pas encore testé
+E1006	ShareOS n’a pas encore été testé sur du matériel réel de ce modèle.

@@ -14,7 +14,7 @@
 #
 # If anything fails, the box stays in rescue mode: network via DHCP, SSH
 # (dropbear) and the serial console, with the flash tools and
-# shareos-install-ubi available. The orange USB LED blinks in rescue mode.
+# shareos-install-ubi available. The USB LED (orange/red) blinks in rescue mode.
 #
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin
@@ -26,6 +26,11 @@ mkdir -p /dev/pts /run /tmp /mnt/ro /mnt/rw /newroot
 mount -t devpts devpts /dev/pts
 mount -t tmpfs -o mode=0755 tmpfs /run
 exec </dev/console >/dev/console 2>&1
+
+# which box: LED names and release file names (/usr/lib/shareos/board.sh)
+. /usr/lib/shareos/board.sh
+board_detect
+LED=$BOARD_LED_USB
 
 CMDLINE=$(cat /proc/cmdline)
 log() { echo "shareos-init: $*"; }
@@ -75,7 +80,7 @@ apply_upgrade() {
 		return 0
 	fi
 	log "upgrade: installing system $ver – do not switch off"
-	led dns320l:orange:usb timer
+	led "$LED" timer
 	if ubiupdatevol "/dev/$ROOTVOL" $U/rootfs.squashfs; then
 		echo "ok $ver" > /mnt/rw/upgrade-result
 		rm -rf $U
@@ -85,14 +90,14 @@ apply_upgrade() {
 		log "upgrade: ubiupdatevol failed – will retry on the next boot"
 	fi
 	sync
-	led dns320l:orange:usb none
+	led "$LED" none
 }
 
 rescue() {
 	log "RESCUE MODE: $*"
-	led dns320l:orange:usb timer
+	led "$LED" timer
 	# slow blink (the first installation blinks fast)
-	for d in delay_on delay_off; do echo 500 > /sys/class/leds/dns320l:orange:usb/$d 2>/dev/null; done
+	for d in delay_on delay_off; do echo 500 > /sys/class/leds/$LED/$d 2>/dev/null; done
 	net_up || udhcpc -i eth0 -b -s /usr/share/udhcpc/default.script -x hostname:shareos
 	mkdir -p /etc/dropbear
 	dropbear -R 2>/dev/null
@@ -124,7 +129,7 @@ first_install() {
 		reboot -f
 	fi
 	rescue "first installation failed: $(cat /tmp/firstinstall.err 2>/dev/null)
-	  Put ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar on a USB stick (FAT/exFAT/ext4)
+	  Put ShareOS-<version>-${BOARD_FWNAME:-<model>}.sysupgrade.tar on a USB stick (FAT/exFAT/ext4)
 	  and restart the box, or check the network cable. Log: /tmp/firstinstall.log"
 }
 

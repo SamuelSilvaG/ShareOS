@@ -30,7 +30,7 @@ Output in `output/dns320l/images/`:
 
 | File | Content |
 |---|---|
-| `ShareOS-<ver>-DNS-320L-rev-Ax.bin` | firmware in the D-Link container format (kernel + initramfs) |
+| `ShareOS-<ver>-<model>.bin` | firmware in the D-Link container format (kernel + initramfs), one per model: `DNS-320L-rev-Ax`, `DNS-320-rev-Bx`, `DNS-320-rev-Ax`, `DNS-325-rev-Ax` ([DEVICES.md](DEVICES.md)) |
 | `….bin.sha256` | checksum |
 | `uImage`, `urootfs` | the two parts on their own |
 | `zImage.kirkwood-dns320l` | kernel with appended device tree |

@@ -7,7 +7,8 @@
 #   shareos-firstinstall
 #
 # Where the system comes from, in this order:
-#   1. a USB stick or a disk with ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar
+#   1. a USB stick or a disk with ShareOS-<version>-<model>.sysupgrade.tar
+#      (<model> = BOARD_FWNAME, e.g. DNS-320L-rev-Ax)
 #      (top folder or folder "shareos"; FAT, exFAT or ext4)
 #   2. GitHub: the release of this version (or the newest one for development
 #      builds), downloaded over HTTPS and checked against its .sha256
@@ -29,7 +30,10 @@ SRC=/mnt/src
 UBOOT_MAX=3145728
 
 . /etc/shareos-release
-FWNAME=$SHAREOS_FWNAME
+# release files for this model (one initramfs serves all models)
+. /usr/lib/shareos/board.sh
+board_detect
+FWNAME=${BOARD_FWNAME:-$SHAREOS_FWNAME}
 VERSION=$SHAREOS_VERSION
 
 # messages go to stderr (the console): stdout of some functions is a result
@@ -40,8 +44,8 @@ cleanup() { umount $SRC 2>/dev/null; }
 mtd_by_name() { sed -n "s/^\(mtd[0-9]*\):.*\"$1\"\$/\1/p" /proc/mtd; }
 
 led_busy() {
-	L=/sys/class/leds/dns320l:orange:usb
-	led dns320l:orange:usb timer
+	L=/sys/class/leds/$BOARD_LED_USB
+	led "$BOARD_LED_USB" timer
 	[ -e $L/delay_on ] && echo 120 > $L/delay_on && echo 120 > $L/delay_off
 }
 
@@ -161,7 +165,7 @@ main() {
 	shareos-install-ubi rootfs.squashfs --yes || fail "installing the system failed"
 	sync
 	log "ShareOS $newver installed – restarting"
-	led dns320l:orange:usb none
+	led "$BOARD_LED_USB" none
 	return 0
 }
 

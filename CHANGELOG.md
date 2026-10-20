@@ -4,6 +4,16 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.2.0-beta.3
+
+- **More models: DNS-320 rev B, DNS-325 rev A, DNS-320 rev A** (not tested on hardware yet – testers wanted, see [DEVICES.md](docs/DEVICES.md)). One kernel, initramfs and system for all Kirkwood boxes; a `.bin` and a `.sysupgrade.tar` per model with its D-Link signature (`ShareOS-<ver>-<model>.*`). The DNS-320L works as before.
+- **Model descriptions instead of DNS-320L wiring:** `/usr/lib/shareos/board.sh` describes each model (fan and temperature through the MCU or kernel sensors, power button polled or as a key, LED names, power-off, RTC, firmware name and signature); the box finds its model in the device tree (`shareos-boardinfo`). Fan control, LEDs, buttons, clock, flashing `.bin` files, updates and the first installation use it.
+- `.bin` files for another model are refused on every box, and only a box of a known model writes one.
+- System → About shows the model and "not tested yet" on models without a hardware test.
+- Kernel: lm75 temperature sensor, gpio-fan and gpio-poweroff built in (DNS-325, DNS-320 rev A).
+- **Fix: uploading an update package over HTTPS** (System → Firmware, `.sysupgrade.tar`) ended with "HTTP 413": uhttpd took the last part of a request body for an oversized header when it arrived as exactly one full read buffer – over TLS nearly every larger upload. Fixed in uhttpd (`patches/uhttpd/0004`); the emulator test uploads the full package over HTTPS. The fix works from this version on: to get here from an older box, use the update from GitHub, upload over `http://`, or copy the file over SSH and run `shareos-update local <file>`.
+- `shareos-update local` run a second time without a file (e.g. over SSH) no longer throws away the package it verified before.
+
 ## 0.2.0-beta.2
 
 Feature lock: the system is cleaned up and the interface is faster; the only addition is `ShareOS.openApp` for apps (below).
@@ -15,8 +25,6 @@ Feature lock: the system is cleaned up and the interface is faster; the only add
 - Pictures of the interface (logos, app icons) are 84 KB instead of 340 KB, with the same look.
 - Fix: storing the shares list called the share tool twice.
 - **Apps open apps in a window:** `ShareOS.openApp(id)` in the app SDK opens another app of the box in its own window (the same one ShareOS uses), with look, language and account – e.g. `webpad <file>` in WebTerm when Webpad is not open yet (WebTerm 1.2 and ShareCommander 1.2 already open a pop-up window on 0.2.0-beta.1; before, a browser tab).
-- **Fix: uploading an update package over HTTPS** (System → Firmware, `.sysupgrade.tar`) ended with "HTTP 413": uhttpd took the last part of a request body for an oversized header when it arrived as exactly one full read buffer – over TLS nearly every larger upload. Fixed in uhttpd (`patches/uhttpd/0004`); the emulator test uploads the full package over HTTPS.
-- `shareos-update local` run a second time without a file (e.g. over SSH) no longer throws away the package it verified before.
 
 ## 0.2.0-beta.1
 

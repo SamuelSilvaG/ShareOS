@@ -1,24 +1,68 @@
 #!/bin/sh
 #
-# ShareOS – DNS-320L fan control and power button
+# ShareOS – fan control and polled power button (models: /usr/lib/shareos/board.sh)
 #
-# dns320l-daemon writes the MCU temperature to /tmp/sys/temp1_input
-# (millidegrees) and applies /tmp/sys/pwm1: 0 = stop, 1..127 = half,
-# 128..255 = full. The curve comes from UCI shareos.fan (presets or custom
-# temperatures) and is re-read every cycle, so changes apply within seconds.
+# The temperature (millidegrees) is in /tmp/sys/temp1_input and the fan
+# setting in /tmp/sys/pwm1 (0 = stop, 1..127 = half, 128..255 = full) – the
+# interface the web interface reads, the same on every box:
+#   BOARD_CONTROL=mcu       dns320l-daemon writes the MCU temperature there
+#                           and applies pwm1 to the MCU's fan
+#   BOARD_CONTROL=hwmon     temperature from the lm75 sensor, fan through the
+#                           kernel's gpio-fan (both hwmon)
+#   BOARD_CONTROL=mcu-temp  temperature asked from the MCU on ttyS1 (DNS-320
+#                           rev A protocol), fan through gpio-fan
+# The curve comes from UCI shareos.fan (presets or custom temperatures) and is
+# re-read every cycle, so changes apply within seconds.
 #
+
+. "${SHAREOS_BOARD_LIB:-/usr/lib/shareos/board.sh}"
+board_detect
+R=${SHAREOS_ROOT:-}          # tests: fake root; SHAREOS_BOARD_ONCE=1: one cycle
 
 OFF=0; HALF=100; FULL=255
-
-# power button: mpp29, low = pressed; it can read low at boot,
-# so only arm it after it has been seen released once.
-PWR_CHIP=gpiochip0
-PWR_LINE=29
 armed=0
 state=half
 
+# --- kernel sensors (hwmon) ---
+hwmon() {   # name of the hwmon device -> its folder
+	for d in $R/sys/class/hwmon/hwmon*; do
+		[ "$(cat "$d/name" 2>/dev/null)" = "$1" ] && { echo "$d"; return 0; }
+	done
+	return 1
+}
+FAN_HW=; TEMP_HW=
+if [ "$BOARD_CONTROL" != mcu ]; then
+	FAN_HW=$(hwmon gpio_fan)
+	[ -n "$FAN_HW" ] && echo 1 > "$FAN_HW/pwm1_enable" 2>/dev/null
+fi
+[ "$BOARD_CONTROL" = hwmon ] && TEMP_HW=$(hwmon lm75)
+
+# DNS-320 rev A: the MCU on ttyS1 answers "f0 f0 d0 x 02 <°C> … cs cs cs"
+mcu_temp() {
+	stty -F /dev/ttyS1 cs8 -cstopb -crtscts -ixon -ixoff -ignpar cread raw -echo 19200 2>/dev/null || return 1
+	printf '\360\360\020\004\002\000\000\000\000\000\000\000\000\366\366\366' > /dev/ttyS1
+	set -- $(timeout 2 dd if=/dev/ttyS1 bs=1 count=16 2>/dev/null | od -An -tu1)
+	while [ $# -ge 6 ]; do
+		[ "$1" = 240 ] && [ "$2" = 240 ] && [ "$3" = 208 ] && [ "$6" -gt 0 ] && { echo $(($6 * 1000)); return 0; }
+		shift
+	done
+	return 1
+}
+
+read_temp() {
+	case "$BOARD_CONTROL" in
+		hwmon)
+			[ -n "$TEMP_HW" ] && v=$(cat "$TEMP_HW/temp1_input" 2>/dev/null) && echo "$v" > $R/tmp/sys/temp1_input ;;
+		mcu-temp)
+			v=$(mcu_temp) && echo "$v" > $R/tmp/sys/temp1_input ;;
+	esac
+	cat $R/tmp/sys/temp1_input 2>/dev/null
+}
+
+# power button without interrupt (BOARD_POWER_BUTTON=chip:line): low = pressed;
+# it can read low at boot, so only arm it after it has been seen released once.
 read_button() {
-	gpioget --numeric -c "$PWR_CHIP" "$PWR_LINE" 2>/dev/null
+	gpioget --numeric -c "${BOARD_POWER_BUTTON%%:*}" "${BOARD_POWER_BUTTON#*:}" 2>/dev/null
 }
 
 # sets OFF_T FULL_T HALF_T (millidegrees; OFF_T=0 means never stop)
@@ -41,14 +85,18 @@ read_curve() {
 set_fan() {
 	[ "$state" = "$1" ] && return
 	case "$1" in off) v=$OFF ;; half) v=$HALF ;; full) v=$FULL ;; esac
-	echo $v > /tmp/sys/pwm1
+	echo $v > $R/tmp/sys/pwm1
+	# gpio-fan: the kernel picks the nearest speed of the box's speed map
+	[ -n "$FAN_HW" ] && echo $v > "$FAN_HW/pwm1" 2>/dev/null
 	logger -t shareos-board "temperature ${t}m°C, fan $1"
 	state=$1
 }
 
+[ -n "$FAN_HW" ] && echo $HALF > "$FAN_HW/pwm1" 2>/dev/null
+
 while true; do
 	read_curve
-	t=$(cat /tmp/sys/temp1_input 2>/dev/null)
+	t=$(read_temp)
 	case "$t" in
 		''|*[!0-9]*) ;;
 		*)
@@ -66,6 +114,11 @@ while true; do
 			;;
 	esac
 
+	[ -n "${SHAREOS_BOARD_ONCE:-}" ] && exit 0
+	if [ -z "$BOARD_POWER_BUTTON" ]; then
+		sleep 5
+		continue
+	fi
 	# poll the power button ten times over the next 5 s
 	i=0
 	while [ $i -lt 10 ]; do

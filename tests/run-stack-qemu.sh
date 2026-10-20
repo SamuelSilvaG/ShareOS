@@ -159,7 +159,7 @@ if [ "$CHECK" = "--check" ]; then
 	t "bin: upload through the ticket" "$(curl -s -o /dev/null -w '{"c":%{http_code}}' --data-binary @"$BIN" -H 'Content-Type: application/octet-stream' "http://127.0.0.1:$PORT$U")" "d['c']==200"
 	t "bin: ShareOS .bin recognised" "$(rpc $SID shareos.update bin_info)" "d['result'][1]['kind']=='shareos' and d['result'][1]['kernel'].startswith('ShareOS-')"
 	t "bin: write needs confirm" "$(rpc $SID shareos.update bin_write)" "'confirm' in d['result'][1]['error']"
-	t "bin: write refused outside a DNS-320L" "$(rpc $SID shareos.update bin_write '{"confirm":true}')" "'not a DNS-320L' in d['result'][1]['error']"
+	t "bin: write refused on a box of unknown model" "$(rpc $SID shareos.update bin_write '{"confirm":true}')" "'not supported' in d['result'][1]['error']"
 	t "bin: upload removed after the attempt" "$(rpc $SID shareos.update bin_info)" "'no uploaded' in d['result'][1]['error']"
 	# update package (.sysupgrade.tar, ~16 MB) without internet: upload over
 	# HTTPS (uhttpd answered 413 when the body ended on a full read buffer,

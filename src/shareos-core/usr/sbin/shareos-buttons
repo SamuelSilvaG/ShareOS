@@ -15,6 +15,8 @@
 //   slowly = access reset, off = cancel, blinking fast = factory reset.
 //
 //   USB button (front): safely removes all USB drives (like "Safely remove").
+//   Power button, on boxes where it is a gpio-key (DNS-320 rev A, DNS-325):
+//     pressed: shut down. (DNS-320L/320 rev B/327L: polled by shareos-board.)
 //
 // The durations come from the kernel's event timestamps.
 //   SHAREOS_BUTTONS_DEV=<file>  read events from this file (tests)
@@ -27,7 +29,9 @@ import * as struct from 'struct';
 
 const EV_KEY = 1;
 const KEY_RESTART = 0x198;          // reset button
-const KEY_COPY = 0x85;              // USB button
+const KEY_COPY = 0x85;              // USB button (DNS-320L, DNS-327L)
+const KEY_EJECTCD = 0xa1;           // USB button (DNS-320 rev A, DNS-325)
+const KEY_POWER = 0x74;             // power button
 const ACCESS_MIN = 5, ACCESS_MAX = 10, FACTORY_MIN = 15;
 const DRY = !!getenv('SHAREOS_BUTTONS_DRY');
 
@@ -51,12 +55,19 @@ function find_dev() {
 	return null;
 }
 
+// the USB LED of this box (BOARD_LED_USB in /tmp/sys/board.env), as a sysfs folder
+function usb_led() {
+	let m = match(readfile('/tmp/sys/board.env') ?? '', /BOARD_LED_USB="([A-Za-z0-9:_.-]+)"/);
+	let d = m ? '/sys/class/leds/' + m[1] : null;
+	return d && glob(d + '/trigger')[0] ? d : '';
+}
+
 // LED feedback while the reset button is held (background shell, killed on release)
 let feedback = null;
 
 function feedback_start() {
 	if (DRY) return;
-	let p = popen('/bin/sh -c ' + "'" + 'L=$(ls -d /sys/class/leds/*:orange:usb 2>/dev/null | head -1); [ -n "$L" ] || exit 0; ' +
+	let p = popen('/bin/sh -c ' + "'" + 'L=' + usb_led() + '; [ -n "$L" ] || exit 0; ' +
 		'blink() { echo timer > $L/trigger; echo $1 > $L/delay_on; echo $1 > $L/delay_off; }; ' +
 		'(sleep ' + ACCESS_MIN + '; blink 500; sleep ' + (ACCESS_MAX - ACCESS_MIN) + '; echo none > $L/trigger; echo 0 > $L/brightness; ' +
 		'sleep ' + (FACTORY_MIN - ACCESS_MAX) + '; blink 100) >/dev/null 2>&1 & echo $!' + "'", 'r');
@@ -70,7 +81,8 @@ function feedback_stop() {
 	if (feedback && match(feedback, /^[0-9]+$/))
 		system('kill ' + feedback + ' 2>/dev/null; pkill -P ' + feedback + ' 2>/dev/null');
 	feedback = null;
-	system('L=$(ls -d /sys/class/leds/*:orange:usb 2>/dev/null | head -1); [ -n "$L" ] && { echo none > $L/trigger; echo 0 > $L/brightness; }');
+	let L = usb_led();
+	if (L) system('echo none > ' + L + '/trigger; echo 0 > ' + L + '/brightness');
 }
 
 function reset_released(secs) {
@@ -131,8 +143,11 @@ while (true) {
 			reset_released(t - pressed_at);
 			pressed_at = null;
 		}
-	} else if (code == KEY_COPY && value == 1) {
+	} else if ((code == KEY_COPY || code == KEY_EJECTCD) && value == 1) {
 		usb_pressed();
+	} else if (code == KEY_POWER && value == 1) {
+		log('power button – shutting down');
+		run('/sbin/poweroff');
 	}
 }
 f.close();

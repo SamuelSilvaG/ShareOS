@@ -20,6 +20,9 @@ ROOT=${SHAREOS_ROOT:-}
 UBOOT_MAX=3145728
 
 die() { echo "error: $*"; rm -rf "${T:-/nonexistent}"; exit 1; }
+# which box this is: BOARD_SIG is the signature its .bin files carry
+. "${SHAREOS_BOARD_LIB:-/usr/lib/shareos/board.sh}"
+board_detect
 mtd_by_name() { sed -n "s/^\(mtd[0-9]*\):.*\"$1\"\$/\1/p" $ROOT/proc/mtd; }
 
 # U-Boot image: magic 27 05 19 56, image name at byte 32
@@ -35,7 +38,8 @@ split_bin() {
 	echo "$out" | grep -q 'kernel saved, checksum is OK' || die "kernel in the file is damaged"
 	echo "$out" | grep -q 'initramfs saved, checksum is OK' || die "initramfs in the file is damaged"
 	SIG=$(echo "$out" | sed -n 's/^signature is "\(.*\)"/\1/p' | head -1)
-	[ "$SIG" = DNS320L ] || die "the file is for another device (${SIG:-unknown})"
+	# on a known box the file must be for this model (writing needs a known box)
+	[ -z "$BOARD_SIG" ] || [ "$SIG" = "$BOARD_SIG" ] || die "the file is for another device (${SIG:-unknown}, this box: $BOARD_SIG)"
 	KN=$(uimage_name "$T/kernel") || die "kernel is not a U-Boot image"
 	IN=$(uimage_name "$T/initramfs") || die "initramfs is not a U-Boot image"
 	KS=$(stat -c %s "$T/kernel"); IS=$(stat -c %s "$T/initramfs")
@@ -52,6 +56,7 @@ split_bin() {
 cmd_info() {
 	split_bin "$1"
 	echo "kind=$KIND"
+	echo "signature=$SIG"
 	echo "kernel=$KN"
 	echo "initramfs=$IN"
 	echo "kernel_size=$KS"
@@ -71,7 +76,7 @@ flash() {   # partition file
 
 cmd_write() {
 	[ "$2" = --yes ] || die "add --yes: this replaces kernel and initramfs in flash"
-	grep -qE 'DNS-320L' $ROOT/proc/device-tree/model 2>/dev/null || die "this is not a DNS-320L"
+	[ -n "$BOARD_SIG" ] || die "this box is not supported ($BOARD_NAME)"
 	if [ -f $ROOT/tmp/shareos-update/state.json ] && grep -qE '"state": *"(downloading|verifying|flashing)"' $ROOT/tmp/shareos-update/state.json; then
 		die "a firmware update is running"
 	fi

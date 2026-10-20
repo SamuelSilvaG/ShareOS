@@ -16,7 +16,7 @@ TOP=$(cd "$(dirname "$0")/.." && pwd)
 case "$OUT" in /*) ;; *) OUT="$TOP/$OUT" ;; esac
 IMG=$OUT/images
 CPIO=$IMG/initramfs.cpio.xz
-PKG=$(ls -t $IMG/ShareOS-*.sysupgrade.tar | head -1)
+PKG=$(ls -t $IMG/ShareOS-*-DNS-320L-rev-Ax.sysupgrade.tar | head -1)   # the fake box is a DNS-320L
 QEMU=$(command -v qemu-arm-static) || { echo "install qemu-user-static"; exit 1; }
 [ -f "$CPIO" ] && [ -f "$PKG" ] || { echo "build first"; exit 1; }
 
