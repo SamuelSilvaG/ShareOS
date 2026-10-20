@@ -82,3 +82,38 @@ rm -f "$TARGET_DIR/sbin/mount.ntfs" "$TARGET_DIR/sbin/mount.ntfs-3g" "$TARGET_DI
 # btrfs-progs: mkfs.btrfs, btrfs and the check are enough
 rm -f "$TARGET_DIR"/usr/bin/btrfs-convert "$TARGET_DIR"/usr/bin/btrfs-image "$TARGET_DIR"/usr/bin/btrfs-map-logical \
 	"$TARGET_DIR"/usr/bin/btrfs-select-super "$TARGET_DIR"/usr/bin/btrfs-find-root "$TARGET_DIR"/usr/bin/btrfstune
+
+# ---- unused parts (feature lock, 0.2.0) -------------------------------------
+# Programs and libraries no part of ShareOS uses. tools/check-elf-deps.py
+# below fails the build if a remaining program still needs one of them.
+# (paths without spaces; * expands inside the target)
+rm_t() { for p in "$@"; do rm -rf "$TARGET_DIR"/$p; done; }
+# OpenSSL: only ttyd selected it; libwebsockets uses mbedtls (external.mk)
+rm_t usr/lib/libssl.so* usr/lib/libcrypto.so* usr/lib/ossl-modules usr/lib/engines-3 \
+	usr/bin/openssl usr/bin/c_rehash etc/ssl/openssl.cnf etc/ssl/ct_log_list.cnf* etc/ssl/misc
+# GLib: ksmbd only needs libglib itself, not GIO/GObject and their tools
+rm_t usr/bin/gapplication usr/bin/gdbus usr/bin/gio usr/bin/gio-querymodules usr/bin/gresource \
+	usr/bin/gsettings usr/bin/gi-compile-repository usr/bin/gi-decompile-typelib usr/bin/gi-inspect-typelib \
+	usr/bin/glib-compile-schemas usr/bin/glib-compile-resources usr/bin/gobject-query usr/bin/gtester \
+	usr/lib/libgio-2.0.so* usr/lib/libgobject-2.0.so* usr/lib/libgmodule-2.0.so* usr/lib/libgthread-2.0.so* \
+	usr/lib/libgirepository-2.0.so* usr/lib/libffi.so* usr/lib/gio usr/lib/girepository-1.0 usr/share/glib-2.0
+rm_t usr/bin/pcre2test usr/bin/pcre2grep usr/lib/libpcre2-posix.so*
+# event loops of libwebsockets other than libuv (ttyd), avahi bindings
+rm_t usr/lib/libwebsockets-evlib_glib.so usr/lib/libwebsockets-evlib_event.so \
+	usr/lib/libavahi-glib.so* usr/lib/libavahi-libevent.so* \
+	usr/lib/libevent-2.1.so* usr/lib/libevent.so usr/lib/libevent_extra* usr/lib/libevent_pthreads*
+# libnl parts ksmbd does not use; C++ binding of libgpiod; e2fsprogs' libss
+rm_t usr/lib/libnl-idiag-3.so* usr/lib/libnl-nf-3.so* usr/lib/libnl-xfrm-3.so* usr/lib/libnl-route-3.so* \
+	usr/lib/libgpiodcxx.so* usr/lib/libss.so* usr/share/ss
+# tools nothing calls: SQLite shell (fsidd keeps the library), SMART daemon
+# (ShareOS reads SMART itself), mdmon (only for IMSM/DDF metadata), lzo
+# examples, gpio tools besides gpioget/gpioset, the leap-second time zones
+# ("right/"; the zones themselves are links into "posix/")
+rm_t usr/bin/sqlite3 usr/sbin/smartd usr/sbin/update-smart-drivedb etc/smartd.conf etc/smartd_warning.sh \
+	sbin/mdmon usr/libexec/lzo usr/bin/gpiodetect usr/bin/gpioinfo usr/bin/gpiomon usr/bin/gpionotify \
+	usr/share/zoneinfo/right
+# strace and iperf3 are system apps now (sysapps/); gone here also in
+# incremental builds, where buildroot keeps files of removed packages
+rm_t usr/bin/strace usr/bin/strace-log-merge usr/bin/iperf3 usr/lib/libiperf.so*
+# every program and library must still find its libraries
+python3 "$TOP_DIR/tools/check-elf-deps.py" "$TARGET_DIR"

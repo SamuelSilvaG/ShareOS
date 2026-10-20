@@ -283,6 +283,16 @@ their permissions.
 6. WebTerm: `webpad <file>` while Webpad is closed – Webpad opens in its **own window** (not a tab) with the file.
 7. System → Terminal over **HTTPS** (`https://<box>/`): the shell appears (no "Press ↵ to Reconnect").
 
+## 14f. Feature lock (0.2.0-beta.2)
+
+1. Click through all pages: everything as before, pages appear faster (above all *Apps*, *System → Services*, the overview after signing in).
+2. Apps → Store → *Refresh now*: the interface stays usable while the store asks its sources; the list updates by itself.
+3. System → Terminal over HTTPS: works (now with mbedtls instead of OpenSSL).
+4. Install `strace-6.19.0.sapp` and `iperf3-3.20.0.sapp` if needed: `strace -V`, `iperf3 -s` in the terminal.
+5. Time zone, certificate (System → General), users and storage limits, messages: unchanged.
+
+Telegram (14c) has been tested on the real box on 20 Oct 2026: bot, chat ID and test message work.
+
 ## 15. Buttons
 
 - **Reset button** (pin hole at the back), hold and let go:

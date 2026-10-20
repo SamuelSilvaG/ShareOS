@@ -133,6 +133,13 @@ if ls $SYSDIR/nano-*.sapp $SYSDIR/htop-*.sapp >/dev/null 2>&1; then
 	check "nano (real package) installs and runs" "run 'shareos-apps install-file /tmp/pkg/nano.sapp' | js \"d['ok']\" && run '. /etc/profile; nano --version' | grep -q 'GNU nano'"
 	check "htop (real package) installs and runs" "run 'shareos-apps install-file /tmp/pkg/htop.sapp' | js \"d['ok']\" && run '. /etc/profile; htop --version' | grep -q '^htop 3'"
 	check "htop draws its screen in a terminal (ncurses, terminfo)" "python3 $TOP/tests/pty-run.py 25 q chroot $R /bin/sh -c '. /etc/profile; TERM=xterm-256color htop' | grep -q 'Load average'"
+	for x in strace:'strace -- version' iperf3:'iperf 3'; do
+		id=${x%%:*}; want=${x#*:}
+		ls $SYSDIR/$id-*.sapp >/dev/null 2>&1 || continue
+		cp $SYSDIR/$id-*.sapp $P/$id.sapp
+		check "$id (real package) installs and runs" "run 'shareos-apps install-file /tmp/pkg/$id.sapp' | js \"d['ok']\" && run '. /etc/profile; $id --version 2>&1' | grep -q '$want'"
+		run "shareos-apps remove $id" >/dev/null
+	done
 	run 'shareos-apps remove nano; shareos-apps remove htop' >/dev/null
 else
 	echo "SKIP  nano/htop packages (make sysapps-pack)"
@@ -150,6 +157,11 @@ check "app server root leads to the admin interface" "curl -s http://127.0.0.1:$
 check "app server: no directory listing" "! curl -s http://127.0.0.1:$PORT/hello/ | grep -qi 'index of'"
 i=0; until run "ubus list shareos.apps" >/dev/null 2>&1 || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
 check "rpc: installed with server ports" "rpc shareos.apps installed '{}' | js \"d['port']==$PORT and [a['id'] for a in d['apps']][0]=='hello'\""
+check "rpc: catalog refresh answers at once and runs in the background" "rpc shareos.apps catalog '{\"refresh\":true}' | js \"d['refreshing']==True\""
+for i in $(seq 60); do rpc shareos.apps catalog '{}' | js "d['refreshing']==False" && break; sleep 0.5; done
+check "rpc: refreshed catalog is there afterwards" "rpc shareos.apps catalog '{}' | js \"d['refreshing']==False and d['time']>0 and 'hello' in [a['id'] for a in d['apps']]\""
+check "rpc: installed list follows an install (cached result renewed)" "rpc shareos.apps installed '{}' | js \"[a['version'] for a in d['apps'] if a['id']=='hello']==['1.1.0']\" && run 'shareos-apps install-file /tmp/pkg/hello-1.0.0.sapp' >/dev/null && rpc shareos.apps installed '{}' | js \"[a['version'] for a in d['apps'] if a['id']=='hello']==['1.0.0']\" && run 'shareos-apps install-file /tmp/pkg/hello-1.1.0.sapp' >/dev/null && rpc shareos.apps installed '{}' | js \"[a['version'] for a in d['apps'] if a['id']=='hello']==['1.1.0']\""
+check "rpc: services report running state" "rpc shareos.service list '{}' | js \"[s['running'] for s in d['services'] if s['name']=='rpcd']==[True]\""
 check "rpc: icon as data URL (no request to the apps server)" "rpc shareos.apps installed '{}' | js \"d['apps'][0]['icon_data'].startswith('data:image/svg+xml;base64,')\""
 check "rpc: box name for app links set by hand" "rpc shareos.web set '{\"host\":\"NAS.example.lan\"}' | js \"d['ok']\" && rpc shareos.apps installed '{}' | js \"d['host']=='nas.example.lan' and d['host_auto']==False\""
 check "rpc: invalid box name rejected" "rpc shareos.web set '{\"host\":\"a b\"}' | grep -q 'invalid host'"

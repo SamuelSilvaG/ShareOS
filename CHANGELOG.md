@@ -4,13 +4,24 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.2.0-beta.2
+
+Feature lock: the system is cleaned up and the interface is faster; the only addition is `ShareOS.openApp` for apps (below).
+
+- **Faster interface:** the box keeps results of expensive steps between calls instead of starting programs again for every request (system info, services, installed apps, certificate, update state, messages, storage limits). In the emulator the requests after loading a page take 0.17 s instead of 1.1 s; the status asked every 5 seconds 45 ms instead of 240 ms; services 90 ms instead of 600 ms; installed apps 50 ms instead of 380 ms.
+- **The app store no longer blocks the interface:** refreshing the catalogs runs in the background. Before, a slow or unreachable catalog source held up every other request for seconds (8 s in the emulator).
+- **Smaller system (11.6 MB instead of 16.2 MB):** OpenSSL is gone – the terminal uses mbedtls like the web server and curl; unused parts of GLib (GIO/GObject and their tools), libevent, libnl, SQLite shell, SMART daemon, mdmon, gpio and lzo extras, leap-second time zones. A build check makes sure every program still finds its libraries.
+- **strace and iperf3** are system apps now (store, `.sapp`) instead of being built in.
+- Pictures of the interface (logos, app icons) are 84 KB instead of 340 KB, with the same look.
+- Fix: storing the shares list called the share tool twice.
+- **Apps open apps in a window:** `ShareOS.openApp(id)` in the app SDK opens another app of the box in its own window (the same one ShareOS uses), with look, language and account – e.g. `webpad <file>` in WebTerm when Webpad is not open yet (WebTerm 1.2 and ShareCommander 1.2 already open a pop-up window on 0.2.0-beta.1; before, a browser tab).
+
 ## 0.2.0-beta.1
 
 - **System apps (new app type `"system"`):** native programs for the terminal, from the same store and as `.sapp` like the web apps. They go to `/opt/shareos/sysapps/<id>` (flash, kept across updates); a starter per command in `/opt/shareos/bin` (in `PATH`) brings the app's own libraries and terminal descriptions along, so the base system stays small. A command the firmware has or another app provides is refused. In the store marked "System app · terminal", in the list with "Terminal" instead of "Open"; System → Terminal lists their commands. First ones: **nano 8.7** (text editor) and **htop 3.4.1** (processes, CPU, memory), each about 270 KB.
 - **Fix: terminal over HTTPS** (System → Terminal showed "Press ↵ to Reconnect" at once): over HTTPS the browser spoke HTTP/2 with the terminal, which has no Host header, and ttyd's origin check refused the connection. libwebsockets is now built without HTTP/2 – and without "secure streams" and the connection monitor, which asked `connectivitycheck.android.com` in the background.
 - **App data per account:** ShareOS tells an app which account opened it, and the app SDK keeps the browser storage of the accounts apart (localStorage and IndexedDB) – what the admin writes in Webpad no longer shows up for another user in the same browser. Old data stays with root. In one browser this separates, it is no hard protection; private data belongs in the user's own folder on the box.
 - **File dialog of the box for apps:** `ShareOS.fs.pick()` in the app SDK – apps with the permission `files` open and save files in the user's own area (personal folder; admins: volumes and USB drives). First user: WinWeb Player 1.1 ("+ From the box": music and videos streamed with seeking, besides "+ From this computer").
-- **Apps open apps in a window:** `ShareOS.openApp(id)` in the app SDK opens another app of the box in its own window (the same one ShareOS uses), with look, language and account – e.g. `webpad <file>` in WebTerm when Webpad is not open yet (WebTerm 1.2, ShareCommander 1.2; before, a browser tab).
 - The version goes to **0.2.0**: system apps, app data per account and the file dialog are a bigger step than another 0.1.0 beta.
 - Build: `make sysapps-pack` builds them with the firmware's toolchain (`configs/shareos_sysapps_defconfig`, recipes in `sysapps/`); the CI attaches them to the release.
 

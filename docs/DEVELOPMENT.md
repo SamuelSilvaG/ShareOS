@@ -130,6 +130,9 @@ the box for why the web server was not running.
 
 | 15:08 | Jan tested the new firmware and apps: terminal, nano, htop, Webpad and WebTerm work. Only: WebTerm opens a closed Webpad in a tab instead of a window. Claude adds `ShareOS.openApp` to the SDK. Jan picks the next version: **0.2.0-beta.1**. |
 
+| 16:06 | Jan: Telegram works on the box. |
+| 16:12 | Jan: "Feature lock – clean up, optimize." Claude measures first: in the emulator every page load waited 1.1 s on requests, a store refresh blocked the interface for 8 s (rpcd answers one request at a time), the 5-second status started three programs each time. Results of expensive steps are now kept between calls, the store refreshes in the background. The system loses OpenSSL (ttyd on mbedtls), unused GLib/libevent/libnl parts and tools – 16.2 → 11.6 MB; strace and iperf3 become system apps. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

@@ -287,6 +287,16 @@ persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 6. WebTerm: `webpad <datei>`, während Webpad geschlossen ist – Webpad öffnet sich in einem **eigenen Fenster** (kein Tab) mit der Datei.
 7. System → Terminal über **HTTPS** (`https://<box>/`): Die Shell erscheint (kein „Press ↵ to Reconnect“).
 
+## 14f. Feature Lock (0.2.0-beta.2)
+
+1. Alle Seiten durchklicken: alles wie vorher, die Seiten erscheinen schneller (vor allem *Apps*, *System → Dienste*, die Übersicht nach dem Anmelden).
+2. Apps → Store → *Jetzt aktualisieren*: Die Oberfläche bleibt bedienbar, während der Store seine Quellen fragt; die Liste aktualisiert sich von selbst.
+3. System → Terminal über HTTPS: funktioniert (jetzt mit mbedtls statt OpenSSL).
+4. Bei Bedarf `strace-6.19.0.sapp` und `iperf3-3.20.0.sapp` installieren: `strace -V`, `iperf3 -s` im Terminal.
+5. Zeitzone, Zertifikat (System → Allgemein), Benutzer und Speichergrenzen, Meldungen: unverändert.
+
+Telegram (14c) wurde am 20.10.2026 auf der echten Box getestet: Bot, Chat-ID und Testnachricht funktionieren.
+
 ## 15. Tasten
 
 - **Reset-Taste** (Loch hinten), gedrückt halten und loslassen:

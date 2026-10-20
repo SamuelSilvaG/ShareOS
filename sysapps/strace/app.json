@@ -1,0 +1,17 @@
+{
+	"id": "strace",
+	"name": "strace",
+	"version": "6.19.0",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Zeigt im Terminal die Systemaufrufe eines Programms – zur Fehlersuche: „strace -f programm“ oder „strace -p PID“. Bis ShareOS 0.1 war es fest eingebaut.",
+		"en": "Shows the system calls of a program in the terminal – for troubleshooting: “strace -f program” or “strace -p PID”. Built in up to ShareOS 0.1."
+	},
+	"type": "system",
+	"commands": [ "strace" ],
+	"icon": "icon.svg",
+	"category": "system",
+	"license": "LGPL-2.1-or-later",
+	"homepage": "https://strace.io/",
+	"min_shareos": "0.2.0-beta.1"
+}
