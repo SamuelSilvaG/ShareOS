@@ -6,8 +6,8 @@ Stand: 18.10.2026. ShareOS ist in der **Testphase**. Es gibt zwei Wege zur
 Installation:
 
 - **Weg A – über die Firmware-Seite von Alt-F oder D-Link** (ohne serielle
-  Konsole, ab 0.1.0-beta.7). Auf echter Hardware noch nicht erprobt: beim
-  ersten Mal am besten die serielle Konsole als Rückfallebene anschließen.
+  Konsole, ab 0.1.0-beta.7). Auf echter Hardware erprobt (hin und zurück,
+  20.10.2026) – Schritt für Schritt in [UMSTIEG.md](UMSTIEG.md).
 - **Weg B – über die serielle Konsole** (Stiftleiste JP1, drei Kabel anlöten, siehe
   [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): erprobt, Schritte 1–3 unten.
 

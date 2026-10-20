@@ -6,8 +6,8 @@ As of 2026-10-18, ShareOS is in its **test phase**. There are two ways to
 install it:
 
 - **Way A – from the Alt-F or D-Link firmware page** (no serial console, from
-  0.1.0-beta.7 on). Not yet tried on real hardware: for the first time, best
-  keep the serial console connected as a safety net.
+  0.1.0-beta.7 on). Tested on real hardware (there and back, 20 Oct 2026) –
+  step by step in [SWITCHING.md](SWITCHING.md).
 - **Way B – over the serial console** (header JP1, three soldered wires, see
   [HARDWARE-DNS320L.md](HARDWARE-DNS320L.md)): tested, steps 1–3 below.
 

@@ -58,7 +58,7 @@ Version in brackets = first release with the feature.
 
 **Firmware and system**
 - Online updates from GitHub Releases: checked every 6 hours, SHA-256 verified, progress for download, check and installation (beta.1)
-- First installation from the Alt-F or D-Link web interface: the `.bin` fetches the system from a USB stick or from GitHub (beta.7)
+- First installation from the Alt-F or D-Link web interface: the `.bin` fetches the system from a USB stick or from GitHub (beta.7; tested on real hardware, step by step: [SWITCHING.md](docs/SWITCHING.md) · [UMSTIEG.md](docs/UMSTIEG.md))
 - Back to Alt-F (or any D-Link `.bin`) from the firmware page, checked and read back (beta.7)
 - First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP
 - HTTPS with a self-signed certificate that follows name and IP, own certificate possible
