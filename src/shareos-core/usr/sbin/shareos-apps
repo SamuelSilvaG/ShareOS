@@ -28,6 +28,10 @@
 //          schedules can be changed or switched off under APPS.
 //   embed  may be shown as a page inside the ShareOS interface (meant for
 //          apps that only have settings); others open in their own window.
+//   files  may read and change the files the user may reach in the file
+//          browser (his personal folder; admins: all volumes and USB drives),
+//          with his rights, through /_shareos/cgi/fs (SDK: ShareOS.fs) –
+//          for file managers and editors that save on the box.
 // Window and files (optional):
 //   "window": { "width": 900, "height": 640 }      size of the app's window
 //   "opens": [ { "ext": [".txt", ".md"], "mode": "edit", "label": {…} } ]
@@ -59,7 +63,7 @@ const MAX_PKG = 64 * 1048576;       // download / upload
 const MAX_FILES = 40 * 1048576;     // unpacked
 const ID_RE = /^[a-z][a-z0-9-]{1,31}$/;
 const JOB_RE = /^[a-z][a-z0-9-]{0,23}$/;
-const PERMISSIONS = { cron: 1, embed: 1 };
+const PERMISSIONS = { cron: 1, embed: 1, files: 1 };
 const MAX_JOBS = 5;
 const MAX_LOG = 65536;
 // the test suite serves catalogs and packages from files

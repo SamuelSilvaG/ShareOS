@@ -933,7 +933,9 @@
 		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "BOX NAME FOR LINKS (E.G. TO THE APPS)",
 		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Leave empty: with your own certificate the name is taken from it, otherwise the address this page was opened with. The name must resolve in your network (DNS).",
 		"Name speichern": "Save name",
-		"Name gespeichert.": "Name saved."
+		"Name gespeichert.": "Name saved.",
+		"Zugriff auf Dateien": "Access to files",
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "May read, change and delete the files the signed-in user reaches in the file browser – with his rights, while the app is open."
 	},
 	"patterns": [
 		[
@@ -1739,6 +1741,10 @@
 		[
 			"^Name: (.+)$",
 			"Name: $1"
+		],
+		[
+			"^Dateizugriff: (.+)$",
+			"File access: $1"
 		]
 	],
 	"words": [

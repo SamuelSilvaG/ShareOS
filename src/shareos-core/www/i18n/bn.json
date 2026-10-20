@@ -933,7 +933,9 @@
 		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "লিংকের জন্য বক্সের নাম (যেমন অ্যাপে)",
 		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "খালি রাখুন: নিজস্ব সার্টিফিকেট থাকলে নাম সেখান থেকে নেওয়া হয়, নইলে যে ঠিকানায় এই পেজ খোলা হয়েছে। নামটি নেটওয়ার্কে রিজলভ হতে হবে (DNS)।",
 		"Name speichern": "নাম সংরক্ষণ করুন",
-		"Name gespeichert.": "নাম সংরক্ষিত।"
+		"Name gespeichert.": "নাম সংরক্ষিত।",
+		"Zugriff auf Dateien": "ফাইলে অ্যাক্সেস",
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "সাইন-ইন করা ব্যবহারকারী ফাইল ব্রাউজারে যে ফাইলগুলোতে পৌঁছায় সেগুলো পড়তে, বদলাতে ও মুছতে পারে – তার অধিকারে, যতক্ষণ অ্যাপ খোলা।"
 	},
 	"patterns": [
 		[
@@ -1739,6 +1741,10 @@
 		[
 			"^Name: (.+)$",
 			"নাম: $1"
+		],
+		[
+			"^Dateizugriff: (.+)$",
+			"ফাইল অ্যাক্সেস: $1"
 		]
 	],
 	"words": [

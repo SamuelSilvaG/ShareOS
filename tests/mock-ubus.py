@@ -224,8 +224,8 @@ APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Back
                                  'enabled': True, 'running': False, 'last': {'time': 1792290600, 'duration': 4, 'rc': 0, 'timeout': False}},
                                 {'id': 'cleanup', 'name': 'Clean up old backups', 'command': 'jobs/cleanup.sh', 'timeout': 120, 'schedule': '0 5 * * 0', 'default_schedule': '0 4 * * 0',
                                  'enabled': False, 'running': False, 'last': None}]},
-                       'webpad': {'id': 'webpad', 'name': 'Webpad', 'version': '1.1.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Texteditor im Stil von Notepad++', 'en': 'text editor'},
-                                  'type': 'webapp', 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': [], 'verified': True, 'source': 'store',
+                       'webpad': {'id': 'webpad', 'name': 'Webpad', 'version': '1.3.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Texteditor im Stil von Notepad++', 'en': 'text editor'},
+                                  'type': 'webapp', 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': ['files'], 'verified': True, 'source': 'store',
                                   'installed': 0, 'users': ['*'], 'jobs': [], 'window': {'width': 1000, 'height': 700},
                                   'opens': [{'ext': ['.txt', '.md', '.log', '.json', '.conf'], 'mode': 'edit', 'label': None}]},
                        'fan-tuner': {'id': 'fan-tuner', 'name': 'Fan Tuner', 'version': '0.1.0', 'publisher': 'Jan', 'description': {'de': 'Nur Einstellungen – wird in ShareOS angezeigt', 'en': 'settings only'},
@@ -378,8 +378,17 @@ def call(obj, method, args):
         return {'port': 8081, 'https_port': 8444, 'https': False,
                 'apps': [{k: a[k] for k in ('id', 'name', 'entry', 'icon', 'window', 'opens')} for a in APPS['installed'].values() if a.get('opens')]}
     if obj == 'shareos.files' and method == 'app_ticket':
+        a = APPS['installed'].get(args['app'], {})
         return {'ticket': '0123456789abcdef0123456789abcdef', 'mode': 'edit', 'app': args['app'], 'entry': 'index.html',
-                'window': {'width': 1000, 'height': 700}, 'port': 8081, 'https_port': 8444, 'https': False}
+                'window': {'width': 1000, 'height': 700}, 'port': 8081, 'https_port': 8444, 'https': False,
+                'grant': 'fedcba9876543210fedcba9876543210' if 'files' in a.get('permissions', []) else None}
+    if obj == 'shareos.files' and method == 'app_grant':
+        a = APPS['installed'].get(args.get('app'))
+        if not a:
+            return {'error': 'app not available'}
+        if 'files' not in a.get('permissions', []):
+            return {'error': 'the app has no access to files'}
+        return {'grant': 'fedcba9876543210fedcba9876543210'}
     if obj == 'shareos.files':
         return files_call(STATE['sessions'].get(SID, 'root'), method, args)
     if obj == 'shareos.notify':

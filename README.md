@@ -51,6 +51,7 @@ Version in brackets = first release with the feature.
 - APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps): one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
 - App permissions: scheduled tasks (`cron`) as a restricted app user, schedule editable in the interface (beta.7)
 - Open files from the file browser in apps (e.g. Webpad), save back; app SDK and ShareOS look for apps (`/_shareos/theme.css`, `/_shareos/app.js`), apps inside the interface (permission `embed`) (beta.9)
+- App permission `files`: apps work with the folders of the box with the user's rights – ShareCommander (two-pane file manager), Webpad saves on the box; music and videos stream with seeking (beta.11)
 - Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)
@@ -114,7 +115,7 @@ sample data via `tests/mock-ubus.py`.
 
 - Hardware tests of the current betas, then a public beta
 - Native apps in the same store (MiniDLNA, Transmission, Syncthing …)
-- More of the app platform: "open with" defaults per file type, a two-pane file manager (ShareCommander)
+- More of the app platform: "open with" defaults per file type
 - Storage: **LVM2**; RAID 5 only makes sense with three or more disks (the DNS-320L has two bays)
 - More devices (DNS-320/325/327L)
 

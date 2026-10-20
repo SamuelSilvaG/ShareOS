@@ -933,7 +933,9 @@
 		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "NOMBRE DEL EQUIPO PARA ENLACES (P. EJ. A LAS APPS)",
 		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "Dejar vacío: con un certificado propio se toma el nombre de él; si no, la dirección con la que se abrió esta página. El nombre debe resolverse en la red (DNS).",
 		"Name speichern": "Guardar nombre",
-		"Name gespeichert.": "Nombre guardado."
+		"Name gespeichert.": "Nombre guardado.",
+		"Zugriff auf Dateien": "Acceso a archivos",
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "Puede leer, cambiar y borrar los archivos a los que el usuario conectado llega en el explorador, con sus permisos, mientras la app esté abierta."
 	},
 	"patterns": [
 		[
@@ -1739,6 +1741,10 @@
 		[
 			"^Name: (.+)$",
 			"Nombre: $1"
+		],
+		[
+			"^Dateizugriff: (.+)$",
+			"Acceso a archivos: $1"
 		]
 	],
 	"words": [

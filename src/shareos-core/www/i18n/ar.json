@@ -933,7 +933,9 @@
 		"NAME DER BOX FÜR LINKS (Z. B. ZU DEN APPS)": "اسم الجهاز للروابط (مثلاً إلى التطبيقات)",
 		"Leer lassen: Mit eigenem Zertifikat wird der Name daraus genommen, sonst die Adresse, unter der diese Seite geöffnet ist. Der Name muss im Netzwerk auflösbar sein (DNS).": "اتركه فارغاً: مع شهادة خاصة يُؤخذ الاسم منها، وإلا فالعنوان الذي فُتحت به هذه الصفحة. يجب أن يكون الاسم قابلاً للحل في الشبكة (DNS).",
 		"Name speichern": "حفظ الاسم",
-		"Name gespeichert.": "تم حفظ الاسم."
+		"Name gespeichert.": "تم حفظ الاسم.",
+		"Zugriff auf Dateien": "الوصول إلى الملفات",
+		"Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.": "يمكنه قراءة الملفات التي يصل إليها المستخدم المسجّل في مستعرض الملفات وتغييرها وحذفها – بصلاحياته، طالما التطبيق مفتوح."
 	},
 	"patterns": [
 		[
@@ -1739,6 +1741,10 @@
 		[
 			"^Name: (.+)$",
 			"الاسم: $1"
+		],
+		[
+			"^Dateizugriff: (.+)$",
+			"الوصول إلى الملفات: $1"
 		]
 	],
 	"words": [

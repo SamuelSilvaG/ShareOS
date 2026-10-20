@@ -19,8 +19,17 @@
  *                             messages between the apps (BroadcastChannel
  *                             'shareos'; every app hears them – no secrets)
  * ShareOS.embedded            true when shown inside the ShareOS interface
+ * ShareOS.fs                  folders of the user, for apps with the permission
+ *                             "files" (null otherwise); all calls return promises:
+ *   .roots()                       [{name, home, usb}]
+ *   .list(root, path, hidden)      {entries: [{name, type, size, mtime}], free, size}
+ *   .mkdir(root, path, name)   .rename(root, path, name, to)
+ *   .copy(root, path, names, destRoot, dest)   .move(…same…)
+ *   .remove(root, path, names)
+ *   .open(root, path, name, {write, create})   a file like ShareOS.file
  *
- * URL parameters set by ShareOS: theme, accent, file (ticket), name, origin.
+ * URL parameters set by ShareOS: theme, accent, file (ticket), name, origin,
+ * fs (grant for ShareOS.fs).
  */
 (function () {
 	'use strict';
@@ -67,16 +76,16 @@
 	}
 
 	/* the opened file */
-	var ticket = q.get('file');
-	var fileUrl = ticket && /^[0-9a-f]{32}$/.test(ticket) ? '/_shareos/cgi/file?t=' + ticket : null;
 	function check(r) {
 		if (r.ok) return r;
 		return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.error || ('HTTP ' + r.status)); });
 	}
-	var file = fileUrl ? {
-		name: q.get('name') || '',
+	function makeFile(ticket, name, mode) {
+		var fileUrl = '/_shareos/cgi/file?t=' + ticket;
+		var file = {
+		name: name || '',
 		url: fileUrl,
-		mode: null,
+		mode: mode || null,
 		info: function () {
 			return fetch(fileUrl + '&info=1', { cache: 'no-store' }).then(check).then(function (r) { return r.json(); }).then(function (j) {
 				file.name = decodeURIComponent(j.name); file.mode = j.mode; file.size = j.size;
@@ -89,6 +98,38 @@
 			return fetch(fileUrl, { method: 'PUT', body: data }).then(check).then(function (r) { return r.json(); }).then(function (j) {
 				toAdmin({ sos: 'file-saved', app: appId, name: file.name });
 				return j;
+			});
+		}
+		};
+		return file;
+	}
+	var ticket = q.get('file');
+	var file = ticket && /^[0-9a-f]{32}$/.test(ticket) ? makeFile(ticket, q.get('name')) : null;
+
+	/* the user's folders (permission "files"); the grant survives a reload */
+	var grant = q.get('fs');
+	try {
+		if (grant && /^[0-9a-f]{32}$/.test(grant)) sessionStorage.setItem('sos-fs-' + appId, grant);
+		else grant = sessionStorage.getItem('sos-fs-' + appId);
+	} catch (e) { }
+	function fsCall(op, args) {
+		args = args || {}; args.op = op;
+		return fetch('/_shareos/cgi/fs?g=' + grant, { method: 'POST', body: JSON.stringify(args), cache: 'no-store' })
+			.then(function (r) { return r.json().catch(function () { return { error: 'HTTP ' + r.status }; }); })
+			.then(function (j) { if (j.error) throw new Error(j.error); return j; });
+	}
+	var fs = grant && /^[0-9a-f]{32}$/.test(grant) ? {
+		roots: function () { return fsCall('roots').then(function (j) { return j.roots; }); },
+		list: function (root, path, hidden) { return fsCall('list', { root: root, path: path || '', hidden: !!hidden }); },
+		mkdir: function (root, path, name) { return fsCall('mkdir', { root: root, path: path || '', name: name }); },
+		rename: function (root, path, name, to) { return fsCall('rename', { root: root, path: path || '', name: name, to: to }); },
+		copy: function (root, path, names, destRoot, dest) { return fsCall('move', { root: root, path: path || '', names: names, dest_root: destRoot || root, dest: dest || '', copy: true }); },
+		move: function (root, path, names, destRoot, dest) { return fsCall('move', { root: root, path: path || '', names: names, dest_root: destRoot || root, dest: dest || '' }); },
+		remove: function (root, path, names) { return fsCall('delete', { root: root, path: path || '', names: names }); },
+		open: function (root, path, name, o) {
+			o = o || {};
+			return fsCall('open', { root: root, path: path || '', name: name, write: !!o.write, create: !!o.create }).then(function (j) {
+				var f = makeFile(j.ticket, j.name, j.mode); f.size = j.size; f.exists = j.exists; return f;
 			});
 		}
 	} : null;
@@ -146,6 +187,7 @@
 		theme: null,
 		onTheme: function (fn) { themeFns.push(fn); if (api.theme) fn(api.theme); },
 		file: file,
+		fs: fs,
 		menu: menu,
 		on: function (type, fn) { (handlers[type] = handlers[type] || []).push(fn); },
 		emit: function (type, data) { if (chan) chan.postMessage({ type: type, data: data, from: appId }); },
