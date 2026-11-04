@@ -449,6 +449,12 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zg. iPhone/iPad: SMB-Freigaben beschreibbar (0.2.0-beta.19)
+
+1. `grep -c 'vfs objects = streams_xattr' /etc/ksmbd/ksmbd.conf` zählt jede Freigabe auf ext4/Btrfs (und `[homes]`); Freigaben auf FAT/exFAT/NTFS haben es nicht.
+2. iPhone/iPad, App *Dateien* → *Mit Server verbinden* → `smb://<box>`, als Benutzer mit Schreibrecht: Ordner anlegen, Datei hochladen, umbenennen, löschen – alles geht (vorher nur lesen).
+3. Windows und macOS schreiben wie bisher.
+
 ## 14zf. DynDNS, Zertifikate, Drucker, USV (0.2.0-beta.18)
 
 1. **DynDNS:** Bei duckdns.org einen Namen anlegen. System → Netzwerk → DynDNS: *DuckDNS*, Name und Token, *Speichern*. Rechts steht nach ein paar Sekunden *aktuell* mit der öffentlichen Adresse; `nslookup <name>.duckdns.org 1.1.1.1` zeigt sie. Falsches Token: *Fehler* und eine Meldung.
