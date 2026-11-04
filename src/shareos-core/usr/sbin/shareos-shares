@@ -138,8 +138,9 @@ write_smb() {
 			echo "	create mask = 0664"
 			echo "	directory mask = 2775"
 			# named streams (kept as xattrs): without them the Files app of
-			# iOS 18 and newer shows the share read-only (#112)
-			echo "	vfs objects = streams_xattr"
+			# iOS 18 and newer shows the share read-only (#112); not on file
+			# systems without user xattrs (FAT, exFAT, NTFS volumes)
+			case "$(uci -q get storage."$v".fstype)" in vfat|exfat|ntfs) ;; *) echo "	vfs objects = streams_xattr" ;; esac
 		done
 	} > $SMBCONF.new && mv $SMBCONF.new $SMBCONF
 }
