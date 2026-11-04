@@ -4,6 +4,10 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.2.0-beta.19
+
+- **iPhone/iPad: SMB shares could only be read in the Files app** ([#112](https://github.com/UniqueDroid/ShareOS/issues/112)). Since iOS 18 the Files app treats a share without named streams (alternate data streams) as read-only, although every write would be allowed – Windows ignores it. ksmbd only announces them with `vfs objects = streams_xattr`; every share and the personal folders get it now (the streams are kept as extended attributes of the files, ext4 and Btrfs have them).
+
 ## 0.2.0-beta.18
 
 - **USB printers in the network** (Dienste → Drucker, new system app **"printer"** in the store: ipp-usb 0.9.34 + p910nd 0.97, 3 MB).
