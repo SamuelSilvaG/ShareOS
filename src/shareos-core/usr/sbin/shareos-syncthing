@@ -1,0 +1,231 @@
+#!/usr/bin/ucode -S
+//
+// shareos-syncthing – one Syncthing per account (system app "syncthing")
+//
+//   shareos-syncthing start <account>     start (or confirm) the account's Syncthing
+//   shareos-syncthing stop <account>
+//   shareos-syncthing restart <account>   (settings that need it, e.g. the name)
+//   shareos-syncthing status <account>
+//   shareos-syncthing boot                start it for all accounts that used it
+//   shareos-syncthing stop-all            stop all (system app removed, shutdown)
+//
+// shareos-service: boot stop-all
+//
+// Like Transmission (shareos-transmission), every account gets its own
+// Syncthing with its own devices and folders:
+//   - it runs with the account's rights (admins: root, like their file browser),
+//     so synced files belong to the account and storage limits apply;
+//   - its configuration, keys and database on the account's drive:
+//     users  /mnt/<home volume>/home/<account>/.config/syncthing
+//     admins /mnt/<first volume>/.shareos/syncthing/<account>
+//   - remote control only through a Unix socket in /tmp/shareos-syncthing/
+//     <account>/ (0700) with a new API key every start, used by the apps
+//     web server's proxy /_shareos/cgi/syncthing – no port for its REST API,
+//     and built without Syncthing's own web interface;
+//   - sync port 22000 for root, 22000 + (uid - 999) for the others (TCP and
+//     QUIC), so every account can be reached directly;
+//   - no usage reports, no crash reports, no updates of its own (the store),
+//     no restart by itself (its process is this pid), Go held to a memory
+//     limit, nice 10.
+// Every JSON line printed is the result; exit code 1 on errors.
+//
+import { readfile, writefile, stat, lsdir, popen, unlink } from 'fs';
+import { cursor } from 'uci';
+
+const ROOT = getenv('SHAREOS_ROOT') ?? '';
+const BIN = ROOT + '/opt/shareos/bin/syncthing';
+const ENABLED = ROOT + '/etc/shareos/syncthing';        // <account> -> state dir (persists)
+const RUN = ROOT + '/tmp/shareos-syncthing';
+const NAME_RE = /^[a-z_][a-z0-9_-]{0,31}$/;
+
+function out(o) { print(sprintf('%J\n', o)); }
+function die(msg) { out({ error: msg }); exit(1); }
+function shq(s) { return "'" + replace(s, "'", "'\\''") + "'"; }
+function sh(cmd) {
+	let p = popen(cmd + ' 2>&1', 'r');
+	if (!p) return { rc: -1, out: '' };
+	let o = p.read('all') ?? '';
+	return { rc: p.close(), out: o };
+}
+function token(n) {
+	let r = readfile('/dev/urandom', n) ?? '', t = '';
+	for (let i = 0; i < length(r); i++) t += sprintf('%02x', ord(r, i));
+	return t;
+}
+
+function mounted(mp) { return index(readfile(ROOT + '/proc/mounts') ?? '', ' ' + mp + ' ') >= 0; }
+function role(u) { return u == 'root' ? 'admin' : (cursor().get('accounts', u, 'role') ?? null); }
+function uid_of(u) {
+	for (let l in split(readfile(ROOT + '/etc/passwd') ?? '', '\n')) {
+		let f = split(l, ':');
+		if (f[0] == u) return +f[2];
+	}
+	return null;
+}
+function small_ram() { return match(readfile(ROOT + '/tmp/sys/board.env') ?? '', /BOARD_RAM_SMALL="?1/) != null; }
+
+// where the account keeps Syncthing's state; null when no drive is there
+function places(u) {
+	let c = cursor(), r = role(u);
+	if (r == 'admin') {
+		let vol = null;
+		c.foreach('storage', 'volume', (x) => { if (!vol && mounted('/mnt/' + x['.name'])) vol = x['.name']; });
+		if (!vol) return null;
+		return { state: '/mnt/' + vol + '/.shareos/syncthing/' + u, home: '/mnt/' + vol, run_as: 'root' };
+	}
+	if (r != 'user') return null;
+	let v = c.get('accounts', u, 'home'), home = '/mnt/' + v + '/home/' + u;
+	if (!v || !mounted('/mnt/' + v) || stat(ROOT + home)?.type != 'directory') return null;
+	return { state: home + '/.config/syncthing', home, run_as: u };
+}
+
+function dir_of(u) { return RUN + '/' + u; }
+function sock_of(u) { return dir_of(u) + '/api.sock'; }
+function key_of(u) { return dir_of(u) + '/apikey'; }
+function pid_of(u) {
+	let p = +trim(readfile(dir_of(u) + '/pid') ?? '0');
+	if (!(p > 1)) return null;
+	let cmd = readfile(ROOT + '/proc/' + p + '/cmdline') ?? '';
+	return index(cmd, 'syncthing') >= 0 ? p : null;
+}
+function port_of(pl) {
+	let uid = pl.run_as == 'root' ? 0 : (uid_of(pl.run_as) ?? 1000);
+	return uid == 0 ? 22000 : 22000 + ((uid - 999) % 1000);
+}
+
+// Syncthing's REST API over the socket
+function api(u, method, path, body) {
+	let args = [ 'curl', '-s', '-m', '20', '-X', method, '-o', '-', '-w', '\n%{http_code}', '--unix-socket', sock_of(u),
+		'-H', 'X-API-Key: ' + trim(readfile(key_of(u)) ?? '') ];
+	let f = null;
+	if (body != null) {
+		f = dir_of(u) + '/.req.' + token(6);
+		writefile(f, sprintf('%J', body));
+		push(args, '-H', 'Content-Type: application/json', '--data-binary', '@' + f);
+	}
+	push(args, 'http://localhost' + path);
+	let r = sh(join(' ', map(args, shq)));
+	if (f) unlink(f);
+	let i = rindex(r.out, '\n');
+	let code = i >= 0 ? +substr(r.out, i + 1) : 0, txt = i >= 0 ? substr(r.out, 0, i) : r.out;
+	let j = null;
+	try { j = json(txt); } catch (e) { }
+	return { status: code, data: j, text: txt };
+}
+
+function status(u) {
+	let p = pid_of(u);
+	return { account: u, installed: stat(BIN)?.type == 'file', running: !!p, pid: p,
+		socket: p ? sock_of(u) : null, enabled: stat(ENABLED + '/' + u)?.type == 'file' };
+}
+
+// what the box decides, every start: no reports, its sync port, no updates
+function settle(u, pl, first) {
+	let port = port_of(pl);
+	let o = {
+		urAccepted: -1, urSeen: 3, crashReportingEnabled: false, autoUpgradeIntervalH: 0, startBrowser: false,
+		listenAddresses: [ 'tcp://:' + port, 'quic://:' + port, 'dynamic+https://relays.syncthing.net/endpoint' ],
+		setLowPriority: true
+	};
+	let r = api(u, 'PATCH', '/rest/config/options', o);
+	if (r.status != 200) return 'options: HTTP ' + r.status + ' ' + trim(r.text);
+	if (first) {
+		// the box's name and the account, so the other devices can tell them apart
+		let host = trim(readfile(ROOT + '/proc/sys/kernel/hostname') ?? '') || 'ShareOS';
+		let st = api(u, 'GET', '/rest/system/status');
+		let id = st.data?.myID;
+		if (id) api(u, 'PATCH', '/rest/config/devices/' + id, { name: u == 'root' ? host : host + ' (' + u + ')' });
+		// new folders: in the personal folder (admins: the first volume), watch
+		// for changes (inotify) and rescan only once an hour
+		api(u, 'PATCH', '/rest/config/defaults/folder', { path: pl.home, fsWatcherEnabled: true, rescanIntervalS: 3600 });
+	}
+	return null;
+}
+
+function stop(u, quiet) {
+	if (!match(u ?? '', NAME_RE)) die('invalid account');
+	let p = pid_of(u);
+	if (p) {
+		sh('kill ' + p);
+		// it closes its database on the way out
+		for (let i = 0; i < 75 && pid_of(u); i++) sh('sleep 0.2');
+		if (pid_of(u)) sh('kill -9 ' + p);
+	}
+	if (!quiet) out(status(u));
+}
+
+function start(u) {
+	if (!match(u ?? '', NAME_RE)) die('invalid account');
+	if (stat(BIN)?.type != 'file') die('Syncthing is not installed (system app "syncthing" in the store)');
+	if (pid_of(u)) return out(status(u));
+	let pl = places(u);
+	if (!pl) die(role(u) == 'admin' ? 'no drive set up' : 'no personal folder on a drive');
+	let ug = pl.run_as == 'root' ? 'root:root' : pl.run_as;
+	if (pl.run_as != 'root' && sh(sprintf('su -s /bin/sh %s -c %s', shq(pl.run_as), shq('test -x ' + shq(BIN)))).rc != 0)
+		die('the account cannot run Syncthing (/opt/shareos is not readable for it – restart the box once)');
+	let run = dir_of(u);
+	sh('mkdir -p ' + shq(RUN) + ' && chmod 711 ' + shq(RUN) + ' && rm -rf ' + shq(run) + ' && mkdir -m 700 ' + shq(run) + ' && chown ' + shq(ug) + ' ' + shq(run));
+	let mk = sprintf('mkdir -p %s', shq(ROOT + pl.state));
+	let r = pl.run_as == 'root' ? sh(mk) : sh(sprintf('su -s /bin/sh %s -c %s', shq(pl.run_as), shq(mk)));
+	if (r.rc != 0) die('cannot create the folder: ' + trim(r.out));
+	let first = stat(ROOT + pl.state + '/config.xml') == null;
+	// a new API key every start (in the 0700 folder, read from there – not on
+	// a command line other accounts see)
+	sh('umask 077; : > ' + shq(key_of(u)) + ' && chown ' + shq(ug) + ' ' + shq(key_of(u)));
+	writefile(key_of(u), token(16) + '\n');
+	let small = small_ram();
+	// STMONITORED: only the Syncthing process itself, without its monitor
+	// process (saves memory; this script restarts it). Its log goes to /tmp
+	// (RAM), so only warnings and errors.
+	let env = sprintf('HOME=%s STGUIADDRESS=%s STGUIAPIKEY="$(cat %s)" STMONITORED=1 STNORESTART=1 STNOUPGRADE=1 STNOBROWSER=1 ' +
+		'STNOPORTPROBING=1 STLOGLEVEL=WARN GOMEMLIMIT=%s GOGC=50 GOMAXPROCS=1',
+		shq(pl.home), shq('unix://' + sock_of(u)), shq(key_of(u)), small ? '40MiB' : '64MiB');
+	let cmd = sprintf('umask 077; exec env %s %s serve --home %s >%s 2>&1', env, shq(BIN), shq(pl.state), shq(run + '/log'));
+	// nice 10: file shares and the web interface stay quick while it hashes
+	r = sh(sprintf('start-stop-daemon -S -b -m -N 10 -p %s -c %s -x /bin/sh -- -c %s', shq(run + '/pid'), shq(ug), shq(cmd)));
+	if (r.rc != 0) die('cannot start: ' + trim(r.out));
+	// remember the account for the next start of the box
+	sh('mkdir -p ' + shq(ENABLED));
+	writefile(ENABLED + '/' + u, pl.state + '\n');
+	// the API answers when it is ready (the first start makes its keys: slow on the box)
+	let ok = false;
+	for (let i = 0; i < 300; i++) {
+		if (stat(sock_of(u)) && api(u, 'GET', '/rest/noauth/health').status == 200) { ok = true; break; }
+		if (i > 10 && !pid_of(u)) break;
+		sh('sleep 0.2');
+	}
+	if (!ok) {
+		let log = trim(sh('tail -n 3 ' + shq(run + '/log')).out);
+		stop(u, true);
+		die('Syncthing did not start: ' + log);
+	}
+	let e = settle(u, pl, first);
+	if (e) die('Syncthing settings failed: ' + e);
+	out(status(u));
+}
+
+
+let verb = ARGV[0], u = ARGV[1];
+switch (verb) {
+case 'start': start(u); break;
+case 'stop': stop(u); break;
+case 'restart': stop(u, true); start(u); break;
+case 'status': if (!match(u ?? '', NAME_RE)) die('invalid account'); out(status(u)); break;
+case 'boot':
+	if (stat(BIN)?.type != 'file') { out({ started: [] }); break; }
+	let started = [];
+	for (let a in lsdir(ENABLED) ?? []) {
+		if (!match(a, NAME_RE) || !role(a)) continue;
+		let r = sh('/usr/sbin/shareos-syncthing start ' + shq(a));
+		if (r.rc == 0) push(started, a);
+	}
+	out({ started });
+	break;
+case 'stop-all':
+	for (let a in lsdir(RUN) ?? []) if (match(a, NAME_RE)) stop(a, true);
+	sh('rm -rf ' + shq(RUN));
+	out({ ok: true });
+	break;
+default:
+	die('usage: shareos-syncthing start|stop|restart|status <account> | boot | stop-all');
+}

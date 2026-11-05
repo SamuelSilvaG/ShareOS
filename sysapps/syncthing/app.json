@@ -1,0 +1,18 @@
+{
+	"id": "syncthing",
+	"name": "syncthing",
+	"version": "2.1.7",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Ordner-Synchronisation für die App „Syncthing“: hält Ordner zwischen der Box, PCs und Handys gleich – direkt von Gerät zu Gerät, ohne Cloud. Jeder Benutzer bekommt seinen eigenen Dienst mit eigenen Geräten und Ordnern, mit seinen Rechten. Er startet, wenn der Benutzer die App öffnet, und nach einem Neustart der Box von selbst.",
+		"en": "Folder synchronisation for the “Syncthing” app: keeps folders the same on the box, PCs and phones – directly from device to device, without a cloud. Every user gets their own service with their own devices and folders, with their rights. It starts when the user opens the app, and again by itself after a restart of the box."
+	},
+	"type": "system",
+	"commands": [ "syncthing" ],
+	"service": { "control": "syncthing", "delay": 10 },
+	"icon": "icon.svg",
+	"category": "network",
+	"license": "MPL-2.0",
+	"homepage": "https://syncthing.net/",
+	"min_shareos": "0.2.0-beta.20"
+}

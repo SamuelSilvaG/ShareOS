@@ -1,0 +1,243 @@
+#!/usr/bin/ucode -S
+// ShareOS app platform: the account's own Syncthing, for apps with the
+// permissions "files" and "syncthing"
+//   POST /_shareos/cgi/syncthing?g=<grant>
+//   body: {"method": "GET", "path": "/rest/db/status", "query": {"folder": "abcde-12345"}, "body": …}
+// The grant (from the admin interface, one app, one account, 8 hours) names
+// the account; rpcd (shareos.appsyncthing) checks it, starts the account's
+// Syncthing when needed (shareos-syncthing) and names its Unix socket and key.
+// Only the parts of Syncthing's REST API a remote control needs pass: devices,
+// folders, pending requests, status, scans, pause/resume, a few options –
+// nothing that changes its own interface, keys, the folder defaults or other
+// places. Folders are exchanged as "<root>/<path>" like ShareOS.fs (root = a
+// name from ShareOS.fs.roots()); Syncthing gets absolute paths inside the
+// account's folders only.
+//   {"method": "GET", "path": "/qr", "query": {"text": <device ID>}}  a device ID as a
+//      QR code (data: URL)
+//   {"method": "POST", "path": "/rest/system/restart"}  restart (by the box)
+import { stdin, stdout, readfile, writefile, unlink, popen } from 'fs';
+import * as ubus from 'ubus';
+
+const MAX_BODY = 262144;
+const ID = '[A-Za-z0-9._-]{1,64}';
+const DEV = '[A-Z0-9-]{50,70}';
+const ID_RE = regexp('^' + ID + '$');
+const DEV_RE = regexp('^' + DEV + '$');
+
+function reply(status, obj) {
+	stdout.write(sprintf('Status: %s\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n%J\n', status, obj));
+	exit(0);
+}
+function fail(status, msg) { reply(status, { error: msg }); }
+function shq(str) { return "'" + replace(str, "'", "'\\''") + "'"; }
+
+// --- what may pass ------------------------------------------------------------------
+// [ method, path, query keys (name: 'id' | 'dev' | 'num'), kind of body ]
+const ROUTES = [
+	[ 'GET', '/rest/system/status', {} ],
+	[ 'GET', '/rest/system/version', {} ],
+	[ 'GET', '/rest/system/connections', {} ],
+	[ 'GET', '/rest/system/error', {} ],
+	[ 'POST', '/rest/system/error/clear', {} ],
+	[ 'POST', '/rest/system/pause', { device: 'dev' } ],
+	[ 'POST', '/rest/system/resume', { device: 'dev' } ],
+	[ 'GET', '/rest/config/devices', {} ],
+	[ 'POST', '/rest/config/devices', {}, 'device' ],
+	[ 'GET', '/rest/config/devices/' + DEV, {} ],
+	[ 'PUT', '/rest/config/devices/' + DEV, {}, 'device' ],
+	[ 'PATCH', '/rest/config/devices/' + DEV, {}, 'device' ],
+	[ 'DELETE', '/rest/config/devices/' + DEV, {} ],
+	[ 'GET', '/rest/config/folders', {} ],
+	[ 'POST', '/rest/config/folders', {}, 'folder' ],
+	[ 'GET', '/rest/config/folders/' + ID, {} ],
+	[ 'PUT', '/rest/config/folders/' + ID, {}, 'folder' ],
+	[ 'PATCH', '/rest/config/folders/' + ID, {}, 'folder' ],
+	[ 'DELETE', '/rest/config/folders/' + ID, {} ],
+	[ 'GET', '/rest/config/options', {} ],
+	[ 'PATCH', '/rest/config/options', {}, 'options' ],
+	[ 'GET', '/rest/config/defaults/folder', {} ],
+	[ 'GET', '/rest/config/restart-required', {} ],
+	[ 'GET', '/rest/cluster/pending/devices', {} ],
+	[ 'DELETE', '/rest/cluster/pending/devices', { device: 'dev' } ],
+	[ 'GET', '/rest/cluster/pending/folders', { device: 'dev' } ],
+	[ 'DELETE', '/rest/cluster/pending/folders', { folder: 'id', device: 'dev' } ],
+	[ 'GET', '/rest/db/status', { folder: 'id' } ],
+	[ 'GET', '/rest/db/completion', { folder: 'id', device: 'dev' } ],
+	[ 'GET', '/rest/db/need', { folder: 'id', page: 'num', perpage: 'num' } ],
+	[ 'GET', '/rest/db/ignores', { folder: 'id' } ],
+	[ 'POST', '/rest/db/ignores', { folder: 'id' }, 'ignores' ],
+	[ 'POST', '/rest/db/scan', { folder: 'id' } ],
+	[ 'POST', '/rest/db/override', { folder: 'id' } ],
+	[ 'POST', '/rest/db/revert', { folder: 'id' } ],
+	[ 'GET', '/rest/folder/errors', { folder: 'id', page: 'num', perpage: 'num' } ],
+	[ 'GET', '/rest/stats/device', {} ],
+	[ 'GET', '/rest/stats/folder', {} ],
+	[ 'GET', '/rest/svc/deviceid', { id: 'any' } ],
+	[ 'GET', '/qr', { text: 'dev' } ]
+];
+// options an app may change: bandwidth and how devices find each other
+const OPTIONS = { maxSendKbps: 'number', maxRecvKbps: 'number', limitBandwidthInLan: 'bool', globalAnnounceEnabled: 'bool',
+	localAnnounceEnabled: 'bool', relaysEnabled: 'bool', natEnabled: 'bool' };
+// fields of a folder that are paths or things only the box decides
+const FOLDER_FIXED = { filesystemType: 'basic', markerName: '.stfolder' };
+
+// --- request ----------------------------------------------------------------------
+let g = match(getenv('QUERY_STRING') ?? '', /(^|&)g=([0-9a-f]{32})(&|$)/);
+if (!g) fail('403 Forbidden', 'no access');
+if (getenv('REQUEST_METHOD') != 'POST') fail('405 Method Not Allowed', 'method not allowed');
+let len = +(getenv('CONTENT_LENGTH') ?? 0);
+if (!(len > 0) || len > MAX_BODY) fail('413 Payload Too Large', 'invalid request');
+let body = '';
+while (length(body) < len) {
+	let chunk = stdin.read(len - length(body));
+	if (chunk == null || chunk == '') break;
+	body += chunk;
+}
+let req = json(body || 'null');
+if (type(req) != 'object' || type(req.method) != 'string' || type(req.path) != 'string') fail('400 Bad Request', 'invalid request');
+let method = uc(req.method), path = req.path, query = req.query ?? {};
+if (type(query) != 'object') fail('400 Bad Request', 'invalid request');
+
+let route = null;
+if (!(method == 'POST' && path == '/rest/system/restart')) {
+	for (let r in ROUTES)
+		if (r[0] == method && match(path, regexp('^' + r[1] + '$'))) { route = r; break; }
+	if (!route) fail('403 Forbidden', 'not allowed: ' + method + ' ' + substr(path, 0, 80));
+}
+
+let conn = ubus.connect();
+if (!conn) fail('503 Service Unavailable', 'not ready');
+let s = conn.call('shareos.appsyncthing', 'session', { grant: g[2] });
+if (s == null) fail('500 Internal Server Error', 'failed');
+if (s.error == 'no access') fail('403 Forbidden', 'no access');
+if (s.error) reply('503 Service Unavailable', { error: s.error, installed: s.installed });
+
+if (method == 'POST' && path == '/rest/system/restart') {
+	let r = conn.call('shareos.appsyncthing', 'restart', { grant: g[2] });
+	if (r?.error) fail('503 Service Unavailable', r.error);
+	reply('200 OK', { status: 200, data: { ok: true } });
+}
+
+// "<root>/<path>" -> absolute path inside the account's folders (checked by rpcd)
+function to_abs(v) {
+	if (type(v) != 'string' || v == '' || substr(v, 0, 1) == '/' || substr(v, 0, 1) == '~') return null;
+	let i = index(v, '/');
+	let root = i < 0 ? v : substr(v, 0, i), rel = i < 0 ? '' : substr(v, i + 1);
+	let r = conn.call('shareos.appsyncthing', 'path', { grant: g[2], root, path: rel });
+	return r?.path ?? null;
+}
+// absolute path -> "<root>/<path>"; outside the account's folders: not shown
+function to_box(v) {
+	if (type(v) != 'string') return v;
+	let best = null;
+	for (let r in s.roots)
+		if ((v == r.path || index(v, r.path + '/') == 0) && (!best || length(r.path) > length(best.path))) best = r;
+	return best ? best.name + substr(v, length(best.path)) : '';
+}
+
+// --- the body --------------------------------------------------------------------------
+function clean_folder(f) {
+	if (type(f) != 'object') fail('400 Bad Request', 'invalid folder');
+	for (let k, v in FOLDER_FIXED) if (f[k] != null && f[k] != v) fail('403 Forbidden', 'not allowed: ' + k);
+	if (f.path == null && (method == 'POST' || method == 'PUT')) fail('400 Bad Request', 'folder path missing');
+	if (f.path != null) {
+		let p = to_abs(f.path);
+		if (!p) fail('403 Forbidden', 'folder not allowed: ' + f.path);
+		f.path = p;
+	}
+	if (f.id != null && (type(f.id) != 'string' || !match(f.id, ID_RE))) fail('400 Bad Request', 'invalid folder ID');
+	// versions only inside the folder (.stversions), no external programs
+	if (f.versioning != null) {
+		let v = f.versioning;
+		if (type(v) != 'object' || (v.fsPath ?? '') != '' || (v.fsType ?? 'basic') != 'basic' || index([ '', 'trashcan', 'simple', 'staggered' ], v.type ?? '') < 0)
+			fail('403 Forbidden', 'versioning not allowed');
+		if (type(v.params) == 'object') for (let k in [ 'versionsPath', 'command' ]) if ((v.params[k] ?? '') != '') fail('403 Forbidden', 'versioning not allowed');
+	}
+	return f;
+}
+function clean_device(d) {
+	if (type(d) != 'object') fail('400 Bad Request', 'invalid device');
+	if (d.deviceID != null && (type(d.deviceID) != 'string' || !match(d.deviceID, DEV_RE))) fail('400 Bad Request', 'invalid device ID');
+	return d;
+}
+function clean_options(o) {
+	if (type(o) != 'object') fail('400 Bad Request', 'invalid options');
+	let n = {};
+	for (let k, v in o) {
+		if (!OPTIONS[k]) fail('403 Forbidden', 'not allowed: ' + k);
+		if (OPTIONS[k] == 'bool' ? type(v) != 'bool' : !(type(v) == 'int' && v >= 0)) fail('400 Bad Request', 'invalid ' + k);
+		n[k] = v;
+	}
+	return n;
+}
+
+let send = null;
+if (route?.[3] == 'folder') send = clean_folder(req.body);
+else if (route?.[3] == 'device') send = clean_device(req.body);
+else if (route?.[3] == 'options') send = clean_options(req.body);
+else if (route?.[3] == 'ignores') {
+	if (type(req.body) != 'object' || type(req.body.ignore) != 'array') fail('400 Bad Request', 'invalid ignores');
+	send = { ignore: map(req.body.ignore, (x) => '' + x) };
+}
+
+// --- the query -------------------------------------------------------------------
+function enc(v) {
+	let o = '';
+	for (let i = 0; i < length(v); i++) {
+		let c = substr(v, i, 1);
+		o += match(c, /[A-Za-z0-9._~-]/) ? c : sprintf('%%%02X', ord(c));
+	}
+	return o;
+}
+let url = path == '/qr' ? '/qr/' : path, qs = [];
+for (let k, v in query) {
+	let t = route[2][k];
+	if (!t) fail('403 Forbidden', 'not allowed: ' + k);
+	v = '' + v;
+	if ((t == 'id' && !match(v, ID_RE)) || (t == 'dev' && !match(v, DEV_RE)) || (t == 'num' && !match(v, /^[0-9]{1,6}$/)) || length(v) > 200)
+		fail('400 Bad Request', 'invalid ' + k);
+	push(qs, k + '=' + enc(v));
+}
+if (length(qs)) url += '?' + join('&', qs);
+
+// --- to Syncthing (Unix socket, API key) ---------------------------------------------
+let rnd = readfile('/dev/urandom', 8) ?? '', rid = '';
+for (let i = 0; i < length(rnd); i++) rid += sprintf('%02x', ord(rnd, i));
+let dir = '/tmp/shareos-syncthing/' + s.user;
+let tmp = null;
+if (send != null) { tmp = dir + '/req.' + rid; writefile(tmp, sprintf('%J', send)); }
+let hdr = dir + '/hdr.' + rid;
+writefile(hdr, 'X-API-Key: ' + s.key + '\n');      // not on the command line
+let cp = popen(sprintf('curl -s -S -m 60 -X %s -o - -w %s --unix-socket %s -H @%s %s %s 2>&1',
+	method, shq('\n%{http_code} %{content_type}'), shq(s.socket), shq(hdr),
+	tmp ? "-H 'Content-Type: application/json' --data-binary @" + shq(tmp) : '', shq('http://localhost' + url)), 'r');
+let resp = cp ? (cp.read('all') ?? '') : '';
+if (cp) cp.close();
+unlink(hdr);
+if (tmp) unlink(tmp);
+let nl = rindex(resp, '\n');
+let tail = nl >= 0 ? split(substr(resp, nl + 1), ' ') : [ '0' ];
+let code = +tail[0], ctype = tail[1] ?? '';
+resp = nl >= 0 ? substr(resp, 0, nl) : resp;
+if (!(code > 0)) fail('502 Bad Gateway', 'Syncthing does not answer');
+
+if (path == '/qr') {
+	if (code != 200) fail('502 Bad Gateway', 'Syncthing: HTTP ' + code);
+	reply('200 OK', { status: 200, data: 'data:image/png;base64,' + b64enc(resp) });
+}
+
+let res = null;
+try { res = json(resp); } catch (e) { }
+
+// absolute paths -> "<root>/<path>"; nothing about its interface
+function scrub(x, key) {
+	if (type(x) == 'array') return map(x, (y) => scrub(y, key));
+	if (type(x) != 'object') return x;
+	let n = {};
+	for (let k, v in x) {
+		if (k == 'gui' || k == 'apiKey' || k == 'guiAddressUsed' || k == 'tilde') continue;
+		n[k] = (k == 'path' || k == 'fsPath') && type(v) == 'string' && v != '' ? to_box(v) : scrub(v, k);
+	}
+	return n;
+}
+reply('200 OK', { status: code, data: res == null ? null : scrub(res), text: res == null ? substr(trim(resp), 0, 2000) : null });

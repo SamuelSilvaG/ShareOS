@@ -1,0 +1,10 @@
+config BR2_PACKAGE_SHAREOS_SYNCTHING
+	bool "shareos-syncthing"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_GO
+	help
+	  Syncthing for the system app "syncthing": continuous file
+	  synchronisation between devices, without its own web
+	  interface (ShareOS uses its REST API).
+
+	  https://syncthing.net/

@@ -1400,6 +1400,8 @@
 		"– er fährt dann vor der Box herunter.": "– तब वह बॉक्स से पहले बंद होगा।",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "बॉक्स तभी बंद होता है जब वह बैटरी पर चल रहा हो। बिजली पहले लौट आए तो कुछ नहीं होता।",
 		"USV gespeichert.": "UPS सहेजा गया।",
+		"Ordner synchronisieren (Syncthing)": "फ़ोल्डर सिंक करें (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "उपयोगकर्ता की अपनी Syncthing सेवा को नियंत्रित कर सकता है: डिवाइस जोड़ना और उनके साथ फ़ोल्डर सिंक करना। हर उपयोगकर्ता की अपनी सेवा होती है; केवल वे फ़ोल्डर सिंक होते हैं जिन तक उसकी पहुँच है।",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "बॉक्स का Zabbix एजेंट सेट कर सकता है (सर्वर, होस्ट नाम, PSK एन्क्रिप्शन, पैसिव जाँचें, SMART अंतराल), उसे फिर से शुरू कर सकता है और उसका लॉग पढ़ सकता है – ऐप कुंजी फिर कभी नहीं देखता। केवल एडमिन के लिए।"
 	},
 	"patterns": [

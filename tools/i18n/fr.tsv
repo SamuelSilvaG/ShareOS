@@ -1762,4 +1762,6 @@ E1393	Sur l'autre ordinateur (NUT, upsmon) :
 E1394	– il s'arrête alors avant la box.
 E1395	La box ne s'arrête que tant qu'elle est sur batterie. Si le courant revient avant, rien ne se passe.
 E1396	Onduleur enregistré.
-E1397	Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement.
+E1397	Synchroniser des dossiers (Syncthing)
+E1398	Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés.
+E1399	Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement.

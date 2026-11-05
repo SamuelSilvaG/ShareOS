@@ -1400,6 +1400,8 @@
 		"– er fährt dann vor der Box herunter.": "– il s'arrête alors avant la box.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "La box ne s'arrête que tant qu'elle est sur batterie. Si le courant revient avant, rien ne se passe.",
 		"USV gespeichert.": "Onduleur enregistré.",
+		"Ordner synchronisieren (Syncthing)": "Synchroniser des dossiers (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés.",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement."
 	},
 	"patterns": [
