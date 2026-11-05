@@ -46,6 +46,8 @@ BR2_PACKAGE_HOST_GO_BIN=y
 BR2_PACKAGE_SHAREOS_TAILSCALE=y
 # autobrr (system app "autobrr"), see package/shareos-autobrr
 BR2_PACKAGE_SHAREOS_AUTOBRR=y
+# Syncthing (system app "syncthing"), see package/shareos-syncthing
+BR2_PACKAGE_SHAREOS_SYNCTHING=y
 # Zabbix agent, classic C version (system app "zabbix-agent"), see
 # package/shareos-zabbix-agent
 BR2_PACKAGE_SHAREOS_ZABBIX_AGENT=y

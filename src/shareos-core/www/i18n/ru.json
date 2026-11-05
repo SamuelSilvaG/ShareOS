@@ -1399,7 +1399,9 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "На другом компьютере (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– тогда он выключится раньше устройства.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "Устройство выключается, только пока работает от батареи. Если питание вернётся раньше, ничего не произойдёт.",
-		"USV gespeichert.": "ИБП сохранён."
+		"USV gespeichert.": "ИБП сохранён.",
+		"Ordner synchronisieren (Syncthing)": "Синхронизация папок (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Может управлять собственной службой Syncthing пользователя: связывать устройства и синхронизировать с ними папки. У каждого пользователя своя служба; синхронизируются только папки, к которым у него есть доступ."
 	},
 	"patterns": [
 		[

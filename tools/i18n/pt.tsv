@@ -1762,3 +1762,5 @@ E1393	No outro computador (NUT, upsmon):
 E1394	– então desliga-se antes da caixa.
 E1395	A caixa só se desliga enquanto estiver em bateria. Se a energia voltar antes, nada acontece.
 E1396	UPS guardada.
+E1397	Sincronizar pastas (Syncthing)
+E1398	Pode controlar o serviço Syncthing do próprio utilizador: emparelhar dispositivos e sincronizar pastas com eles. Cada utilizador tem o seu próprio serviço; só são sincronizadas pastas a que tem acesso.

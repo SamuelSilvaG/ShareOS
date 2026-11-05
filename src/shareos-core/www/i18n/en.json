@@ -1399,7 +1399,9 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "On the other computer (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– it then shuts down before the box.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "The box only shuts down while it runs on battery. If the power comes back before, nothing happens.",
-		"USV gespeichert.": "UPS saved."
+		"USV gespeichert.": "UPS saved.",
+		"Ordner synchronisieren (Syncthing)": "Sync folders (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "May control the user's own Syncthing service: pair devices and sync folders with them. Every user has their own service; only folders they have access to are synced."
 	},
 	"patterns": [
 		[
