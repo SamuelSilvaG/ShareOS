@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "On the other computer (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– it then shuts down before the box.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "The box only shuts down while it runs on battery. If the power comes back before, nothing happens.",
-		"USV gespeichert.": "UPS saved."
+		"USV gespeichert.": "UPS saved.",
+		"Weniger anzeigen": "Show fewer"
 	},
 	"patterns": [
 		[
@@ -2701,6 +2702,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"The certificate “$1” and its key are deleted from the box. Devices that already use it keep their copy."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Show all ($1)"
 		]
 	],
 	"words": [

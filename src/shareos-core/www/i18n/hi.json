@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "दूसरे कंप्यूटर पर (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– तब वह बॉक्स से पहले बंद होगा।",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "बॉक्स तभी बंद होता है जब वह बैटरी पर चल रहा हो। बिजली पहले लौट आए तो कुछ नहीं होता।",
-		"USV gespeichert.": "UPS सहेजा गया।"
+		"USV gespeichert.": "UPS सहेजा गया।",
+		"Weniger anzeigen": "कम दिखाएँ"
 	},
 	"patterns": [
 		[
@@ -2701,6 +2702,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"प्रमाणपत्र “$1” और उसकी कुंजी बॉक्स से हटाई जाएगी। जो उपकरण इसे पहले से उपयोग करते हैं, वे अपनी प्रति रखेंगे।"
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"सभी दिखाएँ ($1)"
 		]
 	],
 	"words": [

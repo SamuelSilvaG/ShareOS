@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "على الحاسوب الآخر (NUT، upsmon):",
 		"– er fährt dann vor der Box herunter.": "– وعندها يُغلق قبل الجهاز.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "لا يُغلق الجهاز إلا أثناء عمله على البطارية. إذا عادت الكهرباء قبل ذلك فلا يحدث شيء.",
-		"USV gespeichert.": "تم حفظ UPS."
+		"USV gespeichert.": "تم حفظ UPS.",
+		"Weniger anzeigen": "عرض أقل"
 	},
 	"patterns": [
 		[
@@ -2701,6 +2702,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"تُحذف الشهادة «$1» ومفتاحها من الجهاز. تحتفظ الأجهزة التي تستخدمها بنسختها."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"عرض الكل ($1)"
 		]
 	],
 	"words": [

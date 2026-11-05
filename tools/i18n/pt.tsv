@@ -1762,3 +1762,5 @@ E1393	No outro computador (NUT, upsmon):
 E1394	– então desliga-se antes da caixa.
 E1395	A caixa só se desliga enquanto estiver em bateria. Se a energia voltar antes, nada acontece.
 E1396	UPS guardada.
+E1397	Mostrar menos
+P325	Mostrar tudo ($1)

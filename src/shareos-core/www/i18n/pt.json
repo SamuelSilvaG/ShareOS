@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "No outro computador (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– então desliga-se antes da caixa.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "A caixa só se desliga enquanto estiver em bateria. Se a energia voltar antes, nada acontece.",
-		"USV gespeichert.": "UPS guardada."
+		"USV gespeichert.": "UPS guardada.",
+		"Weniger anzeigen": "Mostrar menos"
 	},
 	"patterns": [
 		[
@@ -2701,6 +2702,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"O certificado «$1» e a sua chave são eliminados da caixa. Os dispositivos que já o usam mantêm a sua cópia."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Mostrar tudo ($1)"
 		]
 	],
 	"words": [

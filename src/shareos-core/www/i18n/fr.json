@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "Sur l'autre ordinateur (NUT, upsmon) :",
 		"– er fährt dann vor der Box herunter.": "– il s'arrête alors avant la box.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "La box ne s'arrête que tant qu'elle est sur batterie. Si le courant revient avant, rien ne se passe.",
-		"USV gespeichert.": "Onduleur enregistré."
+		"USV gespeichert.": "Onduleur enregistré.",
+		"Weniger anzeigen": "Afficher moins"
 	},
 	"patterns": [
 		[
@@ -2701,6 +2702,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"Le certificat « $1 » et sa clé sont supprimés de la box. Les appareils qui l'utilisent déjà gardent leur copie."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Tout afficher ($1)"
 		]
 	],
 	"words": [

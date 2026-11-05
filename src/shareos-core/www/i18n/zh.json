@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "在另一台电脑上（NUT、upsmon）：",
 		"– er fährt dann vor der Box herunter.": "——它会在本设备之前关机。",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "只有在电池供电期间设备才会关机。如果在此之前恢复供电，则不会发生任何事。",
-		"USV gespeichert.": "UPS 设置已保存。"
+		"USV gespeichert.": "UPS 设置已保存。",
+		"Weniger anzeigen": "收起"
 	},
 	"patterns": [
 		[
@@ -2701,6 +2702,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"证书“$1”及其密钥将从本设备删除。已在使用它的设备会保留各自的副本。"
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"显示全部 ($1)"
 		]
 	],
 	"words": [
