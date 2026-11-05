@@ -1764,3 +1764,5 @@ E1395	La box ne s'arrête que tant qu'elle est sur batterie. Si le courant revie
 E1396	Onduleur enregistré.
 E1397	Synchroniser des dossiers (Syncthing)
 E1398	Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés.
+E1399	Afficher moins
+P325	Tout afficher ($1)

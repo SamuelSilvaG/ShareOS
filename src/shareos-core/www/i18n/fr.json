@@ -1401,7 +1401,8 @@
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "La box ne s'arrête que tant qu'elle est sur batterie. Si le courant revient avant, rien ne se passe.",
 		"USV gespeichert.": "Onduleur enregistré.",
 		"Ordner synchronisieren (Syncthing)": "Synchroniser des dossiers (Syncthing)",
-		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés."
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés.",
+		"Weniger anzeigen": "Afficher moins"
 	},
 	"patterns": [
 		[
@@ -2703,6 +2704,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"Le certificat « $1 » et sa clé sont supprimés de la box. Les appareils qui l'utilisent déjà gardent leur copie."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Tout afficher ($1)"
 		]
 	],
 	"words": [

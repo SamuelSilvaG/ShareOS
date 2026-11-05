@@ -1401,7 +1401,8 @@
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "Устройство выключается, только пока работает от батареи. Если питание вернётся раньше, ничего не произойдёт.",
 		"USV gespeichert.": "ИБП сохранён.",
 		"Ordner synchronisieren (Syncthing)": "Синхронизация папок (Syncthing)",
-		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Может управлять собственной службой Syncthing пользователя: связывать устройства и синхронизировать с ними папки. У каждого пользователя своя служба; синхронизируются только папки, к которым у него есть доступ."
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Может управлять собственной службой Syncthing пользователя: связывать устройства и синхронизировать с ними папки. У каждого пользователя своя служба; синхронизируются только папки, к которым у него есть доступ.",
+		"Weniger anzeigen": "Показать меньше"
 	},
 	"patterns": [
 		[
@@ -2703,6 +2704,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"Сертификат «$1» и его ключ удаляются с устройства. Устройства, которые уже его используют, сохраняют свою копию."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Показать все ($1)"
 		]
 	],
 	"words": [

@@ -1401,7 +1401,8 @@
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "A caixa só se desliga enquanto estiver em bateria. Se a energia voltar antes, nada acontece.",
 		"USV gespeichert.": "UPS guardada.",
 		"Ordner synchronisieren (Syncthing)": "Sincronizar pastas (Syncthing)",
-		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Pode controlar o serviço Syncthing do próprio utilizador: emparelhar dispositivos e sincronizar pastas com eles. Cada utilizador tem o seu próprio serviço; só são sincronizadas pastas a que tem acesso."
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Pode controlar o serviço Syncthing do próprio utilizador: emparelhar dispositivos e sincronizar pastas com eles. Cada utilizador tem o seu próprio serviço; só são sincronizadas pastas a que tem acesso.",
+		"Weniger anzeigen": "Mostrar menos"
 	},
 	"patterns": [
 		[
@@ -2703,6 +2704,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"O certificado «$1» e a sua chave são eliminados da caixa. Os dispositivos que já o usam mantêm a sua cópia."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Mostrar tudo ($1)"
 		]
 	],
 	"words": [

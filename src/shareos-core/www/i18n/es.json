@@ -1401,7 +1401,8 @@
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "La caja solo se apaga mientras funciona con batería. Si la luz vuelve antes, no pasa nada.",
 		"USV gespeichert.": "SAI guardado.",
 		"Ordner synchronisieren (Syncthing)": "Sincronizar carpetas (Syncthing)",
-		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Puede controlar el servicio Syncthing propio del usuario: vincular dispositivos y sincronizar carpetas con ellos. Cada usuario tiene su propio servicio; solo se sincronizan carpetas a las que tiene acceso."
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Puede controlar el servicio Syncthing propio del usuario: vincular dispositivos y sincronizar carpetas con ellos. Cada usuario tiene su propio servicio; solo se sincronizan carpetas a las que tiene acceso.",
+		"Weniger anzeigen": "Mostrar menos"
 	},
 	"patterns": [
 		[
@@ -2703,6 +2704,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"El certificado «$1» y su clave se eliminan de la caja. Los dispositivos que ya lo usan conservan su copia."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Mostrar todo ($1)"
 		]
 	],
 	"words": [
