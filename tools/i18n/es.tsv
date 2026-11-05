@@ -1764,4 +1764,6 @@ E1395	La caja solo se apaga mientras funciona con batería. Si la luz vuelve ant
 E1396	SAI guardado.
 E1397	Sincronizar carpetas (Syncthing)
 E1398	Puede controlar el servicio Syncthing propio del usuario: vincular dispositivos y sincronizar carpetas con ellos. Cada usuario tiene su propio servicio; solo se sincronizan carpetas a las que tiene acceso.
-E1399	Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores.
+E1399	Mostrar menos
+P325	Mostrar todo ($1)
+E1400	Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores.

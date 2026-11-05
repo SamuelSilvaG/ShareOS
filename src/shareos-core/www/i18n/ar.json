@@ -1402,6 +1402,7 @@
 		"USV gespeichert.": "تم حفظ UPS.",
 		"Ordner synchronisieren (Syncthing)": "مزامنة المجلدات (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "يمكنه التحكم في خدمة Syncthing الخاصة بالمستخدم: إقران الأجهزة ومزامنة المجلدات معها. لكل مستخدم خدمته الخاصة؛ تتم مزامنة المجلدات التي يملك الوصول إليها فقط.",
+		"Weniger anzeigen": "عرض أقل",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "يمكنه إعداد وكيل Zabbix للجهاز (الخادم، اسم المضيف، تشفير PSK، الفحوص السلبية، فاصل SMART) وإعادة تشغيله وقراءة سجله – ولن يرى التطبيق المفتاح مرة أخرى. للمسؤولين فقط."
 	},
 	"patterns": [
@@ -2704,6 +2705,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"تُحذف الشهادة «$1» ومفتاحها من الجهاز. تحتفظ الأجهزة التي تستخدمها بنسختها."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"عرض الكل ($1)"
 		]
 	],
 	"words": [

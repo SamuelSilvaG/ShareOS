@@ -111,7 +111,8 @@ SERVICES = [('board', 'Gerätesteuerung', 'Lüfter, Temperatur, Taster, MCU-Uhr'
             ('rpcd', 'API (rpcd)', 'Schnittstelle für diese Oberfläche', True), ('syslogd', 'Systemprotokoll', 'syslogd, im RAM', False),
             ('ubus', 'Systembus (ubus)', 'Nachrichten zwischen den Diensten', True), ('uhttpd', 'Weboberfläche', 'uhttpd, Port 80', True)]
 
-RELEASES = [{'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1', 'prerelease': True, 'date': '2026-10-24T10:00:00Z', 'size': 8396800,
+RELEASES = [{'tag': 'v0.2.0-beta.%d' % n, 'version': '0.2.0-beta.%d' % n, 'prerelease': True, 'date': '2026-11-0%dT10:00:00Z' % (n - 1), 'size': 8400000 + n * 4096,
+             'url': 'https://github.com/UniqueDroid/ShareOS/releases', 'notes': '- Beta %d' % n} for n in (5, 4, 3, 2)] + [{'tag': 'v0.2.0-beta.1', 'version': '0.2.0-beta.1', 'prerelease': True, 'date': '2026-10-24T10:00:00Z', 'size': 8396800,
              'url': 'https://github.com/UniqueDroid/ShareOS/releases', 'notes': '- Freigaben (SMB, NFS)\n- Benutzer und Gruppen\n- Speicher-Assistent'},
             {'tag': 'v0.1.0-beta.1', 'version': '0.1.0-beta.1', 'prerelease': True, 'date': '2026-10-17T16:00:00Z', 'size': 8392704,
              'url': 'https://github.com/UniqueDroid/ShareOS/releases', 'notes': 'Erste Testversion'}]

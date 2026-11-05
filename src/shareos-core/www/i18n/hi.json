@@ -1402,6 +1402,7 @@
 		"USV gespeichert.": "UPS सहेजा गया।",
 		"Ordner synchronisieren (Syncthing)": "फ़ोल्डर सिंक करें (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "उपयोगकर्ता की अपनी Syncthing सेवा को नियंत्रित कर सकता है: डिवाइस जोड़ना और उनके साथ फ़ोल्डर सिंक करना। हर उपयोगकर्ता की अपनी सेवा होती है; केवल वे फ़ोल्डर सिंक होते हैं जिन तक उसकी पहुँच है।",
+		"Weniger anzeigen": "कम दिखाएँ",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "बॉक्स का Zabbix एजेंट सेट कर सकता है (सर्वर, होस्ट नाम, PSK एन्क्रिप्शन, पैसिव जाँचें, SMART अंतराल), उसे फिर से शुरू कर सकता है और उसका लॉग पढ़ सकता है – ऐप कुंजी फिर कभी नहीं देखता। केवल एडमिन के लिए।"
 	},
 	"patterns": [
@@ -2704,6 +2705,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"प्रमाणपत्र “$1” और उसकी कुंजी बॉक्स से हटाई जाएगी। जो उपकरण इसे पहले से उपयोग करते हैं, वे अपनी प्रति रखेंगे।"
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"सभी दिखाएँ ($1)"
 		]
 	],
 	"words": [

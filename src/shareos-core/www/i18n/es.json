@@ -1402,6 +1402,7 @@
 		"USV gespeichert.": "SAI guardado.",
 		"Ordner synchronisieren (Syncthing)": "Sincronizar carpetas (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Puede controlar el servicio Syncthing propio del usuario: vincular dispositivos y sincronizar carpetas con ellos. Cada usuario tiene su propio servicio; solo se sincronizan carpetas a las que tiene acceso.",
+		"Weniger anzeigen": "Mostrar menos",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores."
 	},
 	"patterns": [
@@ -2704,6 +2705,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"El certificado «$1» y su clave se eliminan de la caja. Los dispositivos que ya lo usan conservan su copia."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Mostrar todo ($1)"
 		]
 	],
 	"words": [

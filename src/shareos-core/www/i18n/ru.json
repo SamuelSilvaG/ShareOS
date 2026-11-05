@@ -1402,6 +1402,7 @@
 		"USV gespeichert.": "ИБП сохранён.",
 		"Ordner synchronisieren (Syncthing)": "Синхронизация папок (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Может управлять собственной службой Syncthing пользователя: связывать устройства и синхронизировать с ними папки. У каждого пользователя своя служба; синхронизируются только папки, к которым у него есть доступ.",
+		"Weniger anzeigen": "Показать меньше",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Может настраивать агент Zabbix устройства (сервер, имя хоста, шифрование PSK, пассивные проверки, интервал SMART), перезапускать его и читать журнал – ключ приложение больше не увидит. Только для администраторов."
 	},
 	"patterns": [
@@ -2704,6 +2705,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"Сертификат «$1» и его ключ удаляются с устройства. Устройства, которые уже его используют, сохраняют свою копию."
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"Показать все ($1)"
 		]
 	],
 	"words": [

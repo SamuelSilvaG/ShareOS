@@ -1402,6 +1402,7 @@
 		"USV gespeichert.": "UPS 设置已保存。",
 		"Ordner synchronisieren (Syncthing)": "同步文件夹 (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "可以控制用户自己的 Syncthing 服务：配对设备并与其同步文件夹。每个用户都有自己的服务；只同步其有权访问的文件夹。",
+		"Weniger anzeigen": "收起",
 		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "可以设置设备的 Zabbix 代理（服务器、主机名、PSK 加密、被动检查、SMART 间隔）、重启它并读取其日志——应用再也看不到密钥。仅限管理员。"
 	},
 	"patterns": [
@@ -2704,6 +2705,10 @@
 		[
 			"^Das Zertifikat „(.+)“ und sein Schlüssel werden von der Box gelöscht\\. Geräte, die es schon nutzen, behalten ihre Kopie\\.$",
 			"证书“$1”及其密钥将从本设备删除。已在使用它的设备会保留各自的副本。"
+		],
+		[
+			"^Alle anzeigen \\(([0-9]+)\\)$",
+			"显示全部 ($1)"
 		]
 	],
 	"words": [

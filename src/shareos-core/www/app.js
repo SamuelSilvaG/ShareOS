@@ -2514,13 +2514,14 @@ const SYS = {
 					<h2 class="gh">VERSIONEN <span>von GitHub</span></h2>
 					<div class="tw"><table class="t" style="min-width:600px">
 						<thead><tr><th>VERSION</th><th>DATUM</th><th>KANAL</th><th>GRÖSSE</th><th></th></tr></thead>
-						<tbody>${c.releases.map((r) => html`<tr>
+						<tbody>${(S.relAll ? c.releases : c.releases.slice(0, 3)).map((r) => html`<tr>
 							<td><b>${r.version}</b></td><td>${fmtDate(r.date)}</td>
 							<td><span class="tag">${r.prerelease ? 'BETA' : 'STABIL'}</span></td><td class="mut">${fmtBytes(r.size)}</td>
 							<td>${r.version === cur ? html`<span class="tag ok">installiert</span>`
 								: html`<button class="btn sm${r.tag === latest?.tag ? '' : ' ghost'}" type="button" data-act="download" data-tag="${r.tag}" ${busy || !bootOk ? 'disabled' : ''}>Laden</button>`}
 								<a class="btn sm ghost" href="${r.url}" target="_blank" rel="noopener">Notes ↗</a></td></tr>`)}
-						</tbody></table></div></div>` : ''}
+						</tbody></table></div>
+					${c.releases.length > 3 ? html`<div class="acts" style="margin-top:8px"><button class="btn sm ghost" type="button" data-act="rel-all">${S.relAll ? 'Weniger anzeigen' : `Alle anzeigen (${c.releases.length})`}</button></div>` : ''}</div>` : ''}
 				${latest?.notes ? html`<div class="panel"><div class="ph"><span class="pt">ÄNDERUNGEN IN ${latest.version}</span></div><pre class="notes">${latest.notes}</pre></div>` : ''}
 			</section>
 			<aside class="aside">
@@ -3898,6 +3899,8 @@ async function refreshUpdateStatus() {
 /* ---------- actions (delegated clicks) -------------------------------------- */
 
 const ACTIONS = {
+	// the GitHub versions on the update page: the newest 3, or all of them
+	'rel-all'() { S.relAll = !S.relAll; renderMain(); },
 	'chips-more'() { S.chipsAll = !S.chipsAll; fitChips(); },
 	'page-reload': () => location.reload(),
 	theme() {
