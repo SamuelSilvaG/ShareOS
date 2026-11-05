@@ -1400,6 +1400,8 @@
 		"– er fährt dann vor der Box herunter.": "– তখন সেটি বক্সের আগে বন্ধ হবে।",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "বক্স কেবল ব্যাটারিতে চলার সময়ই বন্ধ হয়। আগে বিদ্যুৎ ফিরলে কিছুই হয় না।",
 		"USV gespeichert.": "UPS সংরক্ষিত।",
+		"Ordner synchronisieren (Syncthing)": "ফোল্ডার সিঙ্ক করুন (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "ব্যবহারকারীর নিজের Syncthing পরিষেবা নিয়ন্ত্রণ করতে পারে: ডিভাইস যুক্ত করা এবং তাদের সাথে ফোল্ডার সিঙ্ক করা। প্রত্যেক ব্যবহারকারীর নিজস্ব পরিষেবা আছে; শুধু সেই ফোল্ডারগুলো সিঙ্ক হয় যেগুলোতে তার অ্যাক্সেস আছে।",
 		"Weniger anzeigen": "কম দেখান"
 	},
 	"patterns": [

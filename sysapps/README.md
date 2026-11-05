@@ -148,6 +148,7 @@ The settings page in the interface, if any, comes with the firmware too
 | `minidlna` | `dlna` | `shareos-dlna` | *Services → Media server* |
 | `ffmpeg` | `media` (`"boot": false`, only `stop-all`) | `shareos-media` | app MediaTranscoder (permission `media`) |
 | `zabbix-agent` | `zabbix` | `shareos-zabbix` (user `zabbix`, active mode) | `shareos-zabbix set` on the command line, see [docs/MONITORING.md](../docs/MONITORING.md) |
+| `syncthing` | `syncthing` | `shareos-syncthing` (one per account) | app Syncthing (permission `syncthing`) |
 | `autobrr` | `autobrr` | `shareos-autobrr` (one for the box, user `autobrr`) | an app with the permission `autobrr` (admins), or autobrr's own web interface on port 7474 |
 
 `zabbix-agent` is built from `package/shareos-zabbix-agent` (the classic

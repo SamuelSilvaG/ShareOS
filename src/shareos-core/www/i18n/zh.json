@@ -1400,6 +1400,8 @@
 		"– er fährt dann vor der Box herunter.": "——它会在本设备之前关机。",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "只有在电池供电期间设备才会关机。如果在此之前恢复供电，则不会发生任何事。",
 		"USV gespeichert.": "UPS 设置已保存。",
+		"Ordner synchronisieren (Syncthing)": "同步文件夹 (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "可以控制用户自己的 Syncthing 服务：配对设备并与其同步文件夹。每个用户都有自己的服务；只同步其有权访问的文件夹。",
 		"Weniger anzeigen": "收起"
 	},
 	"patterns": [

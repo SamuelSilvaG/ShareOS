@@ -1400,6 +1400,8 @@
 		"– er fährt dann vor der Box herunter.": "– وعندها يُغلق قبل الجهاز.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "لا يُغلق الجهاز إلا أثناء عمله على البطارية. إذا عادت الكهرباء قبل ذلك فلا يحدث شيء.",
 		"USV gespeichert.": "تم حفظ UPS.",
+		"Ordner synchronisieren (Syncthing)": "مزامنة المجلدات (Syncthing)",
+		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "يمكنه التحكم في خدمة Syncthing الخاصة بالمستخدم: إقران الأجهزة ومزامنة المجلدات معها. لكل مستخدم خدمته الخاصة؛ تتم مزامنة المجلدات التي يملك الوصول إليها فقط.",
 		"Weniger anzeigen": "عرض أقل"
 	},
 	"patterns": [
