@@ -106,6 +106,22 @@
  *   .api(method, path, body)       autobrr's REST API, e.g. api('GET',
  *                                  '/api/filters'); resolves to the JSON answer
  *                                  (not /api/keys or /api/auth)
+ * ShareOS.zabbix              the box's Zabbix agent (system app
+ *                             "zabbix-agent"), for apps with the permissions
+ *                             "files" and "zabbix" – admin accounts only
+ *                             (ShareOS 0.2.0-beta.20+, null otherwise):
+ *   .status()                      {installed, enabled, running, server,
+ *                                  hostname, hostname_used, metadata,
+ *                                  psk_identity, psk (true/false – the key is
+ *                                  never sent back), passive, allow, port,
+ *                                  disk_interval}
+ *   .set({enabled, server, hostname, metadata, psk_identity, psk, passive,
+ *         allow, port, disk_interval})   as `shareos-zabbix set`: all optional,
+ *                                  server/allow as "a,b" strings, psk hex (32+
+ *                                  digits, "" removes it), disk_interval 10, 15,
+ *                                  20, 30 or 60; resolves to the new status,
+ *                                  rejects with the reason of a wrong value
+ *   .restart()   .log()            {log}: the last lines of the agent's log
  * ShareOS.sysinfo             the box's values, for apps with the permissions
  *                             "files" and "sysinfo" – admin accounts only
  *                             (ShareOS 0.2.0-beta.11+, null otherwise):
@@ -514,6 +530,17 @@
 		processes: function () { return cgiCall('sysinfo', 'processes'); },
 		kill: function (pid, signal) { return cgiCall('sysinfo', 'kill', { pid: pid, signal: signal || 'TERM' }); }
 	} : null;
+	/* the box's Zabbix agent (permissions "files" + "zabbix", admins) */
+	var zabbix = fs ? {
+		status: function () { return cgiCall('zabbix', 'status'); },
+		log: function () { return cgiCall('zabbix', 'log'); },
+		restart: function () { return cgiCall('zabbix', 'restart'); },
+		set: function (o) {
+			var a = {}; o = o || {};
+			['enabled', 'server', 'hostname', 'metadata', 'psk_identity', 'psk', 'passive', 'allow', 'port', 'disk_interval'].forEach(function (k) { if (o[k] != null) a[k] = o[k]; });
+			return cgiCall('zabbix', 'set', a);
+		}
+	} : null;
 	/* checks from the box (permissions "files" + "netcheck", admins) */
 	var netcheck = fs ? {
 		check: function (list) { return cgiCall('netcheck', 'check', { checks: list }).then(function (j) { return j.results; }); },
@@ -666,6 +693,7 @@
 		vpn: vpn,
 		tailscale: tailscale,
 		autobrr: autobrr,
+		zabbix: zabbix,
 		sysinfo: sysinfo,
 		netcheck: netcheck,
 		docker: docker,

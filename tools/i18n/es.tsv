@@ -1762,3 +1762,4 @@ E1393	En el otro ordenador (NUT, upsmon):
 E1394	– entonces se apaga antes que la caja.
 E1395	La caja solo se apaga mientras funciona con batería. Si la luz vuelve antes, no pasa nada.
 E1396	SAI guardado.
+E1397	Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores.

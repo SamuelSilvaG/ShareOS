@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "অন্য কম্পিউটারে (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– তখন সেটি বক্সের আগে বন্ধ হবে।",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "বক্স কেবল ব্যাটারিতে চলার সময়ই বন্ধ হয়। আগে বিদ্যুৎ ফিরলে কিছুই হয় না।",
-		"USV gespeichert.": "UPS সংরক্ষিত।"
+		"USV gespeichert.": "UPS সংরক্ষিত।",
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "বক্সের Zabbix এজেন্ট সেট আপ করতে পারে (সার্ভার, হোস্ট নাম, PSK এনক্রিপশন, প্যাসিভ চেক, SMART বিরতি), এটি আবার চালু করতে এবং এর লগ পড়তে পারে – অ্যাপ আর কখনো কী দেখে না। শুধু অ্যাডমিনদের জন্য।"
 	},
 	"patterns": [
 		[

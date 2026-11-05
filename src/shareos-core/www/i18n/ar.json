@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "على الحاسوب الآخر (NUT، upsmon):",
 		"– er fährt dann vor der Box herunter.": "– وعندها يُغلق قبل الجهاز.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "لا يُغلق الجهاز إلا أثناء عمله على البطارية. إذا عادت الكهرباء قبل ذلك فلا يحدث شيء.",
-		"USV gespeichert.": "تم حفظ UPS."
+		"USV gespeichert.": "تم حفظ UPS.",
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "يمكنه إعداد وكيل Zabbix للجهاز (الخادم، اسم المضيف، تشفير PSK، الفحوص السلبية، فاصل SMART) وإعادة تشغيله وقراءة سجله – ولن يرى التطبيق المفتاح مرة أخرى. للمسؤولين فقط."
 	},
 	"patterns": [
 		[

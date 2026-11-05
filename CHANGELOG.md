@@ -6,6 +6,8 @@ pre-releases for test devices only.
 
 ## 0.2.0-beta.20
 
+- **App permission `zabbix`** (admins only, needs `files`): apps set up the box's Zabbix agent through `ShareOS.zabbix` – `status()`, `set({…})` with the same fields and checks as `shareos-zabbix set`, `restart()`, `log()`. The pre-shared key goes in but never comes back (`status().psk` is only true/false). `/_shareos/cgi/zabbix`, rpcd `shareos.appzabbix`; 6 more checks in `tests/test-zabbix.sh`. For the Zabbix Agent Config app in the store.
+- **Zabbix agent:** stopping it also ends its worker processes. A worker stuck in a connection kept the lock of the pid file, so the next start failed ("Is this process already running?") and the old agent stayed around.
 - **Transmission: less CPU on the DNS-320L** ([#115](https://github.com/UniqueDroid/ShareOS/issues/115)). New defaults, put in once for every account (afterwards the user's choices in the app stay): µTP off – on the 800 MHz ARM it costs more CPU than all TCP peers together –, 60 peers in total and 30 per torrent (128 MB boxes: 30/15), at most 3 active downloads (2). The daemon runs with nice 10, so file shares and the web interface stay quick. The Transmission app 1.3.0 shows these settings (queues, peer limits, DHT/PEX/LPD/µTP, encryption).
 
 ## 0.2.0-beta.19

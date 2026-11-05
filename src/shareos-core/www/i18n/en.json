@@ -1399,7 +1399,8 @@
 		"Auf dem anderen Rechner (NUT, upsmon):": "On the other computer (NUT, upsmon):",
 		"– er fährt dann vor der Box herunter.": "– it then shuts down before the box.",
 		"Die Box fährt nur herunter, solange sie über Akku läuft. Kommt der Strom vorher zurück, passiert nichts.": "The box only shuts down while it runs on battery. If the power comes back before, nothing happens.",
-		"USV gespeichert.": "UPS saved."
+		"USV gespeichert.": "UPS saved.",
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "May set up the box's Zabbix agent (server, host name, PSK encryption, passive checks, SMART interval), restart it and read its log – the app never sees the key again. Admins only."
 	},
 	"patterns": [
 		[
