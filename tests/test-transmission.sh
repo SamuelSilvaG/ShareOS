@@ -100,6 +100,7 @@ check "first call starts anna's daemon, session-get works" "echo '$o' | js \"d['
 check "internal settings hidden (config dir, RPC socket, scripts)" "echo '$o' | js \"'config-dir' not in d['arguments'] and 'rpc-bind-address' not in d['arguments'] and not any(k.startswith('script-') and k.endswith('filename') for k in d['arguments'])\""
 check "anna's daemon runs as anna" "[ \"\$(run 'stat -c %U /proc/\$(cat /tmp/shareos-transmission/anna/pid)')\" = anna ]"
 check "state in anna's home, not in the flash" "[ -f $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json ] && [ \"\$(run 'stat -c %U /mnt/daten/home/anna/.config/transmission-daemon/settings.json')\" = anna ]"
+check "defaults for a small CPU: µTP off, 60/30 peers, nice 10" "echo '$o' | js \"not d['arguments']['utp-enabled'] and d['arguments']['peer-limit-global']==60 and d['arguments']['peer-limit-per-torrent']==30\" && [ \"\$(run 'cut -d\" \" -f19 /proc/\$(cat /tmp/shareos-transmission/anna/pid)/stat')\" = 10 ]"
 check "RPC only on a Unix socket (no TCP port 9091)" "[ -S $R/tmp/shareos-transmission/anna/rpc.sock ] && ! (exec 3<>/dev/tcp/127.0.0.1/9091) 2>/dev/null"
 
 MAG='magnet:?xt=urn:btih:0123456789abcdef0123456789abcdef01234567&dn=ShareOS-Test'
@@ -134,7 +135,10 @@ check "rpcd object not reachable for web sessions" "! grep -q apptorrent $R/usr/
 o=$(tr $GR '{"method":"session-get"}')
 check "admin: own daemon as root, downloads on the volume" "echo '$o' | js \"d['arguments']['download-dir']=='daten/Downloads'\" && [ \"\$(run 'stat -c %U /proc/\$(cat /tmp/shareos-transmission/root/pid)')\" = root ]"
 
+tr $GA '{"method":"session-set","arguments":{"utp-enabled":true,"peer-limit-global":90}}' >/dev/null
 run "shareos-transmission stop anna" >/dev/null
+run "shareos-transmission start anna" >/dev/null; run "shareos-transmission stop anna" >/dev/null
+check "the user's own settings stay after a restart (defaults only once)" "grep -q '\"utp-enabled\": true' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"peer-limit-global\": 90' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "scripts and RPC address never reached the daemon" "grep -q '\"script-torrent-done-enabled\": false' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && ! grep -q '/bin/sh' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"rpc-bind-address\": \"unix:' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "accounts remembered for the next start" "[ -f $R/etc/shareos/transmission/anna ] && [ -f $R/etc/shareos/transmission/bernd ]"
 run "shareos-transmission stop-all" >/dev/null

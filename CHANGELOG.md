@@ -4,6 +4,10 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.2.0-beta.20
+
+- **Transmission: less CPU on the DNS-320L** ([#115](https://github.com/UniqueDroid/ShareOS/issues/115)). New defaults, put in once for every account (afterwards the user's choices in the app stay): µTP off – on the 800 MHz ARM it costs more CPU than all TCP peers together –, 60 peers in total and 30 per torrent (128 MB boxes: 30/15), at most 3 active downloads (2). The daemon runs with nice 10, so file shares and the web interface stay quick. The Transmission app 1.3.0 shows these settings (queues, peer limits, DHT/PEX/LPD/µTP, encryption).
+
 ## 0.2.0-beta.19
 
 - **iPhone/iPad: SMB shares could only be read in the Files app** ([#112](https://github.com/UniqueDroid/ShareOS/issues/112)). Since iOS 18 the Files app treats a share without named streams (alternate data streams) as read-only, although every write would be allowed – Windows ignores it. ksmbd only announces them with `vfs objects = streams_xattr`; every share and the personal folders get it now (the streams are kept as extended attributes of the files, ext4 and Btrfs have them).
