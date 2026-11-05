@@ -56,6 +56,18 @@
  *                             (ShareOS 0.2.0-beta.4+, null otherwise):
  *   .rpc(method, args)             Transmission RPC, resolves to its "arguments";
  *                                  folders as "<root>/<path>" (ShareOS.fs roots)
+ * ShareOS.syncthing           the account's own Syncthing (system app
+ *                             "syncthing"), for apps with the permissions
+ *                             "files" and "syncthing" (ShareOS 0.2.0-beta.20+,
+ *                             null otherwise):
+ *   .api(method, path, query, body)  Syncthing's REST API (the parts a remote
+ *                                  control needs: devices, folders, pending
+ *                                  requests, status), resolves to its answer;
+ *                                  folder paths as "<root>/<path>" (ShareOS.fs
+ *                                  roots); rejects with err.status (HTTP) and
+ *                                  err.installed (false: system app missing)
+ *   .qr(deviceId)                  the device ID as a QR code (data: URL)
+ *   .restart()                     settings that need a restart
  * ShareOS.media               media jobs of the account on the box (ffmpeg system
  *                             app), for apps with the permissions "files" and
  *                             "media" (ShareOS 0.2.0-beta.5+, null otherwise):
@@ -583,6 +595,25 @@
 		}
 	} : null;
 
+	/* the account's own Syncthing (permissions "files" + "syncthing") */
+	var syncthing = fs ? (function () {
+		function call(method, path, query, body) {
+			return fetch('/_shareos/cgi/syncthing?g=' + grant, { method: 'POST', cache: 'no-store',
+				body: JSON.stringify({ method: method, path: path, query: query || {}, body: body }) })
+				.then(function (r) { return r.json().catch(function () { return { error: 'HTTP ' + r.status }; }); })
+				.then(function (j) {
+					var msg = j.error || (j.status >= 300 ? (j.text || (j.data && j.data.error) || 'HTTP ' + j.status) : null);
+					if (msg) { var e = new Error(msg); e.status = j.status; e.installed = j.installed; throw e; }
+					return j.data;
+				});
+		}
+		return {
+			api: call,
+			qr: function (id) { return call('GET', '/qr', { text: id }); },
+			restart: function () { return call('POST', '/rest/system/restart'); }
+		};
+	})() : null;
+
 	/* classic menu bar */
 	function keyOf(ev) {
 		var k = ev.key.length === 1 ? ev.key.toUpperCase() : ev.key;
@@ -662,6 +693,7 @@
 		file: file,
 		fs: fs,
 		torrent: torrent,
+		syncthing: syncthing,
 		media: media,
 		vpn: vpn,
 		tailscale: tailscale,
