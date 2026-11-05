@@ -241,6 +241,13 @@ the box for why the web server was not running.
 | 15:22 | System → Netzwerk gets dynamic DNS (DuckDNS, dynv6, Cloudflare, No-IP, any dyndns2 address; IPv4 and IPv6), an own certificate authority for the box and other devices in the home network, and Let's Encrypt over DNS – no port has to be open (#108). |
 | 16:17 | USB printers in the network (#109): ipp-usb for current printers – driverless printing and scanning; the firmware's avahi has no D-Bus, so a patch makes ipp-usb announce the devices through static service files. Older printers over port 9100 with p910nd. |
 | 17:23 | UPS over USB with Network UPS Tools (#110): charge and runtime, messages on a power failure, a clean shutdown on battery and the UPS switching the box on again with the power. Everything goes into `v0.2.0-beta.18`. |
+| 22:48 | Jan publishes `v0.2.0-beta.18`. |
+
+### Wednesday, 04.11.2026
+
+| Time | What happened |
+|---|---|
+| 10:47 | The iOS Files app showed SMB shares read-only, Windows could write (#112). Not the share's `read only` + `write list` – since iOS 18 Apple's client wants named streams, which ksmbd only announces with `vfs objects = streams_xattr`. The reporter confirmed it by hand, every share gets it now (#113). Goes into `v0.2.0-beta.19`. |
 
 ## Notable problems solved
 

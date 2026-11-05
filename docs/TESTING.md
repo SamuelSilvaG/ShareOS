@@ -445,6 +445,12 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zg. iPhone/iPad: SMB shares writable (0.2.0-beta.19)
+
+1. `grep -c 'vfs objects = streams_xattr' /etc/ksmbd/ksmbd.conf` counts every share on ext4/Btrfs (and `[homes]`); shares on FAT/exFAT/NTFS don't have it.
+2. iPhone/iPad, *Files* app → *Connect to Server* → `smb://<box>`, as a user with write access: create a folder, upload a file, rename, delete – all of it works (read-only before).
+3. Windows and macOS write as before.
+
 ## 14zf. Dynamic DNS, certificates, printers, UPS (0.2.0-beta.18)
 
 1. **Dynamic DNS:** create a name at duckdns.org. System → Netzwerk → DynDNS: *DuckDNS*, name and token, *Speichern*. After a few seconds the right side shows *aktuell* with the public address; `nslookup <name>.duckdns.org 1.1.1.1` shows it. A wrong token: *Fehler* and a message.
