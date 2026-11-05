@@ -122,11 +122,24 @@ function settings(u, pl) {
 	s['umask'] = pl.run_as == 'root' ? '002' : '077';
 	if (s['download-dir'] == null) s['download-dir'] = pl.download;
 	if (s['incomplete-dir-enabled'] == null) s['incomplete-dir-enabled'] = false;
-	// a small NAS: little cache, few connections (128 MB boxes even fewer)
-	if (s['cache-size-mb'] == null) s['cache-size-mb'] = small ? 2 : 4;
-	if (s['peer-limit-global'] == null) s['peer-limit-global'] = small ? 40 : 80;
-	if (s['peer-limit-per-torrent'] == null) s['peer-limit-per-torrent'] = small ? 20 : 40;
-	if (s['download-queue-size'] == null) s['download-queue-size'] = 3;
+	// a small NAS: little cache, few connections (128 MB boxes even fewer).
+	// The daemon writes every key into settings.json, so "not set" cannot tell
+	// the defaults apart from the user's choice: they are put in once per set
+	// of defaults (marker .shareos-defaults next to it); afterwards whatever is
+	// changed in the app (Transmission settings) stays.
+	// Set 2 (#115): µTP off – on the 800 MHz ARM it costs more CPU than the
+	// TCP peers together – and fewer peers.
+	const DEFAULTS = 2;
+	let mark = ROOT + pl.state + '/.shareos-defaults';
+	if (+trim(readfile(mark) ?? '0') < DEFAULTS) {
+		s['cache-size-mb'] = small ? 2 : 4;
+		s['peer-limit-global'] = small ? 30 : 60;
+		s['peer-limit-per-torrent'] = small ? 15 : 30;
+		s['download-queue-enabled'] = true;
+		s['download-queue-size'] = small ? 2 : 3;
+		s['utp-enabled'] = false;
+		writefile(mark, DEFAULTS + '\n');
+	}
 	writefile(file, sprintf('%.J\n', s));
 }
 
@@ -145,8 +158,9 @@ function start(u) {
 	let r = pl.run_as == 'root' ? sh(mk) : sh(sprintf('su -s /bin/sh %s -c %s', shq(pl.run_as), shq(mk)));
 	if (r.rc != 0) die('cannot create the folders: ' + trim(r.out));
 	settings(u, pl);
-	if (pl.run_as != 'root') sh(sprintf('chown %s %s', shq(pl.run_as), shq(ROOT + pl.state + '/settings.json')));
-	r = sh(sprintf('start-stop-daemon -S -b -m -p %s -c %s -x %s -- -f -g %s --logfile %s',
+	if (pl.run_as != 'root') sh(sprintf('chown %s %s %s', shq(pl.run_as), shq(ROOT + pl.state + '/settings.json'), shq(ROOT + pl.state + '/.shareos-defaults')));
+	// nice 10: file shares and the web interface stay quick while it hashes
+	r = sh(sprintf('start-stop-daemon -S -b -m -N 10 -p %s -c %s -x %s -- -f -g %s --logfile %s',
 		shq(run + '/pid'), shq(ug), shq(BIN), shq(pl.state), shq(run + '/log')));
 	if (r.rc != 0) die('cannot start: ' + trim(r.out));
 	// remember the account for the next start of the box
