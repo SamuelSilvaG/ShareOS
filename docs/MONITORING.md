@@ -22,7 +22,9 @@ temperature and fan of the box.
 ## Setting up
 
 1. **Install:** APPS → Store → system apps → **Zabbix Agent**.
-2. **On the box** (System → Terminal or SSH), set the server and switch it on:
+2. **On the box** (System → Terminal or SSH), set the server and switch it on
+   (or, from ShareOS 0.2.0-beta.20, with an app that has the permission `zabbix`
+   – admins only; it uses the same settings and checks):
 
    ```sh
    echo '{"enabled": true, "server": "zabbix.example.lan"}' | shareos-zabbix set

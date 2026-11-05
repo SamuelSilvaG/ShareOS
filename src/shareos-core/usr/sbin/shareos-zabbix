@@ -322,7 +322,10 @@ function start() {
 	sh(sprintf('mkdir -p %s && chown %s:%s %s && chmod 750 %s && touch %s && chown %s:%s %s',
 		shq(RUN), USER, USER, shq(RUN), shq(RUN), shq(LOG), USER, USER, shq(LOG)));
 	write_conf(c);
-	collect();
+	// called by rpcd (apps, permission "zabbix"): reading the disks asks rpcd
+	// (shareos.storage smart), which waits for us – so in the background
+	if (getenv('SHAREOS_ZABBIX_RPCD')) sh('( /usr/sbin/shareos-zabbix collect </dev/null >/dev/null 2>&1 & )');
+	else collect();
 	// -f: stays in the foreground, so start-stop-daemon keeps its pid
 	// its own log goes to LOG; stderr too, for errors before the log is open
 	let cmd = sprintf('exec %s -f -c %s >/dev/null 2>>%s', shq(BIN), shq(CONF), shq(LOG));
@@ -334,12 +337,35 @@ function start() {
 	cron_sync();
 }
 
+// processes of the agent (main and workers): user zabbix, zabbix-agentd
+// (busybox pgrep has no -u)
+function workers() {
+	let uid = null, l = [];
+	for (let x in split(readfile('/etc/passwd') ?? '', '\n')) { let f = split(x, ':'); if (f[0] == USER) uid = f[2]; }
+	if (uid == null) return l;
+	for (let d in lsdir('/proc') ?? []) {
+		if (!match(d, /^[0-9]+$/)) continue;
+		if (index(readfile('/proc/' + d + '/cmdline') ?? '', 'zabbix-agentd') < 0) continue;
+		let u = match(readfile('/proc/' + d + '/status') ?? '', /\nUid:\s+([0-9]+)/);
+		if (u && u[1] == uid) push(l, d);
+	}
+	return l;
+}
+
 function stop() {
 	let p = pid();
 	if (p) {
 		sh('kill ' + p);
 		for (let i = 0; i < 50 && pid(); i++) sh('sleep 0.2');
 		if (pid()) sh('kill -9 ' + p);
+	}
+	// its worker processes hold the lock of its pid file: a new agent could
+	// not start while one of them is still there (e.g. stuck in a connection)
+	for (let i = 0; i < 50; i++) {
+		let left = workers();
+		if (!length(left)) break;
+		sh('kill ' + (i < 25 ? '' : '-9 ') + join(' ', left));
+		sh('sleep 0.2');
 	}
 	unlink(PID);
 	unlink(PSK_RUN);

@@ -1839,7 +1839,7 @@ function ts_tool(args, input) {
 
 // grant of an app with the permission p (and "files"); vpn, tailscale,
 // autobrr, sysinfo, netcheck, docker, tuya, notify: admin accounts only
-const ADMIN_PERMS = { vpn: 1, tailscale: 1, autobrr: 1, sysinfo: 1, netcheck: 1, docker: 1, tuya: 1, notify: 1 };
+const ADMIN_PERMS = { vpn: 1, tailscale: 1, autobrr: 1, zabbix: 1, sysinfo: 1, netcheck: 1, docker: 1, tuya: 1, notify: 1 };
 function app_grant_perm(grant, p) {
 	let g = app_grant_user(grant);
 	if (!g || index(g.app.permissions ?? [], p) < 0) return null;
@@ -1927,6 +1927,25 @@ function docker_hosts(c) {
 
 // shareos-autobrr <args> (JSON on stdin for set, password, api)
 const AUTOBRR = '/usr/sbin/shareos-autobrr';
+
+/* ---------- permission "zabbix": the box's Zabbix agent for apps (admins) ---------- */
+
+const ZB_SET = [ 'enabled', 'server', 'hostname', 'metadata', 'psk_identity', 'psk', 'passive', 'allow', 'port', 'disk_interval' ];
+function zb_tool(args, input) {
+	// SHAREOS_ZABBIX_RPCD: it must not call rpcd back while we wait for it
+	let cmd = 'SHAREOS_ZABBIX_RPCD=1 /usr/sbin/shareos-zabbix ' + join(' ', map(args, shq));
+	let f = null;
+	if (input != null) {
+		f = '/tmp/.shareos-zb-in.' + substr(new_token(), 0, 12);
+		system('umask 077; : > ' + shq(f));
+		writefile(f, sprintf('%J', input));
+		cmd += ' < ' + shq(f);
+	}
+	let r = sh(cmd);
+	if (f) unlink(f);
+	let j = json(trim(r.out) || 'null');
+	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
+}
 function ab_tool(args, input) {
 	let cmd = AUTOBRR + ' ' + join(' ', map(args, shq));
 	let f = null;
@@ -3663,6 +3682,24 @@ return {
 				let l = [ { name: 'root', fullname: 'Administrator' } ], c = cursor();
 				c.foreach('accounts', 'user', (x) => { if (x.role == 'user' || x.role == 'admin') push(l, { name: x['.name'], fullname: x.fullname ?? '' }); });
 				return { accounts: l };
+			}
+		}
+	},
+
+	// called only by /_shareos/cgi/zabbix: the Zabbix agent of the box
+	// (system app "zabbix-agent"), admin accounts only – shareos-zabbix checks
+	// every value; the pre-shared key goes in, never out (status: psk true/false)
+	'shareos.appzabbix': {
+		status: { args: { grant: '' }, call: function(req) { return app_grant_perm(req.args.grant, 'zabbix') ? zb_tool([ 'status' ]) : { error: 'no access' }; } },
+		log: { args: { grant: '' }, call: function(req) { return app_grant_perm(req.args.grant, 'zabbix') ? zb_tool([ 'log' ]) : { error: 'no access' }; } },
+		restart: { args: { grant: '' }, call: function(req) { return app_grant_perm(req.args.grant, 'zabbix') ? zb_tool([ 'restart' ]) : { error: 'no access' }; } },
+		set: {
+			args: { grant: '', enabled: false, server: '', hostname: '', metadata: '', psk_identity: '', psk: '', passive: false, allow: '', port: 0, disk_interval: 0 },
+			call: function(req) {
+				let a = req.args, i = {};
+				if (!app_grant_perm(a.grant, 'zabbix')) return { error: 'no access' };
+				for (let k in ZB_SET) if (a[k] != null) i[k] = a[k];
+				return zb_tool([ 'set' ], i);
 			}
 		}
 	},

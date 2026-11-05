@@ -24,7 +24,8 @@ Platte, den Zustand jedes RAIDs, Temperatur und Lüfter der Box.
 
 1. **Installieren:** APPS → Store → System-Apps → **Zabbix Agent**.
 2. **Auf der Box** (System → Terminal oder SSH) den Server eintragen und
-   einschalten:
+   einschalten (oder ab ShareOS 0.2.0-beta.20 mit einer App mit der Berechtigung
+   `zabbix` – nur Administratoren; dieselben Einstellungen und Prüfungen):
 
    ```sh
    echo '{"enabled": true, "server": "zabbix.example.lan"}' | shareos-zabbix set

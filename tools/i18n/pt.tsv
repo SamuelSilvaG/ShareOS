@@ -1766,3 +1766,4 @@ E1397	Sincronizar pastas (Syncthing)
 E1398	Pode controlar o serviço Syncthing do próprio utilizador: emparelhar dispositivos e sincronizar pastas com eles. Cada utilizador tem o seu próprio serviço; só são sincronizadas pastas a que tem acesso.
 E1399	Mostrar menos
 P325	Mostrar tudo ($1)
+E1400	Pode configurar o agente Zabbix da caixa (servidor, nome do host, encriptação PSK, verificações passivas, intervalo SMART), reiniciá-lo e ler o seu registo – a app nunca volta a ver a chave. Só administradores.

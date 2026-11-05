@@ -1402,7 +1402,8 @@
 		"USV gespeichert.": "UPS saved.",
 		"Ordner synchronisieren (Syncthing)": "Sync folders (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "May control the user's own Syncthing service: pair devices and sync folders with them. Every user has their own service; only folders they have access to are synced.",
-		"Weniger anzeigen": "Show fewer"
+		"Weniger anzeigen": "Show fewer",
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "May set up the box's Zabbix agent (server, host name, PSK encryption, passive checks, SMART interval), restart it and read its log – the app never sees the key again. Admins only."
 	},
 	"patterns": [
 		[

@@ -1766,3 +1766,4 @@ E1397	Synchroniser des dossiers (Syncthing)
 E1398	Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés.
 E1399	Afficher moins
 P325	Tout afficher ($1)
+E1400	Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement.

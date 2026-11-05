@@ -24,7 +24,7 @@ R=$T/root
 SRV=
 cleanup() {
 	[ -n "$SRV" ] && kill "$SRV" 2>/dev/null
-	chroot "$R" /bin/sh -c '/usr/sbin/shareos-zabbix stop-all; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
+	chroot "$R" /bin/sh -c '/usr/sbin/shareos-zabbix stop-all; /etc/init.d/S51apps stop; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
 	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2; else rm -rf "$T"; fi
 }
@@ -127,10 +127,36 @@ check "passive checks need allowed addresses" "z '{\"passive\":true}' | js \"'al
 o=$(z '{"passive":true,"allow":"127.0.0.1","port":10052}')
 check "passive checks: listens on the port for the allowed addresses" "echo '$o' | js \"d['running'] and d['passive']\" && grep -q '^Server=127.0.0.1$' $C && grep -q '^ListenPort=10052$' $C"
 z '{"passive":false}' >/dev/null
+# --- apps with the permission "zabbix" (/_shareos/cgi/zabbix, admins only) -----------------
+AP=$((PORT + 7))
+run "uci set apps.store.port=$AP; uci set apps.store.https_port=$((AP + 1)); uci set shareos.web.https=0; uci commit apps; uci commit shareos; echo anna1234 | shareos-users add anna user --web=1" >/dev/null
+mkapp() {   # id perms
+	mkdir -p $T/$1/files; echo '<!doctype html><title>ok</title>' > $T/$1/files/index.html; echo '<svg xmlns="http://www.w3.org/2000/svg"/>' > $T/$1/files/icon.svg
+	python3 -c "import json; json.dump({'id':'$1','name':'$1','version':'1.0.0','publisher':'T','type':'webapp','entry':'index.html','icon':'icon.svg','description':{'de':'x','en':'x'},'permissions':$2}, open('$T/$1/app.json','w'))"
+	(cd $T/$1 && tar -czf $R/tmp/$1.sapp app.json -C files .); run "SHAREOS_APPS_ALLOW_FILE=1 shareos-apps install-file /tmp/$1.sapp"
+}
+mkapp zbapp '["files","zabbix"]' >/dev/null; mkapp plain '["files"]' >/dev/null
+check "zabbix without files is refused" "mkapp zbbad '[\"zabbix\"]' | grep -q 'zabbix.*needs'"
+run "uci set apps.zbapp.users='*'; uci set apps.plain.users='*'; uci commit apps; /etc/init.d/S51apps start" >/dev/null
+i=0; until curl -s -o /dev/null "http://127.0.0.1:$AP/" || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
+grant() { local t; t=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n'); mkdir -p $R/tmp/shareos-appgrants; printf '%s\n%s\n%d\n' "$1" "$2" $(( $(date +%s) + 3600 )) > $R/tmp/shareos-appgrants/$t; echo $t; }
+GZ=$(grant root zbapp); GU=$(grant anna zbapp); GP=$(grant root plain)
+ac() { curl -s -m 60 -X POST -d "$2" "http://127.0.0.1:$AP/_shareos/cgi/zabbix?g=$1"; }
+acode() { curl -s -m 60 -o /dev/null -w '%{http_code}' -X POST -d "$2" "http://127.0.0.1:$AP/_shareos/cgi/zabbix?g=$1"; }
+check "app: status for an admin, the key never sent back" "ac $GZ '{\"op\":\"status\"}' | js \"d['running'] and d['psk'] is False and 'nas-test'==d['hostname_used']\""
+check "app: not for users, not without the permission" "[ \$(acode $GU '{\"op\":\"status\"}') = 403 ] && [ \$(acode $GP '{\"op\":\"status\"}') = 403 ]"
+check "app: set checks the values like the command line" "ac $GZ '{\"op\":\"set\",\"disk_interval\":7}' | js \"'disk_interval' in d.get('error','')\""
+check "app: set PSK – status only says it is there" "ac $GZ '{\"op\":\"set\",\"psk_identity\":\"app\",\"psk\":\"00112233445566778899aabbccddeeff\"}' | js \"d['psk'] is True and '0011' not in json.dumps(d)\" && run 'shareos-zabbix status' | js \"d['psk_identity']=='app'\""
+check "app: unknown ops refused" "[ \$(acode $GZ '{\"op\":\"collect\"}') = 400 ]"
+check "app: log and restart" "ac $GZ '{\"op\":\"log\"}' | js \"'log' in d\" && ac $GZ '{\"op\":\"restart\"}' | js \"d['running']\""
+z '{"psk":"","psk_identity":""}' >/dev/null
+run "/etc/init.d/S51apps stop" >/dev/null
+
 check "disk interval 10 minutes in the cron job" "z '{\"disk_interval\":10}' | js \"d['disk_interval']==10\" && grep -q '^\*/10 \* \* \* \* /usr/sbin/shareos-zabbix collect' $R/etc/crontabs/root"
 check "switched off: stopped, no cron job, boot does not start it" "z '{\"enabled\":false}' | js \"not d['running']\" && ! grep -q shareos-zabbix $R/etc/crontabs/root && run 'shareos-zabbix boot' | js \"d.get('started')==False\""
 check "boot starts it when switched on" "z '{\"enabled\":true}' >/dev/null; run 'shareos-zabbix stop-all' >/dev/null; run 'shareos-zabbix boot' | js \"d['running']\""
-check "removing the system app stops the agent" "run 'shareos-apps remove zabbix-agent' >/dev/null; run 'shareos-zabbix status' | js \"not d['running'] and not d['installed']\" && ! pgrep -f '[z]abbix-agentd' >/dev/null"
+# (an ended worker may stay a zombie for a moment under the test host's init)
+check "removing the system app stops the agent" "run 'shareos-apps remove zabbix-agent' >/dev/null; run 'shareos-zabbix status' | js \"not d['running'] and not d['installed']\" && ! ps -eo stat,args | grep -v '^Z' | grep -q '[z]abbix-agentd'"
 
 echo
 echo "$pass passed, $failed failed"
