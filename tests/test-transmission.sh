@@ -132,12 +132,36 @@ o=$(tr $GA '{"method":"session-get"}')
 check "session-set: allowed keys pass (speed limit)" "echo '$o' | js \"d['arguments']['speed-limit-down']==123 and d['arguments']['speed-limit-down-enabled']\""
 check "rpcd object not reachable for web sessions" "! grep -q apptorrent $R/usr/share/rpcd/acl.d/shareos.json"
 
+# --- watch folder: kept by the box, the daemon adds new .torrent files by itself ----------
+run "mkdir -p /mnt/daten/home/anna/Watch && chown anna /mnt/daten/home/anna/Watch" >/dev/null
+o=$(tr $GA '{"method":"session-set","arguments":{"watch-dir-enabled":true,"watch-dir":"home/Watch"}}')
+check "watch folder: set as home/Watch" "echo '$o' | js \"d['result']=='success'\" && tr $GA '{\"method\":\"session-get\"}' | js \"d['arguments']['watch-dir']=='home/Watch' and d['arguments']['watch-dir-enabled']\""
+check "watch folder: kept by the box for the next start" "[ \"\$(cat $R/mnt/daten/home/anna/.config/transmission-daemon/.shareos-watch)\" = /mnt/daten/home/anna/Watch ]"
+check "watch folder: outside her folders refused" "[ \$(code $GA '{\"method\":\"session-set\",\"arguments\":{\"watch-dir-enabled\":true,\"watch-dir\":\"/etc\"}}') = 403 ] && [ \$(code $GA '{\"method\":\"session-set\",\"arguments\":{\"watch-dir-enabled\":true}}') = 400 ]"
+python3 -c "
+import hashlib
+def b(x):
+    if isinstance(x,int): return b'i%de'%x
+    if isinstance(x,str): x=x.encode()
+    if isinstance(x,bytes): return b'%d:'%len(x)+x
+    if isinstance(x,dict): return b'd'+b''.join(b(k)+b(v) for k,v in sorted(x.items()))+b'e'
+open('$T/watch.torrent','wb').write(b({'announce':'http://127.0.0.1:1/announce','info':{'name':'Watch-Test','length':16384,'piece length':16384,'pieces':hashlib.sha1(b'\0'*16384).digest()}}))"
+cp $T/watch.torrent $R/mnt/daten/home/anna/Watch/watch.torrent; run "chown anna /mnt/daten/home/anna/Watch/watch.torrent" >/dev/null
+for i in $(seq 40); do tr $GA '{"method":"torrent-get","arguments":{"fields":["name"]}}' | js "'Watch-Test' in [t['name'] for t in d['arguments']['torrents']]" && break; sleep 1; done
+check "a .torrent dropped into it is added by the daemon (app closed)" "tr $GA '{\"method\":\"torrent-get\",\"arguments\":{\"fields\":[\"name\"]}}' | js \"'Watch-Test' in [t['name'] for t in d['arguments']['torrents']]\""
+WID=$(tr $GA '{"method":"torrent-get","arguments":{"fields":["id","name"]}}' | python3 -c "import json,sys; print([t['id'] for t in json.load(sys.stdin)['arguments']['torrents'] if t['name']=='Watch-Test'][0])")
+tr $GA "{\"method\":\"torrent-remove\",\"arguments\":{\"ids\":[$WID]}}" >/dev/null
+o=$(tr $GA '{"method":"session-set","arguments":{"watch-dir-enabled":false}}')
+check "watch folder: switched off, also for the next start" "tr $GA '{\"method\":\"session-get\"}' | js \"not d['arguments']['watch-dir-enabled']\" && [ ! -e $R/mnt/daten/home/anna/.config/transmission-daemon/.shareos-watch ]"
+tr $GA '{"method":"session-set","arguments":{"watch-dir-enabled":true,"watch-dir":"home/Watch"}}' >/dev/null
+
 o=$(tr $GR '{"method":"session-get"}')
 check "admin: own daemon as root, downloads on the volume" "echo '$o' | js \"d['arguments']['download-dir']=='daten/Downloads'\" && [ \"\$(run 'stat -c %U /proc/\$(cat /tmp/shareos-transmission/root/pid)')\" = root ]"
 
 tr $GA '{"method":"session-set","arguments":{"utp-enabled":true,"peer-limit-global":90}}' >/dev/null
 run "shareos-transmission stop anna" >/dev/null
 run "shareos-transmission start anna" >/dev/null; run "shareos-transmission stop anna" >/dev/null
+check "watch folder still set after the restart" "grep -q '\"watch-dir\": \"/mnt/daten/home/anna/Watch\"' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"watch-dir-enabled\": true' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "the user's own settings stay after a restart (defaults only once)" "grep -q '\"utp-enabled\": true' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"peer-limit-global\": 90' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "scripts and RPC address never reached the daemon" "grep -q '\"script-torrent-done-enabled\": false' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && ! grep -q '/bin/sh' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"rpc-bind-address\": \"unix:' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "accounts remembered for the next start" "[ -f $R/etc/shareos/transmission/anna ] && [ -f $R/etc/shareos/transmission/bernd ]"

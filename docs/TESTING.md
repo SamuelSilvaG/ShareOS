@@ -455,7 +455,8 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 6. *System → Prozesse*: note the memory of `syncthing` (expected about 40–60 MB per account).
 7. **Transmission:** on a new account (or after deleting `.shareos-defaults` and the `settings.json` in its state folder), Transmission's preferences show 60/30 peers, a download queue of 3 and µTP off; `top` shows `transmission-daemon` with NI 10. Change a value and restart the box: the value stays.
 8. **Firmware page:** System → Firmware → *Prüfen*: *Versionen von GitHub* lists 3 versions, *Alle anzeigen (n)* the rest, *Weniger anzeigen* folds them again.
-9. **Zabbix for apps** (once the Zabbix Agent Config app uses `ShareOS.zabbix`): as an admin, change the server in the app → `shareos-zabbix status` shows it; set a PSK → the app only shows that a key is set. As a user, the app gets no access.
+9. **Transmission watch folder** (once the Transmission app offers it): set a watch folder in "Mein Ordner", copy a `.torrent` file into it with the app closed – the torrent shows up in the app, the file is renamed to `.torrent.added`. It is still set after a restart of the box. For the account autobrr hands its torrents to, the watch folder cannot be set.
+10. **Zabbix for apps** (once the Zabbix Agent Config app uses `ShareOS.zabbix`): as an admin, change the server in the app → `shareos-zabbix status` shows it; set a PSK → the app only shows that a key is set. As a user, the app gets no access.
 
 ## 14zg. iPhone/iPad: SMB shares writable (0.2.0-beta.19)
 

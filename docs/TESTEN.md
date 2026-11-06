@@ -459,7 +459,8 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 6. *System → Prozesse*: Speicher von `syncthing` notieren (erwartet etwa 40–60 MB pro Konto).
 7. **Transmission:** bei einem neuen Konto (oder nach Löschen von `.shareos-defaults` und der `settings.json` in seinem Zustandsordner) zeigen die Einstellungen 60/30 Peers, eine Download-Warteschlange von 3 und µTP aus; `top` zeigt `transmission-daemon` mit NI 10. Einen Wert ändern und die Box neu starten: der Wert bleibt.
 8. **Firmware-Seite:** System → Firmware → *Prüfen*: *Versionen von GitHub* listet 3 Versionen, *Alle anzeigen (n)* den Rest, *Weniger anzeigen* klappt sie wieder ein.
-9. **Zabbix für Apps** (sobald die App Zabbix Agent Config `ShareOS.zabbix` nutzt): als Admin in der App den Server ändern → `shareos-zabbix status` zeigt ihn; einen PSK setzen → die App zeigt nur, dass ein Schlüssel gesetzt ist. Als Benutzer bekommt die App keinen Zugriff.
+9. **Transmission-Überwachungsordner** (sobald die Transmission-App ihn anbietet): einen Überwachungsordner in „Mein Ordner“ setzen, bei geschlossener App eine `.torrent`-Datei hineinkopieren – der Torrent erscheint in der App, die Datei heißt danach `.torrent.added`. Nach einem Neustart der Box ist er noch gesetzt. Für das Konto, an das autobrr seine Torrents übergibt, lässt er sich nicht setzen.
+10. **Zabbix für Apps** (sobald die App Zabbix Agent Config `ShareOS.zabbix` nutzt): als Admin in der App den Server ändern → `shareos-zabbix status` zeigt ihn; einen PSK setzen → die App zeigt nur, dass ein Schlüssel gesetzt ist. Als Benutzer bekommt die App keinen Zugriff.
 
 ## 14zg. iPhone/iPad: SMB-Freigaben beschreibbar (0.2.0-beta.19)
 

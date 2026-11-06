@@ -55,7 +55,12 @@
  *                             with the permissions "files" and "torrent"
  *                             (ShareOS 0.2.0-beta.4+, null otherwise):
  *   .rpc(method, args)             Transmission RPC, resolves to its "arguments";
- *                                  folders as "<root>/<path>" (ShareOS.fs roots)
+ *                                  folders as "<root>/<path>" (ShareOS.fs roots);
+ *                                  session-set "watch-dir" + "watch-dir-enabled":
+ *                                  a folder the daemon watches for .torrent files
+ *                                  (0.2.0-beta.20+; kept by the box, restarts the
+ *                                  daemon; session-get also gives
+ *                                  "watch-dir-autobrr": true when autobrr uses it)
  * ShareOS.syncthing           the account's own Syncthing (system app
  *                             "syncthing"), for apps with the permissions
  *                             "files" and "syncthing" (ShareOS 0.2.0-beta.20+,

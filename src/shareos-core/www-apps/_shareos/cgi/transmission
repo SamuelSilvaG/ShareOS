@@ -71,7 +71,8 @@ if (type(req) != 'object' || type(req.method) != 'string' || !exists(METHODS, re
 let a = req.arguments ?? {};
 if (type(a) != 'object') fail('400 Bad Request', 'invalid request');
 
-let conn = ubus.connect();
+// setting the watch folder restarts the daemon: that can take a while
+let conn = ubus.connect(null, 120);
 if (!conn) fail('503 Service Unavailable', 'not ready');
 let s = conn.call('shareos.apptorrent', 'session', { grant: g[2] });
 if (s == null) fail('500 Internal Server Error', 'failed');
@@ -109,6 +110,28 @@ for (let k in METHODS[req.method]) {
 		if (!p) fail('403 Forbidden', 'folder not allowed: ' + a[k]);
 		args[k] = p;
 	} else args[k] = a[k];
+}
+// watch folder (session-set "watch-dir", "watch-dir-enabled"; session-get shows
+// them, plus "watch-dir-autobrr"): the box keeps it (shareos-transmission
+// watch) and checks the folder; the account autobrr hands its torrents to
+// keeps autobrr's folder
+if (req.method == 'session-set' && (a['watch-dir'] != null || a['watch-dir-enabled'] != null)) {
+	let on = a['watch-dir-enabled'] ?? true, root = '', rel = '';
+	if (on) {
+		let v = a['watch-dir'];
+		if (type(v) != 'string' || v == '') fail('400 Bad Request', 'watch-dir missing');
+		let abs = to_abs(v);
+		if (!abs) fail('403 Forbidden', 'folder not allowed: ' + v);
+		// rpcd checks it again (and stores it) from root + relative path
+		for (let x in s.roots)
+			if (abs == x.path || index(abs, x.path + '/') == 0) { root = x.name; rel = substr(abs, length(x.path) + 1); break; }
+		if (root == '') fail('403 Forbidden', 'folder not allowed: ' + v);
+	}
+	// stored by the box; the daemon restarts with it (Transmission takes its
+	// watch folder only from settings.json, not over RPC)
+	let w = conn.call('shareos.apptorrent', 'watch', { grant: g[2], root, path: rel });
+	if (w == null || w.error) fail('403 Forbidden', w?.error ?? 'failed');
+	s.watch = w.watch;
 }
 // a torrent comes as file content or as a magnet/http link – no local paths
 if (req.method == 'torrent-add') {
@@ -160,4 +183,10 @@ function scrub(o) {
 	}
 	return n;
 }
-reply('200 OK', scrub(res));
+res = scrub(res);
+if (req.method == 'session-get' && type(res.arguments) == 'object') {
+	res.arguments['watch-dir'] = s.watch && !s.watch_autobrr ? to_box(s.watch) : '';
+	res.arguments['watch-dir-enabled'] = !!s.watch && !s.watch_autobrr;
+	res.arguments['watch-dir-autobrr'] = !!s.watch_autobrr;
+}
+reply('200 OK', res);
