@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "مزامنة المجلدات (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "يمكنه التحكم في خدمة Syncthing الخاصة بالمستخدم: إقران الأجهزة ومزامنة المجلدات معها. لكل مستخدم خدمته الخاصة؛ تتم مزامنة المجلدات التي يملك الوصول إليها فقط.",
 		"Weniger anzeigen": "عرض أقل",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "يمكنه إعداد وكيل Zabbix للجهاز (الخادم، اسم المضيف، تشفير PSK، الفحوص السلبية، فاصل SMART) وإعادة تشغيله وقراءة سجله – ولن يرى التطبيق المفتاح مرة أخرى. للمسؤولين فقط."
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "يمكنه إعداد وكيل Zabbix للجهاز (الخادم، اسم المضيف، تشفير PSK، الفحوص السلبية، فاصل SMART) وإعادة تشغيله وقراءة سجله – ولن يرى التطبيق المفتاح مرة أخرى. للمسؤولين فقط.",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "تضمين شهادة HTTPS (مع المفتاح)",
+		"Eigene CA mitsichern": "تضمين المرجع المصدق الخاص",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "لا تُحفظ المفاتيح إلا في نسخة احتياطية مشفرة – أدخل كلمة مرور أولاً.",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "يحتوي على الجهاز (الشبكة، الاسم، الوقت، الأقراص، كلمة مرور root)، والمستخدمين والمجموعات (كلمات المرور كتجزئة)، والمشاركات، وإعدادات الخدمات وقائمة التطبيقات المثبتة. بدون كلمة مرور يكون الملف مقروءاً – احفظه في مكان آمن. مع كلمة مرور: AES-256، وتلزم كلمة المرور للاستعادة.",
+		"Gruppen": "المجموعات",
+		"Eigene CA": "المرجع المصدق الخاص",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "تُستعاد فوراً كلمة مرور root والشبكة واسم الجهاز والمنطقة الزمنية والأقراص وإعدادات واجهة الويب. ثم يُعاد تشغيل الجهاز ويسأل في وضع الاستعادة عما يجب استعادته أيضاً. تبقى البيانات على الأقراص دون تغيير.",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "تأتي كلمة مرور root والشبكة والاسم والمنطقة الزمنية والأقراص من النسخة الاحتياطية فوراً، ثم يُعاد تشغيل الجهاز. تختار الباقي بعد ذلك في وضع الاستعادة.",
+		"Wiederherstellen und neu starten": "استعادة وإعادة التشغيل",
+		"Danach geht es im Recovery-Modus weiter": "بعدها تستمر العملية في وضع الاستعادة",
+		"RECOVERY-MODUS": "وضع الاستعادة",
+		"Sicherung": "نسخة احتياطية",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "تمت استعادة الجهاز من نسخة احتياطية:",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "تمت استعادته بالفعل: كلمة مرور root، والشبكة (عنوان IP، الشبكة الفرعية)، واسم الجهاز، والمنطقة الزمنية، والأقراص، وإعدادات واجهة الويب. اختر ما يجب استعادته أيضاً:",
+		"Benutzer und Gruppen": "المستخدمون والمجموعات",
+		"Paperless-Anbindung": "ربط Paperless",
+		"Cloud-Speicher": "التخزين السحابي",
+		"Snapshots": "اللقطات",
+		"Zabbix-Agent": "وكيل Zabbix",
+		"Drucker": "الطابعة",
+		"Einstellungen": "الإعدادات",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "تُثبَّت من المتجر بعد إعادة التشغيل (يلزم الإنترنت). ما يفشل يُعرض مرة أخرى لاحقاً في صفحة التطبيقات.",
+		"ZERTIFIKATE": "الشهادات",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "إعادة استخدام شهادة HTTPS من النسخة الاحتياطية",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "وإلا فسيُصدر المرجع المصدق الخاص شهادة جديدة إذا تمت استعادته. سيسأل المتصفح وتطبيق سطح المكتب مرة أخرى.",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "وإلا فسيحتفظ الجهاز بشهادته الحالية. سيسأل المتصفح وتطبيق سطح المكتب مرة أخرى.",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "لا تحتوي النسخة الاحتياطية على شهادة HTTPS – يحتفظ الجهاز بالحالية.",
+		"Eigene CA wiederherstellen": "استعادة المرجع المصدق الخاص",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "الأجهزة التي تثق بالمرجع المصدق ستستمر في الوثوق بالجهاز فقط مع نفس المرجع. بدونه يجب تثبيت المرجع الجديد هناك وإعادة إصدار الشهادات للأجهزة الأخرى.",
+		"Nichts weiter übernehmen": "عدم استعادة أي شيء آخر",
+		"Übernehmen und neu starten": "تطبيق وإعادة التشغيل",
+		"Auswahl übernehmen?": "تطبيق الاختيار؟",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "يطبق الجهاز الإعدادات المختارة ثم يُعاد تشغيله.",
+		"Nichts weiter übernehmen?": "عدم استعادة أي شيء آخر؟",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "يبقى الجهاز كما هو الآن: فقط كلمة المرور والشبكة والاسم والمنطقة الزمنية والأقراص تأتي من النسخة الاحتياطية. يمكن استعادة النسخة مرة أخرى لاحقاً.",
+		"Recovery beenden": "إنهاء الاستعادة",
+		"Die Einstellungen werden übernommen": "جارٍ تطبيق الإعدادات",
+		"Recovery-Modus beendet.": "انتهى وضع الاستعادة.",
+		"APPS AUS DER SICHERUNG": "تطبيقات من النسخة الاحتياطية",
+		"Werden gerade installiert …": "جارٍ التثبيت …",
+		"Noch nicht installiert:": "لم تُثبَّت بعد:",
+		"Apps aus Sicherung installieren": "تثبيت التطبيقات من النسخة الاحتياطية",
+		"Die Apps werden im Hintergrund installiert.": "يجري تثبيت التطبيقات في الخلفية."
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"عرض الكل ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"($1 شهادات صادرة)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"المجموعات: $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"الشهادات الصادرة: $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"الاستعادة: $1"
 		]
 	],
 	"words": [

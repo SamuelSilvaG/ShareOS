@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "Sync folders (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "May control the user's own Syncthing service: pair devices and sync folders with them. Every user has their own service; only folders they have access to are synced.",
 		"Weniger anzeigen": "Show fewer",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "May set up the box's Zabbix agent (server, host name, PSK encryption, passive checks, SMART interval), restart it and read its log – the app never sees the key again. Admins only."
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "May set up the box's Zabbix agent (server, host name, PSK encryption, passive checks, SMART interval), restart it and read its log – the app never sees the key again. Admins only.",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "Include the HTTPS certificate (with key)",
+		"Eigene CA mitsichern": "Include the own CA",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "Keys only go into an encrypted backup – enter a password first.",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Contains the box (network, name, time, drives, root password), users and groups (passwords as hashes), shares, the settings of the services and the list of installed apps. Without a password the file is readable – keep it safe. With a password: AES-256, the password is needed to restore.",
+		"Gruppen": "Groups",
+		"Eigene CA": "Own CA",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "Root password, network, device name, time zone, drives and the settings of the web interface are taken over right away. Then the box restarts and asks in recovery mode what else should come back. Data on the drives stays untouched.",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "Root password, network, name, time zone and drives come from the backup right away, then the box restarts. You choose the rest afterwards in recovery mode.",
+		"Wiederherstellen und neu starten": "Restore and restart",
+		"Danach geht es im Recovery-Modus weiter": "Then it continues in recovery mode",
+		"RECOVERY-MODUS": "RECOVERY MODE",
+		"Sicherung": "Backup",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "The box was restored from a backup:",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "Already taken over: root password, network (IP address, subnet), device name, time zone, drives and the settings of the web interface. Choose what else should come back:",
+		"Benutzer und Gruppen": "Users and groups",
+		"Paperless-Anbindung": "Paperless connection",
+		"Cloud-Speicher": "Cloud storage",
+		"Snapshots": "Snapshots",
+		"Zabbix-Agent": "Zabbix agent",
+		"Drucker": "Printer",
+		"Einstellungen": "Settings",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "Installed from the store after the restart (internet needed). Whatever fails is offered again later on the apps page.",
+		"ZERTIFIKATE": "CERTIFICATES",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "Reuse the HTTPS certificate from the backup",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "Otherwise the own CA issues a new certificate if it is restored. Browser and desktop app then ask once again.",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "Otherwise the box keeps its current certificate. Browser and desktop app then ask once again.",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "The backup holds no HTTPS certificate – the box keeps its current one.",
+		"Eigene CA wiederherstellen": "Restore the own CA",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "Devices that trust the CA keep trusting the box only with the same CA. Without it you have to install the new CA there and issue certificates for other devices again.",
+		"Nichts weiter übernehmen": "Take over nothing else",
+		"Übernehmen und neu starten": "Apply and restart",
+		"Auswahl übernehmen?": "Apply the selection?",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "The box applies the chosen settings and restarts.",
+		"Nichts weiter übernehmen?": "Take over nothing else?",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "The box stays as it is now: only password, network, name, time zone and drives come from the backup. The backup can be restored again later.",
+		"Recovery beenden": "End recovery",
+		"Die Einstellungen werden übernommen": "Applying the settings",
+		"Recovery-Modus beendet.": "Recovery mode ended.",
+		"APPS AUS DER SICHERUNG": "APPS FROM THE BACKUP",
+		"Werden gerade installiert …": "Being installed …",
+		"Noch nicht installiert:": "Not installed yet:",
+		"Apps aus Sicherung installieren": "Install apps from the backup",
+		"Die Apps werden im Hintergrund installiert.": "The apps are being installed in the background."
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"Show all ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"($1 issued certificates)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"Groups: $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"Issued certificates: $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"Recovery: $1"
 		]
 	],
 	"words": [

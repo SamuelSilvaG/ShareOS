@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "फ़ोल्डर सिंक करें (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "उपयोगकर्ता की अपनी Syncthing सेवा को नियंत्रित कर सकता है: डिवाइस जोड़ना और उनके साथ फ़ोल्डर सिंक करना। हर उपयोगकर्ता की अपनी सेवा होती है; केवल वे फ़ोल्डर सिंक होते हैं जिन तक उसकी पहुँच है।",
 		"Weniger anzeigen": "कम दिखाएँ",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "बॉक्स का Zabbix एजेंट सेट कर सकता है (सर्वर, होस्ट नाम, PSK एन्क्रिप्शन, पैसिव जाँचें, SMART अंतराल), उसे फिर से शुरू कर सकता है और उसका लॉग पढ़ सकता है – ऐप कुंजी फिर कभी नहीं देखता। केवल एडमिन के लिए।"
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "बॉक्स का Zabbix एजेंट सेट कर सकता है (सर्वर, होस्ट नाम, PSK एन्क्रिप्शन, पैसिव जाँचें, SMART अंतराल), उसे फिर से शुरू कर सकता है और उसका लॉग पढ़ सकता है – ऐप कुंजी फिर कभी नहीं देखता। केवल एडमिन के लिए।",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "HTTPS प्रमाणपत्र शामिल करें (कुंजी सहित)",
+		"Eigene CA mitsichern": "अपना CA शामिल करें",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "कुंजियाँ केवल एन्क्रिप्टेड बैकअप में जाती हैं – पहले पासवर्ड दर्ज करें।",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "इसमें बॉक्स (नेटवर्क, नाम, समय, ड्राइव, root पासवर्ड), उपयोगकर्ता और समूह (पासवर्ड हैश के रूप में), शेयर, सेवाओं की सेटिंग्स और इंस्टॉल किए गए ऐप्स की सूची होती है। बिना पासवर्ड के फ़ाइल पढ़ी जा सकती है – इसे सुरक्षित रखें। पासवर्ड के साथ: AES-256, पुनर्स्थापना के लिए पासवर्ड चाहिए।",
+		"Gruppen": "समूह",
+		"Eigene CA": "अपना CA",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "root पासवर्ड, नेटवर्क, डिवाइस नाम, समय क्षेत्र, ड्राइव और वेब इंटरफ़ेस की सेटिंग्स तुरंत ले ली जाती हैं। फिर बॉक्स पुनः आरंभ होता है और रिकवरी मोड में पूछता है कि और क्या वापस आना चाहिए। ड्राइव पर डेटा अछूता रहता है।",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "root पासवर्ड, नेटवर्क, नाम, समय क्षेत्र और ड्राइव तुरंत बैकअप से आते हैं, फिर बॉक्स पुनः आरंभ होता है। बाकी आप बाद में रिकवरी मोड में चुनते हैं।",
+		"Wiederherstellen und neu starten": "पुनर्स्थापित करें और पुनः आरंभ करें",
+		"Danach geht es im Recovery-Modus weiter": "इसके बाद रिकवरी मोड में आगे बढ़ेगा",
+		"RECOVERY-MODUS": "रिकवरी मोड",
+		"Sicherung": "बैकअप",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "बॉक्स को बैकअप से पुनर्स्थापित किया गया:",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "पहले ही लिया जा चुका: root पासवर्ड, नेटवर्क (IP पता, सबनेट), डिवाइस नाम, समय क्षेत्र, ड्राइव और वेब इंटरफ़ेस की सेटिंग्स। चुनें कि और क्या वापस आना चाहिए:",
+		"Benutzer und Gruppen": "उपयोगकर्ता और समूह",
+		"Paperless-Anbindung": "Paperless कनेक्शन",
+		"Cloud-Speicher": "क्लाउड स्टोरेज",
+		"Snapshots": "स्नैपशॉट",
+		"Zabbix-Agent": "Zabbix एजेंट",
+		"Drucker": "प्रिंटर",
+		"Einstellungen": "सेटिंग्स",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "पुनः आरंभ के बाद स्टोर से इंस्टॉल होते हैं (इंटरनेट आवश्यक)। जो सफल न हो, उसे ऐप्स पेज बाद में फिर से पेश करता है।",
+		"ZERTIFIKATE": "प्रमाणपत्र",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "बैकअप से HTTPS प्रमाणपत्र फिर से उपयोग करें",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "अन्यथा, यदि अपना CA पुनर्स्थापित होता है तो वह नया प्रमाणपत्र जारी करता है। तब ब्राउज़र और डेस्कटॉप ऐप एक बार फिर पूछते हैं।",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "अन्यथा बॉक्स अपना वर्तमान प्रमाणपत्र रखता है। तब ब्राउज़र और डेस्कटॉप ऐप एक बार फिर पूछते हैं।",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "बैकअप में कोई HTTPS प्रमाणपत्र नहीं है – बॉक्स अपना वर्तमान रखता है।",
+		"Eigene CA wiederherstellen": "अपना CA पुनर्स्थापित करें",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "जो डिवाइस CA पर भरोसा करते हैं, वे बॉक्स पर केवल उसी CA के साथ भरोसा करते रहेंगे। इसके बिना आपको वहाँ नया CA इंस्टॉल करना होगा और अन्य डिवाइस के लिए प्रमाणपत्र फिर से जारी करने होंगे।",
+		"Nichts weiter übernehmen": "और कुछ न लें",
+		"Übernehmen und neu starten": "लागू करें और पुनः आरंभ करें",
+		"Auswahl übernehmen?": "चयन लागू करें?",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "बॉक्स चुनी गई सेटिंग्स लागू करता है और पुनः आरंभ होता है।",
+		"Nichts weiter übernehmen?": "और कुछ न लें?",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "बॉक्स जैसा अभी है वैसा ही रहता है: केवल पासवर्ड, नेटवर्क, नाम, समय क्षेत्र और ड्राइव बैकअप से आते हैं। बैकअप बाद में फिर से लागू किया जा सकता है।",
+		"Recovery beenden": "रिकवरी समाप्त करें",
+		"Die Einstellungen werden übernommen": "सेटिंग्स लागू की जा रही हैं",
+		"Recovery-Modus beendet.": "रिकवरी मोड समाप्त।",
+		"APPS AUS DER SICHERUNG": "बैकअप से ऐप्स",
+		"Werden gerade installiert …": "इंस्टॉल हो रहे हैं …",
+		"Noch nicht installiert:": "अभी इंस्टॉल नहीं:",
+		"Apps aus Sicherung installieren": "बैकअप से ऐप्स इंस्टॉल करें",
+		"Die Apps werden im Hintergrund installiert.": "ऐप्स पृष्ठभूमि में इंस्टॉल हो रहे हैं।"
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"सभी दिखाएँ ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"($1 जारी प्रमाणपत्र)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"समूह: $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"जारी प्रमाणपत्र: $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"रिकवरी: $1"
 		]
 	],
 	"words": [

@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "Synchroniser des dossiers (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Peut piloter le service Syncthing de l'utilisateur : associer des appareils et synchroniser des dossiers avec eux. Chaque utilisateur a son propre service ; seuls les dossiers auxquels il a accès sont synchronisés.",
 		"Weniger anzeigen": "Afficher moins",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement."
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement.",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "Inclure le certificat HTTPS (avec la clé)",
+		"Eigene CA mitsichern": "Inclure la CA propre",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "Les clés ne vont que dans une sauvegarde chiffrée – saisis d'abord un mot de passe.",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Contient la box (réseau, nom, heure, disques, mot de passe root), les utilisateurs et groupes (mots de passe sous forme de hachage), les partages, les réglages des services et la liste des applications installées. Sans mot de passe, le fichier est lisible – conserve-le en lieu sûr. Avec mot de passe : AES-256, le mot de passe est nécessaire pour restaurer.",
+		"Gruppen": "Groupes",
+		"Eigene CA": "CA propre",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "Le mot de passe root, le réseau, le nom de l'appareil, le fuseau horaire, les disques et les réglages de l'interface web sont repris immédiatement. Ensuite la box redémarre et demande en mode récupération ce qui doit encore revenir. Les données des disques restent intactes.",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "Le mot de passe root, le réseau, le nom, le fuseau horaire et les disques viennent tout de suite de la sauvegarde, puis la box redémarre. Tu choisis le reste ensuite en mode récupération.",
+		"Wiederherstellen und neu starten": "Restaurer et redémarrer",
+		"Danach geht es im Recovery-Modus weiter": "Ensuite, cela continue en mode récupération",
+		"RECOVERY-MODUS": "MODE RÉCUPÉRATION",
+		"Sicherung": "Sauvegarde",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "La box a été restaurée à partir d'une sauvegarde :",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "Déjà repris : mot de passe root, réseau (adresse IP, sous-réseau), nom de l'appareil, fuseau horaire, disques et réglages de l'interface web. Choisis ce qui doit encore revenir :",
+		"Benutzer und Gruppen": "Utilisateurs et groupes",
+		"Paperless-Anbindung": "Connexion Paperless",
+		"Cloud-Speicher": "Stockage cloud",
+		"Snapshots": "Instantanés",
+		"Zabbix-Agent": "Agent Zabbix",
+		"Drucker": "Imprimante",
+		"Einstellungen": "Réglages",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "Installées depuis la boutique après le redémarrage (internet nécessaire). Ce qui échoue sera proposé à nouveau plus tard dans la page Applications.",
+		"ZERTIFIKATE": "CERTIFICATS",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "Réutiliser le certificat HTTPS de la sauvegarde",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "Sinon, la CA propre émet un nouveau certificat si elle est restaurée. Le navigateur et l'application de bureau redemandent alors une fois.",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "Sinon, la box garde son certificat actuel. Le navigateur et l'application de bureau redemandent alors une fois.",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "La sauvegarde ne contient pas de certificat HTTPS – la box garde l'actuel.",
+		"Eigene CA wiederherstellen": "Restaurer la CA propre",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "Les appareils qui font confiance à la CA ne continuent à faire confiance à la box qu'avec la même CA. Sans elle, il faut y installer la nouvelle CA et émettre à nouveau les certificats des autres appareils.",
+		"Nichts weiter übernehmen": "Ne rien reprendre d'autre",
+		"Übernehmen und neu starten": "Appliquer et redémarrer",
+		"Auswahl übernehmen?": "Appliquer la sélection ?",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "La box applique les réglages choisis et redémarre.",
+		"Nichts weiter übernehmen?": "Ne rien reprendre d'autre ?",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "La box reste telle qu'elle est : seuls le mot de passe, le réseau, le nom, le fuseau horaire et les disques viennent de la sauvegarde. La sauvegarde peut être restaurée à nouveau plus tard.",
+		"Recovery beenden": "Terminer la récupération",
+		"Die Einstellungen werden übernommen": "Application des réglages",
+		"Recovery-Modus beendet.": "Mode récupération terminé.",
+		"APPS AUS DER SICHERUNG": "APPLICATIONS DE LA SAUVEGARDE",
+		"Werden gerade installiert …": "Installation en cours …",
+		"Noch nicht installiert:": "Pas encore installées :",
+		"Apps aus Sicherung installieren": "Installer les applications de la sauvegarde",
+		"Die Apps werden im Hintergrund installiert.": "Les applications s'installent en arrière-plan."
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"Tout afficher ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"($1 certificats émis)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"Groupes : $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"Certificats émis : $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"Récupération : $1"
 		]
 	],
 	"words": [

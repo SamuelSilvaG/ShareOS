@@ -64,6 +64,12 @@ Log in with `session.login {username, password}` using the null session
 | `shareos.update.bin_ticket` | – | upload address for a D-Link `.bin` (one-time ticket, 5 min) |
 | `shareos.update.bin_info` | – | what the uploaded `.bin` contains: `kind` (`shareos`/`altf`/`other`), kernel name, sizes – or `error` |
 | `shareos.update.bin_write` | `confirm: true` | writes kernel + initramfs of the uploaded `.bin`, then removes it |
+| `shareos.backup.offer` | – | `certificate`, `source`, `ca`, `ca_certs` (what could go into a backup) |
+| `shareos.backup.export` | `password`, `certificate`, `ca` | `filename`, `content` (JSON, `shareos_backup: 2`), summary; certificate/CA only with a password |
+| `shareos.backup.restore` | `content`, `password`, `apply` | preview (summary) or: root password, network, name, time zone, storage, web settings now, the rest kept in `/etc/shareos/recovery.json` (recovery mode after the reboot) |
+| `shareos.recovery.status` | – | `active` + summary of the backup, `pending_apps`, `apps_running` |
+| `shareos.recovery.apply` | `users`, `shares`, `services` [names], `apps` [ids], `certificate`, `ca` | restores the parts, `done`; apps are installed after the reboot (`shareos-restore-apps`) |
+| `shareos.recovery.discard` / `apps_install` / `apps_dismiss` | – | end recovery mode / install the missing apps now / forget them |
 | `uci.*` | rpcd standard | read/write `/etc/config/shareos` |
 
 ## Updater

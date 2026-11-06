@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "同步文件夹 (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "可以控制用户自己的 Syncthing 服务：配对设备并与其同步文件夹。每个用户都有自己的服务；只同步其有权访问的文件夹。",
 		"Weniger anzeigen": "收起",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "可以设置设备的 Zabbix 代理（服务器、主机名、PSK 加密、被动检查、SMART 间隔）、重启它并读取其日志——应用再也看不到密钥。仅限管理员。"
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "可以设置设备的 Zabbix 代理（服务器、主机名、PSK 加密、被动检查、SMART 间隔）、重启它并读取其日志——应用再也看不到密钥。仅限管理员。",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "包含 HTTPS 证书（含密钥）",
+		"Eigene CA mitsichern": "包含自有 CA",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "密钥只会放入加密备份——请先输入密码。",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "包含设备（网络、名称、时间、驱动器、root 密码）、用户和组（密码为哈希）、共享、各服务的设置以及已安装应用的列表。无密码时文件可读——请妥善保管。有密码时：AES-256，恢复时需要该密码。",
+		"Gruppen": "组",
+		"Eigene CA": "自有 CA",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "root 密码、网络、设备名称、时区、驱动器和网页界面设置会立即恢复。随后设备重启，并在恢复模式中询问还要恢复哪些内容。驱动器上的数据保持不变。",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "root 密码、网络、名称、时区和驱动器会立即从备份恢复，然后设备重启。其余内容之后在恢复模式中选择。",
+		"Wiederherstellen und neu starten": "恢复并重启",
+		"Danach geht es im Recovery-Modus weiter": "之后在恢复模式中继续",
+		"RECOVERY-MODUS": "恢复模式",
+		"Sicherung": "备份",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "设备已从备份恢复：",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "已恢复：root 密码、网络（IP 地址、子网）、设备名称、时区、驱动器和网页界面设置。请选择还要恢复的内容：",
+		"Benutzer und Gruppen": "用户和组",
+		"Paperless-Anbindung": "Paperless 连接",
+		"Cloud-Speicher": "云存储",
+		"Snapshots": "快照",
+		"Zabbix-Agent": "Zabbix 代理",
+		"Drucker": "打印机",
+		"Einstellungen": "设置",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "重启后从商店安装（需要互联网）。安装失败的应用稍后会在应用页面再次提供。",
+		"ZERTIFIKATE": "证书",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "重新使用备份中的 HTTPS 证书",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "否则，如果恢复了自有 CA，它会签发新证书。浏览器和桌面应用随后会再询问一次。",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "否则设备保留当前证书。浏览器和桌面应用随后会再询问一次。",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "备份中没有 HTTPS 证书——设备保留当前证书。",
+		"Eigene CA wiederherstellen": "恢复自有 CA",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "信任该 CA 的设备只有在使用同一 CA 时才会继续信任本设备。否则需要在那些设备上安装新的 CA，并为其他设备重新签发证书。",
+		"Nichts weiter übernehmen": "不再恢复其他内容",
+		"Übernehmen und neu starten": "应用并重启",
+		"Auswahl übernehmen?": "应用所选内容？",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "设备将应用所选设置并重启。",
+		"Nichts weiter übernehmen?": "不再恢复其他内容？",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "设备保持当前状态：只有密码、网络、名称、时区和驱动器来自备份。之后可以再次恢复该备份。",
+		"Recovery beenden": "结束恢复",
+		"Die Einstellungen werden übernommen": "正在应用设置",
+		"Recovery-Modus beendet.": "恢复模式已结束。",
+		"APPS AUS DER SICHERUNG": "备份中的应用",
+		"Werden gerade installiert …": "正在安装 …",
+		"Noch nicht installiert:": "尚未安装：",
+		"Apps aus Sicherung installieren": "从备份安装应用",
+		"Die Apps werden im Hintergrund installiert.": "应用正在后台安装。"
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"显示全部 ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"（已签发 $1 个证书）"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"组：$1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"已签发的证书：$1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"恢复：$1"
 		]
 	],
 	"words": [

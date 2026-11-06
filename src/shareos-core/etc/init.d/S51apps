@@ -11,6 +11,8 @@ DIR=/www-apps
 start() {
 	# system apps readable for every account (older versions made them root-only)
 	/usr/sbin/shareos-apps fix-perms >/dev/null 2>&1
+	# apps of a restored settings backup: installed in the background
+	[ -s /etc/shareos/recovery-apps ] && start-stop-daemon -S -q -b -x /usr/sbin/shareos-restore-apps
 	# area "Apps" switched off under System -> Appearance
 	[ "$(uci -q get shareos.ui.area_apps)" = 0 ] && return 0
 	mkdir -p $DIR

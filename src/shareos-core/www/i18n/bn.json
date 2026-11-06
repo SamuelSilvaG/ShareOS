@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "ফোল্ডার সিঙ্ক করুন (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "ব্যবহারকারীর নিজের Syncthing পরিষেবা নিয়ন্ত্রণ করতে পারে: ডিভাইস যুক্ত করা এবং তাদের সাথে ফোল্ডার সিঙ্ক করা। প্রত্যেক ব্যবহারকারীর নিজস্ব পরিষেবা আছে; শুধু সেই ফোল্ডারগুলো সিঙ্ক হয় যেগুলোতে তার অ্যাক্সেস আছে।",
 		"Weniger anzeigen": "কম দেখান",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "বক্সের Zabbix এজেন্ট সেট আপ করতে পারে (সার্ভার, হোস্ট নাম, PSK এনক্রিপশন, প্যাসিভ চেক, SMART বিরতি), এটি আবার চালু করতে এবং এর লগ পড়তে পারে – অ্যাপ আর কখনো কী দেখে না। শুধু অ্যাডমিনদের জন্য।"
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "বক্সের Zabbix এজেন্ট সেট আপ করতে পারে (সার্ভার, হোস্ট নাম, PSK এনক্রিপশন, প্যাসিভ চেক, SMART বিরতি), এটি আবার চালু করতে এবং এর লগ পড়তে পারে – অ্যাপ আর কখনো কী দেখে না। শুধু অ্যাডমিনদের জন্য।",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "HTTPS সার্টিফিকেট অন্তর্ভুক্ত করুন (কী সহ)",
+		"Eigene CA mitsichern": "নিজস্ব CA অন্তর্ভুক্ত করুন",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "কী শুধু এনক্রিপ্টেড ব্যাকআপে যায় – আগে একটি পাসওয়ার্ড দিন।",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "এতে বক্স (নেটওয়ার্ক, নাম, সময়, ড্রাইভ, root পাসওয়ার্ড), ব্যবহারকারী ও গ্রুপ (পাসওয়ার্ড হ্যাশ হিসেবে), শেয়ার, সার্ভিসের সেটিংস এবং ইনস্টল করা অ্যাপের তালিকা থাকে। পাসওয়ার্ড ছাড়া ফাইলটি পড়া যায় – নিরাপদে রাখুন। পাসওয়ার্ড সহ: AES-256, পুনরুদ্ধারে পাসওয়ার্ড লাগবে।",
+		"Gruppen": "গ্রুপ",
+		"Eigene CA": "নিজস্ব CA",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "root পাসওয়ার্ড, নেটওয়ার্ক, ডিভাইসের নাম, সময় অঞ্চল, ড্রাইভ এবং ওয়েব ইন্টারফেসের সেটিংস সঙ্গে সঙ্গে নেওয়া হয়। তারপর বক্স পুনরায় চালু হয় এবং রিকভারি মোডে জিজ্ঞেস করে আর কী ফিরিয়ে আনতে হবে। ড্রাইভের ডেটা অপরিবর্তিত থাকে।",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "root পাসওয়ার্ড, নেটওয়ার্ক, নাম, সময় অঞ্চল ও ড্রাইভ সঙ্গে সঙ্গে ব্যাকআপ থেকে আসে, তারপর বক্স পুনরায় চালু হয়। বাকিটা পরে রিকভারি মোডে বেছে নেবেন।",
+		"Wiederherstellen und neu starten": "পুনরুদ্ধার করে পুনরায় চালু করুন",
+		"Danach geht es im Recovery-Modus weiter": "এরপর রিকভারি মোডে চলবে",
+		"RECOVERY-MODUS": "রিকভারি মোড",
+		"Sicherung": "ব্যাকআপ",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "বক্সটি একটি ব্যাকআপ থেকে পুনরুদ্ধার করা হয়েছে:",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "ইতিমধ্যে নেওয়া হয়েছে: root পাসওয়ার্ড, নেটওয়ার্ক (IP ঠিকানা, সাবনেট), ডিভাইসের নাম, সময় অঞ্চল, ড্রাইভ এবং ওয়েব ইন্টারফেসের সেটিংস। আর কী ফিরিয়ে আনতে হবে বেছে নিন:",
+		"Benutzer und Gruppen": "ব্যবহারকারী ও গ্রুপ",
+		"Paperless-Anbindung": "Paperless সংযোগ",
+		"Cloud-Speicher": "ক্লাউড স্টোরেজ",
+		"Snapshots": "স্ন্যাপশট",
+		"Zabbix-Agent": "Zabbix এজেন্ট",
+		"Drucker": "প্রিন্টার",
+		"Einstellungen": "সেটিংস",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "পুনরায় চালুর পর স্টোর থেকে ইনস্টল হয় (ইন্টারনেট লাগবে)। যা ব্যর্থ হয় তা পরে অ্যাপ পেজে আবার দেখানো হবে।",
+		"ZERTIFIKATE": "সার্টিফিকেট",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "ব্যাকআপের HTTPS সার্টিফিকেট আবার ব্যবহার করুন",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "নইলে নিজস্ব CA পুনরুদ্ধার হলে নতুন সার্টিফিকেট দেয়। তখন ব্রাউজার ও ডেস্কটপ অ্যাপ আবার একবার জিজ্ঞেস করবে।",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "নইলে বক্স তার বর্তমান সার্টিফিকেট রাখে। তখন ব্রাউজার ও ডেস্কটপ অ্যাপ আবার একবার জিজ্ঞেস করবে।",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "ব্যাকআপে কোনো HTTPS সার্টিফিকেট নেই – বক্স বর্তমানটি রাখে।",
+		"Eigene CA wiederherstellen": "নিজস্ব CA পুনরুদ্ধার করুন",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "যে ডিভাইসগুলো CA-কে বিশ্বাস করে, সেগুলো একই CA থাকলেই বক্সকে বিশ্বাস করতে থাকবে। না থাকলে সেখানে নতুন CA ইনস্টল করতে হবে এবং অন্য ডিভাইসের সার্টিফিকেট আবার দিতে হবে।",
+		"Nichts weiter übernehmen": "আর কিছু নেবেন না",
+		"Übernehmen und neu starten": "প্রয়োগ করে পুনরায় চালু করুন",
+		"Auswahl übernehmen?": "নির্বাচন প্রয়োগ করবেন?",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "বক্স বেছে নেওয়া সেটিংস প্রয়োগ করে পুনরায় চালু হয়।",
+		"Nichts weiter übernehmen?": "আর কিছু নেবেন না?",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "বক্স এখন যেমন আছে তেমনই থাকে: শুধু পাসওয়ার্ড, নেটওয়ার্ক, নাম, সময় অঞ্চল ও ড্রাইভ ব্যাকআপ থেকে আসে। ব্যাকআপটি পরে আবার প্রয়োগ করা যায়।",
+		"Recovery beenden": "রিকভারি শেষ করুন",
+		"Die Einstellungen werden übernommen": "সেটিংস প্রয়োগ হচ্ছে",
+		"Recovery-Modus beendet.": "রিকভারি মোড শেষ।",
+		"APPS AUS DER SICHERUNG": "ব্যাকআপ থেকে অ্যাপ",
+		"Werden gerade installiert …": "ইনস্টল হচ্ছে …",
+		"Noch nicht installiert:": "এখনও ইনস্টল হয়নি:",
+		"Apps aus Sicherung installieren": "ব্যাকআপ থেকে অ্যাপ ইনস্টল করুন",
+		"Die Apps werden im Hintergrund installiert.": "অ্যাপগুলো ব্যাকগ্রাউন্ডে ইনস্টল হচ্ছে।"
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"সব দেখান ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"($1টি জারি করা সার্টিফিকেট)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"গ্রুপ: $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"জারি করা সার্টিফিকেট: $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"রিকভারি: $1"
 		]
 	],
 	"words": [

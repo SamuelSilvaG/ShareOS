@@ -4,6 +4,15 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.2.0-beta.21
+
+- **Settings backup with recovery mode.** Restoring a backup no longer replaces everything at once:
+  - What the box needs to run comes back right away – root password, network (IP address, subnet), device name, time zone, drives and the settings of the web interface. The box then restarts in **recovery mode** and asks (System, first page after the login) what else should come back: users and groups, shares, the settings of each service (Paperless, cloud, snapshots, DLNA, Docker hosts, Zabbix, printer, UPS) and the apps that were installed. *Nichts weiter übernehmen* keeps the box as it is.
+  - **Apps** are part of the backup (list with version and their settings). Chosen apps are installed from the store after the restart, one after the other (`shareos-restore-apps`); what fails – e.g. without internet – shows up under Apps → Installiert as *Apps aus der Sicherung* with *Apps aus Sicherung installieren*.
+  - **Certificate and own CA** go into a backup only when asked for and only encrypted (their private keys; an unencrypted backup refuses them). The CA comes with the certificates it issued for other devices. In recovery mode the box asks whether to reuse the HTTPS certificate (otherwise it keeps its current one, or gets a new one from the restored CA) and whether to restore the CA – devices that trust the CA keep trusting the box only with the same CA.
+  - Encrypted backups show box, date and version without the password (for lists of backups, e.g. in ShareOS Desktop). Backups of earlier versions can still be restored.
+  - rpcd `shareos.backup.offer`, `shareos.recovery` (`status`, `apply`, `discard`, `apps_install`, `apps_dismiss`); 20 more checks in `tests/test-users.sh`.
+
 ## 0.2.0-beta.20
 
 - **Syncthing: folders in sync with PCs and phones, without a cloud** ([#88](https://github.com/UniqueDroid/ShareOS/discussions/88)). New system app **"syncthing"** (Syncthing 2.1.7, 12 MB, on the apps drive) and the app **Syncthing** in the store.
