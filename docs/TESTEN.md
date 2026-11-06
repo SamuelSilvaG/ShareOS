@@ -449,6 +449,18 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zh. Syncthing, Transmission auf kleiner CPU, Zabbix für Apps (0.2.0-beta.20)
+
+1. **Syncthing:** Apps → Store → **Syncthing** (bringt die System-App „syncthing“ mit, 12 MB). Als root öffnen: nach ein paar Sekunden *● Läuft*. *ID dieses Geräts* zeigt die ID und einen QR-Code.
+2. Auf einem PC (Syncthing installiert) oder Handy (Syncthing-App) die ID der Box als Gerät hinzufügen. Die App zeigt oben die Anfrage → *Hinzufügen …* → *Speichern*. Unter *Andere Geräte* steht es als *verbunden*.
+3. *＋ Ordner*: Name `Test`, Ordner `daten/SyncTest` (wird angelegt), teilen mit dem PC → *Speichern*. Auf dem PC den Ordner annehmen. Eine Datei, die dort auf dem PC landet, kommt auf der Box an (Dateibrowser), und umgekehrt. Der Ordner zeigt *aktuell*.
+4. Einen Ordner vom PC an die Box teilen: die App zeigt *… möchte den Ordner … teilen* → *Annehmen …*, Ordner wählen, *Speichern*.
+5. Ein **Benutzer** öffnet Syncthing über *Mein ShareOS*: eine andere ID, keine Geräte oder Ordner von root. Ordner nur in „Mein Ordner“ und seinen Freigaben; synchronisierte Dateien gehören ihm. `ps` zeigt ein `syncthing serve` pro Konto, `netstat -ltn` keinen Port 8384; die Sync-Ports sind 22000 (root) und 22000 + n.
+6. *System → Prozesse*: Speicher von `syncthing` notieren (erwartet etwa 40–60 MB pro Konto).
+7. **Transmission:** bei einem neuen Konto (oder nach Löschen von `.shareos-defaults` und der `settings.json` in seinem Zustandsordner) zeigen die Einstellungen 60/30 Peers, eine Download-Warteschlange von 3 und µTP aus; `top` zeigt `transmission-daemon` mit NI 10. Einen Wert ändern und die Box neu starten: der Wert bleibt.
+8. **Firmware-Seite:** System → Firmware → *Prüfen*: *Versionen von GitHub* listet 3 Versionen, *Alle anzeigen (n)* den Rest, *Weniger anzeigen* klappt sie wieder ein.
+9. **Zabbix für Apps** (sobald die App Zabbix Agent Config `ShareOS.zabbix` nutzt): als Admin in der App den Server ändern → `shareos-zabbix status` zeigt ihn; einen PSK setzen → die App zeigt nur, dass ein Schlüssel gesetzt ist. Als Benutzer bekommt die App keinen Zugriff.
+
 ## 14zg. iPhone/iPad: SMB-Freigaben beschreibbar (0.2.0-beta.19)
 
 1. `grep -c 'vfs objects = streams_xattr' /etc/ksmbd/ksmbd.conf` zählt jede Freigabe auf ext4/Btrfs (und `[homes]`); Freigaben auf FAT/exFAT/NTFS haben es nicht.

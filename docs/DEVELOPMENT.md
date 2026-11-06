@@ -249,6 +249,16 @@ the box for why the web server was not running.
 |---|---|
 | 10:47 | The iOS Files app showed SMB shares read-only, Windows could write (#112). Not the share's `read only` + `write list` – since iOS 18 Apple's client wants named streams, which ksmbd only announces with `vfs objects = streams_xattr`. The reporter confirmed it by hand, every share gets it now (#113). Goes into `v0.2.0-beta.19`. |
 
+### Thursday, 05.11.2026
+
+| Time | What happened |
+|---|---|
+| 14:20 | Jan publishes `v0.2.0-beta.19`. |
+| 16:47 | Transmission used most of the 800 MHz CPU (#115). Every account's daemon gets lighter defaults once: 60 peers in total, 30 per torrent, a download queue of 3, µTP off – its congestion control in user space costs more CPU than all TCP peers together – and nice 10, so file shares stay quick. What the user sets afterwards stays. |
+| 18:40 | Syncthing per account (#88, #117): a system app built without its own web interface; the app *Syncthing* talks to its REST API over a Unix socket through the box, which only lets through what a remote control needs and only folders of the account. Passing Syncthing's own interface through the apps web server was the first plan – its two long-polling requests would have taken two of the three CGI slots. |
+| 20:20 | The firmware page shows the newest 3 GitHub versions, *Alle anzeigen* opens the rest (#118). |
+| 21:51 | App permission `zabbix` for the Zabbix Agent Config app (#119). Its tests found two old faults in `shareos-zabbix`: called from rpcd it asked rpcd for the SMART values and waited for itself, and a stopped agent left worker processes behind that kept its pid file locked. Everything goes into `v0.2.0-beta.20`. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

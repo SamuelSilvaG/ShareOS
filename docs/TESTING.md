@@ -445,6 +445,18 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zh. Syncthing, Transmission on a small CPU, Zabbix for apps (0.2.0-beta.20)
+
+1. **Syncthing:** Apps → Store → **Syncthing** (brings the system app "syncthing", 12 MB). Open it as root: after a few seconds *● Läuft*. *ID dieses Geräts* shows the ID and a QR code.
+2. On a PC (Syncthing installed) or a phone (Syncthing app): add the box's ID as a device. The app shows the request at the top → *Hinzufügen …* → *Speichern*. *Andere Geräte* shows it as *verbunden*.
+3. *＋ Ordner*: name `Test`, folder `daten/SyncTest` (it is created), share with the PC → *Speichern*. On the PC, accept the folder. A file put into it on the PC arrives on the box (file browser), and one put in on the box arrives on the PC. The folder shows *aktuell*.
+4. Share a folder from the PC to the box: the app shows *… möchte den Ordner … teilen* → *Annehmen …*, choose the folder, *Speichern*.
+5. A **user** opens Syncthing from *My ShareOS*: a different ID, no devices or folders of root. Folders only inside "Mein Ordner" and the user's shares; synced files belong to the user. `ps` shows one `syncthing serve` per account, `netstat -ltn` no port 8384; the sync ports are 22000 (root) and 22000 + n.
+6. *System → Prozesse*: note the memory of `syncthing` (expected about 40–60 MB per account).
+7. **Transmission:** on a new account (or after deleting `.shareos-defaults` and the `settings.json` in its state folder), Transmission's preferences show 60/30 peers, a download queue of 3 and µTP off; `top` shows `transmission-daemon` with NI 10. Change a value and restart the box: the value stays.
+8. **Firmware page:** System → Firmware → *Prüfen*: *Versionen von GitHub* lists 3 versions, *Alle anzeigen (n)* the rest, *Weniger anzeigen* folds them again.
+9. **Zabbix for apps** (once the Zabbix Agent Config app uses `ShareOS.zabbix`): as an admin, change the server in the app → `shareos-zabbix status` shows it; set a PSK → the app only shows that a key is set. As a user, the app gets no access.
+
 ## 14zg. iPhone/iPad: SMB shares writable (0.2.0-beta.19)
 
 1. `grep -c 'vfs objects = streams_xattr' /etc/ksmbd/ksmbd.conf` counts every share on ext4/Btrfs (and `[homes]`); shares on FAT/exFAT/NTFS don't have it.

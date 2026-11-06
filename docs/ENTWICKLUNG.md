@@ -250,6 +250,16 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 |---|---|
 | 10:47 | Die Dateien-App von iOS zeigte SMB-Freigaben nur lesend, Windows konnte schreiben (#112). Nicht `read only` + `write list` der Freigabe war schuld – seit iOS 18 will Apples Client Named Streams, und die meldet ksmbd nur mit `vfs objects = streams_xattr`. Der Melder hat es von Hand bestätigt, jetzt bekommt es jede Freigabe (#113). Kommt in `v0.2.0-beta.19`. |
 
+### Donnerstag, 05.11.2026
+
+| Zeit | Was passiert ist |
+|---|---|
+| 14:20 | Jan veröffentlicht `v0.2.0-beta.19`. |
+| 16:47 | Transmission belegte den größten Teil der 800-MHz-CPU (#115). Der Dienst jedes Kontos bekommt einmalig sparsamere Voreinstellungen: 60 Peers insgesamt, 30 pro Torrent, eine Download-Warteschlange mit 3, µTP aus – seine Staukontrolle im Userspace kostet mehr CPU als alle TCP-Peers zusammen – und nice 10, damit die Freigaben flott bleiben. Was der Benutzer danach einstellt, bleibt. |
+| 18:40 | Syncthing pro Konto (#88, #117): eine System-App ohne eigene Weboberfläche; die App *Syncthing* spricht über die Box mit seiner REST-API auf einem Unix-Socket, und die Box lässt nur durch, was eine Fernsteuerung braucht, und nur Ordner des Kontos. Zuerst sollte die Original-Oberfläche durch den Apps-Webserver gereicht werden – ihre zwei langen Abfragen hätten zwei der drei CGI-Plätze belegt. |
+| 20:20 | Die Firmware-Seite zeigt die neuesten 3 Versionen von GitHub, *Alle anzeigen* öffnet den Rest (#118). |
+| 21:51 | App-Berechtigung `zabbix` für die App Zabbix Agent Config (#119). Ihre Tests fanden zwei alte Fehler in `shareos-zabbix`: von rpcd aufgerufen fragte es rpcd nach den SMART-Werten und wartete auf sich selbst, und ein gestoppter Agent ließ Arbeitsprozesse zurück, die seine PID-Datei gesperrt hielten. Alles kommt in `v0.2.0-beta.20`. |
+
 ## Bemerkenswerte Problemlösungen
 
 - **3-MB-Grenze des Bootloaders:** Der Kernel ist von 4,2 auf 2,4 MB geschrumpft, Treiber wurden in Module ausgelagert. Das Start-System umfasst nur 0,9 MB.

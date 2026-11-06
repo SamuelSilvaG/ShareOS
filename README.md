@@ -96,7 +96,7 @@ Version in brackets = first release with the feature.
 - Installable as an app (PWA), status address for widget apps (beta.4)
 - "Share with" on Android: the installed app saves shared photos, files and links into `Geteilt` in the personal folder (0.2.0-beta.11)
 - Remote access with Tailscale (system app `tailscaled`, starts by itself, admins only, permission `tailscale` for apps): the box in a tailnet without port forwarding, also behind DS-Lite (0.2.0-beta.7)
-- Monitoring with Zabbix (system app `zabbix-agent`): the classic C agent in active mode, a few MB of memory, no open port, encrypted with PSK; SMART of every disk, RAID state, box temperature and fan as items with a Zabbix template – see [docs/MONITORING.md](docs/MONITORING.md) (0.2.0-beta.15)
+- Monitoring with Zabbix (system app `zabbix-agent`): the classic C agent in active mode, a few MB of memory, no open port, encrypted with PSK; SMART of every disk, RAID state, box temperature and fan as items with a Zabbix template – see [docs/MONITORING.md](docs/MONITORING.md) (0.2.0-beta.15); apps can set it up (permission `zabbix`, admins, 0.2.0-beta.20)
 - Folders in sync with PCs and phones without a cloud: Syncthing per user (system app `syncthing`, app Syncthing, permission `syncthing`), only the user's own folders, no open web port (0.2.0-beta.20)
 - Download automation with autobrr (system app, one for the box, admins only, permission `autobrr` for apps): IRC announces and RSS feeds, matching torrents go to the Transmission of a chosen account (0.2.0-beta.9)
 - Apps keep their data on the box also for accounts without file access: a private folder per app and account (0.2.0-beta.9)
@@ -108,7 +108,7 @@ Version in brackets = first release with the feature.
 - Large system apps on the apps drive (link in `/opt`), the flash stays free (0.2.0-beta.7)
 - Media server (DLNA/UPnP AV, MiniDLNA as a system app): TVs and players play music, videos and pictures from chosen shares (0.2.0-beta.6)
 - VPN for the box in both directions (OpenVPN as a system app, app NetTunnel, admins only): as client with cleaned profiles, as server with its own CA and a ready-made profile per device; status chips of services and apps in the header (0.2.0-beta.6)
-- Transmission with own torrents per user: system app `transmission-daemon`, app permission `torrent`; apps bring the system apps they need (`"requires"`) (0.2.0-beta.4)
+- Transmission with own torrents per user: system app `transmission-daemon`, app permission `torrent`; apps bring the system apps they need (`"requires"`) (0.2.0-beta.4); lighter defaults for the small CPU (fewer peers, download queue, µTP off, lower priority, 0.2.0-beta.20)
 - Media jobs: FFmpeg as a system app, app permission `media` – convert audio, change the container of videos, cut, in the background with the user's rights (MediaTranscoder) (0.2.0-beta.5)
 
 **Firmware and system**
