@@ -258,7 +258,13 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 16:47 | Transmission belegte den größten Teil der 800-MHz-CPU (#115). Der Dienst jedes Kontos bekommt einmalig sparsamere Voreinstellungen: 60 Peers insgesamt, 30 pro Torrent, eine Download-Warteschlange mit 3, µTP aus – seine Staukontrolle im Userspace kostet mehr CPU als alle TCP-Peers zusammen – und nice 10, damit die Freigaben flott bleiben. Was der Benutzer danach einstellt, bleibt. |
 | 18:40 | Syncthing pro Konto (#88, #117): eine System-App ohne eigene Weboberfläche; die App *Syncthing* spricht über die Box mit seiner REST-API auf einem Unix-Socket, und die Box lässt nur durch, was eine Fernsteuerung braucht, und nur Ordner des Kontos. Zuerst sollte die Original-Oberfläche durch den Apps-Webserver gereicht werden – ihre zwei langen Abfragen hätten zwei der drei CGI-Plätze belegt. |
 | 20:20 | Die Firmware-Seite zeigt die neuesten 3 Versionen von GitHub, *Alle anzeigen* öffnet den Rest (#118). |
-| 21:51 | App-Berechtigung `zabbix` für die App Zabbix Agent Config (#119). Ihre Tests fanden zwei alte Fehler in `shareos-zabbix`: von rpcd aufgerufen fragte es rpcd nach den SMART-Werten und wartete auf sich selbst, und ein gestoppter Agent ließ Arbeitsprozesse zurück, die seine PID-Datei gesperrt hielten. Alles kommt in `v0.2.0-beta.20`. |
+| 21:51 | App-Berechtigung `zabbix` für die App Zabbix Agent Config (#119). Ihre Tests fanden zwei alte Fehler in `shareos-zabbix`: von rpcd aufgerufen fragte es rpcd nach den SMART-Werten und wartete auf sich selbst, und ein gestoppter Agent ließ Arbeitsprozesse zurück, die seine PID-Datei gesperrt hielten. |
+
+### Freitag, 06.11.2026
+
+| Zeit | Was passiert ist |
+|---|---|
+| 09:35 | Ein Überwachungsordner für die Transmission-App (#121). Der erste Versuch der App fragte den Ordner aus dem Browser ab, weil die Box `watch-dir` verwarf – und Transmission liest ihn ohnehin nur beim Start aus `settings.json`. Jetzt speichert die Box den Ordner und startet den Dienst des Kontos neu, der neue `.torrent`-Dateien dann selbst übernimmt, auch bei geschlossener App. Alles kommt in `v0.2.0-beta.20`. |
 
 ## Bemerkenswerte Problemlösungen
 
