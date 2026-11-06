@@ -4431,7 +4431,7 @@ return {
 					st = json(r.out ?? '') ?? { error: trim(r.out) || 'cannot start' };
 					if (st.error) return { error: st.error, installed: st.installed };
 				}
-				return { user: g.u, socket: st.socket,
+				return { user: g.u, socket: st.socket, watch: st.watch, watch_autobrr: !!st.watch_autobrr,
 					roots: map(files_roots(g.u), (r) => ({ name: r.name, path: realpath(r.path) ?? r.path, home: !!r.home })) };
 			}
 		},
@@ -4445,6 +4445,23 @@ return {
 				let p = files_wpath(g.u, req.args.root, req.args.path, 'dir');
 				if (p.error) return p;
 				return { path: realpath(p.abs) };
+			}
+		},
+
+		// the account's own watch folder (root + relative path; root "" switches it off)
+		watch: {
+			args: { grant: '', root: '', path: '' },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant);
+				if (!g || index(g.app.permissions ?? [], 'torrent') < 0) return { error: 'no access' };
+				let abs = '';
+				if ((req.args.root ?? '') != '') {
+					let p = files_wpath(g.u, req.args.root, req.args.path, 'dir');
+					if (p.error) return p;
+					abs = realpath(p.abs);
+				}
+				let r = sh('/usr/sbin/shareos-transmission watch ' + shq(g.u) + ' ' + shq(abs));
+				return json(trim(r.out) || 'null') ?? { error: trim(r.out) || 'failed' };
 			}
 		}
 	},

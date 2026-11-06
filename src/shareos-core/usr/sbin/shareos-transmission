@@ -7,6 +7,8 @@
 //   shareos-transmission status <account>
 //   shareos-transmission boot              start the daemons of all accounts that used it
 //   shareos-transmission stop-all          stop all (system app removed, shutdown)
+//   shareos-transmission watch <account> <folder|"">   the account's own watch folder
+//                                          (new .torrent files there are added; restarts it)
 //
 // shareos-service: boot stop-all
 //
@@ -26,7 +28,7 @@
 //   - peer port 51413 for root, 51413 + (uid - 999) for the others.
 // Every JSON line printed is the result; exit code 1 on errors.
 //
-import { readfile, writefile, stat, lsdir, popen } from 'fs';
+import { readfile, writefile, stat, lsdir, popen, unlink } from 'fs';
 import { cursor } from 'uci';
 
 const ROOT = getenv('SHAREOS_ROOT') ?? '';
@@ -80,12 +82,6 @@ function pid_of(u) {
 }
 function sock_of(u) { return dir_of(u) + '/rpc.sock'; }
 
-function status(u) {
-	let p = pid_of(u);
-	return { account: u, installed: stat(BIN)?.type == 'file', running: !!p, pid: p, socket: p ? sock_of(u) : null,
-		enabled: stat(ENABLED + '/' + u)?.type == 'file' };
-}
-
 // the hand-over folder of autobrr (shareos-autobrr) when this account gets its torrents
 function autobrr_drop(u) {
 	let c = cursor();
@@ -93,6 +89,21 @@ function autobrr_drop(u) {
 	let a = c.get('storage', 'global', 'apps');
 	let d = a && match(a, /^[a-z0-9_-]+$/) ? '/mnt/' + a + '/.shareos/autobrr-drop' : null;
 	return d && stat(ROOT + d)?.type == 'directory' ? d : null;
+}
+
+// the account's own watch folder (set by an app through the proxy)
+function own_watch(pl) {
+	let d = trim(readfile(ROOT + pl.state + '/.shareos-watch') ?? '');
+	return d != '' && substr(d, 0, 5) == '/mnt/' && index(d, '/../') < 0 && stat(ROOT + d)?.type == 'directory' ? d : null;
+}
+
+// watch: the folder the daemon watches for .torrent files; watch_autobrr: it is
+// autobrr's hand-over folder (the account's own one cannot be set then)
+function status(u) {
+	let p = pid_of(u), pl = places(u), drop = autobrr_drop(u);
+	return { account: u, installed: stat(BIN)?.type == 'file', running: !!p, pid: p, socket: p ? sock_of(u) : null,
+		enabled: stat(ENABLED + '/' + u)?.type == 'file',
+		watch: drop ?? (pl ? own_watch(pl) : null), watch_autobrr: !!drop };
 }
 
 // settings the box decides; the rest (speed limits …) stays as the user set it
@@ -114,10 +125,12 @@ function settings(u, pl) {
 	s['script-torrent-done-enabled'] = false;
 	s['script-torrent-added-enabled'] = false;
 	s['script-torrent-done-seeding-enabled'] = false;
-	// only the hand-over folder of autobrr (torrents it found), nothing else
-	let drop = autobrr_drop(u);
-	s['watch-dir-enabled'] = !!drop;
-	if (drop) s['watch-dir'] = drop; else delete s['watch-dir'];
+	// watch folder: the hand-over folder of autobrr (torrents it found) for
+	// its account, otherwise the account's own one (app setting, kept in
+	// .shareos-watch: a folder of the account, checked when it was set)
+	let drop = autobrr_drop(u), own = own_watch(pl);
+	s['watch-dir-enabled'] = !!(drop ?? own);
+	if (drop ?? own) s['watch-dir'] = drop ?? own; else delete s['watch-dir'];
 	s['trash-original-torrent-files'] = !!drop;
 	s['umask'] = pl.run_as == 'root' ? '002' : '077';
 	if (s['download-dir'] == null) s['download-dir'] = pl.download;
@@ -190,6 +203,25 @@ switch (cmd) {
 case 'start': start(u); break;
 case 'stop': stop(u); break;
 case 'status': if (!match(u ?? '', NAME_RE)) die('invalid account'); out(status(u)); break;
+// watch <account> <folder|"">: the account's own watch folder (rpcd checked
+// that the folder belongs to the account); autobrr's account keeps autobrr's
+case 'watch': {
+	if (!match(u ?? '', NAME_RE)) die('invalid account');
+	let pl = places(u), d = ARGV[2] ?? '';
+	if (!pl) die('no personal folder on a drive');
+	if (autobrr_drop(u)) die('the watch folder of this account is used by autobrr');
+	if (d != '' && (substr(d, 0, 5) != '/mnt/' || stat(ROOT + d)?.type != 'directory')) die('invalid folder');
+	let f = ROOT + pl.state + '/.shareos-watch';
+	if (d == '') unlink(f);
+	else {
+		writefile(f, d + '\n');
+		if (pl.run_as != 'root') sh('chown ' + shq(pl.run_as) + ' ' + shq(f));
+	}
+	// the daemon reads its watch folder only when it starts (not over RPC)
+	if (pid_of(u)) { sh('/usr/sbin/shareos-transmission stop ' + shq(u)); sh('/usr/sbin/shareos-transmission start ' + shq(u)); }
+	out({ ok: true, watch: d == '' ? null : d });
+	break;
+}
 case 'boot':
 	if (stat(BIN)?.type != 'file') { out({ started: [] }); break; }
 	let started = [];
