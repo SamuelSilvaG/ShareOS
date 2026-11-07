@@ -255,11 +255,13 @@ def files_call(user, method, args):
             return {'ok': True, 'trash': True}
         return {'ok': True}
     if method == 'move':
-        dest = (args.get('dest') or '').strip('/')
-        if dest not in FS[root]:
+        dest, droot = (args.get('dest') or '').strip('/'), args.get('dest_root') or root
+        if droot not in FS or dest not in FS[droot]:
             return {'error': 'not found'}
         moved = [x for x in d if x[0] in args['names']]
-        FS[root][dest] += moved
+        if any(x[0] == m[0] for x in FS[droot][dest] for m in moved):
+            return {'error': 'already exists: ' + moved[0][0]}
+        FS[droot][dest] += moved
         if not args.get('copy'):
             FS[root][path] = [x for x in d if x[0] not in args['names']]
         return {'ok': True}
@@ -549,7 +551,10 @@ def call(obj, method, args):
                                       'name': '', 'hostname': 'skynet-nas', 'media': [{'type': 'A', 'share': 'musik'}, {'type': 'V', 'share': 'filme'}],
                                       'shares': ['backup', 'filme', 'fotos', 'musik']})
         if method == 'set':
-            d.update(enabled=args['enabled'], running=args['enabled'], name=args['name'], media=args['media'])
+            d.update(enabled=args['enabled'], running=args['enabled'], name=args['name'],
+                     media=[{k: v for k, v in m.items() if k != 'path' or v} for m in args['media']])
+        d['share_dirs'] = [{'name': n, 'volume': x['volume'], 'path': x['path']} for n, x in sorted(STATE['shares'].items())]
+        d['shares'] = [x['name'] for x in d['share_dirs']]
         if method == 'rescan':
             d['scanning'] = True
         return d

@@ -1446,7 +1446,21 @@
 		"Werden gerade installiert …": "جارٍ التثبيت …",
 		"Noch nicht installiert:": "لم تُثبَّت بعد:",
 		"Apps aus Sicherung installieren": "تثبيت التطبيقات من النسخة الاحتياطية",
-		"Die Apps werden im Hintergrund installiert.": "يجري تثبيت التطبيقات في الخلفية."
+		"Die Apps werden im Hintergrund installiert.": "يجري تثبيت التطبيقات في الخلفية.",
+		"Durchsuchen …": "استعراض …",
+		"Ordner wählen": "اختيار مجلد",
+		"Diesen Ordner wählen": "اختيار هذا المجلد",
+		"Nach oben": "للأعلى",
+		"Keine Unterordner.": "لا توجد مجلدات فرعية.",
+		"UNTERORDNER": "المجلدات الفرعية",
+		"Unterordner hinzufügen": "إضافة مجلد فرعي",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "مجلدات مفردة من مشاركة – دون الحاجة إلى مشاركة إضافية.",
+		"UNTERORDNER (OPTIONAL)": "مجلد فرعي (اختياري)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "يحتاج مستعرض المجلدات إلى صلاحية «الملفات» – اكتب المجلد يدويًا.",
+		"Ganze Freigaben oben in der Liste wählen.": "اختر المشاركات الكاملة من القائمة أعلاه.",
+		"Ausschneiden": "قص",
+		"Zwischenablage leeren": "إفراغ الحافظة",
+		"Einfügen": "لصق"
 	},
 	"patterns": [
 		[
@@ -2768,6 +2782,18 @@
 		[
 			"^Recovery: (.*)$",
 			"الاستعادة: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"المجلد الشخصي / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"لصق ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"$1 عنصر في الحافظة – اختر «لصق» في المجلد الهدف."
 		]
 	],
 	"words": [

@@ -1446,7 +1446,21 @@
 		"Werden gerade installiert …": "ইনস্টল হচ্ছে …",
 		"Noch nicht installiert:": "এখনও ইনস্টল হয়নি:",
 		"Apps aus Sicherung installieren": "ব্যাকআপ থেকে অ্যাপ ইনস্টল করুন",
-		"Die Apps werden im Hintergrund installiert.": "অ্যাপগুলো ব্যাকগ্রাউন্ডে ইনস্টল হচ্ছে।"
+		"Die Apps werden im Hintergrund installiert.": "অ্যাপগুলো ব্যাকগ্রাউন্ডে ইনস্টল হচ্ছে।",
+		"Durchsuchen …": "ব্রাউজ করুন …",
+		"Ordner wählen": "ফোল্ডার বাছুন",
+		"Diesen Ordner wählen": "এই ফোল্ডারটি বাছুন",
+		"Nach oben": "উপরে",
+		"Keine Unterordner.": "কোনো সাবফোল্ডার নেই।",
+		"UNTERORDNER": "সাবফোল্ডার",
+		"Unterordner hinzufügen": "সাবফোল্ডার যোগ করুন",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "একটি শেয়ারের আলাদা ফোল্ডার – আলাদা শেয়ারের দরকার নেই।",
+		"UNTERORDNER (OPTIONAL)": "সাবফোল্ডার (ঐচ্ছিক)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "ফোল্ডার ব্রাউজারের জন্য “ফাইল” অনুমতি দরকার – ফোল্ডারটি টাইপ করুন।",
+		"Ganze Freigaben oben in der Liste wählen.": "পুরো শেয়ারগুলি উপরের তালিকায় বাছুন।",
+		"Ausschneiden": "কাটুন",
+		"Zwischenablage leeren": "ক্লিপবোর্ড খালি করুন",
+		"Einfügen": "পেস্ট করুন"
 	},
 	"patterns": [
 		[
@@ -2768,6 +2782,18 @@
 		[
 			"^Recovery: (.*)$",
 			"রিকভারি: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"ব্যক্তিগত ফোল্ডার / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"পেস্ট করুন ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"ক্লিপবোর্ডে $1টি আইটেম – গন্তব্য ফোল্ডারে “পেস্ট করুন” বাছুন।"
 		]
 	],
 	"words": [

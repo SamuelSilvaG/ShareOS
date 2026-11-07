@@ -1446,7 +1446,21 @@
 		"Werden gerade installiert …": "Installation en cours …",
 		"Noch nicht installiert:": "Pas encore installées :",
 		"Apps aus Sicherung installieren": "Installer les applications de la sauvegarde",
-		"Die Apps werden im Hintergrund installiert.": "Les applications s'installent en arrière-plan."
+		"Die Apps werden im Hintergrund installiert.": "Les applications s'installent en arrière-plan.",
+		"Durchsuchen …": "Parcourir …",
+		"Ordner wählen": "Choisir un dossier",
+		"Diesen Ordner wählen": "Choisir ce dossier",
+		"Nach oben": "Remonter",
+		"Keine Unterordner.": "Aucun sous-dossier.",
+		"UNTERORDNER": "SOUS-DOSSIERS",
+		"Unterordner hinzufügen": "Ajouter un sous-dossier",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Des dossiers d'un partage – sans partage supplémentaire.",
+		"UNTERORDNER (OPTIONAL)": "SOUS-DOSSIER (FACULTATIF)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "Le navigateur de dossiers nécessite le droit « Fichiers » – saisissez le dossier.",
+		"Ganze Freigaben oben in der Liste wählen.": "Choisissez les partages entiers dans la liste ci-dessus.",
+		"Ausschneiden": "Couper",
+		"Zwischenablage leeren": "Vider le presse-papiers",
+		"Einfügen": "Coller"
 	},
 	"patterns": [
 		[
@@ -2768,6 +2782,18 @@
 		[
 			"^Recovery: (.*)$",
 			"Récupération : $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"Dossier personnel / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"Coller ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"$1 élément(s) dans le presse-papiers – choisissez « Coller » dans le dossier cible."
 		]
 	],
 	"words": [

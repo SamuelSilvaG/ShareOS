@@ -995,12 +995,42 @@ function cloud_jobs(c, owner) {   // owner null = all
 	return sort(list, (a, b) => a.name < b.name ? -1 : 1);
 }
 
-// may this owner use this local folder? ('home', 'home:<sub>' or 'share:<name>')
+// a folder below a share: "Music/Live" – relative, no "." / ".." parts,
+// no control characters (stored in uci lists, read line by line)
+function sub_ok(sub) {
+	if (sub == null || sub == '') return true;
+	if (type(sub) != 'string' || length(sub) > 200 || match(sub, /[[:cntrl:]]/)) return false;
+	for (let p in split(sub, '/'))
+		if (p == '' || p == '.' || p == '..') return false;
+	return true;
+}
+
+// "share:<name>" or "share:<name>/<sub>" -> { share, sub } (null: not a share)
+function share_ref(x) {
+	let m = match(x ?? '', /^share:([a-z0-9][a-z0-9_-]{0,15})(\/(.+))?$/);
+	return m && sub_ok(m[3]) ? { share: m[1], sub: m[3] ?? '' } : null;
+}
+
+// the folder of a share plus an optional subfolder, if it exists and stays
+// inside the share (no symlink out of it)
+function share_subdir(c, share, sub) {
+	if (c.get('shares', share) != 'share' || !sub_ok(sub)) return null;
+	let v = c.get('shares', share, 'volume'), rel = c.get('shares', share, 'path') ?? share;
+	if (!v) return null;
+	let base = realpath('/mnt/' + v + '/' + rel), dir = sub ? realpath('/mnt/' + v + '/' + rel + '/' + sub) : base;
+	if (!base || !dir || (dir != base && index(dir, base + '/') != 0) || stat(dir)?.type != 'directory') return null;
+	return dir;
+}
+
+// may this owner use this local folder? ('home', 'home:<sub>', 'share:<name>'
+// or 'share:<name>/<sub>')
 function cloud_local_ok(c, owner, local, mode) {
-	if (local == 'home' || match(local ?? '', /^home:[A-Za-z0-9 ._\/-]+$/))
-		return owner != '' && !!c.get('accounts', owner, 'home') && !match(local, /\.\./);
-	let m = match(local ?? '', /^share:([a-z0-9][a-z0-9_-]{0,15})$/);
+	let h = match(local ?? '', /^home:(.+)$/);
+	if (local == 'home' || (h && sub_ok(h[1])))
+		return owner != '' && !!c.get('accounts', owner, 'home');
+	let ref = share_ref(local), m = ref ? [ null, ref.share ] : null;
 	if (!m || c.get('shares', m[1]) != 'share') return false;
+	if (ref.sub != '' && !share_subdir(c, ref.share, ref.sub)) return false;
 	if (owner == '') return true;
 	let tags = [ owner, ...map(list_of(c.get('accounts', owner, 'groups')), (g) => '@' + g) ];
 	let rw = list_of(c.get('shares', m[1], 'rw')), ro = list_of(c.get('shares', m[1], 'ro'));
@@ -1074,13 +1104,14 @@ function dlna_status() {
 	}
 	let c = cursor(), media = [];
 	for (let x in list_of(c.get('dlna', 'main', 'media'))) {
-		let m = match(x, /^([AVP-]),share:([a-z0-9_-]+)$/);
-		if (m) push(media, { type: m[1], share: m[2] });
+		let m = match(x, /^([AVP-]),(share:.+)$/), ref = m ? share_ref(m[2]) : null;
+		if (ref) push(media, ref.sub != '' ? { type: m[1], share: ref.share, path: ref.sub } : { type: m[1], share: ref.share });
 	}
 	return { installed: st.installed == '1', enabled: st.enabled == '1', running: st.running == '1', scanning: st.scanning == '1',
 		audio: +(st.audio || 0), video: +(st.video || 0), image: +(st.image || 0), db: st.db ?? null, clients,
 		name: c.get('dlna', 'main', 'name') ?? '', hostname: trim(readfile('/proc/sys/kernel/hostname') ?? ''), media,
-		shares: map(filter(share_list().shares, (x) => x.volume), (x) => x.name) };
+		shares: map(filter(share_list().shares, (x) => x.volume), (x) => x.name),
+		share_dirs: map(filter(share_list().shares, (x) => x.volume), (x) => ({ name: x.name, volume: x.volume, path: x.path })) };
 }
 
 /* ---------- printers (system app "printer": ipp-usb, p910nd) ---------- */
@@ -4067,7 +4098,7 @@ return {
 	'shareos.dlna': {
 		status: { call: function() { return dlna_status(); } },
 
-		// enabled, name, media: [{share, type: A|V|P|-}]
+		// enabled, name, media: [{share, path (subfolder, optional), type: A|V|P|-}]
 		set: {
 			args: { enabled: false, name: '', media: [] },
 			call: function(req) {
@@ -4077,9 +4108,14 @@ return {
 				let shares = map(share_list().shares, (x) => x.name), list = [], seen = {};
 				for (let m in (type(a.media) == 'array' ? a.media : [])) {
 					if (type(m) != 'object' || !(m.type in DLNA_TYPES) || index(shares, m.share) < 0) return { error: 'invalid folder' };
-					if (seen[m.share]) continue;
-					seen[m.share] = 1;
-					push(list, m.type + ',share:' + m.share);
+					let sub = m.path ?? '';
+					if (type(sub) != 'string') return { error: 'invalid folder' };
+					sub = trim(sub, '/');
+					if (sub != '' && !share_subdir(c, m.share, sub)) return { error: 'folder not found: ' + m.share + '/' + sub };
+					let ref = m.share + (sub != '' ? '/' + sub : '');
+					if (seen[ref]) continue;
+					seen[ref] = 1;
+					push(list, m.type + ',share:' + ref);
 				}
 				c.set('dlna', 'main', 'dlna');
 				c.set('dlna', 'main', 'enabled', a.enabled === true ? '1' : '0');
@@ -4300,19 +4336,21 @@ return {
 		},
 
 		move: {
-			// names from one folder into another folder of the same root; copy: keep the originals
-			args: { root: '', path: '', names: [], dest: '', copy: false },
+			// names from one folder into another folder (dest_root: of another
+			// root, e.g. from a share into the personal folder); copy: keep the originals
+			args: { root: '', path: '', names: [], dest: '', dest_root: '', copy: false },
 			call: function(req) {
 				let u = session_user(req), a = req.args;
 				if (!u || !files_allowed(u)) return { error: 'not allowed' };
 				if (type(a.names) != 'array' || !length(a.names)) return { error: 'nothing selected' };
 				for (let n in a.names) if (!name_ok(n)) return { error: 'invalid name' };
-				let p = a.copy ? files_path(u, a.root, a.path, 'dir') : files_wpath(u, a.root, a.path, 'dir'), d = files_wpath(u, a.root, a.dest, 'dir');
+				let droot = a.dest_root ? a.dest_root : a.root;
+				let p = a.copy ? files_path(u, a.root, a.path, 'dir') : files_wpath(u, a.root, a.path, 'dir'), d = files_wpath(u, droot, a.dest, 'dir');
 				if (p.error) return p;
 				if (d.error) return d;
 				for (let n in a.names) {
-					let src = (p.rel != '' ? p.rel + '/' : '') + n;
-					if (d.rel == src || index(d.rel + '/', src + '/') == 0) return { error: 'a folder cannot be moved into itself' };
+					let src = p.abs + '/' + n;
+					if (d.abs == src || index(d.abs + '/', src + '/') == 0) return { error: 'a folder cannot be moved into itself' };
 					if (lstat(d.abs + '/' + n)) return { error: 'already exists: ' + n };
 				}
 				let r = files_sh(u, sprintf('%s -- %s %s', a.copy ? 'cp -a' : 'mv', join(' ', map(a.names, (n) => shq(p.abs + '/' + n))), shq(d.abs + '/')), d.root.share);

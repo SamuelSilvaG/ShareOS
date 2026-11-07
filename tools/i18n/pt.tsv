@@ -1814,3 +1814,20 @@ P326	($1 certificados emitidos)
 P327	Grupos: $1
 P328	Certificados emitidos: $1
 P329	Recuperação: $1
+E1444	Procurar …
+E1445	Escolher pasta
+E1446	Escolher esta pasta
+E1447	Subir
+E1448	Nenhuma subpasta.
+E1449	SUBPASTAS
+E1450	Adicionar subpasta
+E1451	Pastas de um compartilhamento – sem compartilhamento extra.
+E1452	SUBPASTA (OPCIONAL)
+E1453	O navegador de pastas precisa da permissão “Arquivos” – digite a pasta.
+E1454	Escolha compartilhamentos inteiros na lista acima.
+P330	Pasta pessoal / $1
+E1455	Recortar
+E1456	Limpar área de transferência
+P331	Colar ($1)
+P332	$1 item(ns) na área de transferência – escolha “Colar” na pasta de destino.
+E1457	Colar

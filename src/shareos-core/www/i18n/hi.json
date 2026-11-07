@@ -1446,7 +1446,21 @@
 		"Werden gerade installiert …": "इंस्टॉल हो रहे हैं …",
 		"Noch nicht installiert:": "अभी इंस्टॉल नहीं:",
 		"Apps aus Sicherung installieren": "बैकअप से ऐप्स इंस्टॉल करें",
-		"Die Apps werden im Hintergrund installiert.": "ऐप्स पृष्ठभूमि में इंस्टॉल हो रहे हैं।"
+		"Die Apps werden im Hintergrund installiert.": "ऐप्स पृष्ठभूमि में इंस्टॉल हो रहे हैं।",
+		"Durchsuchen …": "ब्राउज़ करें …",
+		"Ordner wählen": "फ़ोल्डर चुनें",
+		"Diesen Ordner wählen": "यह फ़ोल्डर चुनें",
+		"Nach oben": "ऊपर",
+		"Keine Unterordner.": "कोई सबफ़ोल्डर नहीं।",
+		"UNTERORDNER": "सबफ़ोल्डर",
+		"Unterordner hinzufügen": "सबफ़ोल्डर जोड़ें",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "किसी शेयर के अलग-अलग फ़ोल्डर – अलग शेयर की ज़रूरत नहीं।",
+		"UNTERORDNER (OPTIONAL)": "सबफ़ोल्डर (वैकल्पिक)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "फ़ोल्डर ब्राउज़र के लिए “फ़ाइलें” अनुमति चाहिए – फ़ोल्डर टाइप करें।",
+		"Ganze Freigaben oben in der Liste wählen.": "पूरे शेयर ऊपर की सूची में चुनें।",
+		"Ausschneiden": "काटें",
+		"Zwischenablage leeren": "क्लिपबोर्ड खाली करें",
+		"Einfügen": "चिपकाएँ"
 	},
 	"patterns": [
 		[
@@ -2768,6 +2782,18 @@
 		[
 			"^Recovery: (.*)$",
 			"रिकवरी: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"निजी फ़ोल्डर / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"चिपकाएँ ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"क्लिपबोर्ड में $1 आइटम – लक्ष्य फ़ोल्डर में “चिपकाएँ” चुनें।"
 		]
 	],
 	"words": [

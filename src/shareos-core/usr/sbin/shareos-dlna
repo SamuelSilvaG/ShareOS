@@ -57,17 +57,26 @@ write_conf() {
 		echo "wide_links=no"
 		echo "max_connections=10"
 		echo "album_art_names=Cover.jpg/cover.jpg/AlbumArtSmall.jpg/albumartsmall.jpg/AlbumArt.jpg/albumart.jpg/Album.jpg/album.jpg/Folder.jpg/folder.jpg/Thumb.jpg/thumb.jpg"
+		# entries "<type>,share:<name>" or "<type>,share:<name>/<subfolder>";
+		# one per line, subfolders may contain spaces
 		n=0
-		for m in $(uci -q get dlna.main.media); do
+		while IFS= read -r m; do
+			# uci quotes values with spaces: 'V,share:x/TV Shows', ' as '\''
+			case "$m" in "'"*"'") m=${m#\'}; m=${m%\'}; m=$(printf '%s' "$m" | sed "s/'\\\\''/'/g") ;; esac
 			t=${m%%,*}; s=${m#*,}
 			case "$s" in share:*) ;; *) continue ;; esac
-			sh=${s#share:}
+			s=${s#share:}; sh=${s%%/*}; sub=
+			[ "$sh" = "$s" ] || sub=/${s#*/}
 			echo "$sh" | grep -qE '^[a-z0-9_-]+$' || continue
+			case "$sub/" in */../*|*/./*|*//*) continue ;; esac
 			v=$(uci -q get shares."$sh".volume); p=$(uci -q get shares."$sh".path); p=${p:-$sh}
-			[ -n "$v" ] && [ -d "/mnt/$v/$p" ] || continue
-			case "$t" in A|V|P) echo "media_dir=$t,/mnt/$v/$p" ;; *) echo "media_dir=/mnt/$v/$p" ;; esac
+			[ -n "$v" ] && [ -d "/mnt/$v/$p$sub" ] || continue
+			case "$t" in A|V|P) echo "media_dir=$t,/mnt/$v/$p$sub" ;; *) echo "media_dir=/mnt/$v/$p$sub" ;; esac
 			n=$((n + 1))
-		done
+		done <<EOF_MEDIA
+$(uci -q -d "
+" get dlna.main.media)
+EOF_MEDIA
 		[ $n -gt 0 ] || echo "media_dir=$RUN/empty"
 	} > $CONF.new
 	mkdir -p $RUN/empty

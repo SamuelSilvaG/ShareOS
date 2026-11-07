@@ -169,6 +169,16 @@ if [ -n "$RDL" ] && [ -d "$RDL" ]; then
 	rm $R/mnt/daten/Fotos/b.jpg
 	run "uci set cloud.fotos.mode=mirror_up; uci commit cloud; shareos-cloud run fotos" >/dev/null
 	check "job: mirror deletes in the cloud what is gone here" "[ ! -e $R/mnt/daten/cloud/fotos/b.jpg ] && [ -f $R/mnt/daten/cloud/fotos/2026/a.jpg ]"
+	# a subfolder of a share as the local folder (folder browser)
+	o=$(run "ubus call shareos.cloud job_set '{\"name\":\"fsub\",\"remote\":\"target\",\"remote_path\":\"/mnt/daten/cloud/fsub\",\"local\":\"share:fotos/2026\",\"mode\":\"upload\"}'")
+	check "job: subfolder of a share accepted" "echo '$o' | js \"d.get('ok')\"" "$o"
+	run "shareos-cloud run fsub" >/dev/null
+	check "job: subfolder uploads only its content" "[ \"\$(cat $R/mnt/daten/cloud/fsub/a.jpg)\" = bild1 ] && [ ! -e $R/mnt/daten/cloud/fsub/2026 ]"
+	check "job: missing subfolder refused" "run \"ubus call shareos.cloud job_set '{\\\"name\\\":\\\"fx\\\",\\\"remote\\\":\\\"target\\\",\\\"local\\\":\\\"share:fotos/nix\\\",\\\"mode\\\":\\\"upload\\\"}'\" | grep -q 'not allowed'"
+	check "job: '..' in the subfolder refused" "run \"ubus call shareos.cloud job_set '{\\\"name\\\":\\\"fx\\\",\\\"remote\\\":\\\"target\\\",\\\"local\\\":\\\"share:fotos/../x\\\",\\\"mode\\\":\\\"upload\\\"}'\" | grep -q 'not allowed'"
+	ln -s /etc $R/mnt/daten/Fotos/aus
+	check "job: symlink out of the share refused" "run \"ubus call shareos.cloud job_set '{\\\"name\\\":\\\"fx\\\",\\\"remote\\\":\\\"target\\\",\\\"local\\\":\\\"share:fotos/aus\\\",\\\"mode\\\":\\\"upload\\\"}'\" | grep -q 'not allowed'"
+	rm $R/mnt/daten/Fotos/aus; run "uci delete cloud.fsub; uci commit cloud" >/dev/null
 	# a system job downloading into a share: the users of the share can open
 	# what came down, also when started from the web interface (rpcd: umask 077) (#91)
 	run "uci set shares.fotos.rw=anna; uci commit shares; SHAREOS_ACL_WAIT=1 shareos-shares apply" >/dev/null

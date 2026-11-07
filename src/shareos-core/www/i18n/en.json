@@ -1446,7 +1446,21 @@
 		"Werden gerade installiert …": "Being installed …",
 		"Noch nicht installiert:": "Not installed yet:",
 		"Apps aus Sicherung installieren": "Install apps from the backup",
-		"Die Apps werden im Hintergrund installiert.": "The apps are being installed in the background."
+		"Die Apps werden im Hintergrund installiert.": "The apps are being installed in the background.",
+		"Durchsuchen …": "Browse …",
+		"Ordner wählen": "Choose folder",
+		"Diesen Ordner wählen": "Choose this folder",
+		"Nach oben": "Up",
+		"Keine Unterordner.": "No subfolders.",
+		"UNTERORDNER": "SUBFOLDERS",
+		"Unterordner hinzufügen": "Add subfolder",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Single folders from a share – no extra share needed.",
+		"UNTERORDNER (OPTIONAL)": "SUBFOLDER (OPTIONAL)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "The folder browser needs the “Files” permission – please type the folder.",
+		"Ganze Freigaben oben in der Liste wählen.": "Choose whole shares in the list above.",
+		"Ausschneiden": "Cut",
+		"Zwischenablage leeren": "Clear clipboard",
+		"Einfügen": "Paste"
 	},
 	"patterns": [
 		[
@@ -2768,6 +2782,18 @@
 		[
 			"^Recovery: (.*)$",
 			"Recovery: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"Personal folder / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"Paste ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"$1 item(s) on the clipboard – choose “Paste” in the target folder."
 		]
 	],
 	"words": [

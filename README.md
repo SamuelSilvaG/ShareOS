@@ -81,7 +81,7 @@ Version in brackets = first release with the feature.
 - SMB 2/3 (ksmbd) and NFS v4 shares with read/write permissions per user and group, guest access optional; the crypto engine of the SoC computes the SMB 3 signatures (about three times as fast, 0.2.0-beta.17); compatibility mode up to SMB 2.1 for difficult clients (0.2.0-beta.17); named streams, so the iOS Files app can write (0.2.0-beta.19)
 - Users and groups; one account for shares, web interface and apps; storage limit per user (ext4); import of Alt-F users with their passwords
 - "My ShareOS": users with web access manage their own password, look, shares, storage, cloud and Paperless
-- File browser in the web interface: admins for all drives and USB drives, users for their personal folder and the shares they have rights to (enabled per user; read-only shares stay read-only, also for apps); upload/download with progress, drag and drop, large files; trash per folder with restore and automatic emptying (0.2.0-beta.12)
+- File browser in the web interface: admins for all drives and USB drives, users for their personal folder and the shares they have rights to (enabled per user; read-only shares stay read-only, also for apps); upload/download with progress, drag and drop, large files; trash per folder with restore and automatic emptying (0.2.0-beta.12); copy/cut and paste, also between drives, shares and the personal folder (0.3.0-beta.2)
 
 **Apps and integrations**
 - APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) – 38 web apps for files and office, media, network, security, development and everyday life: one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
@@ -91,7 +91,7 @@ Version in brackets = first release with the feature.
 - System apps: native programs for the terminal from the store – nano, htop (0.2.0-beta.1); strace, iperf3 (0.2.0-beta.2); bash (0.2.0-beta.5); store in sections with search (0.2.0-beta.5)
 - Feature lock 0.2.0-beta.2: faster interface (results kept between requests, store refresh in the background), smaller system without OpenSSL, GIO and unused tools
 - App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (0.2.0-beta.1)
-- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
+- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4); a subfolder of a share as the local folder, picked in a folder browser (0.3.0-beta.2)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)
 - "Share with" on Android: the installed app saves shared photos, files and links into `Geteilt` in the personal folder (0.2.0-beta.11)
@@ -106,7 +106,7 @@ Version in brackets = first release with the feature.
 - File dialog of the apps with the personal folder and the user's shares, also for accounts without file access (0.2.0-beta.11)
 - System apps declare their service in `app.json` (`"service"`), ShareOS starts and stops it through the firmware's controller; how to submit a system app: `sysapps/README.md` (0.2.0-beta.9)
 - Large system apps on the apps drive (link in `/opt`), the flash stays free (0.2.0-beta.7)
-- Media server (DLNA/UPnP AV, MiniDLNA as a system app): TVs and players play music, videos and pictures from chosen shares (0.2.0-beta.6)
+- Media server (DLNA/UPnP AV, MiniDLNA as a system app): TVs and players play music, videos and pictures from chosen shares (0.2.0-beta.6) or subfolders of them (0.3.0-beta.2)
 - VPN for the box in both directions (OpenVPN as a system app, app NetTunnel, admins only): as client with cleaned profiles, as server with its own CA and a ready-made profile per device; status chips of services and apps in the header (0.2.0-beta.6)
 - Transmission with own torrents per user: system app `transmission-daemon`, app permission `torrent`; apps bring the system apps they need (`"requires"`) (0.2.0-beta.4); lighter defaults for the small CPU (fewer peers, download queue, µTP off, lower priority, 0.2.0-beta.20); a watch folder for .torrent files, set by the app (0.2.0-beta.20); an own peer port per account, set by the app, for port forwarding (0.3.0-beta.1)
 - Media jobs: FFmpeg as a system app, app permission `media` – convert audio, change the container of videos, cut, in the background with the user's rights (MediaTranscoder) (0.2.0-beta.5)

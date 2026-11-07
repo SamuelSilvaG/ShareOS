@@ -285,6 +285,74 @@ function promptDlg(title, text, value, okLabel, type = 'text', max = 0) {
 	});
 }
 
+// Folder browser on the box (shareos.files list/mkdir): places = [{ name,
+// root (files root: a volume for admins, a share or "home" for users),
+// base (folder inside the root) }]. With several places the first level
+// lists them. Resolves { place, path } (path relative to the place) or null.
+function folderDlg(title, places, start = {}) {
+	const join = (...p) => p.filter(Boolean).join('/');
+	let place = places.length === 1 ? places[0] : places.find((x) => x.name === start.place) || null;
+	let cur = place ? (start.path || '').replace(/^\/+|\/+$/g, '') : '';
+	return new Promise((resolve) => {
+		const d = document.createElement('dialog');
+		d.className = 'dlg';
+		d.style.width = d.style.maxWidth = 'min(560px, calc(100vw - 32px))';
+		let result = null, first = true;
+		const draw = async () => {
+			let body;
+			if (!place) {
+				body = html`<div class="fb-list" data-i18n-skip>${places.map((x, i) => html`<button class="btn ghost fb-item" type="button" data-place="${i}">${svg(I.folder)}<span>${x.name}</span></button>`)}</div>`;
+			} else {
+				let r;
+				try { r = await rpc('shareos.files', 'list', { root: place.root, path: join(place.base, cur) }); }
+				catch (e) {
+					if (first && cur) { cur = ''; first = false; return draw(); }
+					body = html`<p class="note">${e.message === 'not allowed' ? 'Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.' : e.message}</p>`;
+				}
+				if (r) {
+					const dirs = r.entries.filter((x) => x.type === 'dir' || x.type === 'dirlink');
+					body = dirs.length ? html`<div class="fb-list" data-i18n-skip>${dirs.map((x) => html`<button class="btn ghost fb-item" type="button" data-dir="${x.name}">${svg(I.folder)}<span>${x.name}</span></button>`)}</div>`
+						: html`<p class="mut" style="margin:10px 0">Keine Unterordner.</p>`;
+				}
+			}
+			first = false;
+			const where = place ? '/' + join(places.length > 1 ? place.name : '', cur) : '';
+			d.innerHTML = html`<h3>${title}</h3>
+				<div class="fb-path"><button class="btn sm" type="button" value="up"${place && (cur || places.length > 1) ? '' : raw(' disabled')}>Nach oben</button>
+					<code data-i18n-skip>${place ? (places.length > 1 ? '' : place.name) + where : '/'}</code></div>
+				${body}
+				<div class="acts" style="margin-top:14px">${place ? html`<button class="btn" type="button" value="mkdir">Neuer Ordner</button>` : ''}
+					<button class="btn ghost ml" type="button" value="no">Abbrechen</button>
+					<button class="btn primary" type="button" value="ok"${place ? '' : raw(' disabled')}>Diesen Ordner wählen</button></div>`.s;
+		};
+		d.addEventListener('click', async (e) => {
+			const b = e.target.closest('button');
+			if (!b) return;
+			if (b.dataset.place != null) { place = places[+b.dataset.place]; cur = ''; return draw(); }
+			if (b.dataset.dir != null) { cur = join(cur, b.dataset.dir); return draw(); }
+			if (b.value === 'up') {
+				if (cur) cur = cur.includes('/') ? cur.slice(0, cur.lastIndexOf('/')) : '';
+				else place = null;
+				return draw();
+			}
+			if (b.value === 'mkdir') {
+				const n = await promptDlg('Neuer Ordner', 'Name des neuen Ordners:', '', 'Anlegen', 'text', 255);
+				if (!n) return;
+				try { await rpc('shareos.files', 'mkdir', { root: place.root, path: join(place.base, cur), name: n }); cur = join(cur, n); }
+				catch (err) { toast(err.message, true); }
+				return draw();
+			}
+			if (b.value === 'ok') { result = { place: place.name, path: cur }; d.close(); }
+			if (b.value === 'no') d.close();
+		});
+		d.addEventListener('close', () => { d.remove(); resolve(result); });
+		$('#app').append(d);
+		d.innerHTML = html`<h3>${title}</h3><div class="spin" style="margin:12px 0"></div>`.s;
+		d.showModal();
+		draw();
+	});
+}
+
 let coverEl = null;
 function cover(title, text) {
 	uncover();
@@ -975,7 +1043,7 @@ function shareEditor(e) {
 		<div class="fields">
 			<label class="f"><span>NAME</span><input name="name" value="${x.name}" maxlength="16" pattern="[a-z0-9][a-z0-9_-]{0,15}" required${e.mode === 'edit' ? raw(' readonly') : ''}></label>
 			<label class="f"><span>LAUFWERK</span><select name="volume">${S.vols.map((v) => html`<option value="${v.name}"${x.volume === v.name ? raw(' selected') : ''}>${v.name} (${LAYOUT_TXT[v.layout] || v.layout})</option>`)}</select></label>
-			<label class="f"><span>ORDNER AUF DEM LAUFWERK</span><input name="path" value="${x.path}" placeholder="wie der Name"></label>
+			<label class="f"><span>ORDNER AUF DEM LAUFWERK</span><div class="fb-row"><input name="path" value="${x.path}" placeholder="wie der Name"><button class="btn sm" type="button" data-act="sh-browse">Durchsuchen …</button></div></label>
 			<label class="f"><span>BESCHREIBUNG</span><input name="comment" value="${x.comment}" maxlength="64"></label>
 		</div>
 		<div class="pt" style="margin:18px 0 8px">ZUGRIFF ÜBER SMB</div>
@@ -1213,7 +1281,8 @@ const CLOUD_API = {
 	admin: {
 		async load() {
 			const [st, r, j, sh] = await Promise.all([rpc('shareos.cloud', 'status'), rpc('shareos.cloud', 'remotes'), rpc('shareos.cloud', 'jobs'), rpc('shareos.shares', 'list')]);
-			return { status: st, remotes: r.remotes, jobs: j.jobs, locals: sh.shares.map((x) => ['share:' + x.name, 'Freigabe ' + x.name]) };
+			return { status: st, remotes: r.remotes, jobs: j.jobs, locals: sh.shares.map((x) => ['share:' + x.name, 'Freigabe ' + x.name]),
+				places: Object.fromEntries(sh.shares.filter((x) => x.volume).map((x) => ['share:' + x.name, { name: x.name, root: x.volume, base: x.path }])) };
 		},
 		addRemote: (a) => rpc('shareos.cloud', 'remote_add', a), delRemote: (n) => rpc('shareos.cloud', 'remote_del', { name: n }),
 		testRemote: (n) => rpc('shareos.cloud', 'remote_test', { name: n }), saveJob: (a) => rpc('shareos.cloud', 'job_set', a),
@@ -1224,7 +1293,8 @@ const CLOUD_API = {
 		async load() {
 			const c = await rpc('shareos.me', 'cloud');
 			return { status: { installed: c.installed }, remotes: c.remotes || [], jobs: c.jobs || [], allowed: c.allowed,
-				locals: [['home', 'Persönlicher Ordner'], ...(c.shares || []).map((x) => ['share:' + x, 'Freigabe ' + x])] };
+				locals: [['home', 'Persönlicher Ordner'], ...(c.shares || []).map((x) => ['share:' + x, 'Freigabe ' + x])],
+				places: Object.fromEntries([['home', { name: 'home', root: 'home', base: '' }], ...(c.shares || []).map((x) => ['share:' + x, { name: x, root: x, base: '' }])]) };
 		},
 		addRemote: (a) => rpc('shareos.me', 'cloud_remote_add', a), delRemote: (n) => rpc('shareos.me', 'cloud_remote_del', { name: n }),
 		testRemote: null, saveJob: (a) => rpc('shareos.me', 'cloud_job_set', a), delJob: (n) => rpc('shareos.me', 'cloud_job_del', { name: n }),
@@ -1249,7 +1319,12 @@ function jobState(j) {
 	return html`<span class="tag">noch nicht gelaufen</span>`;
 }
 const schedTxt = (s) => (CLOUD_SCHED.find(([v]) => v === s) || [s, s ? 'cron: ' + s : 'nur von Hand'])[1];
-const localTxt = (d, l) => (d.locals.find(([v]) => v === l) || [l, l])[1];
+// job.local: "home", "home:<sub>", "share:<name>" or "share:<name>/<sub>" -> [base, sub]
+function localSplit(l) {
+	const m = /^(home):(.+)$/.exec(l || '') || /^(share:[^/]+)\/(.+)$/.exec(l || '');
+	return m ? [m[1], m[2]] : [l || '', ''];
+}
+const localTxt = (d, l) => { const [b, sub] = localSplit(l); return (d.locals.find(([v]) => v === b) || [b, b])[1] + (sub ? ' / ' + sub : ''); };
 
 function cloudSection(scope) {
 	const c = S.cloud?.scope === scope ? S.cloud : null, d = c?.data;
@@ -1351,7 +1426,8 @@ function jobEditor(scope, d, je) {
 		<div class="ph"><span class="pt">${je.mode === 'new' ? 'NEUER AUFTRAG' : 'AUFTRAG ' + x.name.toUpperCase()}</span><button class="btn sm ghost ml" type="button" data-act="cl-jcancel" data-scope="${scope}">Abbrechen</button></div>
 		<div class="fields">
 			<label class="f"><span>NAME</span><input name="name" value="${x.name}" maxlength="32" pattern="[a-z][a-z0-9_]{0,31}" required${je.mode === 'new' ? '' : raw(' readonly')}></label>
-			<label class="f"><span>ORDNER AUF DEM NAS</span><select name="local">${d.locals.map(([v, t]) => html`<option value="${v}"${x.local === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+			<label class="f"><span>ORDNER AUF DEM NAS</span><select name="local">${d.locals.map(([v, t]) => html`<option value="${v}"${localSplit(x.local)[0] === v ? raw(' selected') : ''}>${t}</option>`)}</select></label>
+			<label class="f"><span>UNTERORDNER (OPTIONAL)</span><div class="fb-row"><input name="sub" value="${localSplit(x.local)[1]}" maxlength="200"><button class="btn sm" type="button" data-act="cl-browse" data-scope="${scope}">Durchsuchen …</button></div></label>
 			<label class="f"><span>CLOUD-KONTO</span><select name="remote">${d.remotes.map((r) => html`<option value="${r.name}"${x.remote === r.name ? raw(' selected') : ''}>${r.name}</option>`)}</select></label>
 			<label class="f"><span>ORDNER IN DER CLOUD</span><input name="remote_path" value="${x.remote_path}" placeholder="Backup/NAS"></label>
 		</div>
@@ -1388,7 +1464,9 @@ function cloudAfter(scope) {
 	$('#f-job')?.addEventListener('submit', async (e) => {
 		e.preventDefault();
 		const f = e.target, sched = f.sched.value === 'custom' ? f.cron.value.trim() : f.sched.value;
-		const args = { name: f.name.value.trim(), local: f.local.value, remote: f.remote.value, remote_path: f.remote_path.value.trim(),
+		const sub = f.sub.value.trim().replace(/^\/+|\/+$/g, '');
+		const local = !sub ? f.local.value : f.local.value === 'home' ? 'home:' + sub : f.local.value + '/' + sub;
+		const args = { name: f.name.value.trim(), local, remote: f.remote.value, remote_path: f.remote_path.value.trim(),
 			mode: $('input[name=mode]:checked', f)?.value || 'upload', schedule: sched, bwlimit: f.bwlimit.value.trim(), enabled: f.enabled.checked };
 		if ((args.mode === 'mirror_down' || args.mode === 'mirror_up') && !await confirmDlg('Spiegeln?', args.mode === 'mirror_down'
 			? 'Beim Spiegeln von der Cloud werden auf dem NAS Dateien gelöscht, die in der Cloud fehlen.' : 'Beim Spiegeln zur Cloud werden in der Cloud Dateien gelöscht, die auf dem NAS fehlen.', 'Verstanden', true)) return;
@@ -1417,7 +1495,8 @@ function dlnaView() {
 		<span>Der Medienserver (MiniDLNA) ist eine System-App: Fernseher, Receiver, Spielkonsolen und Apps wie VLC finden die Box dann im Netzwerk und spielen Musik, Videos und Bilder aus den Freigaben ab.</span>
 		<div class="acts" style="margin-top:12px"><a class="btn primary" href="#/apps/store">Im Store installieren (MiniDLNA)</a></div></div></div></div></section>`;
 	const media = {};
-	d.media.forEach((m) => { media[m.share] = m.type; });
+	d.media.forEach((m) => { if (!m.path) media[m.share] = m.type; });
+	const subs = S.dlnaSubs || (S.dlnaSubs = d.media.filter((m) => m.path).map((m) => ({ ...m })));
 	const host = location.hostname;
 	return html`<section class="sec">
 		<div class="g2">
@@ -1446,6 +1525,12 @@ function dlnaView() {
 		${d.shares.length ? html`<div class="tw"><table class="t"><thead><tr><th>FREIGABE</th><th>ZEIGEN ALS</th></tr></thead><tbody>
 			${d.shares.map((n) => html`<tr><td><b>${n}</b></td><td><select class="dlna-type" data-share="${n}">${DLNA_TYPES.map(([v, t]) => html`<option value="${v}"${(media[n] || '') === v ? raw(' selected') : ''}>${t}</option>`)}</select></td></tr>`)}</tbody></table></div>`
 			: html`<p class="note">Noch keine Freigabe – unter <a href="#/shares/shares">Freigaben</a> anlegen.</p>`}
+		${d.shares.length ? html`<div class="pt" style="margin:16px 0 8px">UNTERORDNER</div>
+		<p class="mut" style="margin:0 0 8px;font-size:13px">Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.</p>
+		${subs.length ? html`<div class="tw"><table class="t"><thead><tr><th>ORDNER</th><th>ZEIGEN ALS</th><th></th></tr></thead><tbody>
+			${subs.map((m, i) => html`<tr><td data-i18n-skip><b>${m.share}</b>/${m.path}</td><td><select class="dlna-sub-type" data-i="${i}">${DLNA_TYPES.filter(([v]) => v).map(([v, t]) => html`<option value="${v}"${m.type === v ? raw(' selected') : ''}>${t}</option>`)}</select></td>
+				<td><button class="btn sm ghost" type="button" data-act="dlna-subdel" data-i="${i}">Entfernen</button></td></tr>`)}</tbody></table></div>` : ''}
+		<div class="acts" style="margin-top:10px"><button class="btn" type="button" data-act="dlna-subadd">Unterordner hinzufügen</button></div>` : ''}
 		<div class="acts" style="margin-top:14px"><button class="btn primary" type="submit">Speichern</button></div>
 	</form></section>`;
 }
@@ -1584,13 +1669,15 @@ function snapEditor(d, ed) {
 
 function dlnaAfter() {
 	if (!S.dlna) { loadDlna(); return; }
+	document.querySelectorAll('.dlna-sub-type').forEach((x) => x.addEventListener('change', () => { S.dlnaSubs[+x.dataset.i].type = x.value; }));
 	$('#f-dlna')?.addEventListener('submit', async (e) => {
 		e.preventDefault();
 		const f = e.target, media = [];
 		document.querySelectorAll('.dlna-type').forEach((x) => { if (x.value) media.push({ share: x.dataset.share, type: x.value }); });
+		(S.dlnaSubs || []).forEach((m) => media.push({ share: m.share, path: m.path, type: m.type }));
 		if (f.enabled.checked && !media.length) { toast('Mindestens eine Freigabe wählen.', true); return; }
 		const b = $('button[type=submit]', f); b.disabled = true;
-		try { S.dlna = await rpc('shareos.dlna', 'set', { enabled: f.enabled.checked, name: f.name.value.trim(), media }); toast('Medienserver gespeichert.'); }
+		try { S.dlna = await rpc('shareos.dlna', 'set', { enabled: f.enabled.checked, name: f.name.value.trim(), media }); S.dlnaSubs = null; toast('Medienserver gespeichert.'); }
 		catch (err) { toast('Medienserver: ' + err.message, true); }
 		loadDlna();
 	});
@@ -4163,6 +4250,26 @@ const ACTIONS = {
 	},
 	'sh-edit'(el) { S.shEdit = { mode: 'edit', data: structuredClone(S.shares.shares.find((x) => x.name === el.dataset.name)) }; renderMain(); window.scrollTo(0, 0); },
 	'sh-cancel'() { S.shEdit = null; renderMain(); },
+	async 'cl-browse'(el) {
+		const f = $('#f-job'), p = S.cloud?.data?.places?.[f.local.value];
+		if (!p) return;
+		const r = await folderDlg('Ordner wählen', [p], { path: f.sub.value.trim() });
+		if (r) f.sub.value = r.path;
+	},
+	async 'dlna-subadd'() {
+		const places = (S.dlna?.share_dirs || []).map((x) => ({ name: x.name, root: x.volume, base: x.path }));
+		const r = await folderDlg('Ordner wählen', places);
+		if (!r) return;
+		if (!r.path) { toast('Ganze Freigaben oben in der Liste wählen.', true); return; }
+		if (!S.dlnaSubs.some((m) => m.share === r.place && m.path === r.path)) S.dlnaSubs.push({ share: r.place, path: r.path, type: 'V' });
+		renderMain();
+	},
+	'dlna-subdel'(el) { S.dlnaSubs.splice(+el.dataset.i, 1); renderMain(); },
+	async 'sh-browse'() {
+		const f = $('#f-share'), v = f.volume.value;
+		const r = await folderDlg('Ordner wählen', [{ name: v, root: v, base: '' }], { path: f.path.value.trim() || f.name.value.trim() });
+		if (r) f.path.value = r.path;
+	},
 	async 'sh-del'(el) {
 		const n = el.dataset.name;
 		if (!await confirmDlg(`Freigabe „${n}“ entfernen?`, 'Die Freigabe verschwindet aus dem Netzwerk. Der Ordner und alle Dateien darin bleiben auf dem Laufwerk erhalten.', 'Entfernen')) return;
@@ -4588,7 +4695,7 @@ function fbInner() {
 		<div class="fbbar">
 			${f.roots.length > 1 ? html`<select id="fb-root" class="btn sm ghost" aria-label="Laufwerk">${f.roots.map((r) => html`<option value="${r.name}"${r.name === f.root ? raw(' selected') : ''}>${fbRootLabel(r)}</option>`)}</select>` : ''}
 			<nav class="crumbs" aria-label="Pfad">
-				<button type="button" data-act="fb-crumb" data-p="">${svg(I.folder)}${fbRootLabel(root)}</button>${parts.map((p, i) => html`<span>/</span><button type="button" data-act="fb-crumb" data-p="${parts.slice(0, i + 1).join('/')}">${p}</button>`)}
+				<button type="button" data-act="fb-crumb" data-p="">${svg(I.folder)}${fbRootLabel(root)}</button>${parts.map((p, i) => html`<span>/</span><button type="button" data-act="fb-crumb" data-p="${parts.slice(0, i + 1).join('/')}" data-i18n-skip>${p}</button>`)}
 			</nav>
 			${d.free != null ? html`<span class="tag ml">${fmtBytes(d.free)} frei</span>` : ''}
 		</div>
@@ -4598,8 +4705,10 @@ function fbInner() {
 			<label class="btn sm${busy || ro ? ' dis' : ''}">${svg(I.ul)}Hochladen<input type="file" id="fb-file" multiple hidden ${busy || ro ? 'disabled' : ''}></label>
 			<span class="sep"></span>
 			<button class="btn sm ghost" type="button" data-act="fb-rename" ${n === 1 && !ro ? '' : 'disabled'}>${svg(I.pen)}Umbenennen</button>
-			<button class="btn sm ghost" type="button" data-act="fb-move" ${n && !ro ? '' : 'disabled'}>${svg(I.move)}Verschieben</button>
-			<button class="btn sm ghost" type="button" data-act="fb-copy" ${n && !ro ? '' : 'disabled'}>${svg(I.copy)}Kopieren</button>
+			<button class="btn sm ghost" type="button" data-act="fb-cut" ${n && !ro ? '' : 'disabled'}>${svg(I.move)}Ausschneiden</button>
+			<button class="btn sm ghost" type="button" data-act="fb-copy" ${n ? '' : 'disabled'}>${svg(I.copy)}Kopieren</button>
+			${S.fbClip ? html`<button class="btn sm primary" type="button" data-act="fb-paste" ${ro ? 'disabled' : ''} title="${S.fbClip.names.join(', ')}">${svg(I.copy)}Einfügen (${S.fbClip.names.length})</button>
+				<button class="btn sm ghost" type="button" data-act="fb-clip-clear" title="Zwischenablage leeren" aria-label="Zwischenablage leeren">×</button>` : ''}
 			<button class="btn sm danger" type="button" data-act="fb-del" ${n && !ro ? '' : 'disabled'}>${svg(I.trash)}Löschen</button>
 			${f.trashConf?.enabled ? html`<button class="btn sm ghost" type="button" data-act="fb-trash">${svg(I.trash)}Papierkorb</button>` : ''}
 			<label class="chk ml"><input type="checkbox" id="fb-hidden"${f.hidden ? raw(' checked') : ''}>Versteckte</label>
@@ -4753,17 +4862,26 @@ async function fbUpload(files) {
 	setTimeout(() => { if (S.fb && S.fb.uploads === list && !list.some((u) => u.err)) { S.fb.uploads = []; fbRender(); } }, 4000);
 }
 
-async function fbTransfer(copy) {
+// clipboard of the file browser: copy / cut takes the selection, "Einfügen"
+// in another folder (also of another drive or share) copies or moves it there
+function fbClip(cut) {
 	const f = S.fb, names = [...f.sel];
-	const dest = await promptDlg(copy ? 'Kopieren nach' : 'Verschieben nach',
-		`${names.length} Eintrag/Einträge. Zielordner als Pfad in „${fbRootLabel(f.roots.find((r) => r.name === f.root))}“, z. B. Fotos/2026 (leer = oberste Ebene).`,
-		f.path, copy ? 'Kopieren' : 'Verschieben', 'text', 1024);
-	if (dest == null) return;
+	if (!names.length) return;
+	S.fbClip = { root: f.root, path: f.path, names, cut };
+	f.sel.clear();
+	toast(`${names.length} Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen.`);
+	fbRender();
+}
+
+async function fbPaste() {
+	const f = S.fb, c = S.fbClip;
+	if (!c) return;
 	try {
-		await rpc('shareos.files', 'move', { root: f.root, path: f.path, names, dest: dest.replace(/^\/+|\/+$/g, ''), copy });
-		toast(copy ? 'Kopiert.' : 'Verschoben.');
+		await rpc('shareos.files', 'move', { root: c.root, path: c.path, names: c.names, dest: f.path, dest_root: f.root, copy: !c.cut });
+		toast(c.cut ? 'Verschoben.' : 'Kopiert.');
+		if (c.cut) S.fbClip = null;   // moved: gone from the old place; a copy can be pasted again
 		fbLoad();
-	} catch (e) { toast((copy ? 'Kopieren: ' : 'Verschieben: ') + e.message, true); }
+	} catch (e) { toast((c.cut ? 'Verschieben: ' : 'Kopieren: ') + e.message, true); }
 }
 
 Object.assign(ACTIONS, {
@@ -4846,8 +4964,10 @@ Object.assign(ACTIONS, {
 		try { await rpc('shareos.files', 'rename', { root: S.fb.root, path: S.fb.path, name: old, to }); fbLoad(); }
 		catch (e) { toast('Umbenennen: ' + e.message, true); }
 	},
-	'fb-move'() { fbTransfer(false); },
-	'fb-copy'() { fbTransfer(true); },
+	'fb-cut'() { fbClip(true); },
+	'fb-copy'() { fbClip(false); },
+	'fb-paste'() { fbPaste(); },
+	'fb-clip-clear'() { S.fbClip = null; fbRender(); },
 	async 'fb-del'() {
 		const names = [...S.fb.sel], list = `${names.slice(0, 5).join(', ')}${names.length > 5 ? ' …' : ''}`;
 		const trash = S.fb.trashConf?.enabled && !(S.fb.path === '.shareos-trash' || S.fb.path.startsWith('.shareos-trash/'));
