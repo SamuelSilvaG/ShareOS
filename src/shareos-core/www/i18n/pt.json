@@ -1457,7 +1457,9 @@
 		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Pastas de um compartilhamento – sem compartilhamento extra.",
 		"UNTERORDNER (OPTIONAL)": "SUBPASTA (OPCIONAL)",
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "O navegador de pastas precisa da permissão “Arquivos” – digite a pasta.",
-		"Ganze Freigaben oben in der Liste wählen.": "Escolha compartilhamentos inteiros na lista acima."
+		"Ganze Freigaben oben in der Liste wählen.": "Escolha compartilhamentos inteiros na lista acima.",
+		"Ausschneiden": "Recortar",
+		"Zwischenablage leeren": "Limpar área de transferência"
 	},
 	"patterns": [
 		[
@@ -2783,6 +2785,14 @@
 		[
 			"^Persönlicher Ordner / (.+)$",
 			"Pasta pessoal / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"Colar ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"$1 item(ns) na área de transferência – escolha “Colar” na pasta de destino."
 		]
 	],
 	"words": [

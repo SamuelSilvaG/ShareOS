@@ -1826,3 +1826,7 @@ E1452	SUBCARPETA (OPCIONAL)
 E1453	El explorador de carpetas necesita el permiso «Archivos»; escribe la carpeta.
 E1454	Elige los recursos compartidos completos en la lista de arriba.
 P330	Carpeta personal / $1
+E1455	Cortar
+E1456	Vaciar el portapapeles
+P331	Pegar ($1)
+P332	$1 elemento(s) en el portapapeles: elige «Pegar» en la carpeta de destino.

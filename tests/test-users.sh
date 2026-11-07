@@ -208,6 +208,13 @@ check "shares: lisa with write rights sees fotos writable" "fs roots '' | js \"{
 check "shares: lisa creates a folder, owned by her" "fs mkdir '\"root\":\"fotos\",\"path\":\"\",\"name\":\"Neu\"' | js \"d['ok']\" && [ \"\$(run 'stat -c %U /mnt/daten/Fotos/Neu')\" = lisa ]"
 check "Linux: the new folder inherits the rights (anna reads, cannot write)" "run 'getfacl -p /mnt/daten/Fotos/Neu' | grep -qx 'group:familie:r-x' && run 'su -s /bin/sh anna -c \"ls /mnt/daten/Fotos/Neu\"' >/dev/null && ! run 'su -s /bin/sh anna -c \"touch /mnt/daten/Fotos/Neu/x\"' >/dev/null"
 check "Linux: existing files got the new right" "run 'su -s /bin/sh lisa -c \"echo mehr >> /mnt/daten/Fotos/urlaub.txt\"' >/dev/null && grep -qx mehr $R/mnt/daten/Fotos/urlaub.txt"
+# clipboard of the file browser: copy / move between roots (personal folder <-> share)
+run 'su -s /bin/sh lisa -c "echo notiz > /mnt/daten/home/lisa/notiz.txt"'
+check "files: copy from the personal folder into a share" "fs move '\"root\":\"home\",\"path\":\"\",\"names\":[\"notiz.txt\"],\"dest\":\"Neu\",\"dest_root\":\"fotos\",\"copy\":true' | js \"d['ok']\" && [ \"\$(cat $R/mnt/daten/Fotos/Neu/notiz.txt)\" = notiz ] && [ -f $R/mnt/daten/home/lisa/notiz.txt ] && [ \"\$(run 'stat -c %U /mnt/daten/Fotos/Neu/notiz.txt')\" = lisa ]"
+check "files: same name in the target is refused" "fs move '\"root\":\"home\",\"path\":\"\",\"names\":[\"notiz.txt\"],\"dest\":\"Neu\",\"dest_root\":\"fotos\",\"copy\":true' | grep -q 'already exists'"
+check "files: move from a share into the personal folder" "fs mkdir '\"root\":\"home\",\"path\":\"\",\"name\":\"Docs2\"' >/dev/null && fs move '\"root\":\"fotos\",\"path\":\"Neu\",\"names\":[\"notiz.txt\"],\"dest\":\"Docs2\",\"dest_root\":\"home\"' | js \"d['ok']\" && [ -f $R/mnt/daten/home/lisa/Docs2/notiz.txt ] && [ ! -e $R/mnt/daten/Fotos/Neu/notiz.txt ]"
+check "files: unknown target root refused" "fs move '\"root\":\"home\",\"path\":\"\",\"names\":[\"notiz.txt\"],\"dest\":\"\",\"dest_root\":\"daten\"' | grep -q 'unknown folder'"
+check "files: anna (read-only) cannot paste into fotos" "fa move '\"root\":\"fotos\",\"path\":\"\",\"names\":[\"urlaub.txt\"],\"dest\":\"Neu\",\"copy\":true' | grep -q 'read only'"
 rpc shareos.shares set '{"name":"fotos","volume":"daten","path":"Fotos","comment":"Familienfotos","smb":true,"rw":["jan"],"ro":["@familie"]}' >/dev/null
 aclwait /mnt/daten/Fotos/Neu 'group:familie:r-x'; sleep 1
 check "Linux: a right taken away is gone everywhere" "! run 'getfacl -p -R /mnt/daten/Fotos' | grep -q 'user:lisa' && ! run 'su -s /bin/sh lisa -c \"ls /mnt/daten/Fotos\"' >/dev/null"

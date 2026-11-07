@@ -1457,7 +1457,9 @@
 		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "একটি শেয়ারের আলাদা ফোল্ডার – আলাদা শেয়ারের দরকার নেই।",
 		"UNTERORDNER (OPTIONAL)": "সাবফোল্ডার (ঐচ্ছিক)",
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "ফোল্ডার ব্রাউজারের জন্য “ফাইল” অনুমতি দরকার – ফোল্ডারটি টাইপ করুন।",
-		"Ganze Freigaben oben in der Liste wählen.": "পুরো শেয়ারগুলি উপরের তালিকায় বাছুন।"
+		"Ganze Freigaben oben in der Liste wählen.": "পুরো শেয়ারগুলি উপরের তালিকায় বাছুন।",
+		"Ausschneiden": "কাটুন",
+		"Zwischenablage leeren": "ক্লিপবোর্ড খালি করুন"
 	},
 	"patterns": [
 		[
@@ -2783,6 +2785,14 @@
 		[
 			"^Persönlicher Ordner / (.+)$",
 			"ব্যক্তিগত ফোল্ডার / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"পেস্ট করুন ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"ক্লিপবোর্ডে $1টি আইটেম – গন্তব্য ফোল্ডারে “পেস্ট করুন” বাছুন।"
 		]
 	],
 	"words": [

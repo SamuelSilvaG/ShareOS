@@ -1457,7 +1457,9 @@
 		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Carpetas sueltas de un recurso compartido, sin crear otro recurso.",
 		"UNTERORDNER (OPTIONAL)": "SUBCARPETA (OPCIONAL)",
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "El explorador de carpetas necesita el permiso «Archivos»; escribe la carpeta.",
-		"Ganze Freigaben oben in der Liste wählen.": "Elige los recursos compartidos completos en la lista de arriba."
+		"Ganze Freigaben oben in der Liste wählen.": "Elige los recursos compartidos completos en la lista de arriba.",
+		"Ausschneiden": "Cortar",
+		"Zwischenablage leeren": "Vaciar el portapapeles"
 	},
 	"patterns": [
 		[
@@ -2783,6 +2785,14 @@
 		[
 			"^Persönlicher Ordner / (.+)$",
 			"Carpeta personal / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"Pegar ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"$1 elemento(s) en el portapapeles: elige «Pegar» en la carpeta de destino."
 		]
 	],
 	"words": [

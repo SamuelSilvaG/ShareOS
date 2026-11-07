@@ -4695,7 +4695,7 @@ function fbInner() {
 		<div class="fbbar">
 			${f.roots.length > 1 ? html`<select id="fb-root" class="btn sm ghost" aria-label="Laufwerk">${f.roots.map((r) => html`<option value="${r.name}"${r.name === f.root ? raw(' selected') : ''}>${fbRootLabel(r)}</option>`)}</select>` : ''}
 			<nav class="crumbs" aria-label="Pfad">
-				<button type="button" data-act="fb-crumb" data-p="">${svg(I.folder)}${fbRootLabel(root)}</button>${parts.map((p, i) => html`<span>/</span><button type="button" data-act="fb-crumb" data-p="${parts.slice(0, i + 1).join('/')}">${p}</button>`)}
+				<button type="button" data-act="fb-crumb" data-p="">${svg(I.folder)}${fbRootLabel(root)}</button>${parts.map((p, i) => html`<span>/</span><button type="button" data-act="fb-crumb" data-p="${parts.slice(0, i + 1).join('/')}" data-i18n-skip>${p}</button>`)}
 			</nav>
 			${d.free != null ? html`<span class="tag ml">${fmtBytes(d.free)} frei</span>` : ''}
 		</div>
@@ -4705,8 +4705,10 @@ function fbInner() {
 			<label class="btn sm${busy || ro ? ' dis' : ''}">${svg(I.ul)}Hochladen<input type="file" id="fb-file" multiple hidden ${busy || ro ? 'disabled' : ''}></label>
 			<span class="sep"></span>
 			<button class="btn sm ghost" type="button" data-act="fb-rename" ${n === 1 && !ro ? '' : 'disabled'}>${svg(I.pen)}Umbenennen</button>
-			<button class="btn sm ghost" type="button" data-act="fb-move" ${n && !ro ? '' : 'disabled'}>${svg(I.move)}Verschieben</button>
-			<button class="btn sm ghost" type="button" data-act="fb-copy" ${n && !ro ? '' : 'disabled'}>${svg(I.copy)}Kopieren</button>
+			<button class="btn sm ghost" type="button" data-act="fb-cut" ${n && !ro ? '' : 'disabled'}>${svg(I.move)}Ausschneiden</button>
+			<button class="btn sm ghost" type="button" data-act="fb-copy" ${n ? '' : 'disabled'}>${svg(I.copy)}Kopieren</button>
+			${S.fbClip ? html`<button class="btn sm primary" type="button" data-act="fb-paste" ${ro ? 'disabled' : ''} title="${S.fbClip.names.join(', ')}">${svg(I.copy)}Einfügen (${S.fbClip.names.length})</button>
+				<button class="btn sm ghost" type="button" data-act="fb-clip-clear" title="Zwischenablage leeren" aria-label="Zwischenablage leeren">×</button>` : ''}
 			<button class="btn sm danger" type="button" data-act="fb-del" ${n && !ro ? '' : 'disabled'}>${svg(I.trash)}Löschen</button>
 			${f.trashConf?.enabled ? html`<button class="btn sm ghost" type="button" data-act="fb-trash">${svg(I.trash)}Papierkorb</button>` : ''}
 			<label class="chk ml"><input type="checkbox" id="fb-hidden"${f.hidden ? raw(' checked') : ''}>Versteckte</label>
@@ -4860,17 +4862,26 @@ async function fbUpload(files) {
 	setTimeout(() => { if (S.fb && S.fb.uploads === list && !list.some((u) => u.err)) { S.fb.uploads = []; fbRender(); } }, 4000);
 }
 
-async function fbTransfer(copy) {
+// clipboard of the file browser: copy / cut takes the selection, "Einfügen"
+// in another folder (also of another drive or share) copies or moves it there
+function fbClip(cut) {
 	const f = S.fb, names = [...f.sel];
-	const dest = await promptDlg(copy ? 'Kopieren nach' : 'Verschieben nach',
-		`${names.length} Eintrag/Einträge. Zielordner als Pfad in „${fbRootLabel(f.roots.find((r) => r.name === f.root))}“, z. B. Fotos/2026 (leer = oberste Ebene).`,
-		f.path, copy ? 'Kopieren' : 'Verschieben', 'text', 1024);
-	if (dest == null) return;
+	if (!names.length) return;
+	S.fbClip = { root: f.root, path: f.path, names, cut };
+	f.sel.clear();
+	toast(`${names.length} Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen.`);
+	fbRender();
+}
+
+async function fbPaste() {
+	const f = S.fb, c = S.fbClip;
+	if (!c) return;
 	try {
-		await rpc('shareos.files', 'move', { root: f.root, path: f.path, names, dest: dest.replace(/^\/+|\/+$/g, ''), copy });
-		toast(copy ? 'Kopiert.' : 'Verschoben.');
+		await rpc('shareos.files', 'move', { root: c.root, path: c.path, names: c.names, dest: f.path, dest_root: f.root, copy: !c.cut });
+		toast(c.cut ? 'Verschoben.' : 'Kopiert.');
+		if (c.cut) S.fbClip = null;   // moved: gone from the old place; a copy can be pasted again
 		fbLoad();
-	} catch (e) { toast((copy ? 'Kopieren: ' : 'Verschieben: ') + e.message, true); }
+	} catch (e) { toast((c.cut ? 'Verschieben: ' : 'Kopieren: ') + e.message, true); }
 }
 
 Object.assign(ACTIONS, {
@@ -4953,8 +4964,10 @@ Object.assign(ACTIONS, {
 		try { await rpc('shareos.files', 'rename', { root: S.fb.root, path: S.fb.path, name: old, to }); fbLoad(); }
 		catch (e) { toast('Umbenennen: ' + e.message, true); }
 	},
-	'fb-move'() { fbTransfer(false); },
-	'fb-copy'() { fbTransfer(true); },
+	'fb-cut'() { fbClip(true); },
+	'fb-copy'() { fbClip(false); },
+	'fb-paste'() { fbPaste(); },
+	'fb-clip-clear'() { S.fbClip = null; fbRender(); },
 	async 'fb-del'() {
 		const names = [...S.fb.sel], list = `${names.slice(0, 5).join(', ')}${names.length > 5 ? ' …' : ''}`;
 		const trash = S.fb.trashConf?.enabled && !(S.fb.path === '.shareos-trash' || S.fb.path.startsWith('.shareos-trash/'));

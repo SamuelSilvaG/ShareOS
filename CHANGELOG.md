@@ -12,6 +12,7 @@ pre-releases for test devices only.
   - *Cloud → Auftrag*: an optional **subfolder** of the chosen share or the personal folder (`share:fotos/2026`). The box checks that the folder exists and stays inside the share (no `..`, no symlink out of it); plain users still only get their own shares.
   - Listing uses the file functions of the box: admins browse the drives, plain users their shares and personal folder (needs the *Dateien* permission, otherwise the folder is typed).
   - Tests: `test-dlna` (subfolders, spaces, missing folder, `..`), `test-cloud-paperless` (subfolder upload, missing folder, `..`, symlink out of the share).
+- **File browser: copy and paste.** *Kopieren* or *Ausschneiden* puts the selection on a clipboard; an *Einfügen (n)* button appears, also after switching to another drive, share or the personal folder. Go to the target folder, *Einfügen* copies or moves it there. A copy stays on the clipboard for further pastes, a moved selection is gone after the paste; *×* clears the clipboard. Replaces typing the target path. `shareos.files move` takes `dest_root` for a target in another root (rights checked on both sides). Folder names in the path bar are no longer translated. 5 more checks in `test-users`.
 
 ## 0.3.0-beta.1
 

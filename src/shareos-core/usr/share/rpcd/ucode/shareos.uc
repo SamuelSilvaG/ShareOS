@@ -4336,19 +4336,21 @@ return {
 		},
 
 		move: {
-			// names from one folder into another folder of the same root; copy: keep the originals
-			args: { root: '', path: '', names: [], dest: '', copy: false },
+			// names from one folder into another folder (dest_root: of another
+			// root, e.g. from a share into the personal folder); copy: keep the originals
+			args: { root: '', path: '', names: [], dest: '', dest_root: '', copy: false },
 			call: function(req) {
 				let u = session_user(req), a = req.args;
 				if (!u || !files_allowed(u)) return { error: 'not allowed' };
 				if (type(a.names) != 'array' || !length(a.names)) return { error: 'nothing selected' };
 				for (let n in a.names) if (!name_ok(n)) return { error: 'invalid name' };
-				let p = a.copy ? files_path(u, a.root, a.path, 'dir') : files_wpath(u, a.root, a.path, 'dir'), d = files_wpath(u, a.root, a.dest, 'dir');
+				let droot = a.dest_root ? a.dest_root : a.root;
+				let p = a.copy ? files_path(u, a.root, a.path, 'dir') : files_wpath(u, a.root, a.path, 'dir'), d = files_wpath(u, droot, a.dest, 'dir');
 				if (p.error) return p;
 				if (d.error) return d;
 				for (let n in a.names) {
-					let src = (p.rel != '' ? p.rel + '/' : '') + n;
-					if (d.rel == src || index(d.rel + '/', src + '/') == 0) return { error: 'a folder cannot be moved into itself' };
+					let src = p.abs + '/' + n;
+					if (d.abs == src || index(d.abs + '/', src + '/') == 0) return { error: 'a folder cannot be moved into itself' };
 					if (lstat(d.abs + '/' + n)) return { error: 'already exists: ' + n };
 				}
 				let r = files_sh(u, sprintf('%s -- %s %s', a.copy ? 'cp -a' : 'mv', join(' ', map(a.names, (n) => shq(p.abs + '/' + n))), shq(d.abs + '/')), d.root.share);

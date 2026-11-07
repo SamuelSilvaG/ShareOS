@@ -445,13 +445,15 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
-## 14zl. Folder browser (0.3.0-beta.2)
+## 14zl. Folder browser, copy and paste (0.3.0-beta.2)
 
 1. *Freigaben → Neue Freigabe* → *Durchsuchen …*: the folders of the chosen drive appear. Go into a folder, *Nach oben* goes back. *Neuer Ordner* creates one and opens it. *Diesen Ordner wählen* fills in "Ordner auf dem Laufwerk".
 2. *Dienste → Medienserver* → *Unterordner hinzufügen*: first the shares, then their folders (e.g. `Medien/TV Shows` – with a space). Choose, set *nur Videos*, *Speichern*. In the terminal: `grep media_dir /tmp/shareos-dlna/minidlna.conf` shows `media_dir=V,/mnt/<drive>/Medien/TV Shows`; the TV shows only that folder.
 3. *Entfernen* on the row and *Speichern*: the folder is gone from the media server.
 4. *Cloud → Neuer Auftrag*: choose a share, *Durchsuchen …* next to *UNTERORDNER*, pick a folder, upload. Only that folder arrives in the cloud. The job list shows `Freigabe <name> / <folder>`.
 5. As a plain user with *Dateien* under *Meine Cloud*: the browser shows only the own shares and the personal folder. Without *Dateien*: the dialog says the folder has to be typed.
+6. *Freigaben → Dateien*: select files, *Kopieren* → *Einfügen (n)* appears. Go into another folder (or switch the drive/share), *Einfügen*: the files are there, the originals too. *Einfügen* again: "already exists". *×* removes the button.
+7. *Ausschneiden* → paste in another folder: the files are moved, the button is gone. In a read-only share *Einfügen* is greyed out; *Kopieren* still works there.
 
 ## 14zk. Plain users stay logged in (0.3.0-beta.1)
 

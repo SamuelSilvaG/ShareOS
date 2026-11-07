@@ -1457,7 +1457,9 @@
 		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Отдельные папки из общего ресурса – без отдельного общего ресурса.",
 		"UNTERORDNER (OPTIONAL)": "ВЛОЖЕННАЯ ПАПКА (НЕОБЯЗАТЕЛЬНО)",
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "Для обзора папок нужно право «Файлы» – введите папку вручную.",
-		"Ganze Freigaben oben in der Liste wählen.": "Целые общие ресурсы выберите в списке выше."
+		"Ganze Freigaben oben in der Liste wählen.": "Целые общие ресурсы выберите в списке выше.",
+		"Ausschneiden": "Вырезать",
+		"Zwischenablage leeren": "Очистить буфер обмена"
 	},
 	"patterns": [
 		[
@@ -2783,6 +2785,14 @@
 		[
 			"^Persönlicher Ordner / (.+)$",
 			"Личная папка / $1"
+		],
+		[
+			"^Einfügen \\((\\d+)\\)$",
+			"Вставить ($1)"
+		],
+		[
+			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
+			"Элементов в буфере обмена: $1 – выберите «Вставить» в папке назначения."
 		]
 	],
 	"words": [

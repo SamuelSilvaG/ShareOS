@@ -255,11 +255,13 @@ def files_call(user, method, args):
             return {'ok': True, 'trash': True}
         return {'ok': True}
     if method == 'move':
-        dest = (args.get('dest') or '').strip('/')
-        if dest not in FS[root]:
+        dest, droot = (args.get('dest') or '').strip('/'), args.get('dest_root') or root
+        if droot not in FS or dest not in FS[droot]:
             return {'error': 'not found'}
         moved = [x for x in d if x[0] in args['names']]
-        FS[root][dest] += moved
+        if any(x[0] == m[0] for x in FS[droot][dest] for m in moved):
+            return {'error': 'already exists: ' + moved[0][0]}
+        FS[droot][dest] += moved
         if not args.get('copy'):
             FS[root][path] = [x for x in d if x[0] not in args['names']]
         return {'ok': True}
