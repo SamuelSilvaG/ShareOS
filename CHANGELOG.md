@@ -4,7 +4,7 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
-## 0.2.0-beta.21
+## 0.3.0-beta.1
 
 - **DNS-320LW tested:** the white DNS-320L (H/W rev A2) is the same board – Alt-F detects it as `DNS-320L-Ax`, same flash layout, CPU, 256 MB RAM, the MAC address at the start of the rescue system. Switched from D-Link firmware 1.02 via Alt-F 1.0 to ShareOS 0.2.0-beta.20 with ShareOS Desktop 0.2.2; it uses the `DNS-320L-rev-Ax` files. Listed in `docs/DEVICES.md` / `GERAETE.md` and the README.
 - **Settings backup with recovery mode.** Restoring a backup no longer replaces everything at once:

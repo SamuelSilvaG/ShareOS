@@ -108,7 +108,7 @@ Version in brackets = first release with the feature.
 - Large system apps on the apps drive (link in `/opt`), the flash stays free (0.2.0-beta.7)
 - Media server (DLNA/UPnP AV, MiniDLNA as a system app): TVs and players play music, videos and pictures from chosen shares (0.2.0-beta.6)
 - VPN for the box in both directions (OpenVPN as a system app, app NetTunnel, admins only): as client with cleaned profiles, as server with its own CA and a ready-made profile per device; status chips of services and apps in the header (0.2.0-beta.6)
-- Transmission with own torrents per user: system app `transmission-daemon`, app permission `torrent`; apps bring the system apps they need (`"requires"`) (0.2.0-beta.4); lighter defaults for the small CPU (fewer peers, download queue, µTP off, lower priority, 0.2.0-beta.20); a watch folder for .torrent files, set by the app (0.2.0-beta.20); an own peer port per account, set by the app, for port forwarding (0.2.0-beta.21)
+- Transmission with own torrents per user: system app `transmission-daemon`, app permission `torrent`; apps bring the system apps they need (`"requires"`) (0.2.0-beta.4); lighter defaults for the small CPU (fewer peers, download queue, µTP off, lower priority, 0.2.0-beta.20); a watch folder for .torrent files, set by the app (0.2.0-beta.20); an own peer port per account, set by the app, for port forwarding (0.3.0-beta.1)
 - Media jobs: FFmpeg as a system app, app permission `media` – convert audio, change the container of videos, cut, in the background with the user's rights (MediaTranscoder) (0.2.0-beta.5)
 
 **Firmware and system**
