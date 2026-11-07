@@ -23,7 +23,7 @@ years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
 
 ## Status: public test versions (beta)
 
-**DNS-320L:** the main device, tested on hardware with every release.
+**DNS-320L:** the main device, tested on hardware with every release; the white **DNS-320LW** (rev A2) is the same box and uses the DNS-320L files (tested with 0.2.0-beta.20).
 **More models** from 0.2.0-beta.3: DNS-320 rev B, DNS-325 rev A, DNS-320 rev A – built; the DNS-325 rev A1 boots from flash (from 0.2.0-beta.9) and its buttons work (from 0.2.0-beta.10), the DNS-320 rev A/B are not tested yet; testers wanted: [docs/DEVICES.md](docs/DEVICES.md).
 
 ShareOS runs from flash on the DNS-320L (kernel, initramfs and the system in
