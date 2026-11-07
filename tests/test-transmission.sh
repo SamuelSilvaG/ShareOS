@@ -155,6 +155,23 @@ o=$(tr $GA '{"method":"session-set","arguments":{"watch-dir-enabled":false}}')
 check "watch folder: switched off, also for the next start" "tr $GA '{\"method\":\"session-get\"}' | js \"not d['arguments']['watch-dir-enabled']\" && [ ! -e $R/mnt/daten/home/anna/.config/transmission-daemon/.shareos-watch ]"
 tr $GA '{"method":"session-set","arguments":{"watch-dir-enabled":true,"watch-dir":"home/Watch"}}' >/dev/null
 
+# --- peer port: kept by the box per account, checked ----------------------------------
+o=$(tr $GA '{"method":"session-get"}')
+check "peer port: anna's default (51413 + uid - 999), bernd another one" "echo '$o' | js \"d['arguments']['peer-port']==51413+$(run 'id -u anna')-999\" && tr $GB '{\"method\":\"session-get\"}' | js \"d['arguments']['peer-port']==51413+$(run 'id -u bernd')-999\""
+o=$(tr $GA '{"method":"session-set","arguments":{"peer-port":52140}}')
+check "peer port: set to 52140" "echo '$o' | js \"d['result']=='success'\" && tr $GA '{\"method\":\"session-get\"}' | js \"d['arguments']['peer-port']==52140\""
+check "peer port: kept by the box for the next start" "[ \"\$(cat $R/mnt/daten/home/anna/.config/transmission-daemon/.shareos-peerport)\" = 52140 ] && grep -q '\"peer-port\": 52140' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
+check "peer port: below 1024, above 65535, not a number refused" "[ \$(code $GA '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":80}}') = 400 ] && [ \$(code $GA '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":70000}}') = 400 ] && [ \$(code $GA '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":\"x\"}}') = 400 ]"
+check "peer port: bernd cannot take anna's port or her default" "tr $GB '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":52140}}' | grep -q 'another account' && tr $GB '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":'\$((51413+$(run 'id -u anna')-999))'}}' | grep -q 'default of another account'"
+check "peer port: services of the box and Syncthing refused" "tr $GB '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":8200}}' | grep -q 'service of the box' && tr $GB '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":22001}}' | grep -q Syncthing"
+check "peer port: a port in use refused (the apps web server)" "tr $GB '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":$PORT}}' | grep -q 'in use'"
+check "peer port: random port does not pass" "tr $GA '{\"method\":\"session-set\",\"arguments\":{\"peer-port-random-on-start\":true}}' >/dev/null; ! grep -q '\"peer-port-random-on-start\": true' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
+# a value written into her folder (over SMB) is checked again at the start
+echo 8200 > $R/mnt/daten/home/anna/.config/transmission-daemon/.shareos-peerport
+run "shareos-transmission stop anna; shareos-transmission start anna" >/dev/null
+check "peer port: a bad value in her folder falls back to the default" "grep -q '\"peer-port\": '\$((51413+$(run 'id -u anna')-999)) $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
+run "shareos-transmission port anna 52140" >/dev/null
+
 o=$(tr $GR '{"method":"session-get"}')
 check "admin: own daemon as root, downloads on the volume" "echo '$o' | js \"d['arguments']['download-dir']=='daten/Downloads'\" && [ \"\$(run 'stat -c %U /proc/\$(cat /tmp/shareos-transmission/root/pid)')\" = root ]"
 
@@ -162,6 +179,7 @@ tr $GA '{"method":"session-set","arguments":{"utp-enabled":true,"peer-limit-glob
 run "shareos-transmission stop anna" >/dev/null
 run "shareos-transmission start anna" >/dev/null; run "shareos-transmission stop anna" >/dev/null
 check "watch folder still set after the restart" "grep -q '\"watch-dir\": \"/mnt/daten/home/anna/Watch\"' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"watch-dir-enabled\": true' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
+check "peer port still set after the restart" "grep -q '\"peer-port\": 52140' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "the user's own settings stay after a restart (defaults only once)" "grep -q '\"utp-enabled\": true' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"peer-limit-global\": 90' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "scripts and RPC address never reached the daemon" "grep -q '\"script-torrent-done-enabled\": false' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && ! grep -q '/bin/sh' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json && grep -q '\"rpc-bind-address\": \"unix:' $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json"
 check "accounts remembered for the next start" "[ -f $R/etc/shareos/transmission/anna ] && [ -f $R/etc/shareos/transmission/bernd ]"

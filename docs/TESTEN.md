@@ -449,6 +449,14 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zj. Transmission: eigener Peer-Port (0.2.0-beta.21)
+
+1. Transmission-App öffnen → Einstellungen → Verbindung: Peer-Port auf z. B. `52140` setzen, speichern. Die App zeigt danach 52140 (auch nach Schließen und erneutem Öffnen).
+2. Auf der Box: `cat /mnt/<laufwerk>/home/<konto>/.config/transmission-daemon/.shareos-peerport` → `52140`; `netstat -ltn | grep 52140` zeigt den Dienst.
+3. Im Router den Port weiterleiten; in der App *Port testen*: offen.
+4. Ungültige Werte geben eine Fehlermeldung statt „gespeichert“: `80`, `70000`, `22000` (Syncthing), `8200` (DLNA), der Port eines anderen Kontos.
+5. Box neu starten: der Port bleibt 52140.
+
 ## 14zi. Einstellungen sichern mit Recovery-Modus (0.2.0-beta.21)
 
 1. System → Allgemein → *Sichern*: ohne Passwort sind *HTTPS-Zertifikat mitsichern* und *Eigene CA mitsichern* ausgegraut. Ein Passwort eingeben (mindestens 6 Zeichen): beide lassen sich wählen. *Sicherung herunterladen*. Die Datei zeigt `host`, `created` und `version` lesbar, alles andere ist verschlüsselt.

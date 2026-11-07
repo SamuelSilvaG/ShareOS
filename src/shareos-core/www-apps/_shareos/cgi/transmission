@@ -133,6 +133,18 @@ if (req.method == 'session-set' && (a['watch-dir'] != null || a['watch-dir-enabl
 	if (w == null || w.error) fail('403 Forbidden', w?.error ?? 'failed');
 	s.watch = w.watch;
 }
+// peer port (session-set "peer-port"): the box keeps it per account (the
+// default is chosen so the accounts' daemons never meet) and checks it –
+// 1024-65535, not another account's, not a service of the box, not in use.
+// The daemon restarts with it. "peer-port-random-on-start" does not pass: a
+// random port could meet another daemon and breaks port forwarding.
+if (req.method == 'session-set' && a['peer-port'] != null && a['peer-port'] != s.peer_port) {
+	let v = a['peer-port'];
+	if (type(v) == 'string' && match(v, /^[0-9]{1,5}$/)) v = +v;
+	if (type(v) != 'int') fail('400 Bad Request', 'peer-port must be a number');
+	let w = conn.call('shareos.apptorrent', 'port', { grant: g[2], port: v });
+	if (w == null || w.error) fail('400 Bad Request', w?.error ?? 'failed');
+}
 // a torrent comes as file content or as a magnet/http link – no local paths
 if (req.method == 'torrent-add') {
 	if (args.filename != null && (type(args.filename) != 'string' || !match(args.filename, /^(magnet:\?|https?:\/\/)/)))
