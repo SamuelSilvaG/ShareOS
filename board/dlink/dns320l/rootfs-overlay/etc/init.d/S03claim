@@ -2,8 +2,9 @@
 #
 # ShareOS – no known password on a new box.
 #
-# A box that still has the factory root password "shareos" and has not been
-# set up (shareos.setup.done != 1) gets root locked at boot. The first
+# A new box (/overlay/claim: written by the initramfs when the overlay is new –
+# first installation or factory reset, never on an update) that still has the
+# factory root password "shareos" gets root locked at boot. The first
 # access is "claiming": press the USB button on the front, then choose a
 # password in the web interface (shareos.setup claim). SSH, the serial
 # console and the browser terminal stay closed until then.
@@ -13,7 +14,8 @@
 #
 [ "$1" = start ] || exit 0
 grep -q 'shareos.netroot' /proc/cmdline 2>/dev/null && exit 0
-[ "$(uci -q get shareos.setup.done)" = 1 ] && exit 0
+[ -e /overlay/claim ] || exit 0
+[ "$(uci -q get shareos.setup.done)" = 1 ] && { rm -f /overlay/claim; exit 0; }
 
 h=$(sed -n 's/^root:\([^:]*\):.*/\1/p' /etc/shadow)
 case "$h" in

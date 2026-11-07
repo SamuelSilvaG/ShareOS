@@ -3802,7 +3802,9 @@ async function checkFirstRun(force = false) {
 	} catch (e) { /* not fatal: the box works without the wizard */ }
 }
 
-function frStepVisible(k) { return k !== 1 || S.fr.altf.found; }
+// step 2 (password) only while root still has the factory password; a claimed
+// box got its own password before the first login
+function frStepVisible(k) { return (k !== 1 || S.fr.altf.found) && (k !== 2 || S.fr.st.default_password !== false); }
 
 function firstRunView() {
 	const f = S.fr, a = f.altf;
@@ -4372,7 +4374,7 @@ const ACTIONS = {
 	'fr-next'() { const e = frCollect(); if (e) { toast(e, true); return; } frGo(1); },
 	'fr-back'() { frCollect(); frGo(-1); },
 	async 'fr-skip'() {
-		if (!await confirmDlg('Ersteinrichtung überspringen?', 'Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.', 'Überspringen')) return;
+		if (!await confirmDlg('Ersteinrichtung überspringen?', S.fr?.st?.default_password !== false ? 'Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.' : 'Alles lässt sich später unter System einstellen.', 'Überspringen')) return;
 		try { await rpc('shareos.setup', 'apply', {}); } catch (e) { }
 		frEnd('overview');
 	},

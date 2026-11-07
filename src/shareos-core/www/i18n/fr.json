@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Bouton détecté – choisissez maintenant un mot de passe (2 minutes).",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NOUVEAU MOT DE PASSE (8 CARACTÈRES MIN.)",
 		"PASSWORT WIEDERHOLEN": "RÉPÉTER LE MOT DE PASSE",
-		"Passwort festlegen": "Définir le mot de passe"
+		"Passwort festlegen": "Définir le mot de passe",
+		"Alles lässt sich später unter System einstellen.": "Tout peut être réglé plus tard sous Système."
 	},
 	"patterns": [
 		[

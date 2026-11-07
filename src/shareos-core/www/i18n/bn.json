@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "বোতাম শনাক্ত হয়েছে – এখন পাসওয়ার্ড বেছে নিন (আপনার হাতে ২ মিনিট)।",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)",
 		"PASSWORT WIEDERHOLEN": "পাসওয়ার্ড আবার লিখুন",
-		"Passwort festlegen": "পাসওয়ার্ড সেট করুন"
+		"Passwort festlegen": "পাসওয়ার্ড সেট করুন",
+		"Alles lässt sich später unter System einstellen.": "সবকিছু পরে সিস্টেমে ঠিক করা যায়।"
 	},
 	"patterns": [
 		[

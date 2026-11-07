@@ -2928,6 +2928,7 @@ return {
 				let e = set_password(pw);
 				if (e) return { error: e };
 				unlink(CLAIM_WINDOW);
+				unlink('/overlay/claim');
 				sh('logger -t shareos-claim "box claimed"');
 				return { ok: true };
 			}
@@ -2936,7 +2937,7 @@ return {
 		status: {
 			call: function() {
 				let c = cursor();
-				return { done: c.get('shareos', 'setup', 'done') == '1', hostname: read_trim('/proc/sys/kernel/hostname'),
+				return { done: c.get('shareos', 'setup', 'done') == '1', default_password: default_password(), hostname: read_trim('/proc/sys/kernel/hostname'),
 					timezone: timezone(), lang: c.get('shareos', 'ui', 'lang') ?? 'en', channel: c.get('shareos', 'update', 'channel') ?? 'stable' };
 			}
 		},

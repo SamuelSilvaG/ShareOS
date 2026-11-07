@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "बटन मिल गया – अब पासवर्ड चुनें (आपके पास 2 मिनट हैं)।",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "नया पासवर्ड (कम से कम 8 अक्षर)",
 		"PASSWORT WIEDERHOLEN": "पासवर्ड दोबारा लिखें",
-		"Passwort festlegen": "पासवर्ड सेट करें"
+		"Passwort festlegen": "पासवर्ड सेट करें",
+		"Alles lässt sich später unter System einstellen.": "सब कुछ बाद में सिस्टम में सेट किया जा सकता है।"
 	},
 	"patterns": [
 		[

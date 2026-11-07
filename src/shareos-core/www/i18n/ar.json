@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "تم اكتشاف الزر – اختر كلمة المرور الآن (لديك دقيقتان).",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "كلمة المرور الجديدة (8 أحرف على الأقل)",
 		"PASSWORT WIEDERHOLEN": "أعد إدخال كلمة المرور",
-		"Passwort festlegen": "تعيين كلمة المرور"
+		"Passwort festlegen": "تعيين كلمة المرور",
+		"Alles lässt sich später unter System einstellen.": "يمكن ضبط كل شيء لاحقًا ضمن النظام."
 	},
 	"patterns": [
 		[

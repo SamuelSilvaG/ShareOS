@@ -305,5 +305,27 @@ check "apps: installed app leaves the list, the failed one stays" "[ \"\$(cat $R
 check "apps: pending in the status" "rpc shareos.recovery status '{}' | js \"d['pending_apps']==['bad']\""
 check "apps: dismiss" "rpc shareos.recovery apps_dismiss '{}' | js \"d['ok']\" && [ ! -e $R/etc/shareos/recovery-apps ]"
 
+# --- claiming a new box: root locked until the USB button + first password ---
+cp $R/etc/shadow $R/tmp/shadow.keep
+run "echo 'root:shareos' | chpasswd -c sha512" >/dev/null
+mkdir -p $R/overlay $R/run/shareos; rm -f $R/overlay/claim $R/run/shareos/claim-window
+run 'uci set shareos.setup=setup; uci set shareos.setup.done=0; uci commit shareos'
+run '/etc/init.d/S03claim start'
+check "claim: S03claim leaves a box without the new-box mark alone (update)" "grep -q '^root:\\\$6\\\$' $R/etc/shadow"
+: > $R/overlay/claim
+run '/etc/init.d/S03claim start'
+check "claim: new box with the factory password: root locked" "grep -q '^root:!:' $R/etc/shadow"
+check "claim: state unclaimed, no button yet" "rpc shareos.setup claim_state '{}' | js \"d['unclaimed'] and not d['window']\""
+check "claim: setup status says no factory password (wizard skips the step)" "rpc shareos.setup status '{}' | js \"d['default_password']==False\""
+check "claim: refused without the USB button" "rpc shareos.setup claim '{\"password\":\"geheim123\"}' | grep -q 'press the USB button'"
+touch $R/run/shareos/claim-window
+check "claim: short password refused" "rpc shareos.setup claim '{\"password\":\"kurz\"}' | grep -q 'too short'"
+check "claim: window open after the button" "rpc shareos.setup claim_state '{}' | js \"d['window']\""
+check "claim: first password set, mark and window gone" "rpc shareos.setup claim '{\"password\":\"geheim123\"}' | js \"d['ok']\" && ! grep -q '^root:!:' $R/etc/shadow && [ ! -e $R/overlay/claim ] && [ ! -e $R/run/shareos/claim-window ]"
+check "claim: second claim refused" "rpc shareos.setup claim '{\"password\":\"geheim456\"}' | grep -q 'already claimed' && rpc shareos.setup claim_state '{}' | js \"not d['unclaimed']\""
+: > $R/overlay/claim; run '/etc/init.d/S03claim start'
+check "claim: own password is never locked" "! grep -q '^root:!:' $R/etc/shadow"
+cp $R/tmp/shadow.keep $R/etc/shadow; rm -f $R/overlay/claim
+
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Botón detectado: elige ahora una contraseña (tienes 2 minutos).",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NUEVA CONTRASEÑA (MÍN. 8 CARACTERES)",
 		"PASSWORT WIEDERHOLEN": "REPETIR CONTRASEÑA",
-		"Passwort festlegen": "Establecer contraseña"
+		"Passwort festlegen": "Establecer contraseña",
+		"Alles lässt sich später unter System einstellen.": "Todo se puede ajustar más tarde en Sistema."
 	},
 	"patterns": [
 		[

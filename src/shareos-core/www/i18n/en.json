@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Button detected – choose a password now (you have 2 minutes).",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NEW PASSWORD (MIN. 8 CHARACTERS)",
 		"PASSWORT WIEDERHOLEN": "REPEAT PASSWORD",
-		"Passwort festlegen": "Set password"
+		"Passwort festlegen": "Set password",
+		"Alles lässt sich später unter System einstellen.": "Everything can be set later under System."
 	},
 	"patterns": [
 		[

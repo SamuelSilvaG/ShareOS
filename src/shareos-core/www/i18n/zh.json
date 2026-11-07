@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "已检测到按钮 – 请现在设置密码（限时 2 分钟）。",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "新密码（至少 8 个字符）",
 		"PASSWORT WIEDERHOLEN": "重复密码",
-		"Passwort festlegen": "设置密码"
+		"Passwort festlegen": "设置密码",
+		"Alles lässt sich später unter System einstellen.": "所有设置都可以稍后在“系统”中调整。"
 	},
 	"patterns": [
 		[

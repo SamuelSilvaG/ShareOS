@@ -179,6 +179,10 @@ else
 	mount -t squashfs -o ro "/dev/ubiblock${ROOTVOL#ubi}" /mnt/ro || rescue "cannot mount rootfs"
 fi
 
+# a new overlay (first installation, factory reset, no settings volume): the
+# box is new and waits to be claimed (/overlay/claim, see S03claim). An update
+# keeps the overlay, so boxes in use are never locked by it.
+[ -d /mnt/rw/upper ] || : > /mnt/rw/claim
 mkdir -p /mnt/rw/upper /mnt/rw/work
 mount -t overlay overlay -o lowerdir=/mnt/ro,upperdir=/mnt/rw/upper,workdir=/mnt/rw/work /newroot \
 	|| rescue "overlay mount failed"

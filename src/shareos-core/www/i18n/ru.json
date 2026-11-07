@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Кнопка нажата – задайте пароль (у вас есть 2 минуты).",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "НОВЫЙ ПАРОЛЬ (МИН. 8 СИМВОЛОВ)",
 		"PASSWORT WIEDERHOLEN": "ПОВТОРИТЕ ПАРОЛЬ",
-		"Passwort festlegen": "Задать пароль"
+		"Passwort festlegen": "Задать пароль",
+		"Alles lässt sich später unter System einstellen.": "Всё можно настроить позже в разделе «Система»."
 	},
 	"patterns": [
 		[

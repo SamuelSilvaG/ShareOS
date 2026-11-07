@@ -1466,7 +1466,8 @@
 		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Botão detetado – escolha agora uma palavra-passe (tem 2 minutos).",
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NOVA PALAVRA-PASSE (MÍN. 8 CARACTERES)",
 		"PASSWORT WIEDERHOLEN": "REPETIR PALAVRA-PASSE",
-		"Passwort festlegen": "Definir palavra-passe"
+		"Passwort festlegen": "Definir palavra-passe",
+		"Alles lässt sich später unter System einstellen.": "Tudo pode ser ajustado depois em Sistema."
 	},
 	"patterns": [
 		[

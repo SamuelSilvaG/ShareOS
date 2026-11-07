@@ -449,6 +449,17 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zm. Neue Box übernehmen (0.3.0-beta.2)
+
+Braucht eine Box, die zurückgesetzt werden darf (Werkseinstellungen löschen die Einstellungen, nicht die Datenplatten).
+1. Eine Box im Betrieb updaten: Sie behält ihr Passwort, SSH geht wie vorher (Updates sperren nie).
+2. *System → Wartung → Werkseinstellungen* (oder Reset-Taste ≥ 15 s). Nach dem Neustart sagt die Anmeldeseite „Diese Box ist noch nicht eingerichtet …“; `ssh root@<box>` wird abgelehnt.
+3. Ein Passwort wählen, ohne die Taste zu drücken: „Passwort festlegen“ bleibt ausgegraut.
+4. Die USB-Taste vorne kurz drücken: Die Seite meldet „Taste erkannt …“. Passwort zweimal eingeben (mind. 8), *Passwort festlegen*: Man ist angemeldet, der Assistent hat keinen Passwort-Schritt. SSH geht mit dem neuen Passwort.
+5. Nach der Taste mehr als 2 Minuten warten: Das Fenster ist wieder zu („press the USB button first“).
+6. Reset-Taste 5–10 s (Zugang zurücksetzen): Nach dem Neustart will die Box wieder übernommen werden; Daten, Benutzer und Freigaben bleiben.
+7. ShareOS Desktop 0.2.3, *Box einrichten* an so einer Box: Sie fragt nach USB-Taste und Passwort und macht dann mit der Einrichtung weiter.
+
 ## 14zl. Ordner-Browser, Kopieren und Einfügen (0.3.0-beta.2)
 
 1. *Freigaben → Neue Freigabe* → *Durchsuchen …*: Die Ordner des gewählten Laufwerks erscheinen. In einen Ordner gehen, *Nach oben* geht zurück. *Neuer Ordner* legt einen an und öffnet ihn. *Diesen Ordner wählen* trägt „Ordner auf dem Laufwerk“ ein.
