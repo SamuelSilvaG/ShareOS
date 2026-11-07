@@ -4,8 +4,9 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
-## 0.2.0-beta.21
+## 0.3.0-beta.1
 
+- **DNS-320LW tested:** the white DNS-320L (H/W rev A2) is the same board – Alt-F detects it as `DNS-320L-Ax`, same flash layout, CPU, 256 MB RAM, the MAC address at the start of the rescue system. Switched from D-Link firmware 1.02 via Alt-F 1.0 to ShareOS 0.2.0-beta.20 with ShareOS Desktop 0.2.2; it uses the `DNS-320L-rev-Ax` files. Listed in `docs/DEVICES.md` / `GERAETE.md` and the README.
 - **Settings backup with recovery mode.** Restoring a backup no longer replaces everything at once:
   - What the box needs to run comes back right away – root password, network (IP address, subnet), device name, time zone, drives and the settings of the web interface. The box then restarts in **recovery mode** and asks (System, first page after the login) what else should come back: users and groups, shares, the settings of each service (Paperless, cloud, snapshots, DLNA, Docker hosts, Zabbix, printer, UPS) and the apps that were installed. *Nichts weiter übernehmen* keeps the box as it is.
   - **Apps** are part of the backup (list with version and their settings). Chosen apps are installed from the store after the restart, one after the other (`shareos-restore-apps`); what fails – e.g. without internet – shows up under Apps → Installiert as *Apps aus der Sicherung* with *Apps aus Sicherung installieren*.
