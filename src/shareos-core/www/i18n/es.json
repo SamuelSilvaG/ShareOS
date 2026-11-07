@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "Sincronizar carpetas (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Puede controlar el servicio Syncthing propio del usuario: vincular dispositivos y sincronizar carpetas con ellos. Cada usuario tiene su propio servicio; solo se sincronizan carpetas a las que tiene acceso.",
 		"Weniger anzeigen": "Mostrar menos",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores."
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores.",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "Incluir el certificado HTTPS (con clave)",
+		"Eigene CA mitsichern": "Incluir la CA propia",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "Las claves solo van en una copia cifrada: introduce primero una contraseña.",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Contiene la caja (red, nombre, hora, unidades, contraseña de root), usuarios y grupos (contraseñas como hash), recursos compartidos, los ajustes de los servicios y la lista de apps instaladas. Sin contraseña el archivo es legible: guárdalo en un lugar seguro. Con contraseña: AES-256, la contraseña se necesita para restaurar.",
+		"Gruppen": "Grupos",
+		"Eigene CA": "CA propia",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "La contraseña de root, la red, el nombre del dispositivo, la zona horaria, las unidades y los ajustes de la interfaz web se aplican de inmediato. Después la caja se reinicia y pregunta en el modo de recuperación qué más debe volver. Los datos de las unidades no se tocan.",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "La contraseña de root, la red, el nombre, la zona horaria y las unidades se toman de la copia de inmediato y luego la caja se reinicia. El resto lo eliges después en el modo de recuperación.",
+		"Wiederherstellen und neu starten": "Restaurar y reiniciar",
+		"Danach geht es im Recovery-Modus weiter": "Después continúa en el modo de recuperación",
+		"RECOVERY-MODUS": "MODO DE RECUPERACIÓN",
+		"Sicherung": "Copia de seguridad",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "La caja se restauró desde una copia de seguridad:",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "Ya aplicado: contraseña de root, red (dirección IP, subred), nombre del dispositivo, zona horaria, unidades y ajustes de la interfaz web. Elige qué más debe volver:",
+		"Benutzer und Gruppen": "Usuarios y grupos",
+		"Paperless-Anbindung": "Conexión con Paperless",
+		"Cloud-Speicher": "Almacenamiento en la nube",
+		"Snapshots": "Instantáneas",
+		"Zabbix-Agent": "Agente de Zabbix",
+		"Drucker": "Impresora",
+		"Einstellungen": "Ajustes",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "Se instalan desde la tienda tras el reinicio (se necesita internet). Lo que falle se ofrecerá de nuevo más tarde en la página de apps.",
+		"ZERTIFIKATE": "CERTIFICADOS",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "Reutilizar el certificado HTTPS de la copia",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "Si no, la CA propia emite un certificado nuevo si se restaura. El navegador y la app de escritorio preguntarán una vez más.",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "Si no, la caja mantiene su certificado actual. El navegador y la app de escritorio preguntarán una vez más.",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "La copia no contiene certificado HTTPS: la caja mantiene el actual.",
+		"Eigene CA wiederherstellen": "Restaurar la CA propia",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "Los dispositivos que confían en la CA solo seguirán confiando en la caja con la misma CA. Sin ella tendrás que instalar allí la CA nueva y volver a emitir certificados para otros dispositivos.",
+		"Nichts weiter übernehmen": "No aplicar nada más",
+		"Übernehmen und neu starten": "Aplicar y reiniciar",
+		"Auswahl übernehmen?": "¿Aplicar la selección?",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "La caja aplica los ajustes elegidos y se reinicia.",
+		"Nichts weiter übernehmen?": "¿No aplicar nada más?",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "La caja se queda como está: solo la contraseña, la red, el nombre, la zona horaria y las unidades vienen de la copia. La copia se puede volver a restaurar más tarde.",
+		"Recovery beenden": "Terminar la recuperación",
+		"Die Einstellungen werden übernommen": "Aplicando los ajustes",
+		"Recovery-Modus beendet.": "Modo de recuperación terminado.",
+		"APPS AUS DER SICHERUNG": "APPS DE LA COPIA",
+		"Werden gerade installiert …": "Instalándose …",
+		"Noch nicht installiert:": "Aún no instaladas:",
+		"Apps aus Sicherung installieren": "Instalar apps de la copia",
+		"Die Apps werden im Hintergrund installiert.": "Las apps se están instalando en segundo plano."
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"Mostrar todo ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"($1 certificados emitidos)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"Grupos: $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"Certificados emitidos: $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"Recuperación: $1"
 		]
 	],
 	"words": [

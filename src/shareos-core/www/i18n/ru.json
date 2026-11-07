@@ -1403,7 +1403,50 @@
 		"Ordner synchronisieren (Syncthing)": "Синхронизация папок (Syncthing)",
 		"Darf den eigenen Syncthing-Dienst des Benutzers steuern: Geräte koppeln und Ordner mit ihnen synchronisieren. Jeder Benutzer hat seinen eigenen Dienst; synchronisiert werden nur Ordner, auf die er Zugriff hat.": "Может управлять собственной службой Syncthing пользователя: связывать устройства и синхронизировать с ними папки. У каждого пользователя своя служба; синхронизируются только папки, к которым у него есть доступ.",
 		"Weniger anzeigen": "Показать меньше",
-		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Может настраивать агент Zabbix устройства (сервер, имя хоста, шифрование PSK, пассивные проверки, интервал SMART), перезапускать его и читать журнал – ключ приложение больше не увидит. Только для администраторов."
+		"Darf den Zabbix-Agenten der Box einrichten (Server, Hostname, PSK-Verschlüsselung, passive Abfragen, SMART-Intervall), ihn neu starten und sein Protokoll lesen – den Schlüssel sieht die App nie wieder. Nur für Administratoren.": "Может настраивать агент Zabbix устройства (сервер, имя хоста, шифрование PSK, пассивные проверки, интервал SMART), перезапускать его и читать журнал – ключ приложение больше не увидит. Только для администраторов.",
+		"HTTPS-Zertifikat mitsichern (mit Schlüssel)": "Включить сертификат HTTPS (с ключом)",
+		"Eigene CA mitsichern": "Включить собственный ЦС",
+		"Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.": "Ключи попадают только в зашифрованную резервную копию – сначала введите пароль.",
+		"Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.": "Содержит устройство (сеть, имя, время, диски, пароль root), пользователей и группы (пароли в виде хешей), общие папки, настройки служб и список установленных приложений. Без пароля файл читаем – храните его в надёжном месте. С паролем: AES-256, пароль нужен для восстановления.",
+		"Gruppen": "Группы",
+		"Eigene CA": "Собственный ЦС",
+		"Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.": "Пароль root, сеть, имя устройства, часовой пояс, диски и настройки веб-интерфейса применяются сразу. Затем устройство перезагружается и в режиме восстановления спрашивает, что ещё вернуть. Данные на дисках не затрагиваются.",
+		"Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.": "Пароль root, сеть, имя, часовой пояс и диски сразу берутся из резервной копии, затем устройство перезагружается. Остальное вы выберете потом в режиме восстановления.",
+		"Wiederherstellen und neu starten": "Восстановить и перезапустить",
+		"Danach geht es im Recovery-Modus weiter": "Затем продолжится в режиме восстановления",
+		"RECOVERY-MODUS": "РЕЖИМ ВОССТАНОВЛЕНИЯ",
+		"Sicherung": "Резервная копия",
+		"Die Box wurde aus einer Sicherung wiederhergestellt:": "Устройство восстановлено из резервной копии:",
+		"Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:": "Уже применено: пароль root, сеть (IP-адрес, подсеть), имя устройства, часовой пояс, диски и настройки веб-интерфейса. Выберите, что ещё вернуть:",
+		"Benutzer und Gruppen": "Пользователи и группы",
+		"Paperless-Anbindung": "Подключение Paperless",
+		"Cloud-Speicher": "Облачное хранилище",
+		"Snapshots": "Снимки",
+		"Zabbix-Agent": "Агент Zabbix",
+		"Drucker": "Принтер",
+		"Einstellungen": "Настройки",
+		"Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.": "Устанавливаются из магазина после перезагрузки (нужен интернет). Что не удастся, будет снова предложено позже на странице приложений.",
+		"ZERTIFIKATE": "СЕРТИФИКАТЫ",
+		"HTTPS-Zertifikat aus der Sicherung wiederverwenden": "Повторно использовать сертификат HTTPS из резервной копии",
+		"Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.": "Иначе собственный ЦС выпустит новый сертификат, если он будет восстановлен. Браузер и настольное приложение спросят ещё раз.",
+		"Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.": "Иначе устройство сохранит текущий сертификат. Браузер и настольное приложение спросят ещё раз.",
+		"Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.": "В резервной копии нет сертификата HTTPS – устройство сохранит текущий.",
+		"Eigene CA wiederherstellen": "Восстановить собственный ЦС",
+		"Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.": "Устройства, доверяющие ЦС, продолжат доверять устройству только с тем же ЦС. Без него придётся установить там новый ЦС и заново выпустить сертификаты для других устройств.",
+		"Nichts weiter übernehmen": "Больше ничего не восстанавливать",
+		"Übernehmen und neu starten": "Применить и перезапустить",
+		"Auswahl übernehmen?": "Применить выбор?",
+		"Die Box übernimmt die gewählten Einstellungen und startet neu.": "Устройство применит выбранные настройки и перезагрузится.",
+		"Nichts weiter übernehmen?": "Больше ничего не восстанавливать?",
+		"Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.": "Устройство остаётся как есть: из резервной копии берутся только пароль, сеть, имя, часовой пояс и диски. Резервную копию можно восстановить снова позже.",
+		"Recovery beenden": "Завершить восстановление",
+		"Die Einstellungen werden übernommen": "Применение настроек",
+		"Recovery-Modus beendet.": "Режим восстановления завершён.",
+		"APPS AUS DER SICHERUNG": "ПРИЛОЖЕНИЯ ИЗ РЕЗЕРВНОЙ КОПИИ",
+		"Werden gerade installiert …": "Устанавливаются …",
+		"Noch nicht installiert:": "Ещё не установлены:",
+		"Apps aus Sicherung installieren": "Установить приложения из резервной копии",
+		"Die Apps werden im Hintergrund installiert.": "Приложения устанавливаются в фоне."
 	},
 	"patterns": [
 		[
@@ -2709,6 +2752,22 @@
 		[
 			"^Alle anzeigen \\(([0-9]+)\\)$",
 			"Показать все ($1)"
+		],
+		[
+			"^\\((\\d+) ausgestellte Zertifikate\\)$",
+			"(выпущено сертификатов: $1)"
+		],
+		[
+			"^Gruppen: (.+)$",
+			"Группы: $1"
+		],
+		[
+			"^Ausgestellte Zertifikate: (.+)$",
+			"Выпущенные сертификаты: $1"
+		],
+		[
+			"^Recovery: (.*)$",
+			"Восстановление: $1"
 		]
 	],
 	"words": [

@@ -1767,3 +1767,50 @@ E1398	Peut piloter le service Syncthing de l'utilisateur : associer des appareil
 E1399	Afficher moins
 P325	Tout afficher ($1)
 E1400	Peut configurer l'agent Zabbix de la box (serveur, nom d'hôte, chiffrement PSK, vérifications passives, intervalle SMART), le redémarrer et lire son journal – l'application ne revoit jamais la clé. Administrateurs uniquement.
+E1401	Inclure le certificat HTTPS (avec la clé)
+E1402	Inclure la CA propre
+E1403	Les clés ne vont que dans une sauvegarde chiffrée – saisis d'abord un mot de passe.
+E1404	Contient la box (réseau, nom, heure, disques, mot de passe root), les utilisateurs et groupes (mots de passe sous forme de hachage), les partages, les réglages des services et la liste des applications installées. Sans mot de passe, le fichier est lisible – conserve-le en lieu sûr. Avec mot de passe : AES-256, le mot de passe est nécessaire pour restaurer.
+E1405	Groupes
+E1406	CA propre
+E1407	Le mot de passe root, le réseau, le nom de l'appareil, le fuseau horaire, les disques et les réglages de l'interface web sont repris immédiatement. Ensuite la box redémarre et demande en mode récupération ce qui doit encore revenir. Les données des disques restent intactes.
+E1408	Le mot de passe root, le réseau, le nom, le fuseau horaire et les disques viennent tout de suite de la sauvegarde, puis la box redémarre. Tu choisis le reste ensuite en mode récupération.
+E1409	Restaurer et redémarrer
+E1410	Ensuite, cela continue en mode récupération
+E1411	MODE RÉCUPÉRATION
+E1412	Sauvegarde
+E1413	La box a été restaurée à partir d'une sauvegarde :
+E1414	Déjà repris : mot de passe root, réseau (adresse IP, sous-réseau), nom de l'appareil, fuseau horaire, disques et réglages de l'interface web. Choisis ce qui doit encore revenir :
+E1415	Utilisateurs et groupes
+E1416	Connexion Paperless
+E1417	Stockage cloud
+E1418	Instantanés
+E1419	Agent Zabbix
+E1420	Imprimante
+E1421	Réglages
+E1422	Installées depuis la boutique après le redémarrage (internet nécessaire). Ce qui échoue sera proposé à nouveau plus tard dans la page Applications.
+E1423	CERTIFICATS
+E1424	Réutiliser le certificat HTTPS de la sauvegarde
+E1425	Sinon, la CA propre émet un nouveau certificat si elle est restaurée. Le navigateur et l'application de bureau redemandent alors une fois.
+E1426	Sinon, la box garde son certificat actuel. Le navigateur et l'application de bureau redemandent alors une fois.
+E1427	La sauvegarde ne contient pas de certificat HTTPS – la box garde l'actuel.
+E1428	Restaurer la CA propre
+E1429	Les appareils qui font confiance à la CA ne continuent à faire confiance à la box qu'avec la même CA. Sans elle, il faut y installer la nouvelle CA et émettre à nouveau les certificats des autres appareils.
+E1430	Ne rien reprendre d'autre
+E1431	Appliquer et redémarrer
+E1432	Appliquer la sélection ?
+E1433	La box applique les réglages choisis et redémarre.
+E1434	Ne rien reprendre d'autre ?
+E1435	La box reste telle qu'elle est : seuls le mot de passe, le réseau, le nom, le fuseau horaire et les disques viennent de la sauvegarde. La sauvegarde peut être restaurée à nouveau plus tard.
+E1436	Terminer la récupération
+E1437	Application des réglages
+E1438	Mode récupération terminé.
+E1439	APPLICATIONS DE LA SAUVEGARDE
+E1440	Installation en cours …
+E1441	Pas encore installées :
+E1442	Installer les applications de la sauvegarde
+E1443	Les applications s'installent en arrière-plan.
+P326	($1 certificats émis)
+P327	Groupes : $1
+P328	Certificats émis : $1
+P329	Récupération : $1

@@ -1767,3 +1767,50 @@ E1398	Pode controlar o serviço Syncthing do próprio utilizador: emparelhar dis
 E1399	Mostrar menos
 P325	Mostrar tudo ($1)
 E1400	Pode configurar o agente Zabbix da caixa (servidor, nome do host, encriptação PSK, verificações passivas, intervalo SMART), reiniciá-lo e ler o seu registo – a app nunca volta a ver a chave. Só administradores.
+E1401	Incluir o certificado HTTPS (com chave)
+E1402	Incluir a CA própria
+E1403	As chaves só entram num backup encriptado – introduz primeiro uma palavra-passe.
+E1404	Contém a caixa (rede, nome, hora, unidades, palavra-passe de root), utilizadores e grupos (palavras-passe como hash), partilhas, as definições dos serviços e a lista de apps instaladas. Sem palavra-passe o ficheiro é legível – guarda-o em segurança. Com palavra-passe: AES-256, a palavra-passe é necessária para restaurar.
+E1405	Grupos
+E1406	CA própria
+E1407	A palavra-passe de root, a rede, o nome do dispositivo, o fuso horário, as unidades e as definições da interface web são aplicados de imediato. Depois a caixa reinicia e pergunta no modo de recuperação o que mais deve voltar. Os dados nas unidades ficam intactos.
+E1408	A palavra-passe de root, a rede, o nome, o fuso horário e as unidades vêm logo do backup e depois a caixa reinicia. O resto escolhes depois no modo de recuperação.
+E1409	Restaurar e reiniciar
+E1410	Depois continua no modo de recuperação
+E1411	MODO DE RECUPERAÇÃO
+E1412	Backup
+E1413	A caixa foi restaurada a partir de um backup:
+E1414	Já aplicado: palavra-passe de root, rede (endereço IP, sub-rede), nome do dispositivo, fuso horário, unidades e definições da interface web. Escolhe o que mais deve voltar:
+E1415	Utilizadores e grupos
+E1416	Ligação ao Paperless
+E1417	Armazenamento na nuvem
+E1418	Instantâneos
+E1419	Agente Zabbix
+E1420	Impressora
+E1421	Definições
+E1422	São instaladas a partir da loja após o reinício (é preciso internet). O que falhar é oferecido de novo mais tarde na página de apps.
+E1423	CERTIFICADOS
+E1424	Reutilizar o certificado HTTPS do backup
+E1425	Caso contrário, a CA própria emite um novo certificado se for restaurada. O navegador e a app de ambiente de trabalho perguntam então mais uma vez.
+E1426	Caso contrário, a caixa mantém o certificado atual. O navegador e a app de ambiente de trabalho perguntam então mais uma vez.
+E1427	O backup não contém certificado HTTPS – a caixa mantém o atual.
+E1428	Restaurar a CA própria
+E1429	Os dispositivos que confiam na CA só continuam a confiar na caixa com a mesma CA. Sem ela tens de instalar lá a nova CA e emitir de novo os certificados de outros dispositivos.
+E1430	Não aplicar mais nada
+E1431	Aplicar e reiniciar
+E1432	Aplicar a seleção?
+E1433	A caixa aplica as definições escolhidas e reinicia.
+E1434	Não aplicar mais nada?
+E1435	A caixa fica como está: só a palavra-passe, a rede, o nome, o fuso horário e as unidades vêm do backup. O backup pode ser restaurado de novo mais tarde.
+E1436	Terminar a recuperação
+E1437	A aplicar as definições
+E1438	Modo de recuperação terminado.
+E1439	APPS DO BACKUP
+E1440	A instalar …
+E1441	Ainda não instaladas:
+E1442	Instalar apps do backup
+E1443	As apps estão a ser instaladas em segundo plano.
+P326	($1 certificados emitidos)
+P327	Grupos: $1
+P328	Certificados emitidos: $1
+P329	Recuperação: $1

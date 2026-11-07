@@ -449,6 +449,17 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zi. Einstellungen sichern mit Recovery-Modus (0.2.0-beta.21)
+
+1. System → Allgemein → *Sichern*: ohne Passwort sind *HTTPS-Zertifikat mitsichern* und *Eigene CA mitsichern* ausgegraut. Ein Passwort eingeben (mindestens 6 Zeichen): beide lassen sich wählen. *Sicherung herunterladen*. Die Datei zeigt `host`, `created` und `version` lesbar, alles andere ist verschlüsselt.
+2. Etwas ändern, das in der Sicherung anders ist (z. B. einen Benutzer löschen, eine Freigabe löschen).
+3. *Wiederherstellen*: Datei wählen, Passwort, *Prüfen*. Die Vorschau zeigt Benutzer, Gruppen, Freigaben, Dienste, Apps, Zertifikat und eigene CA. *Wiederherstellen* → *Wiederherstellen und neu starten*.
+4. Nach dem Neustart mit dem root-Passwort **aus der Sicherung** anmelden: die Seite **Recovery-Modus** erscheint. Alles ist angehakt; Netzwerk und Gerätename stimmen schon.
+5. Z. B. eine App abwählen, *Übernehmen und neu starten*. Danach sind Benutzer und Freigaben wieder da (Freigaben → Benutzer; vom PC aus mit dem alten Passwort per SMB anmelden).
+6. Apps → *Installiert*: die gewählten Apps werden nach dem Start installiert (Internet nötig; `logread | grep shareos-restore-apps`). Ohne Internet erscheint oben *Apps aus der Sicherung* mit *Apps aus Sicherung installieren*.
+7. Mit eigener CA: unter Zertifikate stehen die für andere Geräte ausgestellten Zertifikate wieder in der Liste, ein PC mit installierter CA vertraut der Box weiter. Wenn *HTTPS-Zertifikat wiederverwenden* gewählt war, ist der Fingerabdruck derselbe wie vorher.
+8. Noch einmal wiederherstellen und im Recovery-Modus *Nichts weiter übernehmen*: die Box bleibt so, nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kamen aus der Sicherung.
+
 ## 14zh. Syncthing, Transmission auf kleiner CPU, Zabbix für Apps (0.2.0-beta.20)
 
 1. **Syncthing:** Apps → Store → **Syncthing** (bringt die System-App „syncthing“ mit, 12 MB). Als root öffnen: nach ein paar Sekunden *● Läuft*. *ID dieses Geräts* zeigt die ID und einen QR-Code.

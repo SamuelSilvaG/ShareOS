@@ -445,6 +445,17 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zi. Settings backup with recovery mode (0.2.0-beta.21)
+
+1. System → Allgemein → *Sichern*: without a password, *HTTPS-Zertifikat mitsichern* and *Eigene CA mitsichern* are greyed out. Enter a password (at least 6 characters): both can be chosen. *Sicherung herunterladen*. The file shows `host`, `created` and `version` in plain text, everything else is encrypted.
+2. Change something that differs from the backup (e.g. delete a user, delete a share).
+3. *Wiederherstellen*: choose the file, password, *Prüfen*. The preview lists users, groups, shares, services, apps, certificate and own CA. *Wiederherstellen* → *Wiederherstellen und neu starten*.
+4. After the restart, log in with the root password **from the backup**: the **Recovery-Modus** page appears. Everything is ticked; network and device name are already right.
+5. Untick an app, for example, then *Übernehmen und neu starten*. Afterwards users and shares are back (Freigaben → Benutzer; log in over SMB from a PC with the old password).
+6. Apps → *Installiert*: the chosen apps are installed after the start (internet needed; `logread | grep shareos-restore-apps`). Without internet, *Apps aus der Sicherung* with *Apps aus Sicherung installieren* shows up at the top.
+7. With an own CA: the certificates issued for other devices are listed again under certificates, and a PC with the CA installed keeps trusting the box. If *HTTPS-Zertifikat wiederverwenden* was chosen, the fingerprint is the same as before.
+8. Restore once more and choose *Nichts weiter übernehmen* in recovery mode: the box stays as it is; only password, network, name, time zone and drives came from the backup.
+
 ## 14zh. Syncthing, Transmission on a small CPU, Zabbix for apps (0.2.0-beta.20)
 
 1. **Syncthing:** Apps → Store → **Syncthing** (brings the system app "syncthing", 12 MB). Open it as root: after a few seconds *● Läuft*. *ID dieses Geräts* shows the ID and a QR code.

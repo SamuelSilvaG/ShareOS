@@ -622,19 +622,52 @@ def call(obj, method, args):
             return {'ok': True, 'imported': [], 'skipped': [], **accounts()}
         return accounts() if method != 'passwd' else {'ok': True}
     if obj == 'shareos.backup':
-        summary = {'version': '0.1.0-beta.2', 'host': 'skynet-nas', 'created': int(time.time()), 'users': sorted(STATE['users']),
-                   'shares': sorted(STATE['shares']), 'configs': ['shareos', 'storage', 'network', 'accounts', 'shares'], 'certificate': True}
+        summary = {'version': '0.1.0-beta.2', 'host': 'skynet-nas', 'created': int(time.time()) - 86400, 'users': sorted(STATE['users']),
+                   'groups': sorted(STATE['groups']), 'shares': sorted(STATE['shares']), 'services': ['paperless', 'cloud', 'zabbix'],
+                   'apps': [{'id': 'webpad', 'name': 'Webpad', 'version': '1.2.0'}, {'id': 'transmission', 'name': 'Transmission', 'version': '1.3.1'}],
+                   'configs': ['shareos', 'storage', 'network', 'accounts', 'shares'], 'certificate': True, 'cert_source': 'ca',
+                   'ca': True, 'ca_certs': ['drucker', 'proxmox']}
+        if method == 'offer':
+            return {'certificate': True, 'source': 'ca', 'ca': True, 'ca_certs': 2}
         if method == 'export':
             enc = bool(args.get('password'))
+            if not enc and (args.get('certificate') or args.get('ca')):
+                return {'error': 'certificate and CA keys need an encrypted backup'}
+            s = dict(summary, created=int(time.time()), certificate=bool(args.get('certificate')), ca=bool(args.get('ca')),
+                     ca_certs=summary['ca_certs'] if args.get('ca') else [])
             return {'filename': 'shareos-skynet-nas-20261017-2330.json', 'encrypted': enc,
-                    'content': json.dumps({'shareos_backup': 1, 'encrypted': True, 'data': 'U09TMQ=='} if enc else {'shareos_backup': 1, **summary}), **summary}
+                    'content': json.dumps({'shareos_backup': 2, 'encrypted': True, 'host': 'skynet-nas', 'created': s['created'],
+                                           'version': s['version'], 'data': 'U09TMQ=='} if enc else {'shareos_backup': 2, **s}), **s}
         try:
             d = json.loads(args.get('content') or '')
         except ValueError:
             return {'error': 'not a ShareOS settings backup'}
         if d.get('encrypted') and not args.get('password'):
             return {'error': 'password required', 'encrypted': True}
-        return {'ok': True, 'reboot': True} if args.get('apply') else {'ok': True, 'preview': True, **summary}
+        if args.get('apply'):
+            STATE['recovery'] = summary
+            return {'ok': True, 'reboot': True, 'recovery': True, 'essentials': ['root', 'network', 'hostname', 'timezone', 'storage', 'web']}
+        return {'ok': True, 'preview': True, **summary}
+    if obj == 'shareos.recovery':
+        rec = STATE.get('recovery')
+        if method == 'status':
+            base = {'pending_apps': STATE.get('rec_apps', []), 'apps_running': False}
+            return {'active': True, **rec, **base} if rec else {'active': False, **base}
+        if method == 'apply':
+            if not rec:
+                return {'error': 'not in recovery mode'}
+            STATE['recovery'] = None
+            STATE['rec_apps'] = [a for a in args.get('apps', []) if a != 'webpad']
+            return {'ok': True, 'done': ['users'], 'apps': args.get('apps', []), 'reboot': True}
+        if method == 'discard':
+            STATE['recovery'] = None
+            return {'ok': True}
+        if method == 'apps_install':
+            STATE['rec_apps'] = []
+            return {'started': True}
+        if method == 'apps_dismiss':
+            STATE['rec_apps'] = []
+            return {'ok': True}
     if obj == 'shareos.shares':
         if method == 'set':
             STATE['shares'][args['name']] = {k: v for k, v in args.items() if k != 'name'}

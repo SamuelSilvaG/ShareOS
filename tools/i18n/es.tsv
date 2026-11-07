@@ -1767,3 +1767,50 @@ E1398	Puede controlar el servicio Syncthing propio del usuario: vincular disposi
 E1399	Mostrar menos
 P325	Mostrar todo ($1)
 E1400	Puede configurar el agente Zabbix de la caja (servidor, nombre de host, cifrado PSK, comprobaciones pasivas, intervalo SMART), reiniciarlo y leer su registro: la app nunca vuelve a ver la clave. Solo administradores.
+E1401	Incluir el certificado HTTPS (con clave)
+E1402	Incluir la CA propia
+E1403	Las claves solo van en una copia cifrada: introduce primero una contraseña.
+E1404	Contiene la caja (red, nombre, hora, unidades, contraseña de root), usuarios y grupos (contraseñas como hash), recursos compartidos, los ajustes de los servicios y la lista de apps instaladas. Sin contraseña el archivo es legible: guárdalo en un lugar seguro. Con contraseña: AES-256, la contraseña se necesita para restaurar.
+E1405	Grupos
+E1406	CA propia
+E1407	La contraseña de root, la red, el nombre del dispositivo, la zona horaria, las unidades y los ajustes de la interfaz web se aplican de inmediato. Después la caja se reinicia y pregunta en el modo de recuperación qué más debe volver. Los datos de las unidades no se tocan.
+E1408	La contraseña de root, la red, el nombre, la zona horaria y las unidades se toman de la copia de inmediato y luego la caja se reinicia. El resto lo eliges después en el modo de recuperación.
+E1409	Restaurar y reiniciar
+E1410	Después continúa en el modo de recuperación
+E1411	MODO DE RECUPERACIÓN
+E1412	Copia de seguridad
+E1413	La caja se restauró desde una copia de seguridad:
+E1414	Ya aplicado: contraseña de root, red (dirección IP, subred), nombre del dispositivo, zona horaria, unidades y ajustes de la interfaz web. Elige qué más debe volver:
+E1415	Usuarios y grupos
+E1416	Conexión con Paperless
+E1417	Almacenamiento en la nube
+E1418	Instantáneas
+E1419	Agente de Zabbix
+E1420	Impresora
+E1421	Ajustes
+E1422	Se instalan desde la tienda tras el reinicio (se necesita internet). Lo que falle se ofrecerá de nuevo más tarde en la página de apps.
+E1423	CERTIFICADOS
+E1424	Reutilizar el certificado HTTPS de la copia
+E1425	Si no, la CA propia emite un certificado nuevo si se restaura. El navegador y la app de escritorio preguntarán una vez más.
+E1426	Si no, la caja mantiene su certificado actual. El navegador y la app de escritorio preguntarán una vez más.
+E1427	La copia no contiene certificado HTTPS: la caja mantiene el actual.
+E1428	Restaurar la CA propia
+E1429	Los dispositivos que confían en la CA solo seguirán confiando en la caja con la misma CA. Sin ella tendrás que instalar allí la CA nueva y volver a emitir certificados para otros dispositivos.
+E1430	No aplicar nada más
+E1431	Aplicar y reiniciar
+E1432	¿Aplicar la selección?
+E1433	La caja aplica los ajustes elegidos y se reinicia.
+E1434	¿No aplicar nada más?
+E1435	La caja se queda como está: solo la contraseña, la red, el nombre, la zona horaria y las unidades vienen de la copia. La copia se puede volver a restaurar más tarde.
+E1436	Terminar la recuperación
+E1437	Aplicando los ajustes
+E1438	Modo de recuperación terminado.
+E1439	APPS DE LA COPIA
+E1440	Instalándose …
+E1441	Aún no instaladas:
+E1442	Instalar apps de la copia
+E1443	Las apps se están instalando en segundo plano.
+P326	($1 certificados emitidos)
+P327	Grupos: $1
+P328	Certificados emitidos: $1
+P329	Recuperación: $1

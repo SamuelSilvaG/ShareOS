@@ -239,8 +239,16 @@
 					"share_ticket"
 				],
 				"shareos.backup": [
+					"offer",
 					"export",
 					"restore"
+				],
+				"shareos.recovery": [
+					"status",
+					"apply",
+					"discard",
+					"apps_install",
+					"apps_dismiss"
 				],
 				"shareos.paperless": [
 					"set_global",

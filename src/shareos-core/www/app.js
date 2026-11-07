@@ -290,7 +290,7 @@ function cover(title, text) {
 	uncover();
 	coverEl = document.createElement('div');
 	coverEl.className = 'cover';
-	coverEl.innerHTML = html`<div class="panel"><div class="spin"></div><b class="name">${title}</b><span class="mut" id="cover-text">${text}</span></div>`.s;
+	coverEl.innerHTML = html`<div class="panel"><div class="spin"></div><b class="name">${title}</b><span class="mut"><span id="cover-text">${text}</span> <span id="cover-sec"></span></span></div>`.s;
 	$('#app').append(coverEl);
 }
 function uncover() { coverEl?.remove(); coverEl = null; }
@@ -308,8 +308,9 @@ async function waitForBox(title, text, minDown = true) {
 		} catch (e) { wasDown = true; }
 		if (!wasDown && Date.now() - t0 > 90000) wasDown = true;  // reboot faster than our polling
 		const s = Math.round((Date.now() - t0) / 1000);
-		const el = $('#cover-text');
-		if (el) el.textContent = `${text} (${s} s)`;
+		// the seconds apart from the text: the text stays translatable
+		const el = $('#cover-sec');
+		if (el) el.textContent = `(${s} s)`;
 	}
 }
 
@@ -544,7 +545,7 @@ function renderShell() {
 	renderTabs();
 	renderMain();
 	startPolling();
-	checkFirstRun();
+	checkRecovery().then((on) => { if (!on) checkFirstRun(); });
 	netAutoConfirm();
 }
 
@@ -676,6 +677,7 @@ function parseRoute() {
 function renderMain() {
 	const main = $('#main');
 	if (!main) return;
+	if (S.rec) { main.innerHTML = recoveryView().s; return; }
 	if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); return; }
 	// an app shown in the page keeps running: no new render of the same app
 	if (S.route.tab === 'apps' && S.route.sub === 'run' && $('#appframe')?.dataset.id === S.route.app) return;
@@ -2556,7 +2558,8 @@ const SYS = {
 			<form class="panel" id="f-backup">
 				<div class="ph"><span class="pt">SICHERN</span><span class="tag ml">JSON-Datei</span></div>
 				<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>PASSWORT ZUM VERSCHLÜSSELN (OPTIONAL)</span><input name="pw" type="password" minlength="6" autocomplete="new-password" placeholder="leer = unverschlüsselt"></label></div>
-				<p class="note">Enthält alle Einstellungen, Benutzer mit ihren Passwörtern (als Hash), Freigaben, Netzwerk und das HTTPS-Zertifikat samt Schlüssel. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.</p>
+				<div id="backup-keys">${backupKeys()}</div>
+				<p class="note">Enthält Box (Netzwerk, Name, Zeit, Laufwerke, Passwort von root), Benutzer und Gruppen (Passwörter als Hash), Freigaben, die Einstellungen der Dienste und die Liste der installierten Apps. Ohne Passwort ist die Datei lesbar – dann sicher aufbewahren. Mit Passwort: AES-256, das Passwort wird zum Wiederherstellen gebraucht.</p>
 				<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">${svg(I.dl)}Sicherung herunterladen</button></div>
 			</form>
 			<form class="panel" id="f-restore">
@@ -3253,12 +3256,18 @@ const VIEWS_AFTER = {
 				}
 				catch (err) { toast('Hostname: ' + err.message, true); }
 			});
+			if (!S.backupOffer) rpc('shareos.backup', 'offer').then((o) => {
+				S.backupOffer = o;
+				const k = $('#backup-keys');
+				if (k) { k.innerHTML = backupKeys().s; for (const c of k.querySelectorAll('input')) c.disabled = !$('#f-backup').pw.value; }
+			}).catch(() => {});
+			$('#f-backup').pw.addEventListener('input', (e) => { for (const c of e.target.form.querySelectorAll('#backup-keys input')) c.disabled = !e.target.value; });
 			$('#f-backup').addEventListener('submit', async (e) => {
 				e.preventDefault();
 				const f = e.target, btn = $('button[type=submit]', f);
 				btn.disabled = true;
 				try {
-					const r = await rpc('shareos.backup', 'export', { password: f.pw.value });
+					const r = await rpc('shareos.backup', 'export', { password: f.pw.value, certificate: !!f.cert?.checked && !!f.pw.value, ca: !!f.ca?.checked && !!f.pw.value });
 					const a = document.createElement('a');
 					a.href = URL.createObjectURL(new Blob([r.content], { type: 'application/json' }));
 					a.download = r.filename;
@@ -3282,19 +3291,21 @@ const VIEWS_AFTER = {
 						<dt>Erstellt</dt><dd>${p.created ? new Date(p.created * 1000).toLocaleString(LOC) : '–'}</dd>
 						<dt>ShareOS</dt><dd>${p.version || '–'}</dd>
 						<dt>Benutzerkonten</dt><dd>${p.users.join(', ') || '–'}</dd>
+						<dt>Gruppen</dt><dd>${(p.groups || []).join(', ') || '–'}</dd>
 						<dt>Freigaben</dt><dd>${p.shares.join(', ') || '–'}</dd>
-						<dt>Zertifikat</dt><dd>${p.certificate ? 'ja' : 'nein'}</dd></dl>
-						<p class="note" style="color:var(--amber)">Beim Wiederherstellen werden die aktuellen Einstellungen, Benutzer und Freigaben ersetzt. Danach ist ein Neustart nötig. Daten auf den Laufwerken bleiben unberührt.</p>
+						<dt>Dienste</dt><dd>${(p.services || []).map((x) => REC_SERVICES[x] || x).join(', ') || '–'}</dd>
+						<dt>Apps</dt><dd>${(p.apps || []).map((a) => a.name || a.id).join(', ') || '–'}</dd>
+						<dt>Zertifikat</dt><dd>${p.certificate ? 'ja' : 'nein'}</dd>
+						<dt>Eigene CA</dt><dd>${p.ca ? 'ja' : 'nein'}${p.ca && p.ca_certs?.length ? html` <span class="mut">(${p.ca_certs.length} ausgestellte Zertifikate)</span>` : ''}</dd></dl>
+						<p class="note" style="color:var(--amber)">Sofort übernommen werden Passwort von root, Netzwerk, Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Danach startet die Box neu und fragt im Recovery-Modus, was zusätzlich zurückkommen soll. Daten auf den Laufwerken bleiben unberührt.</p>
 						<div class="acts" style="margin-top:10px"><button class="btn danger" type="button" id="restore-apply">Wiederherstellen</button></div>`.s;
 					$('#restore-apply').addEventListener('click', async () => {
-						if (!await confirmDlg('Einstellungen wiederherstellen?', 'Die aktuellen Einstellungen, Benutzer und Freigaben werden durch die Sicherung ersetzt.', 'Wiederherstellen', true)) return;
+						if (!await confirmDlg('Einstellungen wiederherstellen?', 'Passwort von root, Netzwerk, Name, Zeitzone und Laufwerke kommen sofort aus der Sicherung, dann startet die Box neu. Den Rest wählst du danach im Recovery-Modus.', 'Wiederherstellen und neu starten', true)) return;
 						try {
 							await rpc('shareos.backup', 'restore', { content, password: f.pw.value, apply: true });
-							if (await confirmDlg('Wiederhergestellt', 'Die Einstellungen sind zurückgespielt. Jetzt neu starten, damit alles gilt?', 'Neu starten')) {
-								try { await rpc('shareos.system', 'reboot'); } catch (err) { }
-								stopPolling();
-								waitForBox('Neustart läuft', 'ShareOS startet neu');
-							}
+							try { await rpc('shareos.system', 'reboot'); } catch (err) { }
+							stopPolling();
+							waitForBox('Neustart läuft', 'Danach geht es im Recovery-Modus weiter');
 						} catch (err) { toast('Wiederherstellen: ' + err.message, true); }
 					});
 				} catch (err) {
@@ -3575,6 +3586,73 @@ async function netSubmit(e) {
 }
 
 /* ---------- first-run wizard -------------------------------------------------- */
+
+/* ---------- recovery mode (after restoring a settings backup) ---------- */
+
+const REC_SERVICES = { paperless: 'Paperless-Anbindung', cloud: 'Cloud-Speicher', snapshots: 'Snapshots', dlna: 'Medienserver (DLNA)',
+	dockerhosts: 'Docker-Hosts', zabbix: 'Zabbix-Agent', printer: 'Drucker', ups: 'USV' };
+
+// admin only: shareos.recovery is not granted to other accounts
+async function checkRecovery() {
+	try {
+		const r = await rpc('shareos.recovery', 'status');
+		S.recApps = { pending: r.pending_apps || [], running: !!r.apps_running };
+		if (!r.active) {
+			if (S.recApps.pending.length && S.route.tab === 'apps' && S.apps?.installed) renderMain();
+			return false;
+		}
+		S.rec = { st: r, users: r.users.length > 0 || r.groups.length > 0, shares: r.shares.length > 0, services: new Set(r.services),
+			apps: new Set(r.apps.map((a) => a.id)), certificate: r.certificate, ca: r.ca };
+		renderMain();
+		return true;
+	} catch (e) { return false; }
+}
+
+function recoveryView() {
+	const R = S.rec, st = R.st;
+	const row = (key, on, title, detail) => html`<label class="chk" style="display:flex;align-items:flex-start;margin:8px 0"><input type="checkbox" data-rec="${key}"${on ? raw(' checked') : ''}>
+		<span><b>${title}</b>${detail ? html`<br><span class="mut" style="font-size:12px">${detail}</span>` : ''}</span></label>`;
+	const certNew = st.cert_source === 'ca' && st.ca ? 'Sonst stellt die eigene CA ein neues Zertifikat aus, wenn sie wiederhergestellt wird. Browser und Desktop-App fragen dann einmal neu nach.'
+		: 'Sonst behält die Box ihr aktuelles Zertifikat. Browser und Desktop-App fragen dann einmal neu nach.';
+	return html`<section class="sec"><div class="panel" style="border-color:var(--amber);box-shadow:var(--glow)">
+		<div class="ph"><span class="pt">RECOVERY-MODUS</span><span class="tag warn ml">Sicherung</span></div>
+		<p style="margin:0 0 10px;font-size:13px"><span>Die Box wurde aus einer Sicherung wiederhergestellt:</span> <b>${st.host || '–'}</b> · ${st.created ? fmtTime(st.created) : '–'} · ShareOS ${st.version || '–'}</p>
+		<p class="note" style="margin-top:0">Schon übernommen: Passwort von root, Netzwerk (IP-Adresse, Subnetz), Gerätename, Zeitzone, Laufwerke und die Einstellungen der Weboberfläche. Wähle, was zusätzlich zurückkommen soll:</p>
+		${st.users.length || st.groups.length ? row('users', R.users, 'Benutzer und Gruppen', html`${st.users.join(', ')}${st.groups.length ? html`<br><span>Gruppen: ${st.groups.join(', ')}</span>` : ''}`) : ''}
+		${st.shares.length ? row('shares', R.shares, 'Freigaben', st.shares.join(', ')) : ''}
+		${st.services.map((x) => row('svc:' + x, R.services.has(x), REC_SERVICES[x] || x, 'Einstellungen'))}
+		${st.apps.length ? html`<h3 class="gh" style="margin:16px 0 4px">APPS</h3><p class="note" style="margin:0">Werden nach dem Neustart aus dem Store installiert (Internet nötig). Was nicht klappt, bietet der Bereich Apps später noch einmal an.</p>
+			${st.apps.map((a) => row('app:' + a.id, R.apps.has(a.id), a.name || a.id, a.version ? 'Version ' + a.version : ''))}` : ''}
+		<h3 class="gh" style="margin:16px 0 4px">ZERTIFIKATE</h3>
+		${st.certificate ? row('certificate', R.certificate, 'HTTPS-Zertifikat aus der Sicherung wiederverwenden', certNew)
+			: html`<p class="note" style="margin:6px 0">Die Sicherung enthält kein HTTPS-Zertifikat – die Box behält ihr aktuelles.</p>`}
+		${st.ca ? row('ca', R.ca, 'Eigene CA wiederherstellen',
+			html`${st.ca_certs.length ? html`<span>Ausgestellte Zertifikate: ${st.ca_certs.join(', ')}</span><br>` : ''}<span>Geräte, die der CA vertrauen, vertrauen der Box nur mit derselben CA weiter. Ohne sie musst du die neue CA dort installieren und Zertifikate für andere Geräte neu ausstellen.</span>`) : ''}
+		<div class="acts" style="margin-top:18px;justify-content:space-between">
+			<button class="btn ghost" type="button" data-act="rec-discard">Nichts weiter übernehmen</button>
+			<button class="btn primary" type="button" data-act="rec-apply">Übernehmen und neu starten</button>
+		</div></div></section>`;
+}
+
+// backup form: certificate and own CA (with their private keys) – only encrypted
+function backupKeys() {
+	const o = S.backupOffer;
+	if (!o || (!o.certificate && !o.ca)) return html``;
+	return html`${o.certificate ? html`<label class="chk"><input type="checkbox" name="cert" checked disabled>HTTPS-Zertifikat mitsichern (mit Schlüssel)</label>` : ''}
+		${o.ca ? html`<label class="chk"><input type="checkbox" name="ca" checked disabled><span>Eigene CA mitsichern</span>${o.ca_certs ? html` <span class="mut">(${o.ca_certs} ausgestellte Zertifikate)</span>` : ''}</label>` : ''}
+		<p class="note" style="margin-top:4px">Schlüssel kommen nur in eine verschlüsselte Sicherung – erst ein Passwort eingeben.</p>`;
+}
+
+async function recoveryEnd(args) {
+	try {
+		await rpc('shareos.recovery', args ? 'apply' : 'discard', args || {});
+		S.rec = null;
+		if (!args) { renderMain(); toast('Recovery-Modus beendet.'); return; }
+		try { await rpc('shareos.system', 'reboot'); } catch (err) { }
+		stopPolling();
+		waitForBox('Neustart läuft', 'Die Einstellungen werden übernommen');
+	} catch (err) { toast('Recovery: ' + err.message, true); }
+}
 
 const FR_STEPS = ['Sprache', 'Alt-F', 'Passwort', 'Name & Zeit', 'Updates', 'Fertig'];
 
@@ -3899,6 +3977,25 @@ async function refreshUpdateStatus() {
 /* ---------- actions (delegated clicks) -------------------------------------- */
 
 const ACTIONS = {
+	async 'rec-apply'() {
+		const on = (k) => !!$(`input[data-rec="${k}"]`)?.checked;
+		const pick = (p) => [...document.querySelectorAll(`input[data-rec^="${p}:"]`)].filter((x) => x.checked).map((x) => x.dataset.rec.slice(p.length + 1));
+		const args = { users: on('users'), shares: on('shares'), services: pick('svc'), apps: pick('app'), certificate: on('certificate'), ca: on('ca') };
+		if (!await confirmDlg('Auswahl übernehmen?', 'Die Box übernimmt die gewählten Einstellungen und startet neu.', 'Übernehmen und neu starten')) return;
+		recoveryEnd(args);
+	},
+	async 'rec-discard'() {
+		if (!await confirmDlg('Nichts weiter übernehmen?', 'Die Box bleibt, wie sie jetzt ist: nur Passwort, Netzwerk, Name, Zeitzone und Laufwerke kommen aus der Sicherung. Die Sicherung lässt sich später erneut einspielen.', 'Recovery beenden', true)) return;
+		recoveryEnd(null);
+	},
+	async 'rec-apps-install'() {
+		try { await rpc('shareos.recovery', 'apps_install'); S.recApps.running = true; toast('Die Apps werden im Hintergrund installiert.'); renderMain(); }
+		catch (err) { toast('Apps: ' + err.message, true); }
+	},
+	async 'rec-apps-dismiss'() {
+		try { await rpc('shareos.recovery', 'apps_dismiss'); S.recApps = { pending: [], running: false }; renderMain(); }
+		catch (err) { toast('Apps: ' + err.message, true); }
+	},
 	// the GitHub versions on the update page: the newest 3, or all of them
 	'rel-all'() { S.relAll = !S.relAll; renderMain(); },
 	'chips-more'() { S.chipsAll = !S.chipsAll; fitChips(); },
@@ -4979,6 +5076,12 @@ async function loadApps(what = ['installed', 'catalog', 'store']) {
 			what.includes('catalog') ? rpc('shareos.apps', 'catalog', { refresh: false }) : S.apps.catalog,
 			what.includes('store') ? rpc('shareos.apps', 'store_get') : S.apps.store]);
 		Object.assign(S.apps, { installed: inst, catalog: cat, store: st });
+		// apps of a restored settings backup that are still missing (admins)
+		if (what.includes('installed')) rpc('shareos.recovery', 'status').then((r) => {
+			const was = JSON.stringify(S.recApps || {});
+			S.recApps = { pending: r.pending_apps || [], running: !!r.apps_running };
+			if (was !== JSON.stringify(S.recApps) && S.route.tab === 'apps' && S.route.sub === 'installed') renderMain();
+		}).catch(() => {});
 		// first visit: ask the catalog sources once
 		if (!S.apps.refreshed && !(cat?.time > 0)) { S.apps.refreshed = true; refreshCatalog(true); }
 	} catch (e) { toast('Apps: ' + e.message, true); }
@@ -5044,7 +5147,12 @@ function appInstalled() {
 	if (A.jobs) return appJobsEditor(A.jobs);
 	const upd = (a) => cat[a.id]?.update_available ? cat[a.id] : null;
 	const t = isTable('apps');
-	return html`${favBar(list)}<section class="sec">${secHead('apps', 'INSTALLIERTE APPS', list.length ? `${list.length}` : '')}
+	const rp = (S.recApps?.pending || []).filter((id) => !list.some((a) => a.id === id));
+	const rec = rp.length ? html`<div class="panel" style="margin-bottom:14px;border-color:var(--amber)"><div class="ph"><span class="pt">APPS AUS DER SICHERUNG</span></div>
+		<p class="note" style="margin:0 0 10px"><span>${S.recApps.running ? 'Werden gerade installiert …' : 'Noch nicht installiert:'}</span> <span>${rp.join(', ')}</span></p>
+		<div class="acts"><button class="btn primary sm" type="button" data-act="rec-apps-install" ${S.recApps.running ? 'disabled' : ''}>Apps aus Sicherung installieren</button>
+		<button class="btn ghost sm" type="button" data-act="rec-apps-dismiss">Verwerfen</button></div></div>` : '';
+	return html`${favBar(list)}${rec}<section class="sec">${secHead('apps', 'INSTALLIERTE APPS', list.length ? `${list.length}` : '')}
 		${!list.length ? html`<div class="panel"><div class="empty">${svg(I.box)}<span>Noch keine App installiert. Im <a href="#/apps/store">Store</a> gibt es Apps zum Installieren – oder ein eigenes Paket (.sapp) hochladen.</span></div></div>`
 		: t ? html`<div class="tw"><table class="t" style="min-width:720px"><thead><tr><th></th><th>APP</th><th>VERSION</th><th>HERAUSGEBER</th><th>SICHTBAR FÜR</th><th></th></tr></thead><tbody>
 			${list.map((a) => html`<tr><td style="width:44px">${appIcon(a)}</td><td><b>${a.name}</b> ${favStar(a)}${a.verified ? '' : html` <span class="tag warn">eigene</span>`}<div class="mut" style="font-size:12px">${txtOf(a.description)}</div></td>

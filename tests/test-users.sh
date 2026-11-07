@@ -236,13 +236,20 @@ check "Alt-F: Linux password hash kept" "grep -q '^maria:\\\$1\\\$abcdefgh\\\$01
 check "Alt-F: SMB hash kept" "grep -qx 'maria:iEb36u6PsRetBr3YMLdYbA==' $R/etc/ksmbd/ksmbdpwd.db"
 
 # --- settings backup ------------------------------------------------------------
+run "shareos-ca init" >/dev/null 2>&1; run "shareos-ca issue drucker 10.0.0.5" >/dev/null 2>&1
+run "shareos-cert ensure" >/dev/null 2>&1
+O=$(rpc shareos.backup offer '{}')
+check "backup: offers certificate and CA with one issued certificate" "echo '$O' | js \"d['certificate'] and d['ca'] and d['ca_certs']==1\""
 E1=$(rpc shareos.backup export '{}')
 echo "$E1" | python3 -c 'import json,sys; print(json.load(sys.stdin)["content"])' > $T/plain.json
-check "backup: plain JSON with accounts and shares" "python3 -c \"import json; d=json.load(open('$T/plain.json')); assert d['shareos_backup']==1 and any(l.startswith('jan:') for l in d['accounts']['passwd']) and 'fotos' in d['configs']['shares']\""
+check "backup: plain JSON (v2) with accounts, shares and the app list" "python3 -c \"import json; d=json.load(open('$T/plain.json')); assert d['shareos_backup']==2 and any(l.startswith('jan:') for l in d['accounts']['passwd']) and 'fotos' in d['configs']['shares'] and isinstance(d['apps'], list)\""
+check "backup: no keys in a plain backup" "! grep -q 'PRIVATE KEY' $T/plain.json"
+check "backup: keys only encrypted" "rpc shareos.backup export '{\"certificate\":true}' | grep -q 'encrypted backup'"
 check "backup: short password rejected" "rpc shareos.backup export '{\"password\":\"abc\"}' | grep -q '6 characters'"
-E2=$(rpc shareos.backup export '{"password":"backup-pw"}')
+E2=$(rpc shareos.backup export '{"password":"backup-pw","certificate":true,"ca":true}')
 echo "$E2" | python3 -c 'import json,sys; print(json.load(sys.stdin)["content"])' > $T/enc.json
-check "backup: encrypted file hides the content" "python3 -c \"import json; d=json.load(open('$T/enc.json')); assert d['encrypted'] and 'accounts' not in d\" && ! grep -q jan $T/enc.json"
+check "backup: encrypted file hides the content, date and box readable" "python3 -c \"import json; d=json.load(open('$T/enc.json')); assert d['encrypted'] and 'accounts' not in d and d['host'] and d['created'] > 0\" && ! grep -q jan $T/enc.json"
+check "backup: summary names certificate, CA and the issued certificate" "echo '$E2' | js \"d['certificate'] and d['ca'] and d['ca_certs']==['drucker'] and 'familie' in d['groups']\""
 cat > $T/req.py <<'PY'
 import json, sys
 c = open(sys.argv[1]).read()
@@ -253,12 +260,40 @@ check "restore: wrong password" "run 'ubus call shareos.backup restore \"\$(cat 
 python3 $T/req.py $T/enc.json backup-pw 0 > $R/tmp/req-preview.json
 python3 $T/req.py $T/enc.json backup-pw 1 > $R/tmp/req-apply.json
 P=$(run 'ubus call shareos.backup restore "$(cat /tmp/req-preview.json)"')
-check "restore: preview of the encrypted backup" "echo '$P' | js \"d['preview'] and 'jan' in d['users'] and 'fotos' in d['shares']\""
+check "restore: preview of the encrypted backup" "echo '$P' | js \"d['preview'] and 'jan' in d['users'] and 'fotos' in d['shares'] and d['ca']\""
+grep '^root:' $R/etc/shadow > $T/rootsh
+KEY=$(md5sum < $R/etc/ssl/shareos/server.key)
+# a "new" box: other root password, users, share, CA and certificate gone
+run "echo root:neuneu1 | chpasswd >/dev/null 2>&1"
 run "shareos-users del max" >/dev/null; run "uci delete shares.fotos; uci commit shares" >/dev/null
-check "restore: (max and the share are gone now)" "! grep -q '^max:' $R/etc/passwd && ! run 'uci -q get shares.fotos' | grep -q share"
+run "rm -rf /etc/shareos/ca; shareos-cert selfsigned" >/dev/null 2>&1
+check "restore: (root password, max, the share and the CA are different now)" "! grep '^root:' $R/etc/shadow | cmp -s - $T/rootsh && ! grep -q '^max:' $R/etc/passwd && ! run 'uci -q get shares.fotos' | grep -q share && [ ! -e $R/etc/shareos/ca/ca.key ]"
 A2=$(run 'ubus call shareos.backup restore "$(cat /tmp/req-apply.json)"')
-check "restore: applied" "echo '$A2' | js \"d['ok']\" && grep -q '^max:' $R/etc/passwd && grep -q '^max:' $R/etc/shadow && run 'uci get shares.fotos' | grep -qx share"
-check "restore: web logins rebuilt" "run 'uci get rpcd.acc_jan.read' | grep -qx '\*'"
+check "restore: essentials taken over, recovery mode next" "echo '$A2' | js \"d['ok'] and d['recovery'] and 'root' in d['essentials']\" && grep '^root:' $R/etc/shadow | cmp -s - $T/rootsh"
+check "restore: users and shares wait for the recovery mode" "! grep -q '^max:' $R/etc/passwd && ! run 'uci -q get shares.fotos' | grep -q share"
+check "restore: recovery file private" "[ \"\$(stat -c %a $R/etc/shareos/recovery.json)\" = 600 ]"
+S=$(rpc shareos.recovery status '{}')
+check "recovery: status lists the parts" "echo '$S' | js \"d['active'] and 'max' in d['users'] and 'fotos' in d['shares'] and d['certificate'] and d['ca_certs']==['drucker']\""
+A3=$(rpc shareos.recovery apply '{"users":true,"shares":true,"certificate":true,"ca":true}')
+check "recovery: applied" "echo '$A3' | js \"d['ok'] and 'users' in d['done'] and 'ca' in d['done'] and 'certificate:reused' in d['done']\""
+check "recovery: users back (passwd, shadow, web login)" "grep -q '^max:' $R/etc/passwd && grep -q '^max:' $R/etc/shadow && run 'uci get rpcd.acc_jan.read' | grep -qx '\*'"
+check "recovery: share back" "run 'uci get shares.fotos' | grep -qx share"
+check "recovery: CA with the issued certificate back" "[ -s $R/etc/shareos/ca/ca.key ] && [ -s $R/etc/shareos/ca/certs/drucker.crt ] && [ \"\$(stat -c %a $R/etc/shareos/ca/ca.key)\" = 600 ]"
+check "recovery: certificate reused" "[ \"\$(md5sum < $R/etc/ssl/shareos/server.key)\" = \"$KEY\" ]"
+check "recovery: finished" "[ ! -e $R/etc/shareos/recovery.json ] && rpc shareos.recovery status '{}' | js \"not d['active']\""
+# second round: keep only the essentials, new certificate
+run 'ubus call shareos.backup restore "$(cat /tmp/req-apply.json)"' >/dev/null
+A4=$(rpc shareos.recovery apply '{"certificate":false}')
+check "recovery: certificate not reused -> the box keeps its own" "echo '$A4' | js \"'certificate:kept' in d['done']\" && [ \"\$(md5sum < $R/etc/ssl/shareos/server.key)\" = \"$KEY\" ]"
+run 'ubus call shareos.backup restore "$(cat /tmp/req-apply.json)"' >/dev/null
+check "recovery: discard" "rpc shareos.recovery discard '{}' | js \"d['ok']\" && [ ! -e $R/etc/shareos/recovery.json ]"
+# apps of the backup: installed one after the other, failures stay for the apps page
+printf 'webpad\nbad\n' > $R/etc/shareos/recovery-apps
+printf '#!/bin/sh\n[ "$2" = webpad ]\n' > $R/tmp/fake-apps; chmod +x $R/tmp/fake-apps
+run "SHAREOS_APPS=/tmp/fake-apps shareos-restore-apps"
+check "apps: installed app leaves the list, the failed one stays" "[ \"\$(cat $R/etc/shareos/recovery-apps)\" = bad ]"
+check "apps: pending in the status" "rpc shareos.recovery status '{}' | js \"d['pending_apps']==['bad']\""
+check "apps: dismiss" "rpc shareos.recovery apps_dismiss '{}' | js \"d['ok']\" && [ ! -e $R/etc/shareos/recovery-apps ]"
 
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]
