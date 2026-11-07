@@ -331,6 +331,10 @@
 		"description": "Plain users: their own area (\"Mein ShareOS\")",
 		"read": {
 			"ubus": {
+				"session": [
+					"access",
+					"destroy"
+				],
 				"shareos.me": [
 					"get",
 					"paperless",
