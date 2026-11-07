@@ -449,6 +449,11 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zk. Normale Benutzer bleiben angemeldet (0.2.0-beta.21)
+
+1. Als normaler Benutzer (kein Admin) in der Weboberfläche anmelden, eine beliebige Seite öffnen, neu laden (F5): die Seite bleibt, kein Login.
+2. Abmelden, dann im Browser zurück und neu laden: der Login erscheint (die Sitzung wurde auf der Box beendet).
+
 ## 14zj. Transmission: eigener Peer-Port (0.2.0-beta.21)
 
 1. Transmission-App öffnen → Einstellungen → Verbindung: Peer-Port auf z. B. `52140` setzen, speichern. Die App zeigt danach 52140 (auch nach Schließen und erneutem Öffnen).

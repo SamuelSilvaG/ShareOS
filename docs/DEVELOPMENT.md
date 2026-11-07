@@ -264,6 +264,16 @@ the box for why the web server was not running.
 | Time | What happened |
 |---|---|
 | 09:35 | A watch folder for the Transmission app (#121). The app's first attempt polled the folder from the browser, because the box dropped `watch-dir` – and Transmission only reads it from `settings.json` at start anyway. Now the box keeps the folder and restarts the account's daemon, which then adds new `.torrent` files by itself, also with the app closed. Everything goes into `v0.2.0-beta.20`. |
+| evening | Settings backups with **recovery mode** (#123): what the box needs to run comes back at once, the rest – users, shares, services, apps, certificate, own CA – is chosen after the restart. ShareOS Desktop gets the matching overview of backups on the computer. |
+
+### Saturday, 07.11.2026
+
+| Time | What happened |
+|---|---|
+| 09:00 | Transmission gets an own peer port per account (#124, issue #122), checked against the ports of the other services and accounts. Desktop 0.2.0 is released. |
+| 10:20 | Jan notices that plain users are logged out on every reload: their ACL lacked rpcd's `session access` (#125). |
+| 11:30 | Desktop 0.2.1: backups failed on beta.20 – rpcd refuses arguments a method does not declare. |
+| 14:20 | Desktop 0.2.2: the Alt-F switch took every Alt-F box for "not set up" (the login script names `passwd_again` on every page). Then the first **DNS-320LW** (rev A2, the white DNS-320L) goes from D-Link firmware via Alt-F to ShareOS with the desktop app – on the first try (#126). |
 
 ## Notable problems solved
 

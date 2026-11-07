@@ -445,6 +445,11 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zk. Plain users stay logged in (0.2.0-beta.21)
+
+1. Log in to the web interface as a plain user (not an admin), open any page, reload it (F5): the page stays, no login.
+2. Log out, then use the browser's back button and reload: the login appears (the session was ended on the box).
+
 ## 14zj. Transmission: own peer port (0.2.0-beta.21)
 
 1. Transmission app → settings → connection: set the peer port to e.g. `52140`, save. The app shows 52140 afterwards (also after closing and opening it again).
