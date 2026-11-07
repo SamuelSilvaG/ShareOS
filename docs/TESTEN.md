@@ -449,6 +449,14 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zl. Ordner-Browser (0.3.0-beta.2)
+
+1. *Freigaben → Neue Freigabe* → *Durchsuchen …*: Die Ordner des gewählten Laufwerks erscheinen. In einen Ordner gehen, *Nach oben* geht zurück. *Neuer Ordner* legt einen an und öffnet ihn. *Diesen Ordner wählen* trägt „Ordner auf dem Laufwerk“ ein.
+2. *Dienste → Medienserver* → *Unterordner hinzufügen*: zuerst die Freigaben, dann ihre Ordner (z. B. `Medien/TV Shows` – mit Leerzeichen). Wählen, *nur Videos* einstellen, *Speichern*. Im Terminal: `grep media_dir /tmp/shareos-dlna/minidlna.conf` zeigt `media_dir=V,/mnt/<laufwerk>/Medien/TV Shows`; der Fernseher zeigt nur diesen Ordner.
+3. *Entfernen* in der Zeile und *Speichern*: Der Ordner ist nicht mehr im Medienserver.
+4. *Cloud → Neuer Auftrag*: Freigabe wählen, *Durchsuchen …* neben *UNTERORDNER*, Ordner wählen, Hochladen. Nur dieser Ordner kommt in der Cloud an. Die Auftragsliste zeigt `Freigabe <name> / <ordner>`.
+5. Als normaler Benutzer mit *Dateien* unter *Meine Cloud*: Der Browser zeigt nur die eigenen Freigaben und den persönlichen Ordner. Ohne *Dateien*: Der Dialog sagt, dass der Ordner eingetippt werden muss.
+
 ## 14zk. Normale Benutzer bleiben angemeldet (0.3.0-beta.1)
 
 1. Als normaler Benutzer (kein Admin) in der Weboberfläche anmelden, eine beliebige Seite öffnen, neu laden (F5): die Seite bleibt, kein Login.

@@ -1446,7 +1446,18 @@
 		"Werden gerade installiert …": "Устанавливаются …",
 		"Noch nicht installiert:": "Ещё не установлены:",
 		"Apps aus Sicherung installieren": "Установить приложения из резервной копии",
-		"Die Apps werden im Hintergrund installiert.": "Приложения устанавливаются в фоне."
+		"Die Apps werden im Hintergrund installiert.": "Приложения устанавливаются в фоне.",
+		"Durchsuchen …": "Обзор …",
+		"Ordner wählen": "Выбрать папку",
+		"Diesen Ordner wählen": "Выбрать эту папку",
+		"Nach oben": "Вверх",
+		"Keine Unterordner.": "Нет вложенных папок.",
+		"UNTERORDNER": "ВЛОЖЕННЫЕ ПАПКИ",
+		"Unterordner hinzufügen": "Добавить вложенную папку",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Отдельные папки из общего ресурса – без отдельного общего ресурса.",
+		"UNTERORDNER (OPTIONAL)": "ВЛОЖЕННАЯ ПАПКА (НЕОБЯЗАТЕЛЬНО)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "Для обзора папок нужно право «Файлы» – введите папку вручную.",
+		"Ganze Freigaben oben in der Liste wählen.": "Целые общие ресурсы выберите в списке выше."
 	},
 	"patterns": [
 		[
@@ -2768,6 +2779,10 @@
 		[
 			"^Recovery: (.*)$",
 			"Восстановление: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"Личная папка / $1"
 		]
 	],
 	"words": [

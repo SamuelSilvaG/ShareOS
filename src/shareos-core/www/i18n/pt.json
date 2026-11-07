@@ -1446,7 +1446,18 @@
 		"Werden gerade installiert …": "A instalar …",
 		"Noch nicht installiert:": "Ainda não instaladas:",
 		"Apps aus Sicherung installieren": "Instalar apps do backup",
-		"Die Apps werden im Hintergrund installiert.": "As apps estão a ser instaladas em segundo plano."
+		"Die Apps werden im Hintergrund installiert.": "As apps estão a ser instaladas em segundo plano.",
+		"Durchsuchen …": "Procurar …",
+		"Ordner wählen": "Escolher pasta",
+		"Diesen Ordner wählen": "Escolher esta pasta",
+		"Nach oben": "Subir",
+		"Keine Unterordner.": "Nenhuma subpasta.",
+		"UNTERORDNER": "SUBPASTAS",
+		"Unterordner hinzufügen": "Adicionar subpasta",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Pastas de um compartilhamento – sem compartilhamento extra.",
+		"UNTERORDNER (OPTIONAL)": "SUBPASTA (OPCIONAL)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "O navegador de pastas precisa da permissão “Arquivos” – digite a pasta.",
+		"Ganze Freigaben oben in der Liste wählen.": "Escolha compartilhamentos inteiros na lista acima."
 	},
 	"patterns": [
 		[
@@ -2768,6 +2779,10 @@
 		[
 			"^Recovery: (.*)$",
 			"Recuperação: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"Pasta pessoal / $1"
 		]
 	],
 	"words": [

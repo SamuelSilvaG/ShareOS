@@ -246,9 +246,11 @@ local_path() {   # job -> local directory
 	l=$(job local); o=$(job owner); o=${o:--}
 	case "$l" in
 		home) [ "$o" != - ] && owner_home "$o" ;;
-		share:*)
-			s=${l#share:}; v=$(uci -q get shares."$s".volume); p=$(uci -q get shares."$s".path); p=${p:-$s}
-			[ -n "$v" ] && echo "/mnt/$v/$p" ;;
+		share:*)   # share:<name> or share:<name>/<subfolder>
+			s=${l#share:}; sub=${s#*/}; s=${s%%/*}; [ "$sub" != "${l#share:}" ] || sub=
+			case "/$sub/" in */../*|*/./*) return 1 ;; esac
+			v=$(uci -q get shares."$s".volume); p=$(uci -q get shares."$s".path); p=${p:-$s}
+			[ -n "$v" ] && echo "/mnt/$v/$p${sub:+/$sub}" ;;
 		home:*) [ "$o" != - ] && h=$(owner_home "$o") && echo "$h/${l#home:}" ;;
 	esac
 }

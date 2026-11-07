@@ -85,6 +85,14 @@ check "after the rescan the library is complete" "u status | js \"d['audio']==3 
 check "switched off: stopped, boot does not start it" "u set '{\"enabled\":false,\"name\":\"Wohnzimmer NAS\",\"media\":[{\"share\":\"musik\",\"type\":\"A\"}]}' | js \"not d['running']\" && run 'shareos-dlna boot; shareos-dlna status' | grep -q '^running=0'"
 u set '{"enabled":true,"name":"","media":[{"share":"filme","type":"-"}]}' >/dev/null
 check "name empty: the box's name; folder for everything" "run 'curl -s http://127.0.0.1:8200/rootDesc.xml' | grep -q \"<friendlyName>\$(run 'cat /proc/sys/kernel/hostname')</friendlyName>\" && grep -q '^media_dir=/mnt/daten/filme$' $R/tmp/shareos-dlna/minidlna.conf"
+# subfolders of a share (folder browser), also with spaces
+mkdir -p "$R/mnt/daten/filme/TV Shows/S1" "$R/mnt/daten/filme/Kino"
+o=$(u set '{"enabled":true,"name":"","media":[{"share":"filme","path":"TV Shows","type":"V"},{"share":"filme","path":"Kino/","type":"-"}]}')
+check "subfolders: in the settings and the config" "echo '$o' | js \"d['media']==[{'type':'V','share':'filme','path':'TV Shows'},{'type':'-','share':'filme','path':'Kino'}]\" && grep -q '^media_dir=V,/mnt/daten/filme/TV Shows$' $R/tmp/shareos-dlna/minidlna.conf && grep -q '^media_dir=/mnt/daten/filme/Kino$' $R/tmp/shareos-dlna/minidlna.conf" "$o"
+check "subfolders: share folders listed for the browser" "echo '$o' | js \"{'name':'filme','volume':'daten','path':'filme'} in d['share_dirs']\""
+check "subfolders: missing folder refused" "u set '{\"enabled\":true,\"name\":\"\",\"media\":[{\"share\":\"filme\",\"path\":\"nix\",\"type\":\"V\"}]}' | js \"d.get('error','').startswith('folder not found')\""
+check "subfolders: '..' refused" "u set '{\"enabled\":true,\"name\":\"\",\"media\":[{\"share\":\"filme\",\"path\":\"../musik\",\"type\":\"V\"}]}' | js \"'error' in d\""
+u set '{"enabled":true,"name":"","media":[{"share":"filme","type":"-"}]}' >/dev/null
 check "removing the system app stops the server" "run 'shareos-apps remove minidlna' >/dev/null; ! run 'shareos-dlna status' | grep -q '^running=1' && ! pgrep -f '[/]minidlnad ' >/dev/null"
 check "web sessions: status read, changes for admins (ACL)" "grep -q '\"shareos.dlna\"' $R/usr/share/rpcd/acl.d/shareos.json"
 

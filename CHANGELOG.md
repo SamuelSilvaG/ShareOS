@@ -4,6 +4,15 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.2
+
+- **Folder browser** (discussion #88): *Durchsuchen …* opens a dialog to pick a folder on the box – go into folders, back up, *Neuer Ordner*. The text field stays for typing.
+  - *Freigaben → Neue Freigabe*: the folder on the drive.
+  - *Dienste → Medienserver*: besides whole shares, **subfolders of a share** (e.g. `Medien/Filme`) with their own type (music, videos, pictures) – no extra share per folder. Only folders inside shares, because the media server shows them to every device in the network without a login. Folder names with spaces work.
+  - *Cloud → Auftrag*: an optional **subfolder** of the chosen share or the personal folder (`share:fotos/2026`). The box checks that the folder exists and stays inside the share (no `..`, no symlink out of it); plain users still only get their own shares.
+  - Listing uses the file functions of the box: admins browse the drives, plain users their shares and personal folder (needs the *Dateien* permission, otherwise the folder is typed).
+  - Tests: `test-dlna` (subfolders, spaces, missing folder, `..`), `test-cloud-paperless` (subfolder upload, missing folder, `..`, symlink out of the share).
+
 ## 0.3.0-beta.1
 
 - **DNS-320LW tested:** the white DNS-320L (H/W rev A2) is the same board – Alt-F detects it as `DNS-320L-Ax`, same flash layout, CPU, 256 MB RAM, the MAC address at the start of the rescue system. Switched from D-Link firmware 1.02 via Alt-F 1.0 to ShareOS 0.2.0-beta.20 with ShareOS Desktop 0.2.2; it uses the `DNS-320L-rev-Ax` files. Listed in `docs/DEVICES.md` / `GERAETE.md` and the README.

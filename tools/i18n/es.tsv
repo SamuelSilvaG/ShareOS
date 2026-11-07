@@ -1814,3 +1814,15 @@ P326	($1 certificados emitidos)
 P327	Grupos: $1
 P328	Certificados emitidos: $1
 P329	Recuperación: $1
+E1444	Examinar …
+E1445	Elegir carpeta
+E1446	Elegir esta carpeta
+E1447	Subir
+E1448	Sin subcarpetas.
+E1449	SUBCARPETAS
+E1450	Añadir subcarpeta
+E1451	Carpetas sueltas de un recurso compartido, sin crear otro recurso.
+E1452	SUBCARPETA (OPCIONAL)
+E1453	El explorador de carpetas necesita el permiso «Archivos»; escribe la carpeta.
+E1454	Elige los recursos compartidos completos en la lista de arriba.
+P330	Carpeta personal / $1

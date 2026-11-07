@@ -1446,7 +1446,18 @@
 		"Werden gerade installiert …": "Instalándose …",
 		"Noch nicht installiert:": "Aún no instaladas:",
 		"Apps aus Sicherung installieren": "Instalar apps de la copia",
-		"Die Apps werden im Hintergrund installiert.": "Las apps se están instalando en segundo plano."
+		"Die Apps werden im Hintergrund installiert.": "Las apps se están instalando en segundo plano.",
+		"Durchsuchen …": "Examinar …",
+		"Ordner wählen": "Elegir carpeta",
+		"Diesen Ordner wählen": "Elegir esta carpeta",
+		"Nach oben": "Subir",
+		"Keine Unterordner.": "Sin subcarpetas.",
+		"UNTERORDNER": "SUBCARPETAS",
+		"Unterordner hinzufügen": "Añadir subcarpeta",
+		"Einzelne Ordner aus einer Freigabe – dafür ist keine eigene Freigabe nötig.": "Carpetas sueltas de un recurso compartido, sin crear otro recurso.",
+		"UNTERORDNER (OPTIONAL)": "SUBCARPETA (OPCIONAL)",
+		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "El explorador de carpetas necesita el permiso «Archivos»; escribe la carpeta.",
+		"Ganze Freigaben oben in der Liste wählen.": "Elige los recursos compartidos completos en la lista de arriba."
 	},
 	"patterns": [
 		[
@@ -2768,6 +2779,10 @@
 		[
 			"^Recovery: (.*)$",
 			"Recuperación: $1"
+		],
+		[
+			"^Persönlicher Ordner / (.+)$",
+			"Carpeta personal / $1"
 		]
 	],
 	"words": [

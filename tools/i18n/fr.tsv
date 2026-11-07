@@ -1814,3 +1814,15 @@ P326	($1 certificats émis)
 P327	Groupes : $1
 P328	Certificats émis : $1
 P329	Récupération : $1
+E1444	Parcourir …
+E1445	Choisir un dossier
+E1446	Choisir ce dossier
+E1447	Remonter
+E1448	Aucun sous-dossier.
+E1449	SOUS-DOSSIERS
+E1450	Ajouter un sous-dossier
+E1451	Des dossiers d'un partage – sans partage supplémentaire.
+E1452	SOUS-DOSSIER (FACULTATIF)
+E1453	Le navigateur de dossiers nécessite le droit « Fichiers » – saisissez le dossier.
+E1454	Choisissez les partages entiers dans la liste ci-dessus.
+P330	Dossier personnel / $1

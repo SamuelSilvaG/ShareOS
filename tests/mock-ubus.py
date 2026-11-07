@@ -549,7 +549,10 @@ def call(obj, method, args):
                                       'name': '', 'hostname': 'skynet-nas', 'media': [{'type': 'A', 'share': 'musik'}, {'type': 'V', 'share': 'filme'}],
                                       'shares': ['backup', 'filme', 'fotos', 'musik']})
         if method == 'set':
-            d.update(enabled=args['enabled'], running=args['enabled'], name=args['name'], media=args['media'])
+            d.update(enabled=args['enabled'], running=args['enabled'], name=args['name'],
+                     media=[{k: v for k, v in m.items() if k != 'path' or v} for m in args['media']])
+        d['share_dirs'] = [{'name': n, 'volume': x['volume'], 'path': x['path']} for n, x in sorted(STATE['shares'].items())]
+        d['shares'] = [x['name'] for x in d['share_dirs']]
         if method == 'rescan':
             d['scanning'] = True
         return d

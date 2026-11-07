@@ -91,7 +91,7 @@ Version in brackets = first release with the feature.
 - System apps: native programs for the terminal from the store – nano, htop (0.2.0-beta.1); strace, iperf3 (0.2.0-beta.2); bash (0.2.0-beta.5); store in sections with search (0.2.0-beta.5)
 - Feature lock 0.2.0-beta.2: faster interface (results kept between requests, store refresh in the background), smaller system without OpenSSL, GIO and unused tools
 - App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (0.2.0-beta.1)
-- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4)
+- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4); a subfolder of a share as the local folder, picked in a folder browser (0.3.0-beta.2)
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4)
 - Installable as an app (PWA), status address for widget apps (beta.4)
 - "Share with" on Android: the installed app saves shared photos, files and links into `Geteilt` in the personal folder (0.2.0-beta.11)
@@ -106,7 +106,7 @@ Version in brackets = first release with the feature.
 - File dialog of the apps with the personal folder and the user's shares, also for accounts without file access (0.2.0-beta.11)
 - System apps declare their service in `app.json` (`"service"`), ShareOS starts and stops it through the firmware's controller; how to submit a system app: `sysapps/README.md` (0.2.0-beta.9)
 - Large system apps on the apps drive (link in `/opt`), the flash stays free (0.2.0-beta.7)
-- Media server (DLNA/UPnP AV, MiniDLNA as a system app): TVs and players play music, videos and pictures from chosen shares (0.2.0-beta.6)
+- Media server (DLNA/UPnP AV, MiniDLNA as a system app): TVs and players play music, videos and pictures from chosen shares (0.2.0-beta.6) or subfolders of them (0.3.0-beta.2)
 - VPN for the box in both directions (OpenVPN as a system app, app NetTunnel, admins only): as client with cleaned profiles, as server with its own CA and a ready-made profile per device; status chips of services and apps in the header (0.2.0-beta.6)
 - Transmission with own torrents per user: system app `transmission-daemon`, app permission `torrent`; apps bring the system apps they need (`"requires"`) (0.2.0-beta.4); lighter defaults for the small CPU (fewer peers, download queue, µTP off, lower priority, 0.2.0-beta.20); a watch folder for .torrent files, set by the app (0.2.0-beta.20); an own peer port per account, set by the app, for port forwarding (0.3.0-beta.1)
 - Media jobs: FFmpeg as a system app, app permission `media` – convert audio, change the container of videos, cut, in the background with the user's rights (MediaTranscoder) (0.2.0-beta.5)
