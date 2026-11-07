@@ -1460,7 +1460,13 @@
 		"Ganze Freigaben oben in der Liste wählen.": "Целые общие ресурсы выберите в списке выше.",
 		"Ausschneiden": "Вырезать",
 		"Zwischenablage leeren": "Очистить буфер обмена",
-		"Einfügen": "Вставить"
+		"Einfügen": "Вставить",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "Это устройство ещё не настроено. Коротко нажмите кнопку USB на передней панели, затем задайте пароль для root.",
+		"Warte auf die USB-Taste …": "Ожидание нажатия кнопки USB …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Кнопка нажата – задайте пароль (у вас есть 2 минуты).",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "НОВЫЙ ПАРОЛЬ (МИН. 8 СИМВОЛОВ)",
+		"PASSWORT WIEDERHOLEN": "ПОВТОРИТЕ ПАРОЛЬ",
+		"Passwort festlegen": "Задать пароль"
 	},
 	"patterns": [
 		[

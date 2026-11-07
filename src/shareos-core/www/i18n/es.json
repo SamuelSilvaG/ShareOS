@@ -1460,7 +1460,13 @@
 		"Ganze Freigaben oben in der Liste wählen.": "Elige los recursos compartidos completos en la lista de arriba.",
 		"Ausschneiden": "Cortar",
 		"Zwischenablage leeren": "Vaciar el portapapeles",
-		"Einfügen": "Pegar"
+		"Einfügen": "Pegar",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "Esta caja aún no está configurada. Pulsa brevemente el botón USB de la parte frontal de la caja y elige después una contraseña para root.",
+		"Warte auf die USB-Taste …": "Esperando el botón USB …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Botón detectado: elige ahora una contraseña (tienes 2 minutos).",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NUEVA CONTRASEÑA (MÍN. 8 CARACTERES)",
+		"PASSWORT WIEDERHOLEN": "REPETIR CONTRASEÑA",
+		"Passwort festlegen": "Establecer contraseña"
 	},
 	"patterns": [
 		[

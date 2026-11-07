@@ -31,7 +31,10 @@ for n, q in seqs.items():
     open(f'{T}/{n}.ev', 'wb').write(b''.join(ev(*e) + syn(e[0]) for e in q))
 PY
 mkdir -p $T/conf; : > $T/conf/shareos
-btn() { SHAREOS_BUTTONS_CONF=$T/conf SHAREOS_BUTTONS_DDPID=$T/dd.pid SHAREOS_BUTTONS_DEV=$T/$1.ev SHAREOS_BUTTONS_DRY=1 SHAREOS_BUTTONS_USB="${2:-}" \
+# claimed box (root has a hash) and a new box (root locked); never the host's /etc/shadow
+echo 'root:$6$salt$abcdefghijklmnopqrstuv:20000:0:99999:7:::' > $T/shadow
+echo 'root:!:20000:0:99999:7:::' > $T/shadow-locked
+btn() { SHAREOS_BUTTONS_SHADOW=${SHADOW:-$T/shadow} SHAREOS_BUTTONS_CONF=$T/conf SHAREOS_BUTTONS_DDPID=$T/dd.pid SHAREOS_BUTTONS_DEV=$T/$1.ev SHAREOS_BUTTONS_DRY=1 SHAREOS_BUTTONS_USB="${2:-}" \
 	"$BIN/ucode" -L "$(dirname "$BIN")/lib/ucode" -S "$TOP/src/shareos-core/usr/sbin/shareos-buttons" 2>&1; }
 
 o=$(btn short);   check "reset < 5 s: nothing" "! echo \"\$o\" | grep -q '^run:'" "$o"
@@ -59,6 +62,8 @@ find_dev() {   # name of the input device or "-" for none
 check "input device named gpio-keys (DNS-320L)" "[ \"\$(find_dev gpio-keys)\" = /dev/input/event1 ]" "$(find_dev gpio-keys)"
 check "input device named gpio_keys (DNS-325)" "[ \"\$(find_dev gpio_keys)\" = /dev/input/event1 ]" "$(find_dev gpio_keys)"
 check "no gpio-keys input device: none found" "[ \"\$(find_dev -)\" = none ]" "$(find_dev -)"
+
+o=$(SHADOW=$T/shadow-locked btn usb "/dev/sdc1 /mnt/usb-A vfat"); check "new box (root locked): USB button opens the claim window, removes nothing" "echo \"\$o\" | grep -qx 'run: mkdir -p /run/shareos && touch /run/shareos/claim-window' && ! echo \"\$o\" | grep -q eject" "$o"
 
 # access reset on a fake root
 R=$T/root; mkdir -p "$R/etc/config"

@@ -1,10 +1,14 @@
 {
 	"unauthenticated": {
-		"description": "Language and logo for the login page",
+		"description": "Language and logo for the login page, claiming a new box",
 		"read": {
 			"ubus": {
 				"shareos.ui": [
 					"get"
+				],
+				"shareos.setup": [
+					"claim_state",
+					"claim"
 				]
 			}
 		}

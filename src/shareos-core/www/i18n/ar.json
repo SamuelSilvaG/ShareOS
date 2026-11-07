@@ -1460,7 +1460,13 @@
 		"Ganze Freigaben oben in der Liste wählen.": "اختر المشاركات الكاملة من القائمة أعلاه.",
 		"Ausschneiden": "قص",
 		"Zwischenablage leeren": "إفراغ الحافظة",
-		"Einfügen": "لصق"
+		"Einfügen": "لصق",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "لم يتم إعداد هذا الجهاز بعد. اضغط ضغطة قصيرة على زر USB في مقدمة الجهاز، ثم اختر كلمة مرور لـ root.",
+		"Warte auf die USB-Taste …": "في انتظار زر USB …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "تم اكتشاف الزر – اختر كلمة المرور الآن (لديك دقيقتان).",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "كلمة المرور الجديدة (8 أحرف على الأقل)",
+		"PASSWORT WIEDERHOLEN": "أعد إدخال كلمة المرور",
+		"Passwort festlegen": "تعيين كلمة المرور"
 	},
 	"patterns": [
 		[

@@ -1831,3 +1831,9 @@ E1456	Limpar área de transferência
 P331	Colar ($1)
 P332	$1 item(ns) na área de transferência – escolha “Colar” na pasta de destino.
 E1457	Colar
+E1458	Esta caixa ainda não está configurada. Prima brevemente o botão USB na frente da caixa e depois escolha uma palavra-passe para root.
+E1459	A aguardar o botão USB …
+E1460	Botão detetado – escolha agora uma palavra-passe (tem 2 minutos).
+E1461	NOVA PALAVRA-PASSE (MÍN. 8 CARACTERES)
+E1462	REPETIR PALAVRA-PASSE
+E1463	Definir palavra-passe

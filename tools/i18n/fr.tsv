@@ -1831,3 +1831,9 @@ E1456	Vider le presse-papiers
 P331	Coller ($1)
 P332	$1 élément(s) dans le presse-papiers – choisissez « Coller » dans le dossier cible.
 E1457	Coller
+E1458	Cette boîte n’est pas encore configurée. Appuyez brièvement sur le bouton USB à l’avant de la boîte, puis choisissez un mot de passe pour root.
+E1459	En attente du bouton USB …
+E1460	Bouton détecté – choisissez maintenant un mot de passe (2 minutes).
+E1461	NOUVEAU MOT DE PASSE (8 CARACTÈRES MIN.)
+E1462	RÉPÉTER LE MOT DE PASSE
+E1463	Définir le mot de passe

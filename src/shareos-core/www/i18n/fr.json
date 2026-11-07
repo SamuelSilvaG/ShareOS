@@ -1460,7 +1460,13 @@
 		"Ganze Freigaben oben in der Liste wählen.": "Choisissez les partages entiers dans la liste ci-dessus.",
 		"Ausschneiden": "Couper",
 		"Zwischenablage leeren": "Vider le presse-papiers",
-		"Einfügen": "Coller"
+		"Einfügen": "Coller",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "Cette boîte n’est pas encore configurée. Appuyez brièvement sur le bouton USB à l’avant de la boîte, puis choisissez un mot de passe pour root.",
+		"Warte auf die USB-Taste …": "En attente du bouton USB …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Bouton détecté – choisissez maintenant un mot de passe (2 minutes).",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NOUVEAU MOT DE PASSE (8 CARACTÈRES MIN.)",
+		"PASSWORT WIEDERHOLEN": "RÉPÉTER LE MOT DE PASSE",
+		"Passwort festlegen": "Définir le mot de passe"
 	},
 	"patterns": [
 		[

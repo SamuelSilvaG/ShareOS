@@ -1460,7 +1460,13 @@
 		"Ganze Freigaben oben in der Liste wählen.": "Choose whole shares in the list above.",
 		"Ausschneiden": "Cut",
 		"Zwischenablage leeren": "Clear clipboard",
-		"Einfügen": "Paste"
+		"Einfügen": "Paste",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "This box is not set up yet. Press the USB button on the front of the box briefly, then choose a password for root.",
+		"Warte auf die USB-Taste …": "Waiting for the USB button …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Button detected – choose a password now (you have 2 minutes).",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NEW PASSWORD (MIN. 8 CHARACTERS)",
+		"PASSWORT WIEDERHOLEN": "REPEAT PASSWORD",
+		"Passwort festlegen": "Set password"
 	},
 	"patterns": [
 		[

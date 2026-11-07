@@ -1460,7 +1460,13 @@
 		"Ganze Freigaben oben in der Liste wählen.": "पूरे शेयर ऊपर की सूची में चुनें।",
 		"Ausschneiden": "काटें",
 		"Zwischenablage leeren": "क्लिपबोर्ड खाली करें",
-		"Einfügen": "चिपकाएँ"
+		"Einfügen": "चिपकाएँ",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "यह बॉक्स अभी सेट अप नहीं है। बॉक्स के आगे वाले USB बटन को थोड़ा दबाएँ, फिर root के लिए पासवर्ड चुनें।",
+		"Warte auf die USB-Taste …": "USB बटन की प्रतीक्षा …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "बटन मिल गया – अब पासवर्ड चुनें (आपके पास 2 मिनट हैं)।",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "नया पासवर्ड (कम से कम 8 अक्षर)",
+		"PASSWORT WIEDERHOLEN": "पासवर्ड दोबारा लिखें",
+		"Passwort festlegen": "पासवर्ड सेट करें"
 	},
 	"patterns": [
 		[
