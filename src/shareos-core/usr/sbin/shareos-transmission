@@ -25,7 +25,10 @@
 //   - remote control only through a Unix socket in /tmp/shareos-transmission/
 //     <account>/ (0700), reached by the apps web server's proxy
 //     /_shareos/cgi/transmission – no TCP port for the RPC;
-//   - peer port 51413 for root, 51413 + (uid - 999) for the others.
+//   - peer port 51413 for root, 51413 + (uid - 999) for the others, or the
+//     account's own one (app setting, .shareos-peerport, checked: 1024-65535,
+//     not the default or own port of another account, not a port of the
+//     box's services, not in use).
 // Every JSON line printed is the result; exit code 1 on errors.
 //
 import { readfile, writefile, stat, lsdir, popen, unlink } from 'fs';
@@ -97,13 +100,82 @@ function own_watch(pl) {
 	return d != '' && substr(d, 0, 5) == '/mnt/' && index(d, '/../') < 0 && stat(ROOT + d)?.type == 'directory' ? d : null;
 }
 
+// --- peer port -----------------------------------------------------------------
+const PORT_BASE = 51413, PORT_SPAN = 1000;
+// ports of the box's own services (and Syncthing's per-account range)
+const RESERVED = [ 21, 22, 23, 25, 53, 67, 68, 80, 111, 123, 137, 138, 139, 161, 443, 445, 548, 631, 1900, 2049, 3260,
+	5353, 8080, 8200, 8384, 10050, 10051, 21027 ];
+const RESERVED_RANGES = [ [ 22000, 22999 ] ];
+
+function default_port(uid) { return uid == 0 ? PORT_BASE : PORT_BASE + ((uid - 999) % PORT_SPAN); }
+function run_uid(pl) { return pl.run_as == 'root' ? 0 : (uid_of(pl.run_as) ?? 1000); }
+
+// the account's own peer port as stored (null: none or not a port)
+function own_port(pl) {
+	let t = trim(readfile(ROOT + pl.state + '/.shareos-peerport') ?? '');
+	let p = match(t, /^[0-9]{4,5}$/) ? +t : 0;
+	return p >= 1024 && p <= 65535 ? p : null;
+}
+
+// ports something listens on (TCP) or has bound (UDP), from /proc/net
+function busy_ports() {
+	let busy = {};
+	for (let f in [ 'tcp', 'tcp6', 'udp', 'udp6' ])
+		for (let l in split(readfile(ROOT + '/proc/net/' + f) ?? '', '\n')) {
+			let m = match(l, /^ *[0-9]+: [0-9A-F]+:([0-9A-F]{4}) [0-9A-F]+:[0-9A-F]{4} ([0-9A-F]{2})/);
+			if (m && (substr(f, 0, 3) == 'udp' || m[2] == '0A')) busy[hex(m[1])] = true;
+		}
+	return busy;
+}
+
+// the default ports of all accounts (root and uid >= 1000), so a later start
+// of another account's daemon finds its port free
+function account_defaults() {
+	let ports = [ default_port(0) ];
+	for (let l in split(readfile(ROOT + '/etc/passwd') ?? '', '\n')) {
+		let uid = +(split(l, ':')[2] ?? -1);
+		if (uid >= 1000 && uid < 65534) push(ports, default_port(uid));
+	}
+	return ports;
+}
+
+// the port the daemon gets: the own one while it fits (a stored value is checked
+// again – the file lies in the account's folder), else the default
+function effective_port(u, pl) {
+	let p = own_port(pl), mine = default_port(run_uid(pl));
+	if (p == null || p == mine) return mine;
+	if (index(account_defaults(), p) >= 0) return mine;
+	if (index(RESERVED, p) >= 0) return mine;
+	for (let rg in RESERVED_RANGES) if (p >= rg[0] && p <= rg[1]) return mine;
+	return p;
+}
+
+// why the port cannot be the account's peer port (null: it can)
+function port_problem(u, pl, port, cur) {
+	if (!(port >= 1024 && port <= 65535)) return 'the peer port must be between 1024 and 65535';
+	let mine = default_port(run_uid(pl));
+	if (port != mine && index(account_defaults(), port) >= 0) return 'port ' + port + ' is the default of another account';
+	if (index(RESERVED, port) >= 0) return 'port ' + port + ' is used by a service of the box';
+	for (let rg in RESERVED_RANGES)
+		if (port >= rg[0] && port <= rg[1]) return 'ports ' + rg[0] + '-' + rg[1] + ' are used by Syncthing';
+	for (let a in lsdir(ENABLED) ?? []) {
+		if (a == u || !match(a, NAME_RE)) continue;
+		let p2 = places(a);
+		if (p2 && effective_port(a, p2) == port) return 'port ' + port + ' is used by Transmission of another account';
+	}
+	// in use by something else (the account's own running daemon may hold it)
+	if (port != cur && busy_ports()[port]) return 'port ' + port + ' is in use';
+	return null;
+}
+
 // watch: the folder the daemon watches for .torrent files; watch_autobrr: it is
 // autobrr's hand-over folder (the account's own one cannot be set then)
 function status(u) {
 	let p = pid_of(u), pl = places(u), drop = autobrr_drop(u);
 	return { account: u, installed: stat(BIN)?.type == 'file', running: !!p, pid: p, socket: p ? sock_of(u) : null,
 		enabled: stat(ENABLED + '/' + u)?.type == 'file',
-		watch: drop ?? (pl ? own_watch(pl) : null), watch_autobrr: !!drop };
+		watch: drop ?? (pl ? own_watch(pl) : null), watch_autobrr: !!drop,
+		peer_port: pl ? effective_port(u, pl) : null, peer_port_own: pl ? own_port(pl) != null : false };
 }
 
 // settings the box decides; the rest (speed limits …) stays as the user set it
@@ -119,7 +191,7 @@ function settings(u, pl) {
 	s['rpc-authentication-required'] = false;
 	s['rpc-whitelist-enabled'] = false;
 	s['rpc-host-whitelist-enabled'] = false;
-	s['peer-port'] = uid == 0 ? 51413 : 51413 + ((uid - 999) % 1000);
+	s['peer-port'] = effective_port(u, pl);
 	s['peer-port-random-on-start'] = false;
 	// nothing the remote control could use to run programs
 	s['script-torrent-done-enabled'] = false;
@@ -222,6 +294,27 @@ case 'watch': {
 	out({ ok: true, watch: d == '' ? null : d });
 	break;
 }
+// port <account> <port|"">: the account's own peer port ("" = the default);
+// the daemon restarts with it
+case 'port': {
+	if (!match(u ?? '', NAME_RE)) die('invalid account');
+	let pl = places(u), v = ARGV[2] ?? '';
+	if (!pl) die('no personal folder on a drive');
+	let f = ROOT + pl.state + '/.shareos-peerport';
+	if (v == '') unlink(f);
+	else {
+		if (!match(v, /^[0-9]{1,5}$/)) die('the peer port must be a number');
+		let cur = pid_of(u) ? effective_port(u, pl) : null;
+		let why = port_problem(u, pl, +v, cur);
+		if (why) die(why);
+		sh('mkdir -p ' + shq(ROOT + pl.state));
+		writefile(f, v + '\n');
+		if (pl.run_as != 'root') sh('chown ' + shq(pl.run_as) + ' ' + shq(f));
+	}
+	if (pid_of(u)) { sh('/usr/sbin/shareos-transmission stop ' + shq(u)); sh('/usr/sbin/shareos-transmission start ' + shq(u)); }
+	out({ ok: true, peer_port: effective_port(u, pl) });
+	break;
+}
 case 'boot':
 	if (stat(BIN)?.type != 'file') { out({ started: [] }); break; }
 	let started = [];
@@ -238,5 +331,5 @@ case 'stop-all':
 	out({ ok: true });
 	break;
 default:
-	die('usage: shareos-transmission start|stop|status <account> | boot | stop-all');
+	die('usage: shareos-transmission start|stop|status <account> | watch <account> <folder> | port <account> <port> | boot | stop-all');
 }

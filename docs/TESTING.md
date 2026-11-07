@@ -445,6 +445,14 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zj. Transmission: own peer port (0.2.0-beta.21)
+
+1. Transmission app → settings → connection: set the peer port to e.g. `52140`, save. The app shows 52140 afterwards (also after closing and opening it again).
+2. On the box: `cat /mnt/<drive>/home/<account>/.config/transmission-daemon/.shareos-peerport` → `52140`; `netstat -ltn | grep 52140` shows the daemon.
+3. Forward the port in the router; *test port* in the app: open.
+4. Invalid values give an error instead of "saved": `80`, `70000`, `22000` (Syncthing), `8200` (DLNA), another account's port.
+5. Restart the box: the port stays 52140.
+
 ## 14zi. Settings backup with recovery mode (0.2.0-beta.21)
 
 1. System → Allgemein → *Sichern*: without a password, *HTTPS-Zertifikat mitsichern* and *Eigene CA mitsichern* are greyed out. Enter a password (at least 6 characters): both can be chosen. *Sicherung herunterladen*. The file shows `host`, `created` and `version` in plain text, everything else is encrypted.

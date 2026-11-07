@@ -4627,7 +4627,7 @@ return {
 					st = json(r.out ?? '') ?? { error: trim(r.out) || 'cannot start' };
 					if (st.error) return { error: st.error, installed: st.installed };
 				}
-				return { user: g.u, socket: st.socket, watch: st.watch, watch_autobrr: !!st.watch_autobrr,
+				return { user: g.u, socket: st.socket, watch: st.watch, watch_autobrr: !!st.watch_autobrr, peer_port: st.peer_port,
 					roots: map(files_roots(g.u), (r) => ({ name: r.name, path: realpath(r.path) ?? r.path, home: !!r.home })) };
 			}
 		},
@@ -4657,6 +4657,20 @@ return {
 					abs = realpath(p.abs);
 				}
 				let r = sh('/usr/sbin/shareos-transmission watch ' + shq(g.u) + ' ' + shq(abs));
+				return json(trim(r.out) || 'null') ?? { error: trim(r.out) || 'failed' };
+			}
+		},
+
+		// the account's own peer port (0 = the default of the box); the
+		// controller checks range, other accounts, the box's services, ports in use
+		port: {
+			args: { grant: '', port: 0 },
+			call: function(req) {
+				let g = app_grant_user(req.args.grant);
+				if (!g || index(g.app.permissions ?? [], 'torrent') < 0) return { error: 'no access' };
+				let p = req.args.port;
+				if (type(p) != 'int' || p < 0 || p > 65535) return { error: 'the peer port must be a number' };
+				let r = sh('/usr/sbin/shareos-transmission port ' + shq(g.u) + ' ' + shq(p == 0 ? '' : '' + p));
 				return json(trim(r.out) || 'null') ?? { error: trim(r.out) || 'failed' };
 			}
 		}
