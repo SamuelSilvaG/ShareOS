@@ -84,6 +84,9 @@ i=0; until run "ubus list shareos.me" >/dev/null 2>&1 || [ $i -ge 30 ]; do sleep
 L=$(rpc session login '{"username":"anna","password":"anna1234"}')
 SID=$(echo "$L" | python3 -c 'import json,sys; print(json.load(sys.stdin)["ubus_rpc_session"])' 2>/dev/null)
 check "user can log in" "[ -n \"\$SID\" ]"
+# the web interface checks a stored session on reload and ends it on logout
+check "user may check and end the own session" "echo '$L' | js \"sorted(d['acls']['ubus']['session'])==['access','destroy']\""
+check "user session is valid (reload)" "rpc session access '{\"ubus_rpc_session\":\"$SID\",\"scope\":\"ubus\",\"object\":\"session\",\"function\":\"access\"}' | js \"d['access']\""
 check "user has only the own-area ACL" "echo '$L' | js \"'shareos.me' in d['acls']['ubus'] and 'shareos.system' not in d['acls']['ubus']\""
 check "share-only user cannot log in" "! rpc session login '{\"username\":\"tv\",\"password\":\"tvtvtv\"}' | grep -q ubus_rpc_session"
 check "bind with a wrong password fails" "rpc shareos.me bind '{\"username\":\"anna\",\"password\":\"nope\",\"ubus_rpc_session\":\"$SID\"}' | grep -q 'login failed'"
