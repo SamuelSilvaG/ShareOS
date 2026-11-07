@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "Le navigateur de dossiers nécessite le droit « Fichiers » – saisissez le dossier.",
 		"Ganze Freigaben oben in der Liste wählen.": "Choisissez les partages entiers dans la liste ci-dessus.",
 		"Ausschneiden": "Couper",
-		"Zwischenablage leeren": "Vider le presse-papiers"
+		"Zwischenablage leeren": "Vider le presse-papiers",
+		"Einfügen": "Coller"
 	},
 	"patterns": [
 		[

@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "ফোল্ডার ব্রাউজারের জন্য “ফাইল” অনুমতি দরকার – ফোল্ডারটি টাইপ করুন।",
 		"Ganze Freigaben oben in der Liste wählen.": "পুরো শেয়ারগুলি উপরের তালিকায় বাছুন।",
 		"Ausschneiden": "কাটুন",
-		"Zwischenablage leeren": "ক্লিপবোর্ড খালি করুন"
+		"Zwischenablage leeren": "ক্লিপবোর্ড খালি করুন",
+		"Einfügen": "পেস্ট করুন"
 	},
 	"patterns": [
 		[

@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "文件夹浏览需要“文件”权限——请手动输入文件夹。",
 		"Ganze Freigaben oben in der Liste wählen.": "请在上方列表中选择整个共享。",
 		"Ausschneiden": "剪切",
-		"Zwischenablage leeren": "清空剪贴板"
+		"Zwischenablage leeren": "清空剪贴板",
+		"Einfügen": "粘贴"
 	},
 	"patterns": [
 		[

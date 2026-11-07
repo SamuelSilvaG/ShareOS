@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "The folder browser needs the “Files” permission – please type the folder.",
 		"Ganze Freigaben oben in der Liste wählen.": "Choose whole shares in the list above.",
 		"Ausschneiden": "Cut",
-		"Zwischenablage leeren": "Clear clipboard"
+		"Zwischenablage leeren": "Clear clipboard",
+		"Einfügen": "Paste"
 	},
 	"patterns": [
 		[

@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "Для обзора папок нужно право «Файлы» – введите папку вручную.",
 		"Ganze Freigaben oben in der Liste wählen.": "Целые общие ресурсы выберите в списке выше.",
 		"Ausschneiden": "Вырезать",
-		"Zwischenablage leeren": "Очистить буфер обмена"
+		"Zwischenablage leeren": "Очистить буфер обмена",
+		"Einfügen": "Вставить"
 	},
 	"patterns": [
 		[

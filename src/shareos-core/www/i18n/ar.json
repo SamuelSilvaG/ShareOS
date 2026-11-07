@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "يحتاج مستعرض المجلدات إلى صلاحية «الملفات» – اكتب المجلد يدويًا.",
 		"Ganze Freigaben oben in der Liste wählen.": "اختر المشاركات الكاملة من القائمة أعلاه.",
 		"Ausschneiden": "قص",
-		"Zwischenablage leeren": "إفراغ الحافظة"
+		"Zwischenablage leeren": "إفراغ الحافظة",
+		"Einfügen": "لصق"
 	},
 	"patterns": [
 		[

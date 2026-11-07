@@ -1459,7 +1459,8 @@
 		"Der Ordner-Browser braucht das Recht „Dateien“ – den Ordner bitte eintippen.": "O navegador de pastas precisa da permissão “Arquivos” – digite a pasta.",
 		"Ganze Freigaben oben in der Liste wählen.": "Escolha compartilhamentos inteiros na lista acima.",
 		"Ausschneiden": "Recortar",
-		"Zwischenablage leeren": "Limpar área de transferência"
+		"Zwischenablage leeren": "Limpar área de transferência",
+		"Einfügen": "Colar"
 	},
 	"patterns": [
 		[
