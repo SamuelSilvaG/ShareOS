@@ -253,7 +253,10 @@ CONFIG_TUN=y
 CONFIG_STRICT_KERNEL_RWX=y
 CONFIG_STACKPROTECTOR=y
 CONFIG_STACKPROTECTOR_STRONG=y
-CONFIG_FORTIFY_SOURCE=y
+# FORTIFY_SOURCE breaks the decompressor link: atags_to_fdt.c (needed for
+# ARM_ATAG_DTB_COMPAT, the original U-Boot) then calls warn_slowpath_fmt,
+# which the decompressor does not have
+# CONFIG_FORTIFY_SOURCE is not set
 CONFIG_HARDENED_USERCOPY=y
 CONFIG_SLAB_FREELIST_RANDOM=y
 CONFIG_SHUFFLE_PAGE_ALLOCATOR=y
