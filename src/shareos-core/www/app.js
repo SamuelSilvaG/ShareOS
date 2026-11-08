@@ -788,24 +788,136 @@ function parseRoute() {
 	if (!(S.route.tab === 'apps' && S.route.sub === 'run')) S.appPage = null;
 }
 
+// Pages are rendered as a whole (innerHTML), also by the background timers
+// (overview every 5 s, firmware, storage, …). On the same page a new render
+// keeps what the user is doing: typed or changed form fields (as long as the
+// box did not change the same field), focus and cursor, scroll positions and
+// open <details>, and file fields with a chosen file (the element itself is
+// moved into the new page – a file cannot be set again by script). While a
+// file dialog is open, a render of the same page waits until it closes.
+const uiKey = (el) => (el.closest('form')?.id || '') + '|' + (el.id || el.name || el.dataset.target || '');
+
+// a form that was just sent (submit or its primary button) is not restored:
+// after saving, the page shows what the box has – and forms that add
+// something (a user, a share …) start empty again
+const uiSent = {};
+const markSent = (f) => { if (f) uiSent[f.id || '|'] = Date.now(); };
+document.addEventListener('submit', (e) => markSent(e.target), true);
+document.addEventListener('click', (e) => { const b = e.target.closest?.('button[type=submit], .btn.primary'); if (b) markSent(b.closest('form')); }, true);
+const uiWasSent = (el) => Date.now() - (uiSent[el.closest('form')?.id || '|'] || 0) < 60000;
+
+function uiDirty(el) {
+	if (el.type === 'checkbox' || el.type === 'radio') return el.checked !== el.defaultChecked;
+	if (el.tagName === 'SELECT') return [...el.options].some((o) => o.selected !== o.defaultSelected);
+	return el.value !== el.defaultValue;
+}
+
+function uiDefault(el) {
+	if (el.type === 'checkbox' || el.type === 'radio') return el.defaultChecked;
+	if (el.tagName === 'SELECT') return [...el.options].map((o) => o.defaultSelected).join();
+	return el.defaultValue;
+}
+
+function uiCapture(main) {
+	const count = {}, fields = {}, scroll = [], open = [];
+	main.querySelectorAll('input:not([type=file]):not([type=hidden]), textarea, select').forEach((el) => {
+		const k = uiKey(el);
+		if (k === '|') return;
+		const n = count[k] = (count[k] || 0) + 1;
+		if (uiDirty(el)) fields[k + '#' + n] = { def: uiDefault(el), value: el.value, checked: el.checked,
+			sel: el.tagName === 'SELECT' ? [...el.selectedOptions].map((o) => o.value) : null };
+	});
+	main.querySelectorAll('*').forEach((el, i) => { if (el.scrollTop > 0 || el.scrollLeft > 0) scroll.push([el.tagName + '.' + el.className, i, el.scrollTop, el.scrollLeft]); });
+	main.querySelectorAll('details').forEach((el, i) => open.push(el.open));
+	const files = {}, fcount = {};
+	main.querySelectorAll('input[type=file]').forEach((el) => {
+		const k = uiKey(el), n = fcount[k] = (fcount[k] || 0) + 1;
+		if (k !== '|' && el.files?.length) files[k + '#' + n] = el;
+	});
+	const a = document.activeElement;
+	const focus = a && main.contains(a) && (a.id || a.name) ? { key: uiKey(a), start: a.selectionStart, end: a.selectionEnd } : null;
+	return { fields, files, scroll, open, focus, page: [window.scrollX, window.scrollY, main.scrollTop] };
+}
+
+function uiRestore(main, ui) {
+	const count = {};
+	main.querySelectorAll('input:not([type=file]):not([type=hidden]), textarea, select').forEach((el) => {
+		const k = uiKey(el);
+		if (k === '|') return;
+		const n = count[k] = (count[k] || 0) + 1, f = ui.fields[k + '#' + n];
+		// only where the box still sends the same value: a changed value from the box wins
+		if (!f || uiDefault(el) !== f.def || uiWasSent(el)) return;
+		if (el.type === 'checkbox' || el.type === 'radio') el.checked = f.checked;
+		else if (f.sel) [...el.options].forEach((o) => { o.selected = f.sel.includes(o.value); });
+		else el.value = f.value;
+	});
+	const fcount = {};
+	main.querySelectorAll('input[type=file]').forEach((el) => {
+		const k = uiKey(el), n = fcount[k] = (fcount[k] || 0) + 1, old = ui.files[k + '#' + n];
+		// also while it is being sent (an upload is running); handlers reset the form when done
+		if (old) el.replaceWith(old);
+	});
+	const all = main.querySelectorAll('*');
+	ui.scroll.forEach(([sig, i, top, left]) => {
+		const el = all[i];
+		if (el && el.tagName + '.' + el.className === sig) { el.scrollTop = top; el.scrollLeft = left; }
+	});
+	const det = main.querySelectorAll('details');
+	if (det.length === ui.open.length) det.forEach((el, i) => { el.open = ui.open[i]; });
+	main.scrollTop = ui.page[2];
+	window.scrollTo(ui.page[0], ui.page[1]);
+	if (ui.focus) {
+		const el = [...main.querySelectorAll('input, textarea, select, button')].find((x) => (x.id || x.name) && uiKey(x) === ui.focus.key);
+		if (el) {
+			el.focus({ preventScroll: true });
+			try { if (ui.focus.start != null) el.setSelectionRange(ui.focus.start, ui.focus.end); } catch (e) { /* not a text field */ }
+		}
+	}
+}
+
+// a file dialog is open (click on a file field until change/cancel/focus back)
+let fileDialog = 0;
+document.addEventListener('click', (e) => { if (e.target.matches?.('input[type=file]')) fileDialog = Date.now(); }, true);
+const fileDialogDone = () => {
+	if (!fileDialog) return;
+	fileDialog = 0;
+	if (S.renderPending) setTimeout(() => { if (S.renderPending) renderMain(); }, 0);
+};
+document.addEventListener('change', (e) => { if (e.target.matches?.('input[type=file]')) fileDialogDone(); }, true);
+document.addEventListener('cancel', (e) => { if (e.target.matches?.('input[type=file]')) fileDialogDone(); }, true);
+window.addEventListener('focus', () => setTimeout(fileDialogDone, 500));
+
 function renderMain() {
 	const main = $('#main');
 	if (!main) return;
-	if (S.rec) { main.innerHTML = recoveryView().s; return; }
-	if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); return; }
-	// an app shown in the page keeps running: no new render of the same app
-	if (S.route.tab === 'apps' && S.route.sub === 'run' && $('#appframe')?.dataset.id === S.route.app) return;
-	const v = VIEWS[S.route.tab] || VIEWS.overview;
-	// a page that fails must not leave the previous page standing (it looked
-	// as if the tab did not react): show the error instead
-	try {
-		main.innerHTML = v().s;
-		VIEWS_AFTER[S.route.tab]?.();
-	} catch (e) {
-		console.error('render ' + location.hash, e);
-		main.innerHTML = renderError(e).s;
+	const page = location.hash + (S.rec ? '|rec' : S.fr ? '|fr' : '');
+	const same = main.dataset.page === page;
+	// same page while a file dialog is open: render when it closes
+	if (same && fileDialog && Date.now() - fileDialog < 120000) {
+		S.renderPending = true;
+		return;
 	}
-	appFrameLoad();
+	S.renderPending = false;
+	const ui = same ? uiCapture(main) : null;
+	main.dataset.page = page;
+	if (S.rec) main.innerHTML = recoveryView().s;
+	else if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); }
+	else {
+		// an app shown in the page keeps running: no new render of the same app
+		if (S.route.tab === 'apps' && S.route.sub === 'run' && $('#appframe')?.dataset.id === S.route.app) return;
+		const v = VIEWS[S.route.tab] || VIEWS.overview;
+		// a page that fails must not leave the previous page standing (it looked
+		// as if the tab did not react): show the error instead
+		try {
+			main.innerHTML = v().s;
+			VIEWS_AFTER[S.route.tab]?.();
+		} catch (e) {
+			console.error('render ' + location.hash, e);
+			main.innerHTML = renderError(e).s;
+		}
+	}
+	if (ui) uiRestore(main, ui);
+	if (!S.rec && !S.fr) appFrameLoad();
 }
 
 function renderError(e) {

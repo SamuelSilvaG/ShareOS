@@ -445,6 +445,13 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zo. Redraws keep input and scroll position (0.3.0-beta.2)
+
+1. *System → Firmware*: *Datei* → choose a `.sysupgrade.tar` and take your time in the dialog (> 30 s): the file is shown at the first try.
+2. Same page: open the release notes, scroll down, wait 1 minute: the page stays where it is.
+3. First-run wizard (or *Benutzer → Neuer Benutzer*): type a password slowly, wait 10 s: the fields keep their content.
+4. Save a user: the form closes as before; *Neuer Benutzer* starts empty.
+
 ## 14zn. Hardening (0.3.0-beta.2)
 
 1. After the update, in the terminal: `sysctl kernel.kptr_restrict kernel.sysrq net.ipv4.conf.all.rp_filter` → `2`, `176`, `2`.
