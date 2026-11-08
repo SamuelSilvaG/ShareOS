@@ -1460,7 +1460,14 @@
 		"Ganze Freigaben oben in der Liste wählen.": "Escolha compartilhamentos inteiros na lista acima.",
 		"Ausschneiden": "Recortar",
 		"Zwischenablage leeren": "Limpar área de transferência",
-		"Einfügen": "Colar"
+		"Einfügen": "Colar",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "Esta caixa ainda não está configurada. Prima brevemente o botão USB na frente da caixa e depois escolha uma palavra-passe para root.",
+		"Warte auf die USB-Taste …": "A aguardar o botão USB …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "Botão detetado – escolha agora uma palavra-passe (tem 2 minutos).",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NOVA PALAVRA-PASSE (MÍN. 8 CARACTERES)",
+		"PASSWORT WIEDERHOLEN": "REPETIR PALAVRA-PASSE",
+		"Passwort festlegen": "Definir palavra-passe",
+		"Alles lässt sich später unter System einstellen.": "Tudo pode ser ajustado depois em Sistema."
 	},
 	"patterns": [
 		[

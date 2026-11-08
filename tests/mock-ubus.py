@@ -405,7 +405,7 @@ def apps_call(method, args):
 def call(obj, method, args):
     if obj == 'session' and method == 'login':
         user, pw = args.get('username'), args.get('password')
-        if user == 'root' and pw == 'shareos':
+        if user == 'root' and pw == STATE.setdefault('root_pw', '' if os.environ.get('MOCK_UNCLAIMED') == '1' else 'shareos') and pw:
             return {'ubus_rpc_session': SID}
         x = STATE['users'].get(user)
         if x and x['pw'] == pw and (x['role'] == 'admin' or (x['role'] == 'user' and x['web'])):
@@ -718,8 +718,24 @@ def call(obj, method, args):
         return {'now': int(time.time()) + t['offset'], 'timezone': t['timezone'], 'ntp': t['ntp'], 'servers': t['servers'],
                 'last_sync': t['last_sync'], 'ntp_running': t['ntp'], 'rtc': True}
     if obj == 'shareos.setup':
+        # MOCK_UNCLAIMED=1: a new box, root locked; the "USB button" counts as
+        # pressed from the third state query on
+        cl = STATE.setdefault('claim', {'unclaimed': os.environ.get('MOCK_UNCLAIMED') == '1', 'polls': 0})
+        if method == 'claim_state':
+            cl['polls'] += 1
+            return {'unclaimed': cl['unclaimed'], 'window': cl['unclaimed'] and cl['polls'] >= 3, 'seconds': 120}
+        if method == 'claim':
+            if not cl['unclaimed']:
+                return {'error': 'already claimed'}
+            if cl['polls'] < 3:
+                return {'error': 'press the USB button first'}
+            if len(args.get('password', '')) < 8:
+                return {'error': 'password too short (min. 8)'}
+            cl['unclaimed'] = False
+            STATE['root_pw'] = args['password']
+            return {'ok': True}
         if method == 'status':
-            return {'done': STATE['setup_done'], 'hostname': 'shareos', 'timezone': 'Europe/Berlin', 'lang': STATE['lang'], 'channel': 'stable'}
+            return {'done': STATE['setup_done'], 'default_password': STATE.get('root_pw', 'shareos') == 'shareos', 'hostname': 'shareos', 'timezone': 'Europe/Berlin', 'lang': STATE['lang'], 'channel': 'stable'}
         if method == 'zones':
             return {'zones': ['Europe/Berlin', 'Europe/London', 'Europe/Vienna', 'Europe/Zurich', 'America/New_York', 'UTC'], 'current': 'Europe/Berlin'}
         if method == 'altf':
@@ -980,7 +996,8 @@ class H(SimpleHTTPRequestHandler):
         params = req.get('params', [])
         if req.get('method') == 'call':
             sid, obj, method, args = params
-            if obj not in ('session',) and not (obj == 'shareos.ui' and method == 'get') and sid != SID:
+            public = (obj == 'shareos.ui' and method == 'get') or (obj == 'shareos.setup' and method in ('claim_state', 'claim'))
+            if obj not in ('session',) and not public and sid != SID:
                 body = {'jsonrpc': '2.0', 'id': req.get('id'), 'error': {'code': -32002, 'message': 'Access denied'}}
             else:
                 r = call(obj, method, args)

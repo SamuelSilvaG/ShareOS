@@ -1460,7 +1460,14 @@
 		"Ganze Freigaben oben in der Liste wählen.": "পুরো শেয়ারগুলি উপরের তালিকায় বাছুন।",
 		"Ausschneiden": "কাটুন",
 		"Zwischenablage leeren": "ক্লিপবোর্ড খালি করুন",
-		"Einfügen": "পেস্ট করুন"
+		"Einfügen": "পেস্ট করুন",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "এই বক্সটি এখনও সেট আপ করা হয়নি। বক্সের সামনের USB বোতামটি একটু চাপুন, তারপর root-এর জন্য একটি পাসওয়ার্ড বেছে নিন।",
+		"Warte auf die USB-Taste …": "USB বোতামের জন্য অপেক্ষা …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "বোতাম শনাক্ত হয়েছে – এখন পাসওয়ার্ড বেছে নিন (আপনার হাতে ২ মিনিট)।",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)",
+		"PASSWORT WIEDERHOLEN": "পাসওয়ার্ড আবার লিখুন",
+		"Passwort festlegen": "পাসওয়ার্ড সেট করুন",
+		"Alles lässt sich später unter System einstellen.": "সবকিছু পরে সিস্টেমে ঠিক করা যায়।"
 	},
 	"patterns": [
 		[

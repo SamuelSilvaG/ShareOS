@@ -1460,7 +1460,14 @@
 		"Ganze Freigaben oben in der Liste wählen.": "请在上方列表中选择整个共享。",
 		"Ausschneiden": "剪切",
 		"Zwischenablage leeren": "清空剪贴板",
-		"Einfügen": "粘贴"
+		"Einfügen": "粘贴",
+		"Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.": "此设备尚未设置。请短按设备正面的 USB 按钮，然后为 root 设置密码。",
+		"Warte auf die USB-Taste …": "正在等待 USB 按钮 …",
+		"Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).": "已检测到按钮 – 请现在设置密码（限时 2 分钟）。",
+		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "新密码（至少 8 个字符）",
+		"PASSWORT WIEDERHOLEN": "重复密码",
+		"Passwort festlegen": "设置密码",
+		"Alles lässt sich später unter System einstellen.": "所有设置都可以稍后在“系统”中调整。"
 	},
 	"patterns": [
 		[

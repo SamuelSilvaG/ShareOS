@@ -600,6 +600,52 @@ function renderLogin(msg = '') {
 		}
 	});
 	setTimeout(() => $('#login-form input[name=pass]')?.focus(), 0);
+	// a new box has no password: claim it with the USB button first
+	rpc('shareos.setup', 'claim_state', {}, ZERO_SID).then((r) => { if (r.unclaimed) renderClaim(); }).catch(() => { });
+}
+
+// first access to a new box: USB button, then the first password for root
+function renderClaim() {
+	$('#root').innerHTML = html`
+	<div class="login">
+		<form class="panel" id="claim-form" autocomplete="off">
+			${brand()}
+			<p class="prompt">Diese Box ist noch nicht eingerichtet. Drücke kurz die USB-Taste an der Vorderseite der Box und lege dann ein Passwort für root fest.</p>
+			<p class="note" id="claim-wait">Warte auf die USB-Taste …</p>
+			<label class="f"><span>NEUES PASSWORT (MIND. 8 ZEICHEN)</span><input name="p1" type="password" autocomplete="new-password" minlength="8" required></label>
+			<label class="f"><span>PASSWORT WIEDERHOLEN</span><input name="p2" type="password" autocomplete="new-password" minlength="8" required></label>
+			<p class="err" id="claim-err"></p>
+			<button class="btn primary" type="submit" style="min-height:44px" disabled>Passwort festlegen</button>
+		</form>
+	</div>`.s;
+	const f = $('#claim-form'), btn = $('button[type=submit]', f);
+	let timer = null;
+	const poll = async () => {
+		if (!f.isConnected) return;
+		try {
+			const r = await rpc('shareos.setup', 'claim_state', {}, ZERO_SID);
+			if (!r.unclaimed) { renderLogin(); return; }
+			$('#claim-wait').textContent = r.window ? 'Taste erkannt – jetzt Passwort festlegen (2 Minuten Zeit).' : 'Warte auf die USB-Taste …';
+			btn.disabled = !r.window;
+		} catch (e) { }
+		timer = setTimeout(poll, 2000);
+	};
+	poll();
+	f.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		$('#claim-err').textContent = '';
+		if (f.p1.value !== f.p2.value) { $('#claim-err').textContent = 'Die Passwörter stimmen nicht überein.'; return; }
+		btn.disabled = true;
+		try {
+			await rpc('shareos.setup', 'claim', { password: f.p1.value }, ZERO_SID);
+			clearTimeout(timer);
+			await login('root', f.p1.value, false);
+			enter();
+		} catch (err) {
+			$('#claim-err').textContent = err.message;
+			btn.disabled = false;
+		}
+	});
 }
 
 function renderShell() {
@@ -3756,7 +3802,9 @@ async function checkFirstRun(force = false) {
 	} catch (e) { /* not fatal: the box works without the wizard */ }
 }
 
-function frStepVisible(k) { return k !== 1 || S.fr.altf.found; }
+// step 2 (password) only while root still has the factory password; a claimed
+// box got its own password before the first login
+function frStepVisible(k) { return (k !== 1 || S.fr.altf.found) && (k !== 2 || S.fr.st.default_password !== false); }
 
 function firstRunView() {
 	const f = S.fr, a = f.altf;
@@ -4326,7 +4374,7 @@ const ACTIONS = {
 	'fr-next'() { const e = frCollect(); if (e) { toast(e, true); return; } frGo(1); },
 	'fr-back'() { frCollect(); frGo(-1); },
 	async 'fr-skip'() {
-		if (!await confirmDlg('Ersteinrichtung überspringen?', 'Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.', 'Überspringen')) return;
+		if (!await confirmDlg('Ersteinrichtung überspringen?', S.fr?.st?.default_password !== false ? 'Alles lässt sich später unter System einstellen. Das Passwort bleibt „shareos“, bis du es änderst.' : 'Alles lässt sich später unter System einstellen.', 'Überspringen')) return;
 		try { await rpc('shareos.setup', 'apply', {}); } catch (e) { }
 		frEnd('overview');
 	},

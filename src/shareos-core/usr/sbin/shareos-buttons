@@ -134,7 +134,20 @@ function copy_on() {
 	return c?.get('shareos', 'usbcopy', 'enabled') == '1';
 }
 
+// a box with a locked root account waits to be claimed: the USB button then
+// opens the claim window for the web interface instead of removing drives
+function unclaimed() {
+	let line = filter(split(readfile(getenv('SHAREOS_BUTTONS_SHADOW') ?? '/etc/shadow') ?? '', '\n'), (l) => index(l, 'root:') == 0)[0];
+	let h = line ? split(line, ':')[1] : null;
+	return !!h && (substr(h, 0, 1) == '!' || substr(h, 0, 1) == '*');
+}
+
 function usb_released(secs) {
+	if (unclaimed()) {
+		log('USB button – box not claimed yet, claim window open for 2 minutes');
+		run('mkdir -p /run/shareos && touch /run/shareos/claim-window');
+		return;
+	}
 	if (copy_on() && secs < USB_LONG) {
 		log(sprintf('USB button %.1f s – copying the USB drives', secs));
 		run('start-stop-daemon -S -b -x /usr/sbin/shareos-usb -- copy');

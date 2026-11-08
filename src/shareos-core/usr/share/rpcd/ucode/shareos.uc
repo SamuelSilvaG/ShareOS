@@ -846,6 +846,23 @@ function default_password() {
 	return memo('default_password', split(line, ':')[1] ?? '', 0, () => password_ok('root', 'shareos'));
 }
 
+// A box whose root account is locked ("!" or "*" in /etc/shadow) is not claimed
+// yet (init script S03claim). Claiming needs the USB button: shareos-buttons
+// touches CLAIM_WINDOW, which is valid for 2 minutes. Someone in the LAN
+// could use that window, but only while a person stands at the box.
+const CLAIM_WINDOW = '/run/shareos/claim-window';
+const CLAIM_SECS = 120;
+
+function root_locked() {
+	let line = filter(split(readfile('/etc/shadow') ?? '', '\n'), (l) => index(l, 'root:') == 0)[0];
+	let hash = line ? split(line, ':')[1] : null;
+	return !!hash && (substr(hash, 0, 1) == '!' || substr(hash, 0, 1) == '*');
+}
+
+function claim_window() {
+	let st = stat(CLAIM_WINDOW);
+	return !!st && time() - st.mtime < CLAIM_SECS;
+}
 
 // lines of a text file and a field of a passwd-style line
 function lines_of(path) { return filter(split(readfile(path) ?? '', '\n'), (l) => l != ''); }
@@ -2893,10 +2910,34 @@ return {
 	},
 
 	'shareos.setup': {
+		// public (also before login): is this box still waiting to be claimed?
+		claim_state: {
+			call: function() { return { unclaimed: root_locked(), window: claim_window(), seconds: CLAIM_SECS }; }
+		},
+
+		// public: first password of a new box; only while root is locked and
+		// the USB button was pressed within the last 2 minutes
+		claim: {
+			args: { password: '' },
+			call: function(req) {
+				if (!root_locked()) return { error: 'already claimed' };
+				if (!claim_window()) return { error: 'press the USB button first' };
+				let pw = req.args.password ?? '';
+				if (length(pw) < 8) return { error: 'password too short (min. 8)' };
+				if (lc(pw) == 'shareos') return { error: 'choose your own password' };
+				let e = set_password(pw);
+				if (e) return { error: e };
+				unlink(CLAIM_WINDOW);
+				unlink('/overlay/claim');
+				sh('logger -t shareos-claim "box claimed"');
+				return { ok: true };
+			}
+		},
+
 		status: {
 			call: function() {
 				let c = cursor();
-				return { done: c.get('shareos', 'setup', 'done') == '1', hostname: read_trim('/proc/sys/kernel/hostname'),
+				return { done: c.get('shareos', 'setup', 'done') == '1', default_password: default_password(), hostname: read_trim('/proc/sys/kernel/hostname'),
 					timezone: timezone(), lang: c.get('shareos', 'ui', 'lang') ?? 'en', channel: c.get('shareos', 'update', 'channel') ?? 'stable' };
 			}
 		},

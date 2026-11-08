@@ -445,6 +445,17 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zm. Claiming a new box (0.3.0-beta.2)
+
+Needs a box you may reset (factory reset deletes the settings, not the data disks).
+1. Update a box that is in use: it keeps its password, SSH works as before (no lock on updates).
+2. *System → Wartung → Werkseinstellungen* (or reset button ≥ 15 s). After the restart the login page says "Diese Box ist noch nicht eingerichtet …"; `ssh root@<box>` is refused.
+3. Choose a password without pressing the button: "Passwort festlegen" stays greyed out.
+4. Press the USB button on the front briefly: the page says "Taste erkannt …". Type a password twice (min. 8), *Passwort festlegen*: you are logged in, the wizard has no password step. SSH works with the new password.
+5. Wait more than 2 minutes after the button: the window is closed again ("press the USB button first").
+6. Reset button 5–10 s (access reset): after the restart the box asks to be claimed again; data, users and shares are kept.
+7. ShareOS Desktop 0.2.3, *Box einrichten* on such a box: it asks for the USB button and the password, then continues with the setup.
+
 ## 14zl. Folder browser, copy and paste (0.3.0-beta.2)
 
 1. *Freigaben → Neue Freigabe* → *Durchsuchen …*: the folders of the chosen drive appear. Go into a folder, *Nach oben* goes back. *Neuer Ordner* creates one and opens it. *Diesen Ordner wählen* fills in "Ordner auf dem Laufwerk".

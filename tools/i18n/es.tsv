@@ -1831,3 +1831,10 @@ E1456	Vaciar el portapapeles
 P331	Pegar ($1)
 P332	$1 elemento(s) en el portapapeles: elige «Pegar» en la carpeta de destino.
 E1457	Pegar
+E1458	Esta caja aún no está configurada. Pulsa brevemente el botón USB de la parte frontal de la caja y elige después una contraseña para root.
+E1459	Esperando el botón USB …
+E1460	Botón detectado: elige ahora una contraseña (tienes 2 minutos).
+E1461	NUEVA CONTRASEÑA (MÍN. 8 CARACTERES)
+E1462	REPETIR CONTRASEÑA
+E1463	Establecer contraseña
+E1464	Todo se puede ajustar más tarde en Sistema.

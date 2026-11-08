@@ -6,6 +6,10 @@ pre-releases for test devices only.
 
 ## 0.3.0-beta.2
 
+- **No known password on a new box (claiming).** A newly installed box no longer opens with the public password `shareos`: root stays locked until someone at the box claims it. The login page asks to press the **USB button** on the front and then, within two minutes, to choose the first password (min. 8 characters, `shareos.setup claim_state` / `claim`, public). SSH, the serial console and the browser terminal stay closed until then; the first-run wizard skips its password step afterwards. ShareOS Desktop 0.2.3 does the same in *Box einrichten*.
+  - Only **new** boxes: the start system marks a new settings volume (first installation, factory reset) with `/overlay/claim`, and `S03claim` locks root only then and only while it still has the factory password. **Updates never lock a box**, also not one that still uses `shareos`.
+  - The access reset (reset button 5–10 s) now locks root the same way instead of setting `shareos`. Unchanged: the TFTP development boot and the rescue system (still `shareos`).
+  - Tests: `test-buttons` (USB button opens the claim window), `test-users` (claim state, button window, short / factory password refused, claim sets the password and removes the mark).
 - **Folder browser** (discussion #88): *Durchsuchen …* opens a dialog to pick a folder on the box – go into folders, back up, *Neuer Ordner*. The text field stays for typing.
   - *Freigaben → Neue Freigabe*: the folder on the drive.
   - *Dienste → Medienserver*: besides whole shares, **subfolders of a share** (e.g. `Medien/Filme`) with their own type (music, videos, pictures) – no extra share per folder. Only folders inside shares, because the media server shows them to every device in the network without a login. Folder names with spaces work.

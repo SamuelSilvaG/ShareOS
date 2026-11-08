@@ -43,7 +43,10 @@ das System im Flash.
    einige Minuten. Die Zusatzpakete von Alt-F im Flash werden dabei ersetzt.
 5. Danach startet die Box von selbst noch einmal neu – jetzt mit ShareOS.
 6. Im Browser `http://<IP-der-Box>/` öffnen (oder `http://<Gerätename>.local/`).
-   Anmelden mit **root** und dem Passwort **shareos**.
+   Eine neue Box hat kein bekanntes Passwort: die **USB-Taste** vorne an der
+   Box drücken, dann auf der Seite das Passwort für **root** festlegen
+   (innerhalb von 2 Minuten). Vor 0.3.0-beta.2: Anmelden mit **root** und
+   dem Passwort **shareos**.
 7. Der Einrichtungsassistent führt durch Sprache, Übernahme aus Alt-F,
    Passwort, Name und Zeit und Updates. Danach die Platten mit den Daten
    übernehmen: **Speicher → Laufwerke**, an der Platte **„sda2 übernehmen“** (ein
