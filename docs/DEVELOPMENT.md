@@ -274,6 +274,8 @@ the box for why the web server was not running.
 | 10:20 | Jan notices that plain users are logged out on every reload: their ACL lacked rpcd's `session access` (#125). |
 | 11:30 | Desktop 0.2.1: backups failed on beta.20 – rpcd refuses arguments a method does not declare. |
 | 14:20 | Desktop 0.2.2: the Alt-F switch took every Alt-F box for "not set up" (the login script names `passwd_again` on every page). Then the first **DNS-320LW** (rev A2, the white DNS-320L) goes from D-Link firmware via Alt-F to ShareOS with the desktop app – on the first try (#126). |
+| evening | Discussion #88 (lgustavod) turns into a **folder browser** for shares, media server and cloud jobs, plus copy/paste in the file browser (#127). |
+| night | A technical audit brings kernel hardening (#128; `FORTIFY_SOURCE` fails in the ARM decompressor) and **claim mode** (#129): a new box no longer has a known password, it is claimed with the USB button – updates never lock. Desktop 0.2.3 does it too. |
 
 ## Notable problems solved
 

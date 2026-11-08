@@ -275,6 +275,8 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 10:20 | Jan fällt auf, dass normale Benutzer bei jedem Neuladen abgemeldet werden: ihrer ACL fehlte rpcds `session access` (#125). |
 | 11:30 | Desktop 0.2.1: Sicherungen scheiterten mit beta.20 – rpcd lehnt Argumente ab, die eine Methode nicht deklariert. |
 | 14:20 | Desktop 0.2.2: Der Alt-F-Wechsel hielt jede Alt-F-Box für „nicht eingerichtet“ (das Login-Skript nennt `passwd_again` auf jeder Seite). Danach geht die erste **DNS-320LW** (rev A2, die weiße DNS-320L) mit der Desktop-App von der D-Link-Firmware über Alt-F zu ShareOS – auf Anhieb (#126). |
+| abends | Aus Diskussion #88 (lgustavod) wird ein **Ordner-Browser** für Freigaben, Medienserver und Cloud-Aufträge; dazu Kopieren/Einfügen im Dateibrowser (#127). |
+| nachts | Ein technisches Audit bringt Kernel-Härtung (#128; `FORTIFY_SOURCE` scheitert am ARM-Entpacker) und den **Claim-Modus** (#129): Eine neue Box hat kein bekanntes Passwort mehr, man übernimmt sie mit der USB-Taste – Updates sperren nie. Desktop 0.2.3 kann das auch. |
 
 ## Bemerkenswerte Problemlösungen
 
