@@ -1,4 +1,4 @@
-# ShareOS – D-Link DNS-320L rev Ax (phase-1 test system)
+# ShareOS – D-Link DNS-320L rev Ax
 # Build: make dns320l   (see Makefile / docs/BUILD.md)
 
 # --- Architecture: Marvell Kirkwood 88F6702, ARMv5TE, no FPU ---
@@ -21,7 +21,7 @@ BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_18=y
 
 # --- System ---
 BR2_TARGET_GENERIC_HOSTNAME="shareos"
-BR2_TARGET_GENERIC_ISSUE="ShareOS phase-1 test system"
+BR2_TARGET_GENERIC_ISSUE="ShareOS"
 BR2_TARGET_GENERIC_ROOT_PASSWD="shareos"
 BR2_INIT_BUSYBOX=y
 BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES="$(BR2_EXTERNAL_SHAREOS_PATH)/board/dlink/dns320l/busybox.fragment"
