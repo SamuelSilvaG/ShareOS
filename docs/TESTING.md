@@ -445,6 +445,12 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zn. Hardening (0.3.0-beta.2)
+
+1. After the update, in the terminal: `sysctl kernel.kptr_restrict kernel.sysrq net.ipv4.conf.all.rp_filter` → `2`, `176`, `2`.
+2. *System → Protokolle*: the kernel log still shows (read by the box as root).
+3. Tailscale / OpenVPN (if installed) connect as before; SMB, NFS and the web interface work.
+
 ## 14zm. Claiming a new box (0.3.0-beta.2)
 
 Needs a box you may reset (factory reset deletes the settings, not the data disks).

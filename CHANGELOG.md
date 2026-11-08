@@ -17,6 +17,8 @@ pre-releases for test devices only.
   - Listing uses the file functions of the box: admins browse the drives, plain users their shares and personal folder (needs the *Dateien* permission, otherwise the folder is typed).
   - Tests: `test-dlna` (subfolders, spaces, missing folder, `..`), `test-cloud-paperless` (subfolder upload, missing folder, `..`, symlink out of the share).
 - **File browser: copy and paste.** *Kopieren* or *Ausschneiden* puts the selection on a clipboard; an *Einfügen (n)* button appears, also after switching to another drive, share or the personal folder. Go to the target folder, *Einfügen* copies or moves it there. A copy stays on the clipboard for further pastes, a moved selection is gone after the paste; *×* clears the clipboard. Replaces typing the target path. `shareos.files move` takes `dest_root` for a target in another root (rights checked on both sides). Folder names in the path bar are no longer translated. 5 more checks in `test-users`.
+- **Hardening (technical audit, #128):** kernel without `KEXEC` (it hung on the DNS-320L), with `STRICT_KERNEL_RWX`, `STACKPROTECTOR_STRONG`, `HARDENED_USERCOPY`, randomised slab/page allocator, `mmap_min_addr` 32768, restricted `dmesg`, no legacy PTYs – the kernel stays at 2.39 MB (no growth). `FORTIFY_SOURCE` is left out: the ARM decompressor (`atags_to_fdt`) does not link with it. `/etc/sysctl.d/10-shareos-hardening.conf`: kernel pointers hidden, SysRq only sync/remount-ro/reboot, protected links, no ICMP redirects, SYN cookies, loose reverse-path filter (strict breaks Tailscale subnet routes and VPNs). The console greeting no longer says "phase-1 test system". A weekly GitHub workflow reports package versions and known CVEs (buildroot `pkg-stats`).
+
 
 ## 0.3.0-beta.1
 

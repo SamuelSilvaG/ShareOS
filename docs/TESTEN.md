@@ -449,6 +449,12 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zn. Härtung (0.3.0-beta.2)
+
+1. Nach dem Update im Terminal: `sysctl kernel.kptr_restrict kernel.sysrq net.ipv4.conf.all.rp_filter` → `2`, `176`, `2`.
+2. *System → Protokolle*: Das Kernel-Protokoll wird weiter angezeigt (die Box liest es als root).
+3. Tailscale / OpenVPN (falls installiert) verbinden wie vorher; SMB, NFS und die Weboberfläche laufen.
+
 ## 14zm. Neue Box übernehmen (0.3.0-beta.2)
 
 Braucht eine Box, die zurückgesetzt werden darf (Werkseinstellungen löschen die Einstellungen, nicht die Datenplatten).
