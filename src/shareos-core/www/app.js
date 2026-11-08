@@ -657,10 +657,30 @@ function renderShell() {
 	parseRoute();
 	renderHeader();
 	renderTabs();
-	renderMain();
 	startPolling();
-	checkRecovery().then((on) => { if (!on) checkFirstRun(); });
+	startMain();
 	netAutoConfirm();
+}
+
+// After the login: recovery mode, the first-run wizard or the page. Both
+// states are asked first, so a new box opens the wizard right away instead of
+// showing the overview for a few seconds; the wizard shows "Lade …" while it
+// collects time zones and the Alt-F settings (the disks are searched).
+async function startMain() {
+	let shown = false;
+	const show = () => { if (!shown) { shown = true; renderMain(); } };
+	const slow = setTimeout(show, 3000);   // the box answers slowly: the page first
+	const [rec, st] = await Promise.all([checkRecovery(), rpc('shareos.setup', 'status').catch(() => null)]);
+	clearTimeout(slow);
+	if (rec) return;
+	if (st && !st.done && !S.fr) {
+		S.fr = { loading: true, step: 0, st };
+		shown = true;
+		renderMain();
+		checkFirstRun(false, st);
+		return;
+	}
+	show();
 }
 
 /* ---------- status chips of services and apps (header) --------------------------- */
@@ -3901,17 +3921,20 @@ async function recoveryEnd(args) {
 
 const FR_STEPS = ['Sprache', 'Alt-F', 'Passwort', 'Name & Zeit', 'Updates', 'Fertig'];
 
-async function checkFirstRun(force = false) {
+async function checkFirstRun(force = false, known = null) {
 	try {
-		const st = await rpc('shareos.setup', 'status');
-		if (st.done && !force) return;
+		const st = known || await rpc('shareos.setup', 'status');
+		if (st.done && !force) { if (S.fr?.loading) { S.fr = null; renderMain(); } return; }
 		const [z, a] = await Promise.all([rpc('shareos.setup', 'zones'), rpc('shareos.setup', 'altf').catch(() => ({ found: false }))]);
 		let step = 0;
 		try { step = +(sessionStorage.getItem('shareos.frstep') || 0); } catch (e) { }
 		S.fr = { step, st, zones: z.zones, altf: a, use_altf: !!a.found, hostname: a.found && a.hostname ? a.hostname : st.hostname,
 			timezone: a.found && a.timezone && z.zones.includes(a.timezone) ? a.timezone : st.timezone, channel: st.channel, password: '' };
 		renderMain();
-	} catch (e) { /* not fatal: the box works without the wizard */ }
+	} catch (e) {
+		// not fatal: the box works without the wizard
+		if (S.fr?.loading) { S.fr = null; renderMain(); }
+	}
 }
 
 // step 2 (password) only while root still has the factory password; a claimed
@@ -3919,6 +3942,7 @@ async function checkFirstRun(force = false) {
 function frStepVisible(k) { return (k !== 1 || S.fr.altf.found) && (k !== 2 || S.fr.st.default_password !== false); }
 
 function firstRunView() {
+	if (S.fr.loading) return html`<section class="sec"><div class="panel"><div class="spin" style="margin:24px auto"></div><p class="mut" style="text-align:center">Lade …</p></div></section>`;
 	const f = S.fr, a = f.altf;
 	const steps = FR_STEPS.map((n, k) => [n, k]).filter(([, k]) => frStepVisible(k));
 	let body;
@@ -3980,6 +4004,7 @@ function firstRunView() {
 }
 
 function firstRunAfter() {
+	if (S.fr.loading) return;
 	$('#fr-lang')?.addEventListener('change', async (e) => {
 		try {
 			await rpc('shareos.ui', 'set', { lang: e.target.value });

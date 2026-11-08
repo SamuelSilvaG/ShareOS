@@ -451,6 +451,7 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 2. Same page: open the release notes, scroll down, wait 1 minute: the page stays where it is.
 3. First-run wizard (or *Benutzer → Neuer Benutzer*): type a password slowly, wait 10 s: the fields keep their content.
 4. Save a user: the form closes as before; *Neuer Benutzer* starts empty.
+5. New (claimed) box: right after the login the setup wizard appears, not the overview first.
 
 ## 14zn. Hardening (0.3.0-beta.2)
 

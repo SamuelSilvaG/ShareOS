@@ -455,6 +455,7 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 2. Gleiche Seite: Release-Text öffnen, nach unten scrollen, 1 Minute warten: Die Seite bleibt, wo sie ist.
 3. Ersteinrichtung (oder *Benutzer → Neuer Benutzer*): Passwort langsam tippen, 10 s warten: Die Felder behalten ihren Inhalt.
 4. Einen Benutzer speichern: Das Formular schließt wie bisher; *Neuer Benutzer* beginnt leer.
+5. Neue (übernommene) Box: Nach der Anmeldung erscheint sofort der Einrichtungsassistent, nicht erst die Übersicht.
 
 ## 14zn. Härtung (0.3.0-beta.2)
 
