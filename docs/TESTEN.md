@@ -449,6 +449,14 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zo. Neuzeichnen behält Eingaben und Scroll-Position (0.3.0-beta.2)
+
+1. *System → Firmware*: *Datei* → eine `.sysupgrade.tar` wählen und sich im Dialog Zeit lassen (> 30 s): Die Datei steht beim ersten Mal da.
+2. Gleiche Seite: Release-Text öffnen, nach unten scrollen, 1 Minute warten: Die Seite bleibt, wo sie ist.
+3. Ersteinrichtung (oder *Benutzer → Neuer Benutzer*): Passwort langsam tippen, 10 s warten: Die Felder behalten ihren Inhalt.
+4. Einen Benutzer speichern: Das Formular schließt wie bisher; *Neuer Benutzer* beginnt leer.
+5. Neue (übernommene) Box: Nach der Anmeldung erscheint sofort der Einrichtungsassistent, nicht erst die Übersicht.
+
 ## 14zn. Härtung (0.3.0-beta.2)
 
 1. Nach dem Update im Terminal: `sysctl kernel.kptr_restrict kernel.sysrq net.ipv4.conf.all.rp_filter` → `2`, `176`, `2`.
