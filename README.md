@@ -135,7 +135,7 @@ Version in brackets = first release with the feature.
 
 | | D-Link firmware (ShareCenter) | Alt-F | ShareOS |
 |---|---|---|---|
-| Last release | 1.11 (last version listed for CVE-2024-3273); product end of life | 1.0 (Oct 2017); trunk r3935 (basis of ShareOS) | 0.2.0 betas (2026), updated continuously |
+| Last release | 1.11 (last version listed for CVE-2024-3273); product end of life | 1.0 (Oct 2017); trunk r3935 (basis of ShareOS) | 0.3.0 betas (2026), updated continuously |
 | Linux kernel | 2.6.31 ¹ | 3.10.32 (0.1RC4, 2014), 4.4.86 (1.0), 4.14.268 (trunk) | **6.18 LTS** |
 | Boot loader | Marvell U-Boot 1.1.4 | stock U-Boot (unchanged) | stock U-Boot (unchanged, never written) |
 | Build system / toolchain | D-Link GPL sources, uClibc ¹ | buildroot 2009.08 fork, GCC 7.4, uClibc-ng 1.0.44 (trunk) | buildroot 2026.08.1 (`BR2_EXTERNAL`), GCC 15.3, musl 1.2.6 |
