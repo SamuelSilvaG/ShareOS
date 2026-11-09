@@ -1224,7 +1224,7 @@ E965	ID DE CHAT
 E966	TOKEN DEL BOT (DE @BOTFATHER)
 E967	Telegram (bot)
 E968	ÁREAS
-E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas, entradas de Paperless). Ajustes y datos se conservan; al activar vuelve todo.
+E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas). Ajustes y datos se conservan; al activar vuelve todo.
 E970	Apps (tienda, apps web, tareas de las apps)
 E971	Nube (sincronización con almacenamiento en la nube)
 E972	Paperless (carpetas de entrada para Paperless-ngx)
@@ -1838,3 +1838,7 @@ E1461	NUEVA CONTRASEÑA (MÍN. 8 CARACTERES)
 E1462	REPETIR CONTRASEÑA
 E1463	Establecer contraseña
 E1464	Todo se puede ajustar más tarde en Sistema.
+E1465	Paperless es un módulo: aparece cuando está instalado en APPS y desaparece al quitarlo (ajustes y carpetas se conservan).
+E1466	Módulo · pestaña propia
+E1467	Activa una parte de ShareOS con su propia pestaña. El código forma parte del firmware revisado: el paquete solo trae el interruptor.
+E1468	Módulo

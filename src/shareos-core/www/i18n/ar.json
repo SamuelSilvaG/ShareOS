@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "رمز البوت (من @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (بوت)",
 		"BEREICHE": "الأقسام",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "عند الإيقاف: يختفي التبويب، حتى للمستخدمين في «ShareOS الخاص بي»، ويتوقف العمل في الخلفية (خادم ويب التطبيقات ومهامها، ومهام السحابة المجدولة، ووارد Paperless). تبقى الإعدادات والبيانات؛ والتشغيل يعيد كل شيء.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "عند الإيقاف: يختفي التبويب، حتى للمستخدمين في «ShareOS الخاص بي»، ويتوقف العمل في الخلفية (خادم ويب التطبيقات ومهامها، ومهام السحابة المجدولة). تبقى الإعدادات والبيانات؛ والتشغيل يعيد كل شيء.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "التطبيقات (المتجر، تطبيقات الويب، مهام التطبيقات)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "السحابة (مزامنة مع التخزين السحابي)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (مجلدات وارد لـ Paperless-ngx)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "كلمة المرور الجديدة (8 أحرف على الأقل)",
 		"PASSWORT WIEDERHOLEN": "أعد إدخال كلمة المرور",
 		"Passwort festlegen": "تعيين كلمة المرور",
-		"Alles lässt sich später unter System einstellen.": "يمكن ضبط كل شيء لاحقًا ضمن النظام."
+		"Alles lässt sich später unter System einstellen.": "يمكن ضبط كل شيء لاحقًا ضمن النظام.",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "Paperless وحدة: تظهر عند تثبيتها ضمن التطبيقات وتختفي عند إزالتها (تبقى الإعدادات والمجلدات).",
+		"Modul · eigener Reiter": "وحدة · تبويب خاص",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "تُفعِّل جزءًا من ShareOS بتبويب خاص. الشيفرة جزء من البرنامج الثابت المُراجَع – الحزمة تجلب المفتاح فقط.",
+		"Modul": "وحدة"
 	},
 	"patterns": [
 		[

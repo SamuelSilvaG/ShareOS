@@ -166,6 +166,11 @@ Paperless, cloud).
 
 ## 8. Paperless-ngx
 
+Paperless is a **module** (0.3.0-beta.3+): the *PAPERLESS* tab appears once the
+system app **Paperless** is installed under **Apps → Store**. A box that had
+Paperless set up before the update gets the module by itself at the first start.
+
+0. **Apps → Store → Paperless → Install.** The *PAPERLESS* tab appears behind *CLOUD*.
 1. In Paperless: Profile → create an **API token**.
 2. In ShareOS under **Paperless** enter the address (e.g. `http://192.168.1.20:8000`) and save.
 3. **New inbox**: personal (folder `Paperless` in a user's personal folder) or shared (folder of a share, e.g. for the scanner), enter the token, **Test connection**.
@@ -174,6 +179,17 @@ Paperless, cloud).
 Files Paperless rejects (e.g. duplicates) are moved to `.paperless/failed` in
 the inbox folder. If Paperless cannot be reached, the file stays and is sent on
 the next run.
+
+**Remove and reinstall the module:**
+
+1. **Apps → Installed → Paperless → Remove.** The *PAPERLESS* tab disappears, "My ShareOS" has no Paperless part.
+2. Over SSH: `grep shareos-paperless /etc/crontabs/root` finds nothing; the inbox folders are still there.
+3. Restart the box: the module does **not** come back by itself.
+4. Install it again: address and inboxes are as before, files are sent again.
+
+**Update of a box with Paperless set up** (from 0.3.0-beta.2): after the
+restart the *PAPERLESS* tab is there, **Apps → Installed** lists "Paperless"
+(module), `cat /etc/shareos/module-migrated.paperless` shows the time.
 
 ## 9. Cloud sync
 

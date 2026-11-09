@@ -110,6 +110,10 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cloud $(TARGET_DIR)/usr/sbin/shareos-cloud
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-cron $(TARGET_DIR)/usr/sbin/shareos-cron
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/paperless $(TARGET_DIR)/etc/config/paperless
+	# modules (shareos-apps "modules migrate"): the package's app.json and icon,
+	# installed once on boxes that used the area before it became a module
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_SHAREOS_PATH)/sysapps/paperless/app.json $(TARGET_DIR)/usr/share/shareos/modules/paperless/app.json
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_SHAREOS_PATH)/sysapps/paperless/icon.svg $(TARGET_DIR)/usr/share/shareos/modules/paperless/icon.svg
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/cloud $(TARGET_DIR)/etc/config/cloud
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S50avahi-daemon $(TARGET_DIR)/etc/init.d/S50avahi-daemon
 	$(INSTALL) -D -m 0644 $(@D)/etc/avahi/avahi-daemon.conf $(TARGET_DIR)/etc/avahi/avahi-daemon.conf

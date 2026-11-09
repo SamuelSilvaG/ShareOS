@@ -277,6 +277,13 @@ the box for why the web server was not running.
 | evening | Discussion #88 (lgustavod) turns into a **folder browser** for shares, media server and cloud jobs, plus copy/paste in the file browser (#127). |
 | night | A technical audit brings kernel hardening (#128; `FORTIFY_SOURCE` fails in the ARM decompressor) and **claim mode** (#129): a new box no longer has a known password, it is claimed with the USB button – updates never lock. Desktop 0.2.3 does it too. |
 
+### Monday, 09.11.2026
+
+| Time | What happened |
+|---|---|
+| 17:00 | Feasibility study DNS filter: Pi-hole runs on ARMv5 (3eca/pihole-armv5), Jan chooses **AdGuard Home** (official ARMv5 build, nothing to build ourselves) – to install only when wanted. With it the wish: everything modular, depending on what the NAS is for. |
+| 17:30 | **Modules:** a system app can switch on an area of the firmware; tab, "My ShareOS" part and background work exist only while it is installed. The code stays in the reviewed firmware – an uploaded package brings no code that runs as root. **Paperless** becomes the first module, boxes that use it get it by themselves on the update. DNS filter and cloud follow. |
+
 ## Notable problems solved
 
 - **The bootloader's 3 MB limit:** the kernel shrank from 4.2 to 2.4 MB, with drivers moved to modules. The initramfs is only 0.9 MB.

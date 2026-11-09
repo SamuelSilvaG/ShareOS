@@ -4,6 +4,15 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.3
+
+- **Modules: Paperless only when you need it.** A system app can now switch on an area of the firmware (`"module"` in its `app.json`): its tab, its part of "My ShareOS" and its background work exist only while it is installed. **Paperless is the first module** – the new system app **"paperless"** in the store (Apps → Store) shows the *PAPERLESS* tab behind *CLOUD*; removing it hides the tab again and stops the scheduled uploads (settings, inboxes and folders stay for a later reinstall).
+  - **Updating boxes:** a box that had Paperless set up (an address or an inbox, area not switched off) gets the module once at the first start, from a copy in the firmware – no internet needed. Removed later, it stays removed (`/etc/shareos/module-migrated.paperless`).
+  - The page, the rpcd methods (`shareos.paperless`, `shareos.me paperless`) and `shareos-paperless` stay in the reviewed firmware; the package only brings the switch (`app.json`, icon). A module is accepted only when the firmware knows it (its controller `/usr/sbin/shareos-<id>` has a line `shareos-module`) and its `module` equals the id – an uploaded or third-party package cannot add code that runs as root or in the admin interface.
+  - Without the module, `shareos.paperless` and `shareos.me paperless` answer "not installed", `shareos-paperless run`/`folders` do nothing and cron has no entry. *System → Darstellung → Bereiche* keeps only Apps and Cloud.
+  - `shareos-apps modules` lists the installed modules, `shareos-apps modules migrate` runs from `S70shares`. The apps list shows a module with *Öffnen* (its tab) instead of *Terminal*.
+  - Tests: `test-cloud-paperless` (migration once, listed, install hook creates the inbox folders, cron entry only while installed, removal keeps folders and is not undone by the migration, install from the package, unknown module and module ≠ id refused), `run-stack-qemu` (area off until installed, methods refused).
+
 ## 0.3.0-beta.2
 
 - **No known password on a new box (claiming).** A newly installed box no longer opens with the public password `shareos`: root stays locked until someone at the box claims it. The login page asks to press the **USB button** on the front and then, within two minutes, to choose the first password (min. 8 characters, `shareos.setup claim_state` / `claim`, public). SSH, the serial console and the browser terminal stay closed until then; the first-run wizard skips its password step afterwards. ShareOS Desktop 0.2.3 does the same in *Box einrichten*.

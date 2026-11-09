@@ -8,6 +8,16 @@
 #   shareos-paperless tags <inbox>     list the Paperless tags (JSON) the inbox
 #                                      token can see
 #   shareos-paperless status           key=value lines per inbox
+#   shareos-paperless folders          create the inbox folders
+#   shareos-paperless module-configured   exit 0 when Paperless was set up
+#                                      (an address or an inbox) and its area
+#                                      was not switched off – for boxes that
+#                                      used it before it became a module
+#   shareos-paperless module-installed    after installing the module
+#
+# shareos-module: Paperless is a module (system app "paperless", see
+# shareos-apps) – tab, "My ShareOS" part and the scheduled runs exist only
+# while it is installed (module_on below).
 #
 # Settings: UCI /etc/config/paperless – global.url, and one "inbox" section
 # per folder with the API token of the Paperless user the documents belong
@@ -202,11 +212,17 @@ cmd_status() {
 	done
 }
 
+# the module (system app "paperless") is installed
+module_on() { [ -f /opt/shareos/sysapps/paperless/app.json ]; }
+
 case "$1" in
-	run) cmd_run ;;
+	run) module_on || exit 0; cmd_run ;;
 	test) cmd_test "$2" ;;
 	tags) cmd_tags "$2" ;;
 	status) cmd_status ;;
-	folders) ensure_folders ;;
-	*) sed -n '3,18s/^# \{0,1\}//p' "$0"; exit 2 ;;
+	folders) module_on && ensure_folders ;;
+	# set up and not switched off under System -> Appearance (before 0.3.0-beta.3)
+	module-configured) [ "$(uci -q get shareos.ui.area_paperless)" != 0 ] && { [ -n "$(url)" ] || [ -n "$(inboxes)" ]; } ;;
+	module-installed) ensure_folders; /usr/sbin/shareos-cron sync >/dev/null 2>&1; exit 0 ;;
+	*) sed -n '3,29s/^# \{0,1\}//p' "$0"; exit 2 ;;
 esac

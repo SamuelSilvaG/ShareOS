@@ -1224,7 +1224,7 @@ E965	ID DU CHAT
 E966	JETON DU BOT (DE @BOTFATHER)
 E967	Telegram (bot)
 E968	ZONES
-E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées, dossiers d’entrée Paperless). Réglages et données sont conservés ; réactiver remet tout en marche.
+E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées). Réglages et données sont conservés ; réactiver remet tout en marche.
 E970	Apps (boutique, apps web, tâches des apps)
 E971	Cloud (synchronisation avec le stockage en ligne)
 E972	Paperless (dossiers d’entrée pour Paperless-ngx)
@@ -1838,3 +1838,7 @@ E1461	NOUVEAU MOT DE PASSE (8 CARACTÈRES MIN.)
 E1462	RÉPÉTER LE MOT DE PASSE
 E1463	Définir le mot de passe
 E1464	Tout peut être réglé plus tard sous Système.
+E1465	Paperless est un module : il apparaît une fois installé sous APPS et disparaît quand on le retire (réglages et dossiers sont conservés).
+E1466	Module · onglet propre
+E1467	Active une partie de ShareOS avec son propre onglet. Le code fait partie du firmware vérifié – le paquet n’apporte que l’interrupteur.
+E1468	Module

@@ -138,6 +138,38 @@ A pull request for a service contains:
 The settings page in the interface, if any, comes with the firmware too
 (e.g. *Services → Media server* for `minidlna`).
 
+## Example 3: a module (an area of the firmware)
+
+A module switches on an area of the firmware – its own tab, its part of
+"My ShareOS" and its background work – only while the system app is
+installed (ShareOS 0.3.0-beta.3+). [`sysapps/paperless`](paperless):
+
+```json
+{
+	"id": "paperless", "name": "Paperless", "version": "1.0.0",
+	"type": "system",
+	"module": "paperless",
+	"commands": [],
+	…
+	"min_shareos": "0.3.0-beta.3"
+}
+```
+
+- `"module"` equals the id; `"commands"` may be empty (a module can still
+  bring programs, e.g. a DNS filter its daemon). `pack.json` may be `{ "bin": [] }`.
+- Like a controller, **everything that runs stays in the firmware**: the page
+  in `www/app.js` (tab in `TABS`, shown while `areas.<id>` is true), the rpcd
+  methods (guarded with `module_on('<id>')`, area listed in `MODULES` in
+  `shareos.uc`) and the script `/usr/sbin/shareos-<id>`, which has a line
+  `shareos-module` and answers
+  - `module-installed` – after installing (e.g. create folders, `shareos-cron sync`),
+  - `module-configured` – exit 0 when the area was in use before it became a
+    module: `shareos-apps modules migrate` (boot) then installs the module once
+    from the copy in `/usr/share/shareos/modules/<id>/` (`app.json`, icon;
+    installed by `shareos-core.mk`).
+- Background work checks `[ -f /opt/shareos/sysapps/<id>/app.json ]`
+  (`shareos-cron`, init scripts); `shareos-apps modules` lists the installed ones.
+
 ## The services of the box
 
 | System app | `control` | Controller | Controlled by |
