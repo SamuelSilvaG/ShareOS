@@ -1,0 +1,19 @@
+{
+	"id": "paperless",
+	"name": "Paperless",
+	"version": "1.0.0",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Anbindung an Paperless-ngx: Eingangsordner auf der Box (persönlich je Benutzer oder gemeinsam über eine Freigabe), deren Dokumente automatisch an deinen Paperless-Server gehen – mit dem API-Token des jeweiligen Besitzers. Modul: Installiert erscheint der Reiter PAPERLESS und der Abschnitt in „Mein ShareOS“. Entfernen behält Einstellungen und Ordner.",
+		"en": "Connection to Paperless-ngx: inbox folders on the box (personal per user or shared through a share) whose documents go to your Paperless server by themselves – with the API token of their owner. Module: once installed, the PAPERLESS tab and its part of “My ShareOS” appear. Removing it keeps the settings and folders."
+	},
+	"type": "system",
+	"module": "paperless",
+	"commands": [],
+	"flash": true,
+	"icon": "icon.svg",
+	"category": "office",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://docs.paperless-ngx.com/",
+	"min_shareos": "0.3.0-beta.3"
+}

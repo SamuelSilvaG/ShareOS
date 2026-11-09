@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "বট টোকেন (@BOTFATHER থেকে)",
 		"Telegram (Bot)": "Telegram (বট)",
 		"BEREICHE": "এলাকা",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "বন্ধ করলে: ট্যাবটি সরে যায়, „আমার ShareOS“-এ ব্যবহারকারীদের জন্যও, এবং পটভূমির কাজ থেমে থাকে (অ্যাপ ওয়েব সার্ভার ও অ্যাপ কাজ, নির্ধারিত ক্লাউড কাজ, Paperless ইনবক্স)। সেটিংস ও ডেটা থাকে; চালু করলে সব ফিরে আসে।",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "বন্ধ করলে: ট্যাবটি সরে যায়, „আমার ShareOS“-এ ব্যবহারকারীদের জন্যও, এবং পটভূমির কাজ থেমে থাকে (অ্যাপ ওয়েব সার্ভার ও অ্যাপ কাজ, নির্ধারিত ক্লাউড কাজ)। সেটিংস ও ডেটা থাকে; চালু করলে সব ফিরে আসে।",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "অ্যাপ (অ্যাপ স্টোর, ওয়েব অ্যাপ, অ্যাপের কাজ)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "ক্লাউড (ক্লাউড স্টোরেজের সাথে সিঙ্ক)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (Paperless-ngx-এর ইনবক্স)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)",
 		"PASSWORT WIEDERHOLEN": "পাসওয়ার্ড আবার লিখুন",
 		"Passwort festlegen": "পাসওয়ার্ড সেট করুন",
-		"Alles lässt sich später unter System einstellen.": "সবকিছু পরে সিস্টেমে ঠিক করা যায়।"
+		"Alles lässt sich später unter System einstellen.": "সবকিছু পরে সিস্টেমে ঠিক করা যায়।",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "Paperless একটি মডিউল: APPS-এ ইনস্টল করলে এটি দেখা যায় এবং সরালে চলে যায় (সেটিংস ও ফোল্ডার থাকে)।",
+		"Modul · eigener Reiter": "মডিউল · নিজস্ব ট্যাব",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "ShareOS-এর একটি অংশ নিজস্ব ট্যাবসহ চালু করে। কোডটি যাচাই করা ফার্মওয়্যারের অংশ – প্যাকেজ শুধু সুইচটি আনে।",
+		"Modul": "মডিউল"
 	},
 	"patterns": [
 		[

@@ -467,17 +467,31 @@ const CERT = '/usr/sbin/shareos-cert';
 const THEMES = { dark: 1, light: 1, system: 1 };
 const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
 
+// modules: system apps with "module" (see shareos-apps) that switch on an
+// area of the firmware – tab, "My ShareOS" part, background work. The code
+// stays here; the area exists only while the system app is installed.
+const MODULES = [ 'paperless' ];
+function module_on(id) {
+	let a = null;
+	try { a = json(readfile('/opt/shareos/sysapps/' + id + '/app.json') ?? 'null'); } catch (e) { }
+	return type(a) == 'object' && a.module == id;
+}
+
 // areas that can be switched off under System -> Appearance (tab hidden,
 // background work stopped): apps (apps web server, app tasks), cloud
-// (scheduled jobs), paperless (inboxes)
-const AREAS = [ 'apps', 'cloud', 'paperless' ];
-function area_on(a) { return cursor().get('shareos', 'ui', 'area_' + a) != '0'; }
+// (scheduled jobs); a module's area is on while it is installed
+const AREAS = [ 'apps', 'cloud' ];
+function area_on(a) {
+	if (index(MODULES, a) >= 0) return module_on(a);
+	return cursor().get('shareos', 'ui', 'area_' + a) != '0';
+}
 
 function ui_settings() {
 	let c = cursor();
 	let theme = c.get('shareos', 'ui', 'theme'), accent = c.get('shareos', 'ui', 'accent');
 	let areas = {};
 	for (let a in AREAS) areas[a] = c.get('shareos', 'ui', 'area_' + a) != '0';
+	for (let m in MODULES) areas[m] = module_on(m);
 	return {
 		lang: c.get('shareos', 'ui', 'lang') ?? 'en',
 		logo: (c.get('shareos', 'ui', 'logo') ?? '1') != '0',
@@ -3443,6 +3457,7 @@ return {
 
 		paperless: {
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let u = session_user(req), c = cursor();
 				if (!u || u == 'root') return { error: 'session not bound' };
 				let g = paperless_global(c), name = 'u_' + u;
@@ -3455,6 +3470,7 @@ return {
 		paperless_set: {
 			args: { token: '', tags: [], enabled: true, test: false },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let u = session_user(req), c = cursor();
 				if (!u || u == 'root') return { error: 'session not bound' };
 				if (!c.get('accounts', u, 'home')) return { error: 'you have no personal folder' };
@@ -3702,6 +3718,7 @@ return {
 	'shareos.paperless': {
 		get: {
 			call: function() {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let c = cursor(), list = [];
 				c.foreach('paperless', 'inbox', (x) => { push(list, inbox_info(c, x['.name'])); });
 				return { ...paperless_global(c), inboxes: list };
@@ -3711,6 +3728,7 @@ return {
 		set_global: {
 			args: { url: '', enabled: true, interval: 2, after: '' },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let a = req.args, c = cursor();
 				if (a.url != null && a.url != '' && !match(a.url, /^https?:\/\/[A-Za-z0-9.:\[\]_-]+(:[0-9]+)?(\/[^[:space:]]*)?$/)) return { error: 'invalid URL (http://… or https://…)' };
 				if (a.interval != null && !(+a.interval >= 1 && +a.interval <= 60)) return { error: 'interval 1–60 minutes' };
@@ -3729,6 +3747,7 @@ return {
 		test: {
 			args: { url: '', token: '', inbox: '' },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let c = cursor(), tok = req.args.token || (req.args.inbox ? c.get('paperless', req.args.inbox, 'token') : null);
 				let url = req.args.url || c.get('paperless', 'global', 'url');
 				if (!url || !tok) return { error: 'URL and token needed' };
@@ -3742,6 +3761,7 @@ return {
 		inbox_set: {
 			args: { name: '', owner: '', share: '', token: '', tags: [], enabled: true },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let a = req.args, c = cursor();
 				if (!match(a.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name (a-z, 0-9 and _)' };
 				let exists = c.get('paperless', a.name) == 'inbox';
@@ -3760,6 +3780,7 @@ return {
 		inbox_del: {
 			args: { name: '' },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let c = cursor();
 				if (c.get('paperless', req.args.name) != 'inbox') return { error: 'unknown inbox' };
 				c.delete('paperless', req.args.name); c.commit('paperless');
@@ -3770,6 +3791,7 @@ return {
 
 		run: {
 			call: function() {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				system('start-stop-daemon -S -b -x ' + PAPERLESS + ' -- run');
 				return { started: true };
 			}
@@ -3778,6 +3800,7 @@ return {
 		tags: {
 			args: { inbox: '' },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				if (!match(req.args.inbox ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid inbox' };
 				let j = json(sh(PAPERLESS + ' tags ' + shq(req.args.inbox)).out);
 				return { tags: map(j?.results ?? [], (t) => ({ id: t.id, name: t.name })) };
@@ -3787,6 +3810,7 @@ return {
 		log: {
 			args: { inbox: '' },
 			call: function(req) {
+				if (!module_on('paperless')) return { error: 'Paperless is not installed (system app paperless)' };
 				let c = cursor();
 				if (c.get('paperless', req.args.inbox) != 'inbox') return { error: 'unknown inbox' };
 				return { entries: paperless_log(inbox_path(c, req.args.inbox), 100) };

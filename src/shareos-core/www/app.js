@@ -3267,10 +3267,11 @@ const SYS = {
 		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">BEREICHE</span><span class="tag ml">gilt für alle</span></div>
 			<div style="display:grid;gap:6px">
-				${[['apps', 'Apps (App-Store, Web-Apps, Aufgaben der Apps)'], ['cloud', 'Cloud (Abgleich mit Cloud-Speichern)'], ['paperless', 'Paperless (Eingangsordner für Paperless-ngx)']].map(([k, t]) =>
+				${[['apps', 'Apps (App-Store, Web-Apps, Aufgaben der Apps)'], ['cloud', 'Cloud (Abgleich mit Cloud-Speichern)']].map(([k, t]) =>
 					html`<label class="chk"><input type="checkbox" class="opt-area" data-area="${k}"${tabOn(k) ? raw(' checked') : ''}>${t}</label>`)}
 			</div>
-			<p class="note">Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.</p>
+			<p class="note">Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.</p>
+			<p class="note">Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).</p>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
@@ -5298,7 +5299,7 @@ const findApp = (id) => (S.apps?.installed?.apps || []).find((x) => x.id === id)
 	|| (S.fbApps?.apps || []).find((x) => x.id === id);
 const appSrv = () => S.apps?.installed || S.me?.apps_server || S.fbApps;
 
-const sysApps = () => S.sysapps || [];
+const sysApps = () => (S.sysapps || []).filter((a) => (a.commands || []).length);
 
 // web terminal (ttyd on its own port, secret path)
 const termUrl = (t) => `${location.protocol}//${location.hostname}:${t.port}/${t.path}/`;
@@ -5409,6 +5410,11 @@ async function refreshCatalog(quiet = false) {
 	if (S.route.tab === 'apps') renderMain();
 }
 
+// modules (system apps like "paperless") switch tabs on and off: read the areas again
+function refreshAreas() {
+	rpc('shareos.ui', 'get', {}, ZERO_SID).then((r) => { if (r.areas) { S.areas = r.areas; renderTabs(); } }).catch(() => {});
+}
+
 async function pollAppJob() {
 	clearTimeout(S.appTimer);
 	try {
@@ -5420,6 +5426,7 @@ async function pollAppJob() {
 			if (j.state === 'done' && j.warning) toast('Hinweis: ' + j.warning, true);
 			else if (j.state === 'error') toast('Installieren: ' + (j.error || 'fehlgeschlagen'), true);
 			S.apps.job = null;
+			if (j.state === 'done') refreshAreas();
 			await loadApps(['installed', 'catalog']);
 			return;
 		}
@@ -5439,6 +5446,7 @@ function appsView() {
 }
 
 function appUsersTxt(a) {
+	if (a.module) return 'nur Administratoren';
 	if (a.type === 'system') return 'Terminal (Administratoren)';
 	if (a.users.includes('*')) return 'alle Benutzer';
 	if (!a.users.length) return 'nur Administratoren';
@@ -5469,7 +5477,7 @@ function appInstalled() {
 				<div class="desc">${txtOf(a.description)}</div>
 				<div class="desc" style="margin-top:6px"><span class="tag ${a.verified ? 'ok' : 'warn'}">${a.verified ? 'aus dem Store' : 'eigene / ungeprüft'}</span> ${upd(a) ? html`<span class="tag warn">Update ${upd(a).latest}</span>` : ''}</div>
 				${permTags(appPerms(a))}
-				<div class="ip">${a.publisher} · ${a.type === 'system' ? html`<span>Befehl</span> ${sysCmds(a)}` : 'sichtbar für ' + appUsersTxt(a)}</div>
+				<div class="ip">${a.publisher} · ${a.module ? html`<span>Modul</span>` : a.type === 'system' ? html`<span>Befehl</span> ${sysCmds(a)}` : 'sichtbar für ' + appUsersTxt(a)}</div>
 				<div class="acts" style="margin-top:10px">${appActions(a, upd(a))}</div></div></div>`)}</div>`}
 		<p class="note">Web-Apps laufen auf einem eigenen Port (${A.installed.port}${A.installed.https ? ' / ' + A.installed.https_port + ' für HTTPS' : ''}) – getrennt von dieser Oberfläche, damit eine App deine Anmeldung nicht benutzen kann. Wer die Adresse kennt, kann eine Web-App im Netzwerk öffnen; „sichtbar für“ steuert, wem sie in „Mein ShareOS“ angezeigt wird.</p>
 	</section>`;
@@ -5481,7 +5489,7 @@ const sysCmds = (a) => (a.commands || []).map((c, i) => html`${i ? ', ' : ''}<co
 function appActions(a, upd) {
 	const busy = !!(S.apps.job && JOB_TXT[S.apps.job.state]);
 	const sys = a.type === 'system';
-	return html`${sys ? html`<a class="btn sm" href="#/system/terminal">${svg(I.term)}Terminal</a>`
+	return html`${a.module ? html`<a class="btn sm" href="#/${a.module}">Öffnen</a>` : sys ? html`<a class="btn sm" href="#/system/terminal">${svg(I.term)}Terminal</a>`
 		: html`<button class="btn sm" type="button" data-act="app-launch" data-id="${a.id}">${appMode(a) === 'page' ? 'Öffnen' : 'Öffnen ↗'}</button>`}
 		${!sys && (a.permissions || []).includes('embed') ? html`<select class="btn sm ghost app-display" data-id="${a.id}" aria-label="Anzeige von ${a.name}">
 			<option value="page"${a.display !== 'window' ? raw(' selected') : ''}>In der Seite</option><option value="window"${a.display === 'window' ? raw(' selected') : ''}>Eigenes Fenster</option></select>` : ''}
@@ -5492,12 +5500,12 @@ function appActions(a, upd) {
 }
 
 // permissions an app can ask for (app.json "permissions")
-const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', torrent: 'Eigene Torrents (Transmission)', syncthing: 'Ordner synchronisieren (Syncthing)', media: 'Medien umwandeln (FFmpeg)', vpn: 'VPN der Box (OpenVPN)', tailscale: 'Fernzugriff (Tailscale)', autobrr: 'Download-Automatik (autobrr)', zabbix: 'Überwachung (Zabbix-Agent)', sysinfo: 'Werte der Box', netcheck: 'Netzwerk prüfen', docker: 'Docker-Hosts', tuya: 'Smart Home (Tuya)', notify: 'Meldungen senden', status: 'Anzeige im Kopf', internet: 'Nutzt das Internet', system: 'System-App · Terminal' };
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', torrent: 'Eigene Torrents (Transmission)', syncthing: 'Ordner synchronisieren (Syncthing)', media: 'Medien umwandeln (FFmpeg)', vpn: 'VPN der Box (OpenVPN)', tailscale: 'Fernzugriff (Tailscale)', autobrr: 'Download-Automatik (autobrr)', zabbix: 'Überwachung (Zabbix-Agent)', sysinfo: 'Werte der Box', netcheck: 'Netzwerk prüfen', docker: 'Docker-Hosts', tuya: 'Smart Home (Tuya)', module: 'Modul · eigener Reiter', notify: 'Meldungen senden', status: 'Anzeige im Kopf', internet: 'Nutzt das Internet', system: 'System-App · Terminal' };
 // permissions plus "internet" (manifest field: the app loads data from the internet – not a restriction, shown for transparency)
 // and "system" for system apps (programs for the terminal)
-const appPerms = (x) => [...(x?.type === 'system' ? ['system'] : []), ...(x?.permissions || []), ...(x?.internet ? ['internet'] : [])];
+const appPerms = (x) => [...(x?.module ? ['module'] : x?.type === 'system' ? ['system'] : []), ...(x?.permissions || []), ...(x?.internet ? ['internet'] : [])];
 const permTags = (perms) => (perms.length ? html`<div class="desc" style="margin-top:6px">${perms.map((p) => html`<span class="tag" title="${PERM_TXT[p] || p}">${PERM_TAG[p] || p}</span> `)}</div>` : '');
-const PERM_TXT = { cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.',
+const PERM_TXT = { module: 'Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.', cron: 'Darf zeitgesteuerte Aufgaben auf der Box ausführen – als eigener eingeschränkter Benutzer, nur in ihrem Datenordner, mit Zeitlimit.',
 	embed: 'Darf als Seite in der ShareOS-Oberfläche angezeigt werden (statt in einem eigenen Fenster).',
 	files: 'Darf die Dateien lesen, ändern und löschen, die der angemeldete Benutzer im Dateibrowser erreicht – mit seinen Rechten, solange die App offen ist.',
 	torrent: 'Darf den eigenen Transmission-Dienst des Benutzers steuern: Torrents hinzufügen, anhalten und löschen. Jeder Benutzer hat seinen eigenen Dienst; Downloads landen nur in seinen Ordnern.',
@@ -5700,7 +5708,7 @@ Object.assign(ACTIONS, {
 		const parts = [(a?.jobs || []).length ? 'Die App wird gelöscht, mit ihren Aufgaben und ihren Daten auf der Box.' : 'Die App wird gelöscht. Daten, die sie im Browser gespeichert hat, bleiben dort.',
 			...(users.length ? [`Gebraucht von: ${users.join(', ')} – diese Apps funktionieren danach nicht mehr.`] : [])];
 		if (!await confirmDlg(`${a?.name || el.dataset.id} entfernen?`, raw(html`${parts.map((t) => html`<span>${t}</span> `)}`.s), 'Entfernen', true)) return;
-		try { await rpc('shareos.apps', 'remove', { id: el.dataset.id, force: users.length > 0 }); toast('Entfernt.'); loadApps(['installed', 'catalog']); }
+		try { await rpc('shareos.apps', 'remove', { id: el.dataset.id, force: users.length > 0 }); toast('Entfernt.'); refreshAreas(); loadApps(['installed', 'catalog']); }
 		catch (e) { toast('Entfernen: ' + e.message, true); }
 	},
 	'app-users'(el) { S.apps.edit = el.dataset.id; if (!S.acc) rpc('shareos.accounts', 'list').then((a) => { S.acc = a; renderMain(); }).catch(() => {}); renderMain(); window.scrollTo(0, 0); },

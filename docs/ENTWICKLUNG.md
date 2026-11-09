@@ -278,6 +278,13 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | abends | Aus Diskussion #88 (lgustavod) wird ein **Ordner-Browser** für Freigaben, Medienserver und Cloud-Aufträge; dazu Kopieren/Einfügen im Dateibrowser (#127). |
 | nachts | Ein technisches Audit bringt Kernel-Härtung (#128; `FORTIFY_SOURCE` scheitert am ARM-Entpacker) und den **Claim-Modus** (#129): Eine neue Box hat kein bekanntes Passwort mehr, man übernimmt sie mit der USB-Taste – Updates sperren nie. Desktop 0.2.3 kann das auch. |
 
+### Montag, 09.11.2026
+
+| Zeit | Was passiert ist |
+|---|---|
+| 17:00 | Machbarkeitsstudie DNS-Filter: Pi-hole läuft auf ARMv5 (3eca/pihole-armv5), Jan entscheidet sich für **AdGuard Home** (offizielles ARMv5-Programm, kein eigener Build) – nur zum Nachinstallieren. Dazu der Wunsch: alles modular, je nach Ausrichtung der NAS. |
+| 17:30 | **Module:** Eine System-App kann einen Bereich der Firmware einschalten; Reiter, „Mein ShareOS“-Teil und Hintergrundarbeit gibt es nur, solange sie installiert ist. Der Code bleibt in der geprüften Firmware – ein hochgeladenes Paket bringt keinen Code, der als root läuft. **Paperless** wird das erste Modul, eingerichtete Boxen bekommen es beim Update von selbst. Danach folgen DNS-Filter und Cloud. |
+
 ## Bemerkenswerte Problemlösungen
 
 - **3-MB-Grenze des Bootloaders:** Der Kernel ist von 4,2 auf 2,4 MB geschrumpft, Treiber wurden in Module ausgelagert. Das Start-System umfasst nur 0,9 MB.

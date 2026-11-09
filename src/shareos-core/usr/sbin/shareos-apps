@@ -8,6 +8,7 @@
 //   shareos-apps install <id> [ver] download from the catalog, verify, install
 //   shareos-apps install-file <f>   install an uploaded package (not verified)
 //   shareos-apps remove <id> [--force]   (--force: also when another app needs it)
+//   shareos-apps modules [migrate]  installed modules (JSON); migrate: see below
 //   shareos-apps status             state of the last install job (JSON)
 //   shareos-apps run-job <id> <job> run a scheduled task of an app now (cron)
 //   shareos-apps job-log <id> <job> output of the last run
@@ -76,6 +77,20 @@
 //   delay       seconds after boot before it starts, 0 … 60 (default 5)
 // Removing the app runs "<controller> stop-all"; so does shutting down.
 // The boot runs from /etc/init.d/S90services ("shareos-apps services boot").
+// A system app that is a module (ShareOS 0.3.0-beta.3+) switches on an area
+// of the firmware – its tab (e.g. PAPERLESS), its part of "My ShareOS" and its
+// background work appear only while the app is installed:
+//   { "id": "paperless", "type": "system", "module": "paperless", "commands": [] }
+//   module      equals the id; the firmware's controller /usr/sbin/shareos-<id>
+//               has a line "shareos-module" (pages, rpcd methods and scripts
+//               stay in the reviewed firmware – a package brings no code
+//               that runs as root or in the admin interface)
+//   commands    may be empty for a module
+// After installing, "<controller> module-installed" runs (e.g. folders).
+// "shareos-apps modules migrate" (boot) installs a module from the copy in
+// /usr/share/shareos/modules/<id> once when the controller says the area is
+// in use ("<controller> module-configured" exits 0) – for boxes that used
+// the area before it became a module. "shareos-apps modules" lists them.
 // Web apps are served by their own web server (port apps.store.port, default
 // 8081) from /www-apps/<id>/ – another origin than the admin interface, so an
 // app cannot use the admin's login.
@@ -377,6 +392,7 @@ function installed() {
 			permissions: a.permissions ?? [], internet: a.internet === true, jobs: jobs_of(id, a, c),
 			window: type(a.window) == 'object' ? { width: a.window.width ?? null, height: a.window.height ?? null } : null,
 			opens: opens_of(a), commands: base == SYS ? (a.commands ?? []) : [], requires: a.requires ?? [],
+			module: base == SYS && a.module == id ? id : null,
 			verified: c.get('apps', s, 'verified') == '1', source: c.get('apps', s, 'source') ?? '',
 			installed: +(c.get('apps', s, 'installed') ?? 0),
 			users: type(users) == 'array' ? users : (users ? [ users ] : []), display: c.get('apps', s, 'display') ?? null });
@@ -581,9 +597,42 @@ function cmd_services(what) {
 	die('usage: shareos-apps services list|boot|stop');
 }
 
+/* ---------- modules: system apps that switch on an area of the firmware ---------- */
+
+const MODULES_SRC = ROOT + '/usr/share/shareos/modules';
+
+// a module the firmware knows: its controller has a line "shareos-module"
+function module_known(id) {
+	return !!match(id ?? '', CTL_RE) && !!match(readfile(controller(id), 4096) ?? '', /shareos-module/);
+}
+
+function check_module(a) {
+	if (a.module == null) return null;
+	if (a.module != a.id) return 'system app: "module" must equal the id';
+	if (!module_known(a.module)) return 'system app: this ShareOS has no module "' + a.module + '"';
+	return null;
+}
+
+// installed modules (ids)
+function modules() {
+	let l = [];
+	for (let id in sort(lsdir(SYS) ?? [])) {
+		if (!match(id, ID_RE)) continue;
+		let a = sysapp_json(id);
+		if (a?.module == id && module_known(id)) push(l, id);
+	}
+	return l;
+}
+
+function module_hook(id, verb) {
+	if (!module_known(id)) return;
+	capture(shq(controller(id)) + ' ' + verb + ' </dev/null >/dev/null 2>&1');
+}
+
 function check_system(a, dir) {
-	let cmds = a.commands;
-	if (type(cmds) != 'array' || !length(cmds) || length(cmds) > MAX_CMDS) return 'system app: "commands" lists 1 … ' + MAX_CMDS + ' programs';
+	let cmds = a.commands, me = check_module(a);
+	if (me) return me;
+	if (type(cmds) != 'array' || (!length(cmds) && a.module == null) || length(cmds) > MAX_CMDS) return 'system app: "commands" lists 1 … ' + MAX_CMDS + ' programs';
 	for (let c in cmds) {
 		if (type(c) != 'string' || !match(c, CMD_RE)) return 'system app: invalid command ' + c;
 		if (stat(dir + '/bin/' + c)?.type != 'file') return 'system app: program bin/' + c + ' missing in the package';
@@ -730,7 +779,8 @@ function install_file(file, verified, source) {
 	// a service: start it right away when it asks for that (in the background)
 	let svc = sys ? service_of(a) : null;
 	if (svc?.on_install) service_run(svc, svc.on_install, true, 0);
-	return { ok: true, id: a.id, version: a.version, verified, requires: a.requires ?? [] };
+	if (sys && a.module) module_hook(a.id, 'module-installed');
+	return { ok: true, id: a.id, version: a.version, verified, requires: a.requires ?? [], module: sys && a.module ? true : false };
 }
 
 // install_catalog and ensure_requires call each other (no hoisting in ucode)
@@ -957,6 +1007,31 @@ exit $rc`, shq(d), id, shq(APPS + '/' + id), shq(d), shq(d), spool ? ' SHAREOS_N
 	return out(st);
 }
 
+// boxes that used an area before it became a module get the module once,
+// from the copy in the firmware (no internet needed); removed later, it stays
+// removed (mark /etc/shareos/module-migrated.<id>)
+function cmd_modules_migrate() {
+	let done = [];
+	for (let id in sort(lsdir(MODULES_SRC) ?? [])) {
+		if (!match(id, ID_RE) || !module_known(id)) continue;
+		let mark = ROOT + '/etc/shareos/module-migrated.' + id;
+		if (stat(mark) || sysapp_json(id)) continue;
+		let used = capture(shq(controller(id)) + ' module-configured </dev/null').rc == 0;
+		if (used) {
+			let f = ROOT + '/tmp/shareos-module-' + id + '.sapp';
+			let r = capture(sprintf('tar -cf - -C %s app.json %s | gzip -c > %s', shq(MODULES_SRC + '/' + id),
+				stat(MODULES_SRC + '/' + id + '/icon.svg') ? 'icon.svg' : '', shq(f)));
+			let res = r.rc == 0 ? install_file(f, true, 'firmware') : { error: trim(r.out) };
+			unlink(f);
+			if (res.error) { warn('module ' + id + ': ' + res.error + '\n'); continue; }
+			push(done, id);
+		}
+		mkdir(ROOT + '/etc/shareos');
+		writefile(mark, '' + time() + '\n');
+	}
+	return out({ installed: done });
+}
+
 function cmd_job_log(id, j) {
 	if (!match(id ?? '', ID_RE) || !match(j ?? '', JOB_RE)) die('invalid app or job');
 	return out({ log: readfile(ST + '/jobs/' + id + '.' + j + '.log') ?? '', last: job_state(id, j) });
@@ -984,6 +1059,10 @@ case 'fix-perms': {
 	break;
 }
 case 'services': cmd_services(ARGV[1]); break;
+case 'modules':
+	if (ARGV[1] == 'migrate') cmd_modules_migrate();
+	else out({ modules: modules() });
+	break;
 case 'install': cmd_install(ARGV[1], ARGV[2]); break;
 case 'install-file': cmd_install_file(ARGV[1]); break;
 case 'remove': cmd_remove(ARGV[1], ARGV[2]); break;
@@ -992,6 +1071,6 @@ case 'run-job': cmd_run_job(ARGV[1], ARGV[2]); break;
 case 'job-log': cmd_job_log(ARGV[1], ARGV[2]); break;
 case 'notify': cmd_notify(ARGV[1], ARGV[2], ARGV[3], ARGV[4], ARGV[5], ARGV[6]); break;
 default:
-	warn('usage: shareos-apps catalog | cached | list | install <id> [version] | install-file <file> | remove <id> | status | run-job <id> <job> | job-log <id> <job> | notify <id> send|clear … | services list|boot|stop\n');
+	warn('usage: shareos-apps catalog | cached | list | install <id> [version] | install-file <file> | remove <id> | status | run-job <id> <job> | job-log <id> <job> | notify <id> send|clear … | services list|boot|stop | modules [migrate]\n');
 	exit(2);
 }

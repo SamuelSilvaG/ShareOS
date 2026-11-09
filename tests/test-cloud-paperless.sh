@@ -97,8 +97,29 @@ run "echo anna1234 | shareos-users add anna user --home=daten --cloud=1" >/dev/n
 check "test: good token" "run \"echo $TOK | shareos-paperless test http://127.0.0.1:$PPORT\" | grep -q 'ok documents=42'"
 check "test: bad token" "run \"echo wrongwrongwrongwrongwrong | shareos-paperless test http://127.0.0.1:$PPORT\" | grep -q 'token rejected'"
 run "uci set paperless.global.url=http://127.0.0.1:$PPORT; uci set paperless.u_anna=inbox; uci set paperless.u_anna.owner=anna; uci set paperless.u_anna.token=$TOK; uci add_list paperless.u_anna.tags=3; uci commit paperless" >/dev/null
-run "shareos-paperless folders" >/dev/null
 IN=$R/mnt/daten/home/anna/Paperless
+
+# --- Paperless is a module (system app "paperless") ---------------------------------
+run "shareos-paperless folders" >/dev/null
+check "module not installed: no folders, run does nothing" "[ ! -d $IN ] && run 'shareos-paperless run; echo rc=\$?' | grep -q rc=0"
+o=$(run "shareos-apps modules migrate")
+check "module: installed once from the firmware copy (Paperless was set up)" "echo \"\$o\" | js \"d['installed']==['paperless']\" && [ -f $R/opt/shareos/sysapps/paperless/app.json ] && [ -f $R/etc/shareos/module-migrated.paperless ]"
+check "module: listed" "run 'shareos-apps modules' | js \"d['modules']==['paperless']\""
+check "module: install hook created the inbox folder" "[ -d $IN ]"
+run "shareos-cron sync" >/dev/null
+check "module: cron entry while installed" "grep -q 'shareos-paperless run' $R/etc/crontabs/root"
+run "shareos-apps remove paperless" >/dev/null
+check "module removed: no cron entry, folder stays" "! grep -q 'shareos-paperless run' $R/etc/crontabs/root && [ -d $IN ] && [ ! -e $R/opt/shareos/sysapps/paperless ]"
+check "module removed: migration does not bring it back" "run 'shareos-apps modules migrate' | js \"d['installed']==[]\""
+(cd "$TOP/sysapps/paperless" && tar -cf - app.json icon.svg | gzip -c > "$R/tmp/paperless.sapp")
+check "module: installed from its package" "run 'shareos-apps install-file /tmp/paperless.sapp' | js \"d['ok'] and d['module']\""
+mkdir -p $T/fake && printf '{"id":"dnsfilter","name":"x","version":"1.0.0","type":"system","module":"dnsfilter","commands":[]}' > $T/fake/app.json
+(cd $T/fake && tar -cf - app.json | gzip -c > "$R/tmp/fake.sapp")
+check "module: unknown module refused" "run 'shareos-apps install-file /tmp/fake.sapp' | grep -q 'no module'"
+printf '{"id":"paperless2","name":"x","version":"1.0.0","type":"system","module":"paperless","commands":[]}' > $T/fake/app.json
+(cd $T/fake && tar -cf - app.json | gzip -c > "$R/tmp/fake.sapp")
+check "module: must equal the id" "run 'shareos-apps install-file /tmp/fake.sapp' | grep -q 'must equal the id'"
+run "shareos-paperless folders" >/dev/null
 check "personal inbox folder created for the user" "[ -d $IN ] && [ \"\$(run stat -c %U /mnt/daten/home/anna/Paperless)\" = anna ]"
 echo "%PDF-1.4 test" > $IN/rechnung.pdf; echo hi > $IN/notiz.xyz; echo "%PDF-1.4 new" > $IN/frisch.pdf
 touch -d '-5 minutes' $IN/rechnung.pdf $IN/notiz.xyz
@@ -121,6 +142,7 @@ run "uci set paperless.global.enabled=1; uci commit paperless" >/dev/null
 # --- rpcd ---------------------------------------------------------------------------
 run '/etc/init.d/S12ubus start && /etc/init.d/S13rpcd start' >/dev/null
 i=0; until run "ubus list shareos.paperless" >/dev/null 2>&1 || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
+check "rpc: area Paperless on while the module is installed" "run \"ubus call shareos.ui get\" | js \"d['areas']['paperless']\""
 G=$(run "ubus call shareos.paperless get")
 check "rpc: get hides the token" "echo '$G' | js \"d['inboxes'][0]['token_hint']=='••••aaaa' and 'token' not in d['inboxes'][0] and d['inboxes'][0]['recent'][0]['state'] in ('FAILURE','SUCCESS')\""
 check "rpc: tags" "run \"ubus call shareos.paperless tags '{\\\"inbox\\\":\\\"u_anna\\\"}'\" | js \"[t['name'] for t in d['tags']]==['Rechnung','Scan']\""

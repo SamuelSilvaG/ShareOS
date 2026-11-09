@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "JETON DU BOT (DE @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (bot)",
 		"BEREICHE": "ZONES",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées, dossiers d’entrée Paperless). Réglages et données sont conservés ; réactiver remet tout en marche.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées). Réglages et données sont conservés ; réactiver remet tout en marche.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (boutique, apps web, tâches des apps)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Cloud (synchronisation avec le stockage en ligne)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (dossiers d’entrée pour Paperless-ngx)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NOUVEAU MOT DE PASSE (8 CARACTÈRES MIN.)",
 		"PASSWORT WIEDERHOLEN": "RÉPÉTER LE MOT DE PASSE",
 		"Passwort festlegen": "Définir le mot de passe",
-		"Alles lässt sich später unter System einstellen.": "Tout peut être réglé plus tard sous Système."
+		"Alles lässt sich später unter System einstellen.": "Tout peut être réglé plus tard sous Système.",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "Paperless est un module : il apparaît une fois installé sous APPS et disparaît quand on le retire (réglages et dossiers sont conservés).",
+		"Modul · eigener Reiter": "Module · onglet propre",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "Active une partie de ShareOS avec son propre onglet. Le code fait partie du firmware vérifié – le paquet n’apporte que l’interrupteur.",
+		"Modul": "Module"
 	},
 	"patterns": [
 		[
