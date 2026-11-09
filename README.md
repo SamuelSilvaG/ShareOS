@@ -28,7 +28,7 @@ years of work goes to the Alt-F project — see [LICENSE](LICENSE) and
 
 ShareOS runs from flash on the DNS-320L (kernel, initramfs and the system in
 UBI with a persistent overlay for settings and packages). Test releases
-(`v0.2.0-beta.x`, before that `v0.1.0-beta.x`; pre-releases, for test devices
+(`v0.3.0-beta.x`, before that `v0.2.0-beta.x` and `v0.1.0-beta.x`; pre-releases, for test devices
 only) are published on
 [GitHub Releases](https://github.com/UniqueDroid/ShareOS/releases); a running
 ShareOS updates itself from there.
@@ -84,7 +84,7 @@ Version in brackets = first release with the feature.
 - File browser in the web interface: admins for all drives and USB drives, users for their personal folder and the shares they have rights to (enabled per user; read-only shares stay read-only, also for apps); upload/download with progress, drag and drop, large files; trash per folder with restore and automatic emptying (0.2.0-beta.12); copy/cut and paste, also between drives, shares and the personal folder (0.3.0-beta.2)
 
 **Apps and integrations**
-- APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) – 38 web apps for files and office, media, network, security, development and everyday life: one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
+- APPS area with a store from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps) – 43 web apps for files and office, media, network, security, development and everyday life: one-click install/update with SHA-256 check, own `.sapp` packages, more catalogs, visibility per user/group; apps run on their own port (8081/8444) (beta.6)
 - App permissions: scheduled tasks (`cron`) as a restricted app user, schedule editable in the interface (beta.7)
 - Open files from the file browser in apps (e.g. Webpad), save back; app SDK and ShareOS look for apps (`/_shareos/theme.css`, `/_shareos/app.js`), apps inside the interface (permission `embed`) (beta.9)
 - App permission `files`: apps work with the folders of the box with the user's rights – ShareCommander (two-pane file manager), Webpad saves on the box; music and videos stream with seeking (beta.11)
