@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "ТОКЕН БОТА (ОТ @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (бот)",
 		"BEREICHE": "РАЗДЕЛЫ",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Выключено: вкладка исчезает, в том числе у пользователей в «Мой ShareOS», и фоновая работа останавливается (веб-сервер и задачи приложений, плановые облачные задания, входящие Paperless). Настройки и данные сохраняются; при включении всё возвращается.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Выключено: вкладка исчезает, в том числе у пользователей в «Мой ShareOS», и фоновая работа останавливается (веб-сервер и задачи приложений, плановые облачные задания). Настройки и данные сохраняются; при включении всё возвращается.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Приложения (магазин, веб-приложения, задачи приложений)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Облако (синхронизация с облачными хранилищами)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (входящие папки для Paperless-ngx)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "НОВЫЙ ПАРОЛЬ (МИН. 8 СИМВОЛОВ)",
 		"PASSWORT WIEDERHOLEN": "ПОВТОРИТЕ ПАРОЛЬ",
 		"Passwort festlegen": "Задать пароль",
-		"Alles lässt sich später unter System einstellen.": "Всё можно настроить позже в разделе «Система»."
+		"Alles lässt sich später unter System einstellen.": "Всё можно настроить позже в разделе «Система».",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "Paperless — это модуль: он появляется после установки в разделе ПРИЛОЖЕНИЯ и исчезает при удалении (настройки и папки сохраняются).",
+		"Modul · eigener Reiter": "Модуль · своя вкладка",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "Включает часть ShareOS со своей вкладкой. Код входит в проверенную прошивку — пакет приносит только переключатель.",
+		"Modul": "Модуль"
 	},
 	"patterns": [
 		[

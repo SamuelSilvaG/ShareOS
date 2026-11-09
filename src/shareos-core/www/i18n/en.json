@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "BOT TOKEN (FROM @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (bot)",
 		"BEREICHE": "AREAS",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Switched off: the tab disappears, also for users in “My ShareOS”, and the background work rests (apps web server and app tasks, scheduled cloud jobs, Paperless inboxes). Settings and data stay; switching on brings everything back.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Switched off: the tab disappears, also for users in “My ShareOS”, and the background work rests (apps web server and app tasks, scheduled cloud jobs). Settings and data stay; switching on brings everything back.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (app store, web apps, app tasks)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Cloud (sync with cloud storage)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (inboxes for Paperless-ngx)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NEW PASSWORD (MIN. 8 CHARACTERS)",
 		"PASSWORT WIEDERHOLEN": "REPEAT PASSWORD",
 		"Passwort festlegen": "Set password",
-		"Alles lässt sich später unter System einstellen.": "Everything can be set later under System."
+		"Alles lässt sich später unter System einstellen.": "Everything can be set later under System.",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "Paperless is a module: it appears when it is installed under APPS and disappears when removed (settings and folders stay).",
+		"Modul · eigener Reiter": "Module · own tab",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "Switches on an area of ShareOS with its own tab. The code is part of the reviewed firmware – the package only brings the switch.",
+		"Modul": "Module"
 	},
 	"patterns": [
 		[

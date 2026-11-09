@@ -290,7 +290,10 @@ APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Back
                                      'installed': 0, 'users': ['*'], 'jobs': [], 'window': None, 'opens': []},
                        'nano': {'id': 'nano', 'name': 'nano', 'version': '8.7.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Einfacher Texteditor für das Terminal (System → Terminal oder SSH): „nano datei“. Mit Rückgängig, Suchen und Ersetzen und UTF-8.', 'en': 'text editor for the terminal'},
                                 'type': 'system', 'commands': ['nano'], 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': [], 'verified': True, 'source': 'store',
-                                'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []}},
+                                'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
+                       'paperless': {'id': 'paperless', 'name': 'Paperless', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Anbindung an Paperless-ngx (Modul)', 'en': 'Paperless-ngx connection (module)'},
+                                     'type': 'system', 'module': 'paperless', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'office', 'permissions': [], 'verified': True, 'source': 'store',
+                                     'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []}},
         'job': None, 'channel': 'stable',
         'sources': ['https://github.com/UniqueDroid/ShareOS-Apps/releases/download/catalog/index.json'], 'refreshed': 0}
 CATALOG = [
@@ -691,9 +694,11 @@ def call(obj, method, args):
                 if args.get(k):
                     STATE[k] = args[k]
             for k, v in (args.get('areas') or {}).items():
-                STATE.setdefault('areas', {'apps': True, 'cloud': True, 'paperless': True})[k] = bool(v)
+                if k in ('apps', 'cloud'):
+                    STATE.setdefault('areas', {'apps': True, 'cloud': True})[k] = bool(v)
+        # modules (Paperless): on while the system app is installed
         return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent'],
-                'areas': STATE.get('areas', {'apps': True, 'cloud': True, 'paperless': True}), 'default_password': True}
+                'areas': {**STATE.get('areas', {'apps': True, 'cloud': True}), 'paperless': 'paperless' in APPS['installed']}, 'default_password': True}
     if obj == 'shareos.net':
         if method == 'set':
             STATE['net'] = {k: args.get(k, STATE['net'][k]) for k in STATE['net']}

@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "TOKEN DEL BOT (DE @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (bot)",
 		"BEREICHE": "ÁREAS",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas, entradas de Paperless). Ajustes y datos se conservan; al activar vuelve todo.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas). Ajustes y datos se conservan; al activar vuelve todo.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (tienda, apps web, tareas de las apps)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Nube (sincronización con almacenamiento en la nube)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (carpetas de entrada para Paperless-ngx)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NUEVA CONTRASEÑA (MÍN. 8 CARACTERES)",
 		"PASSWORT WIEDERHOLEN": "REPETIR CONTRASEÑA",
 		"Passwort festlegen": "Establecer contraseña",
-		"Alles lässt sich später unter System einstellen.": "Todo se puede ajustar más tarde en Sistema."
+		"Alles lässt sich später unter System einstellen.": "Todo se puede ajustar más tarde en Sistema.",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "Paperless es un módulo: aparece cuando está instalado en APPS y desaparece al quitarlo (ajustes y carpetas se conservan).",
+		"Modul · eigener Reiter": "Módulo · pestaña propia",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "Activa una parte de ShareOS con su propia pestaña. El código forma parte del firmware revisado: el paquete solo trae el interruptor.",
+		"Modul": "Módulo"
 	},
 	"patterns": [
 		[

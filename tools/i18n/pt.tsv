@@ -1224,7 +1224,7 @@ E965	ID DO CHAT
 E966	TOKEN DO BOT (DO @BOTFATHER)
 E967	Telegram (bot)
 E968	ÁREAS
-E969	Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas, entradas do Paperless). Definições e dados mantêm-se; ligar repõe tudo.
+E969	Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas). Definições e dados mantêm-se; ligar repõe tudo.
 E970	Apps (loja, apps web, tarefas das apps)
 E971	Nuvem (sincronização com armazenamento na nuvem)
 E972	Paperless (pastas de entrada para o Paperless-ngx)
@@ -1838,3 +1838,7 @@ E1461	NOVA PALAVRA-PASSE (MÍN. 8 CARACTERES)
 E1462	REPETIR PALAVRA-PASSE
 E1463	Definir palavra-passe
 E1464	Tudo pode ser ajustado depois em Sistema.
+E1465	O Paperless é um módulo: aparece quando está instalado em APPS e desaparece ao removê-lo (definições e pastas mantêm-se).
+E1466	Módulo · separador próprio
+E1467	Ativa uma parte do ShareOS com separador próprio. O código faz parte do firmware revisto – o pacote só traz o interruptor.
+E1468	Módulo

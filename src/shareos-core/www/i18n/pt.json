@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "TOKEN DO BOT (DO @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (bot)",
 		"BEREICHE": "ÁREAS",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge, Paperless-Eingänge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas, entradas do Paperless). Definições e dados mantêm-se; ligar repõe tudo.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas). Definições e dados mantêm-se; ligar repõe tudo.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (loja, apps web, tarefas das apps)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Nuvem (sincronização com armazenamento na nuvem)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (pastas de entrada para o Paperless-ngx)",
@@ -1467,7 +1467,11 @@
 		"NEUES PASSWORT (MIND. 8 ZEICHEN)": "NOVA PALAVRA-PASSE (MÍN. 8 CARACTERES)",
 		"PASSWORT WIEDERHOLEN": "REPETIR PALAVRA-PASSE",
 		"Passwort festlegen": "Definir palavra-passe",
-		"Alles lässt sich später unter System einstellen.": "Tudo pode ser ajustado depois em Sistema."
+		"Alles lässt sich später unter System einstellen.": "Tudo pode ser ajustado depois em Sistema.",
+		"Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).": "O Paperless é um módulo: aparece quando está instalado em APPS e desaparece ao removê-lo (definições e pastas mantêm-se).",
+		"Modul · eigener Reiter": "Módulo · separador próprio",
+		"Schaltet einen Bereich von ShareOS frei, mit eigenem Reiter. Der Code gehört zur geprüften Firmware – das Paket bringt nur den Schalter mit.": "Ativa uma parte do ShareOS com separador próprio. O código faz parte do firmware revisto – o pacote só traz o interruptor.",
+		"Modul": "Módulo"
 	},
 	"patterns": [
 		[

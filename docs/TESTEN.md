@@ -170,6 +170,12 @@ Benutzer oder Gruppe setzen. Windows: `\\<box>\<freigabe>`, macOS/Linux:
 
 ## 8. Paperless-ngx
 
+Paperless ist ein **Modul** (ab 0.3.0-beta.3): Der Reiter *PAPERLESS* erscheint
+erst, wenn unter **Apps → Store** die System-App **Paperless** installiert ist.
+Eine Box, auf der Paperless vor dem Update schon eingerichtet war, bekommt das
+Modul beim ersten Start von selbst.
+
+0. **Apps → Store → Paperless → Installieren.** Der Reiter *PAPERLESS* erscheint hinter *CLOUD*.
 1. In Paperless: Profil → **API-Token** erzeugen.
 2. In ShareOS unter **Paperless** die Adresse eintragen (z. B. `http://192.168.1.20:8000`) und speichern.
 3. **Neuer Eingang**: persönlich (Ordner `Paperless` im persönlichen Ordner eines Benutzers) oder gemeinsam (Ordner einer Freigabe, z. B. für den Scanner), Token eintragen, **Verbindung prüfen**.
@@ -178,6 +184,17 @@ Benutzer oder Gruppe setzen. Windows: `\\<box>\<freigabe>`, macOS/Linux:
 Dateien, die Paperless ablehnt (z. B. Duplikate), landen in `.paperless/failed`
 im Eingangsordner. Ist Paperless nicht erreichbar, bleibt die Datei liegen und
 wird beim nächsten Lauf erneut gesendet.
+
+**Modul entfernen und wieder installieren:**
+
+1. **Apps → Installiert → Paperless → Entfernen.** Der Reiter *PAPERLESS* verschwindet, in „Mein ShareOS“ fehlt der Paperless-Abschnitt.
+2. Per SSH: `grep shareos-paperless /etc/crontabs/root` findet nichts; die Eingangsordner sind noch da.
+3. Box neu starten: Das Modul kommt **nicht** von selbst zurück.
+4. Wieder installieren: Adresse und Eingänge sind wie vorher, Dateien werden wieder übertragen.
+
+**Update einer Box mit eingerichtetem Paperless** (von 0.3.0-beta.2): Nach dem
+Neustart ist der Reiter *PAPERLESS* da, unter **Apps → Installiert** steht
+„Paperless“ (Modul), `cat /etc/shareos/module-migrated.paperless` zeigt die Zeit.
 
 ## 9. Cloud-Sync
 
