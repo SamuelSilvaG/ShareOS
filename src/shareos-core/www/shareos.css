@@ -124,6 +124,11 @@ kbd{font:inherit;font-size:11px;color:var(--muted);border:1px solid var(--line);
 .btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
 .btn svg{width:15px;height:15px}
 .btn.sm{min-height:32px;padding:0 10px;font-size:12px}
+/* links styled as buttons: keep the button colours (.sos a / a:hover would win) */
+.sos a.btn,.sos a.btn:hover{color:var(--accent)}
+.sos a.btn.primary,.sos a.btn.primary:hover{color:var(--bg)}
+.sos a.btn.ghost{color:var(--muted)}
+.sos a.btn.danger,.sos a.btn.danger:hover{color:var(--red)}
 .tag{display:inline-block;font-size:11px;letter-spacing:.08em;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:2px 7px;white-space:nowrap}
 .tag.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
 .tag.warn{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,transparent)}

@@ -4,6 +4,10 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.3
+
+- **Readable link buttons on hover.** Buttons that are links – *Im Store installieren* on *Drucker*, *USV* and *Medienserver*, *Terminal*, *Öffnen ↗*, *Notes ↗* – took the link colour on hover: the main button turned its text into the button colour and it disappeared. They now keep the colours of normal buttons (text on the main button stays light).
+
 ## 0.3.0-beta.2
 
 - **No known password on a new box (claiming).** A newly installed box no longer opens with the public password `shareos`: root stays locked until someone at the box claims it. The login page asks to press the **USB button** on the front and then, within two minutes, to choose the first password (min. 8 characters, `shareos.setup claim_state` / `claim`, public). SSH, the serial console and the browser terminal stay closed until then; the first-run wizard skips its password step afterwards. ShareOS Desktop 0.2.3 does the same in *Box einrichten*.
