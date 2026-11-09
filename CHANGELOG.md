@@ -12,6 +12,7 @@ pre-releases for test devices only.
   - Without the module, `shareos.paperless` and `shareos.me paperless` answer "not installed", `shareos-paperless run`/`folders` do nothing and cron has no entry. *System → Darstellung → Bereiche* keeps only Apps and Cloud.
   - `shareos-apps modules` lists the installed modules, `shareos-apps modules migrate` runs from `S70shares`. The apps list shows a module with *Öffnen* (its tab) instead of *Terminal*.
   - Tests: `test-cloud-paperless` (migration once, listed, install hook creates the inbox folders, cron entry only while installed, removal keeps folders and is not undone by the migration, install from the package, unknown module and module ≠ id refused), `run-stack-qemu` (area off until installed, methods refused).
+- **Readable link buttons on hover.** Buttons that are links – *Im Store installieren* on *Drucker*, *USV* and *Medienserver*, *Terminal*, *Öffnen ↗*, *Notes ↗* – took the link colour on hover: the main button turned its text into the button colour and it disappeared. They now keep the colours of normal buttons (text on the main button stays light).
 
 ## 0.3.0-beta.2
 
