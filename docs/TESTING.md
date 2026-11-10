@@ -229,7 +229,7 @@ Users may create their own accounts and jobs when "May create own cloud sync
 jobs" is set in their account (needs a personal folder). Their jobs run with
 their permissions.
 
-## 9a. Desktop view (0.3.0-beta.6)
+## 9a. Desktop view (0.3.0-beta.5)
 
 The desktop view is a **module**. The classic view stays next to it.
 

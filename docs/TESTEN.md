@@ -234,7 +234,7 @@ Benutzer dürfen eigene Konten und Aufträge anlegen, wenn im Benutzerkonto
 „Darf eigene Cloud-Sync-Aufträge anlegen“ gesetzt ist (braucht einen
 persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
-## 9a. Desktop-Ansicht (0.3.0-beta.6)
+## 9a. Desktop-Ansicht (0.3.0-beta.5)
 
 Die Desktop-Ansicht ist ein **Modul**. Die klassische Ansicht bleibt daneben.
 
