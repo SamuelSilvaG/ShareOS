@@ -80,13 +80,16 @@ print(json.dumps({"schema": 1, "apps": [
   {"id": "hello", "name": "Hello", "publisher": "Test", "type": "webapp", "versions": [v("1.0.0", "hello-1.0.0.sapp", s1), v("1.1.0", "hello-1.1.0.sapp", s2, True)]},
   {"id": "helper", "name": "Helper", "publisher": "Test", "type": "webapp", "versions": [v("1.0.0", "helper-1.0.0.sapp", s3)]},
   {"id": "needy", "name": "Needy", "publisher": "Test", "type": "webapp", "versions": [dict(v("1.0.0", "needy-1.0.0.sapp", s4), requires=["helper"])]},
+  {"id": "paperless", "name": "Paperless", "publisher": "Test", "type": "system", "module": "paperless", "versions": [v("1.0.0", "paperless-1.0.0.sapp", s1)]},
+  {"id": "nanox", "name": "Nanox", "publisher": "Test", "type": "system", "module": "paperless", "versions": [v("1.0.0", "nanox-1.0.0.sapp", s1)]},
   {"id": "broken", "name": "Broken", "publisher": "Test", "type": "webapp", "versions": [v("1.0.0", "hello-1.0.0.sapp", "0" * 64)]},
   {"id": "insecure", "name": "Insecure", "publisher": "Test", "versions": [dict(v("1.0.0", "x", s1), url="http://example.com/x.sapp")]}]}))
 PY
 run "uci -q delete apps.store.source; uci add_list apps.store.source=file:///tmp/pkg/index.json; uci set apps.store.port=$PORT; uci set apps.store.https_port=$((PORT+1)); uci set shareos.web.https=0; uci commit apps; uci commit shareos" >/dev/null
 
 C=$(run "shareos-apps catalog")
-check "catalog: stable channel shows release versions only" "echo '$C' | js \"[(a['id'],a['latest']) for a in d['apps']]==[('broken','1.0.0'),('hello','1.0.0'),('helper','1.0.0'),('needy','1.0.0')]\""
+check "catalog: stable channel shows release versions only" "echo '$C' | js \"[(a['id'],a['latest']) for a in d['apps']]==[('broken','1.0.0'),('hello','1.0.0'),('helper','1.0.0'),('nanox','1.0.0'),('needy','1.0.0'),('paperless','1.0.0')]\""
+check "catalog: a module keeps its field, only with its own id" "echo '$C' | js \"{a['id']:a['module'] for a in d['apps'] if a['type']=='system'}=={'paperless':'paperless','nanox':None} and all(a['module'] is None for a in d['apps'] if a['type']!='system')\""
 check "catalog: plain http package URLs are ignored" "! echo '$C' | grep -q insecure"
 run "uci set apps.store.channel=beta; uci commit apps" >/dev/null
 check "catalog: beta channel offers the pre-release" "run 'shareos-apps cached' | js \"[a['latest'] for a in d['apps'] if a['id']=='hello']==['1.1.0']\""

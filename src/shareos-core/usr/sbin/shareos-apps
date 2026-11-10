@@ -427,7 +427,7 @@ function merge(catalogs, channel) {
 			let i = inst[a.id];
 			push(apps, { id: a.id, name: a.name ?? a.id, publisher: a.publisher ?? '', description: a.description ?? '',
 				category: a.category ?? '', icon_url: a.icon_url ?? null, homepage: a.homepage ?? '',
-				type: a.type ?? 'webapp', source: cat.url, versions: vs, latest: vs[0].version, requires: vs[0].requires ?? [],
+				type: a.type ?? 'webapp', module: a.type == 'system' && a.module == a.id ? a.id : null, source: cat.url, versions: vs, latest: vs[0].version, requires: vs[0].requires ?? [],
 				installed: i?.version ?? null,
 				update_available: !!i && vcmp(vs[0].version, i.version) > 0,
 				compatible: !too_old(vs[0].min_shareos) });
