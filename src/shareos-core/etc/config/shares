@@ -11,6 +11,8 @@
 #	option nfs '0'
 #	option nfs_rw '0'
 #	list nfs_hosts '192.168.1.0/24'
+#	option vault '0'             # 1 = locked, unlocked on demand for some minutes
+#	option vault_ttl '15'        # default minutes when unlocking (1-480)
 
 config global 'global'
 	option workgroup 'WORKGROUP'

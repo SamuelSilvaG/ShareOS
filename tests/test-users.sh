@@ -125,6 +125,41 @@ check "NFS export" "grep -q '^/mnt/daten/medien 10.0.0.0/24(ro,sync,no_subtree_c
 check "user sees own shares" "rpc shareos.me get '{\"ubus_rpc_session\":\"$SID\"}' | js \"sorted((s['name'],s['access']) for s in d['shares'])==[('fotos','ro'),('medien','ro')]\""
 check "share removed, folder kept" "rpc shareos.shares del '{\"name\":\"medien\"}' | js \"[s['name'] for s in d['shares']]==['fotos']\" && [ -d $R/mnt/daten/medien ] && ! grep -q medien $R/etc/exports"
 
+# --- vault shares (#88): locked by default, unlocked for some minutes ----------
+check "vault: guests or NFS refused" "rpc shareos.shares set '{\"name\":\"tresor\",\"volume\":\"daten\",\"smb\":true,\"guest\":true,\"rw\":[\"jan\"],\"vault\":true}' | grep -q 'without guests and NFS' && rpc shareos.shares set '{\"name\":\"tresor\",\"volume\":\"daten\",\"smb\":true,\"nfs\":true,\"nfs_hosts\":[\"10.0.0.1\"],\"rw\":[\"jan\"],\"vault\":true}' | grep -q 'without guests and NFS'"
+V1=$(rpc shareos.shares set '{"name":"tresor","volume":"daten","smb":true,"rw":["jan"],"ro":["anna"],"vault":true,"vault_ttl":30}')
+aclwait /mnt/daten/tresor 'user::rwx'; sleep 1
+vacl() { run 'getfacl -p /mnt/daten/tresor'; }
+check "vault: created locked (not exported, only root in the folder)" "echo '$V1' | js \"[(s['vault'],s['vault_ttl'],s['vault_open']) for s in d['shares'] if s['name']=='tresor']==[(True,30,[])]\" && ! grep -q '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf && ! vacl | grep -q '^user:jan:' && ! vacl | grep -q '^user:anna:' && vacl | grep -qx 'other::---'"
+check "vault: inside the share's rights stay (default ACL)" "vacl | grep -qx 'default:user:jan:rwx'"
+check "vault: cron locks what runs out" "grep -q 'shareos-shares vault-expire' $R/etc/crontabs/root"
+check "vault: shown to anna, locked" "rpc shareos.me get '{\"ubus_rpc_session\":\"$SID\"}' | js \"[(s['vault'],s['vault_until'],s['access']) for s in d['shares'] if s['name']=='tresor']==[(True,0,'ro')]\""
+check "vault: wrong password refused" "rpc shareos.me vault_unlock '{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"password\":\"falsch\"}' | grep -q 'wrong password' && ! grep -q '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf"
+check "vault: a share that is no vault cannot be unlocked" "rpc shareos.me vault_unlock '{\"ubus_rpc_session\":\"$SID\",\"share\":\"fotos\",\"password\":\"neu12345\"}' | grep -q 'not a vault'"
+U1=$(rpc shareos.me vault_unlock "{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"minutes\":10,\"password\":\"neu12345\"}")
+check "vault: unlocked for anna for 10 minutes" "echo '$U1' | js \"d['ok'] and 590<=d['until']-__import__('time').time()<=610 and [s['vault_until'] for s in d['shares'] if s['name']=='tresor']==[d['until']]\""
+check "vault: exported for anna only" "grep -A12 '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf | grep -q 'valid users = anna ' && grep -A12 '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf | grep -q 'guest ok = no'"
+check "vault: folder open for anna (read only), not for jan" "vacl | grep -qx 'user:anna:r-x' && ! vacl | grep -q '^user:jan:'"
+check "vault: admin list shows who unlocked it" "rpc shareos.shares list '{}' | js \"[[o['user'] for o in s['vault_open']] for s in d['shares'] if s['name']=='tresor']==[['anna']]\""
+check "vault: admin locks it now" "rpc shareos.shares vault_lock '{\"name\":\"tresor\"}' | js \"[s['vault_open'] for s in d['shares'] if s['name']=='tresor']==[[]]\" && ! grep -q '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf && ! vacl | grep -q '^user:anna:'"
+rpc shareos.me vault_unlock "{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"minutes\":5,\"password\":\"neu12345\"}" >/dev/null
+check "vault: anna locks it herself" "rpc shareos.me vault_lock '{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\"}' | js \"[s['vault_until'] for s in d['shares'] if s['name']=='tresor']==[0]\" && ! grep -q '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf"
+rpc shareos.me vault_unlock "{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"minutes\":5,\"password\":\"neu12345\"}" >/dev/null
+echo "anna $(( $(date +%s) - 5 ))" > $R/tmp/shareos-vault/tresor
+run 'shareos-shares vault-expire' >/dev/null
+check "vault: the time ran out – locked again by cron" "[ ! -e $R/tmp/shareos-vault/tresor ] && ! grep -q '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf && ! vacl | grep -q '^user:anna:'"
+check "vault: invalid time refused" "rpc shareos.me vault_unlock '{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"minutes\":999,\"password\":\"neu12345\"}' | grep -q 'invalid time'"
+check "vault: tool refuses users without rights" "run 'shareos-shares vault-unlock tresor tv 5' | grep -q 'no access'"
+run 'shareos-shares apply' >/dev/null; sleep 1
+check "vault: apply keeps it locked" "! vacl | grep -q '^user:[a-z]' && vacl | grep -qx 'default:user:jan:rwx'"
+for i in 1 2 3 4 5; do rpc shareos.me vault_unlock "{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"password\":\"x$i\"}" >/dev/null; done
+check "vault: five wrong passwords block unlocking for 10 minutes" "rpc shareos.me vault_unlock '{\"ubus_rpc_session\":\"$SID\",\"share\":\"tresor\",\"password\":\"neu12345\"}' | grep -q 'too many'"
+rm -f $R/tmp/shareos-vault-fails.anna
+V2=$(rpc shareos.shares set '{"name":"tresor","volume":"daten","smb":true,"rw":["jan"],"ro":["anna"],"vault":false}')
+aclwait /mnt/daten/tresor 'user:jan:rwx'
+check "vault switched off: normal share with its full ACL again, no cron entry" "grep -q '^\[tresor\]' $R/etc/ksmbd/ksmbd.conf && vacl | grep -qx 'user:jan:rwx' && vacl | grep -qx 'user:anna:r-x' && ! grep -q 'vault-expire' $R/etc/crontabs/root"
+rpc shareos.shares del '{"name":"tresor"}' >/dev/null
+
 # --- file browser, own look ---------------------------------------------------
 o=$(run "echo lisa1234 | shareos-users add lisa user --home=daten --files=1")
 L2=$(rpc session login '{"username":"lisa","password":"lisa1234"}')

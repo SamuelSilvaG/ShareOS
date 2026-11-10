@@ -286,6 +286,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 07:30 | **DNS-Filter als zweites Modul:** System-App „DNS-Filter“, Steuerung `shareos-dnsfilter`, Reiter DNS-FILTER. Einrichtung über AdGuards eigene Setup-API, Bremse, Protokoll und Statistik nur im RAM, Warnung ab 300 000 Regeln. AdGuards Benutzerwechsel gibt root zu früh ab (Port 53 scheitert) – es läuft als root. `test-dnsfilter` mit 34 Prüfungen, Blockieren über Port 53 eingeschlossen. |
 | 10:17 | **Projekt-Webseite** auf GitHub Pages: [uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/) – Funktionen, Downloads je Modell, App-Katalog, Diskussionen und diese Doku als Wiki. Sie baut sich bei jedem Push, Release und einmal täglich selbst aus dem Repository. |
 | 11:30 | Doku für **0.3.0-beta.4** (DNS-Filter, Webseite). |
+| 14:30 | **Tresor-Freigaben** (Diskussion #88, Idee von SamuelSilvaG): Eine Freigabe bleibt gesperrt und unsichtbar, bis ein Benutzer sie mit seinem Passwort für einige Minuten entsperrt – dann nur für ihn, danach sperrt sie sich selbst wieder (cron). Gesperrt hält die ACL des obersten Ordners auch offene Verbindungen und Apps draußen. App-Recht `vault` mit `ShareOS.vault`, damit Samuel die Begleit-App bauen kann. Für 0.3.0-beta.5. |
 
 ### Montag, 09.11.2026
 

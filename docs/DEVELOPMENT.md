@@ -285,6 +285,7 @@ the box for why the web server was not running.
 | 07:30 | **DNS filter as the second module:** system app "DNS-Filter", controller `shareos-dnsfilter`, tab DNS-FILTER. Set up through AdGuard's own setup API, memory limit, query log and statistics in RAM only, warning from 300,000 rules on. AdGuard's user switch drops root too early (port 53 fails) – it runs as root. `test-dnsfilter` with 34 checks, blocking over port 53 included. |
 | 10:17 | **Project website** on GitHub Pages: [uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/) – features, downloads per model, the app catalog, discussions and these docs as a wiki. It builds itself from the repository on every push, release and once a day. |
 | 11:30 | Docs for **0.3.0-beta.4** (DNS filter, website). |
+| 14:30 | **Vault shares** (discussion #88, idea of SamuelSilvaG): a share stays locked and invisible until a user unlocks it with the password for some minutes – then only for that user, and it locks itself again (cron). While locked the top folder's ACL shuts out open connections and apps too. App permission `vault` with `ShareOS.vault`, so Samuel can build the companion app. For 0.3.0-beta.5. |
 
 ### Monday, 09.11.2026
 

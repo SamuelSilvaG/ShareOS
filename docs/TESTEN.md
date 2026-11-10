@@ -485,6 +485,16 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zp. Tresor-Freigaben (0.3.0-beta.5)
+
+Braucht ein Laufwerk mit ext4 (oder Btrfs) und zwei Benutzer mit SMB-Zugang, z. B. `jan` (Admin) und `anna`.
+1. *Freigaben → Neue Freigabe* `tresor`, *jan* und *anna* „lesen & schreiben“, *Als Tresor …* anhaken, Standard-Dauer 15 Minuten, *Speichern*. *Gäste* und *NFS* sind ausgegraut. Die Karte zeigt *TRESOR* und *gesperrt*.
+2. Am PC: `\\<box>` listet `tresor` nicht, `\\<box>\tresor` wird abgewiesen. Im Terminal: `getfacl /mnt/<laufwerk>/tresor` zeigt kein `user:anna` / `user:jan`.
+3. Als `anna` anmelden → *Mein ShareOS*: Die Karte *tresor* hat *Entsperren*. Falsches Passwort: „wrong password“. Richtiges mit 5 Minuten: *offen bis HH:MM*, `\\<box>\tresor` geht für anna (eine Datei hineinkopieren). Von einem anderen PC als `jan` an der Freigabe anmelden: abgewiesen.
+4. Admin *Freigaben*: Die Karte zeigt *anna: offen bis …* und *Jetzt sperren*. Warten, bis die Zeit um ist (oder *Jetzt sperren*): Binnen einer Minute verschwindet die Freigabe; ein offenes Explorer-Fenster von anna bekommt „Zugriff verweigert“.
+5. `reboot`: Nach dem Start sind alle Tresore gesperrt.
+6. Freigabe bearbeiten, *Als Tresor* abwählen: wieder eine normale Freigabe für jan und anna.
+
 ## 14zo. Neuzeichnen behält Eingaben und Scroll-Position (0.3.0-beta.2)
 
 1. *System → Firmware*: *Datei* → eine `.sysupgrade.tar` wählen und sich im Dialog Zeit lassen (> 30 s): Die Datei steht beim ersten Mal da.

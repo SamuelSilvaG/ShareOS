@@ -349,6 +349,21 @@ check "fs: open read-only cannot save, missing file needs create" "T2=\$(fs '{\"
 check "fs: delete" "fs '{\"op\":\"delete\",\"root\":\"daten\",\"path\":\"\",\"names\":[\"ablage\"]}' | js \"d['ok']\" && [ ! -e $R/mnt/daten/ablage ]"
 check "fs: unknown op, wrong grant, GET refused" "fs '{\"op\":\"exec\"}' | grep -q 'invalid request' && fs '{\"op\":\"roots\"}' 'http://127.0.0.1:$PORT/_shareos/cgi/fs?g=ffffffffffffffffffffffffffffffff' | grep -q 'no access' && curl -s '$FS' | grep -q 'not allowed'"
 check "fs: no web session may call shareos.appfs (ACL)" "! grep -q 'shareos.appfs' $R/usr/share/rpcd/acl.d/shareos.json"
+# permission "vault": vault shares through /_shareos/cgi/vault (files + vault)
+mkapp $T/va vaulter 1.0.0 && python3 -c "import json; f='$T/va/app.json'; d=json.load(open(f)); d['permissions']=['vault']; json.dump(d,open(f,'w'))" && pack $T/va $P/vault-bad.sapp
+check "vault: the permission needs files" "run 'shareos-apps install-file /tmp/pkg/vault-bad.sapp' | grep -q 'vault.*needs'"
+python3 -c "import json; f='$T/va/app.json'; d=json.load(open(f)); d['permissions']=['files','vault']; json.dump(d,open(f,'w'))" && pack $T/va $P/vaulter.sapp
+run 'shareos-apps install-file /tmp/pkg/vaulter.sapp' >/dev/null
+run "echo maxmax1 | shareos-users add max share" >/dev/null
+rpc shareos.shares set '{"name":"tresor","volume":"daten","smb":true,"rw":["max"]}' >/dev/null
+GV=$(rpc shareos.files app_grant "$(s ',"app":"vaulter"')" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("grant",""))')
+vt() { curl -s -X POST --data-binary "$1" "http://127.0.0.1:$PORT/_shareos/cgi/vault?g=${2:-$GV}"; }
+check "vault (app): admin makes a share a vault with 20 minutes" "vt '{\"op\":\"set\",\"share\":\"tresor\",\"vault\":true,\"default_ttl\":20}' | js \"d['ok']\" && run 'uci get shares.tresor.vault' | grep -qx 1 && run 'uci get shares.tresor.vault_ttl' | grep -qx 20"
+check "vault (app): status lists it, locked" "vt '{\"op\":\"status\"}' | js \"d['user']=='root' and [(v['name'],v['ttl'],v['until']) for v in d['vaults']]==[('tresor',20,0)]\""
+check "vault (app): root has no SMB account to unlock it" "vt '{\"op\":\"unlock\",\"share\":\"tresor\",\"password\":\"x\"}' | grep -q 'only accounts'"
+check "vault (app): lock, unknown op and wrong grant" "vt '{\"op\":\"lock\",\"share\":\"tresor\"}' | js \"d['ok']\" && vt '{\"op\":\"exec\"}' | grep -q 'invalid request' && vt '{\"op\":\"status\"}' ffffffffffffffffffffffffffffffff | grep -q 'no access'"
+check "vault (app): an app without the permission gets no access" "GF=\$(rpc shareos.files app_grant '$(s ',"app":"filer"')' | python3 -c 'import json,sys; print(json.load(sys.stdin).get(\"grant\",\"\"))') && vt '{\"op\":\"status\"}' \$GF | grep -q 'no access'"
+run 'shareos-apps remove vaulter' >/dev/null; rpc shareos.shares del '{"name":"tresor"}' >/dev/null; run 'shareos-users del max' >/dev/null
 # an account without "Dateien": the app gets only its private folder on the apps drive
 run "uci set storage.global=global; uci set storage.global.apps=daten; uci commit storage; mkdir -p /mnt/daten/.shareos" >/dev/null
 run "echo lisa1234 | shareos-users add lisa user --web=1 --files=0; shareos-users set lisa --home=daten --files=0" >/dev/null

@@ -4,6 +4,15 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.5
+
+- **Vault shares** (discussion #88): a share can be a **vault** – locked by default and not visible in the network. A user with rights on it unlocks it under *Mein ShareOS* (or an admin account on *Freigaben*) with their password again, for 5 minutes up to 8 hours (default per share): then it appears as `\\box\<share>` **for that user only** and locks itself when the time runs out. Protects confidential folders from ransomware on a PC that has the shares mapped, and keeps them out of sight.
+  - *Freigaben → Bearbeiten → Tresor*: "Als Tresor …" and the default time. A vault is SMB only, without guests and NFS (NFS has no accounts). The share list shows who unlocked it until when, *Jetzt sperren* locks it for everybody.
+  - While locked, the top folder's ACL lets nobody but root in (the folders inside keep the share's rights), so open SMB connections, the user's apps, Syncthing or Transmission lose access too (a file that is already open stays readable until it is closed) – on drives with Linux rights (ext4, Btrfs, ext3); exFAT/NTFS only hide the share. The unlock state lives in RAM: a restart locks every vault. Five wrong passwords block unlocking for 10 minutes.
+  - `shareos-shares vault-unlock|vault-lock|vault-expire|vault-status`; cron runs `vault-expire` every minute while there is a vault.
+  - **App SDK:** permission `vault` (needs `files`) and `ShareOS.vault` – `status()`, `unlock({share, ttl, password})`, `lock(share)`, `set({share, vault, default_ttl})` (admins) – so a companion app can show the vaults with a countdown.
+  - Tests: `test-users` (locked by default, unlock for one user only, folder ACL, admin and user lock, expiry, wrong passwords, switching it off), `test-apps` (permission, `/_shareos/cgi/vault`).
+
 ## 0.3.0-beta.4
 
 - **DNS filter (AdGuard Home) as the second module.** The new system app **"DNS-Filter"** in the store (Apps → Store) makes the box the DNS server of the network: it blocks ads, trackers and malicious sites for every device and asks the internet encrypted (DNS-over-HTTPS, Quad9 by default). Once installed, the *DNS-FILTER* tab appears behind *PAPERLESS*: switch on, status (queries, blocked, rules, RAM), upstream servers, filtering on/off, port of AdGuard's own interface (default 8053), block lists (add, switch on/off, remove, update), login for AdGuard Home. Then enter the box as DNS server in the router.

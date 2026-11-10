@@ -232,7 +232,8 @@
 				"shareos.shares": [
 					"set",
 					"del",
-					"global"
+					"global",
+					"vault_lock"
 				],
 				"shareos.me": [
 					"bind",
@@ -246,7 +247,9 @@
 					"cloud_job_del",
 					"cloud_job_run",
 					"fav_set",
-					"share_ticket"
+					"share_ticket",
+					"vault_unlock",
+					"vault_lock"
 				],
 				"shareos.backup": [
 					"offer",
@@ -386,7 +389,9 @@
 					"cloud_job_run",
 					"fav_set",
 					"ui_set",
-					"share_ticket"
+					"share_ticket",
+					"vault_unlock",
+					"vault_lock"
 				],
 				"shareos.files": [
 					"mkdir",

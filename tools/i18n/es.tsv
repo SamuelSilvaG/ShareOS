@@ -1877,3 +1877,26 @@ E1500	Abrir AdGuard Home ↗
 E1501	Filtrado activo (desactivado = solo reenviar)
 E1502	Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.
 E1503	El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.
+E1504	CAJA FUERTE
+E1505	bloqueada
+E1506	Desbloquear
+E1507	Bloquear
+E1508	Bloquear ahora
+E1509	Como caja fuerte: compartir solo bajo demanda, durante unos minutos
+E1510	DURACIÓN PREDETERMINADA AL DESBLOQUEAR
+E1511	Una caja fuerte no es visible en la red. Un usuario con derechos la desbloquea en «Mi ShareOS» (o en una app) con su contraseña; entonces, durante el tiempo elegido, solo él puede acceder a ella como
+E1512	y después se bloquea sola. Bloqueada, nadie accede a los archivos, tampoco por conexiones abiertas ni apps. Una caja fuerte solo se comparte por SMB, sin invitados ni NFS.
+E1513	Tu contraseña otra vez, por seguridad. Después la caja fuerte solo es accesible en la red para ti y se vuelve a bloquear sola.
+E1514	ABIERTA DURANTE
+E1515	La caja fuerte desaparece de la red para todos los que la desbloquearon. Las conexiones abiertas pierden el acceso.
+E1516	Cajas fuertes
+E1517	Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes.
+P333	Desbloquear la caja fuerte «$1»
+P334	La caja fuerte «$1» está abierta hasta las $2.
+P335	¿Bloquear ahora la caja fuerte «$1»?
+P336	Caja fuerte «$1» bloqueada.
+P337	abierta hasta las $1
+P338	$1: abierta hasta las $2
+P339	$1 minutos
+P340	$1 horas
+P341	Caja fuerte: $1
