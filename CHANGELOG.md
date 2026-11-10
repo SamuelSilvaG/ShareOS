@@ -30,6 +30,8 @@ pre-releases for test devices only.
   - Layout per account on the box (`/etc/shareos/desktop/<account>.json`: open windows, window places, icon places, wallpaper; `shareos.me desk_get`/`desk_set`, at most 16 KB). Plain users get a desktop with *Mein ShareOS*, their files, their apps and their settings.
   - The pages stay in the firmware (`/www/desktop.js`, `/www/desktop.css`, loaded only for the desktop; the windows show the existing pages with `?frame=1`) – nothing runs on the box for it. Without the module there is no choice on the login page and `desk_get`/`desk_set` answer "not installed". During the first-run wizard and in recovery mode the classic page opens.
   - Tests: `tests/ui-desktop.js` (Chromium against the mock box, 47 checks: login choice, icons, windows, moving, snapping, resizing, control panel, start menu, wallpaper, look in all windows, layout saved and back after a reload, switching views, plain users, module removed); `test-cloud-paperless` (module install/removal, layout saved per account, size limit, sessions).
+- **Store: modules shown as modules before installing.** The catalog now carries the `"module"` field of a system app (ShareOS-Apps `tools/catalog.py`), and the box passes it on (`shareos-apps catalog`, only when it equals the app's id). In *Apps → Store* Paperless, DNS filter, Cloud and Desktop view get the tag *Modul · eigener Reiter* instead of *System-App · Terminal*.
+  - Tests: `test-apps` (module field kept, refused with a different id).
 
 ## 0.3.0-beta.4
 
