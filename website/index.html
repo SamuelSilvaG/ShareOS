@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShareOS – open firmware for D-Link ShareCenter NAS</title>
+<meta name="description" content="ShareOS is a free, open source firmware for the D-Link DNS-320L, DNS-320 and DNS-325 NAS: Linux 6.18 LTS, SMB 3, app store, cloud sync, Paperless-ngx and online updates from GitHub.">
+<meta property="og:title" content="ShareOS – open firmware for D-Link ShareCenter NAS">
+<meta property="og:description" content="A current, maintained system for old D-Link NAS boxes: Linux 6.18 LTS, SMB 3, app store, cloud sync and online updates.">
+<meta property="og:image" content="https://uniquedroid.github.io/ShareOS/assets/icon-512.png">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#070b12">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{var t=localStorage.getItem('sos-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="nav-brand" href="./" aria-label="ShareOS home">
+      <img src="assets/icon-192.png" alt="" width="32" height="32"><span>Share<b>OS</b></span>
+    </a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" data-nav-toggle>
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="nav-links" data-nav>
+      <a href="#features">Features</a>
+      <a href="#screenshots">Screenshots</a>
+      <a href="#devices">Devices</a>
+      <a href="#install">Install</a>
+      <a href="#apps">Apps</a>
+      <a href="wiki.html">Wiki</a>
+      <a href="#community">Community</a>
+      <a class="nav-gh" href="https://github.com/UniqueDroid/ShareOS" rel="noopener">
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span data-stars>GitHub</span>
+      </a>
+      <button class="theme-btn" data-theme-toggle aria-label="Switch light/dark">
+        <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <div class="hero-text">
+      <a class="pill" href="#releases" data-latest-pill><i></i><span>Latest test version</span> <b data-latest-tag>…</b></a>
+      <h1>A modern system for your <span class="grad">D-Link&nbsp;NAS</span></h1>
+      <p class="lead">ShareOS is a free, open source firmware for the D-Link ShareCenter boxes DNS-320L, DNS-320 and DNS-325.
+        Current Linux, SMB&nbsp;3, an app store, cloud sync and online updates – for hardware the vendor gave up on.</p>
+      <div class="cta">
+        <a class="btn primary" href="#releases" data-dl-btn>
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download
+        </a>
+        <a class="btn" href="#install">Install guide</a>
+        <a class="btn ghost" href="https://github.com/UniqueDroid/ShareOS" rel="noopener">Source on GitHub ↗</a>
+      </div>
+      <ul class="facts">
+        <li><b>6.18</b><span>LTS kernel</span></li>
+        <li><b>SMB 3</b><span>ksmbd in the kernel</span></li>
+        <li><b data-app-count>50+</b><span>apps in the store</span></li>
+        <li><b>10</b><span>languages</span></li>
+      </ul>
+    </div>
+    <div class="hero-art">
+      <img class="logo-dark" src="assets/logo-dark.png" alt="ShareOS logo" width="421" height="266">
+      <img class="logo-light" src="assets/logo-light.png" alt="ShareOS logo" width="421" height="266">
+    </div>
+  </div>
+</section>
+
+<!-- Why -->
+<section class="band">
+  <div class="wrap why">
+    <div>
+      <h2 class="eyebrow">Why ShareOS</h2>
+      <p class="big">The D-Link firmware has known remote code execution holes (CVE-2024-3273) and D-Link advises to retire the boxes.
+        Alt-F kept them alive for years, its last release is from 2017. ShareOS brings them back to a current, maintained state –
+        <b>without soldering and without a serial console</b>.</p>
+    </div>
+    <ul class="checks">
+      <li>Installs from the Alt-F or D-Link web interface</li>
+      <li>Your disks and data stay untouched</li>
+      <li>Back to Alt-F from the firmware page at any time</li>
+      <li>Stock U-Boot, never written</li>
+      <li>Updates itself from GitHub Releases, SHA-256 verified</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="sec">
+  <div class="wrap">
+    <h2 class="eyebrow">Features</h2>
+    <h3 class="title">Everything a home NAS needs – and a store for the rest</h3>
+    <p class="intro">The base system stays small. What only some boxes need – media server, torrents, VPN, Paperless – comes from the store.</p>
+    <div class="cards">
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/></svg></div>
+        <h4>Storage</h4><p>Setup wizard for one disk, a mirror (RAID 1), RAID 0 or JBOD. ext4, Btrfs, exFAT, NTFS. Take over Alt-F disks as they are, SMART health with self-tests, snapshots of shares.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 013-3h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3z"/><path d="M8 12h8M12 8v8"/></svg></div>
+        <h4>Shares</h4><p>SMB 2/3 through ksmbd with the SoC's crypto engine, NFS v4. Rights per user and group, also as POSIX ACLs, storage limit per user, personal folders.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <h4>App store</h4><p>Web apps and native system apps with one click: Transmission, Syncthing, MiniDLNA, FFmpeg, OpenVPN, Tailscale, autobrr, Zabbix agent and more. Apps get only the permissions they declare.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 01-.6-8.96A6 6 0 0118 8.5a4 4 0 01-.5 9.5z"/><path d="M12 11v6m-2.5-2.5L12 17l2.5-2.5"/></svg></div>
+        <h4>Cloud &amp; Paperless</h4><p>rclone sync with Nextcloud/WebDAV, S3, SFTP, Google Drive and more – for the box and per user. Paperless-ngx inbox folders, e.g. for a scanner, as a module.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
+        <h4>Network &amp; remote</h4><p>HTTPS with own CA or Let's Encrypt, Dynamic DNS, mDNS name, Tailscale without port forwarding (also behind DS-Lite), VPN client and server.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h4>Security</h4><p>Current kernel and libraries, kernel hardening, no known password on a new box (claimed with the USB button), settings backup with optional AES-256.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 8v5l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <h4>Updates</h4><p>Online updates from GitHub Releases, checked every 6 hours, with progress. Or upload the update file – no internet needed.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0"/></svg></div>
+        <h4>Monitoring</h4><p>Messages for RAID, SMART, temperature and updates by e-mail, ntfy, Gotify, webhook or Telegram. Zabbix agent with a ready template.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></div>
+        <h4>Made for the hardware</h4><p>Fan curve, LEDs, buttons, power schedule with wake-up alarm, browser terminal, light/dark look with accent colours, 10 languages.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- Screenshots -->
+<section id="screenshots" class="sec alt">
+  <div class="wrap">
+    <h2 class="eyebrow">Screenshots</h2>
+    <h3 class="title">A web interface that feels at home on the box</h3>
+    <div class="shots" data-shots>
+      <figure data-full="docs/images/gui-en-overview.png"><img loading="lazy" src="docs/images/gui-en-overview.png" alt="Overview page"><figcaption>Overview</figcaption></figure>
+      <figure data-full="docs/images/gui-apps-store.png"><img loading="lazy" src="docs/images/gui-apps-store.png" alt="App store"><figcaption>App store</figcaption></figure>
+      <figure data-full="docs/images/gui-en-files.png"><img loading="lazy" src="docs/images/gui-en-files.png" alt="File browser"><figcaption>File browser</figcaption></figure>
+      <figure data-full="docs/images/gui-en-cloud.png"><img loading="lazy" src="docs/images/gui-en-cloud.png" alt="Cloud sync"><figcaption>Cloud sync</figcaption></figure>
+      <figure data-full="docs/images/gui-speicher.png"><img loading="lazy" src="docs/images/gui-speicher.png" alt="Storage"><figcaption>Storage</figcaption></figure>
+      <figure data-full="docs/images/gui-update-progress.png"><img loading="lazy" src="docs/images/gui-update-progress.png" alt="Online update"><figcaption>Online update</figcaption></figure>
+      <figure data-full="docs/images/gui-farben.png"><img loading="lazy" src="docs/images/gui-farben.png" alt="Accent colours, light and dark"><figcaption>Light, dark &amp; accents</figcaption></figure>
+      <figure data-full="docs/images/gui-en-network.png"><img loading="lazy" src="docs/images/gui-en-network.png" alt="Network settings"><figcaption>Network</figcaption></figure>
+      <figure data-full="docs/images/gui-en-wizard.png"><img loading="lazy" src="docs/images/gui-en-wizard.png" alt="Setup wizard"><figcaption>Setup wizard</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- Devices -->
+<section id="devices" class="sec">
+  <div class="wrap">
+    <h2 class="eyebrow">Devices</h2>
+    <h3 class="title">Which boxes ShareOS runs on</h3>
+    <div class="devices">
+      <div class="dev ok"><span class="tag ok">tested</span><h4>DNS-320L <small>rev A1–A3</small></h4><p>The main device, tested on hardware with every release. 256 MB RAM.</p><code>DNS-320L-rev-Ax</code></div>
+      <div class="dev ok"><span class="tag ok">tested</span><h4>DNS-320LW <small>rev A2</small></h4><p>The white DNS-320L – same board, uses the DNS-320L files.</p><code>DNS-320L-rev-Ax</code></div>
+      <div class="dev part"><span class="tag part">partly tested</span><h4>DNS-325 <small>rev A</small></h4><p>Boots from flash, buttons, LEDs, fan and updates work on rev A1. 256 MB RAM.</p><code>DNS-325-rev-Ax</code></div>
+      <div class="dev want"><span class="tag want">testers wanted</span><h4>DNS-320 <small>rev A / rev B</small></h4><p>Built with every release, not tested on hardware yet. 128 MB RAM.</p><code>DNS-320-rev-Ax · DNS-320-rev-Bx</code></div>
+      <div class="dev plan"><span class="tag plan">planned</span><h4>DNR-322L · DNS-327L</h4><p>The DNS-327L (Armada 370) needs its own kernel and flash layout and a tester.</p></div>
+      <div class="dev plan"><span class="tag plan">research</span><h4>ShareOS Lite <small>DNS-323</small></h4><p>A reduced system for the 64 MB Orion boxes – the hardware test is running.</p></div>
+    </div>
+    <p class="note">Have one of the boxes marked “testers wanted”? See <a href="wiki.html#DEVICES">Devices &amp; testers</a> – no soldering, no serial console needed.</p>
+  </div>
+</section>
+
+<!-- Install -->
+<section id="install" class="sec alt">
+  <div class="wrap">
+    <h2 class="eyebrow">Install</h2>
+    <h3 class="title">From Alt-F or the D-Link firmware in six steps</h3>
+    <ol class="steps">
+      <li><b>Download</b> from the <a href="#releases">latest release</a> the two files with your model's name: <code>ShareOS-&lt;version&gt;-&lt;model&gt;.bin</code> and <code>.sysupgrade.tar</code>.</li>
+      <li><b>Keep</b> the <code>.bin</code> of your current firmware (e.g. Alt-F) for the way back.</li>
+      <li><b>Copy</b> the <code>.sysupgrade.tar</code> to a USB stick (FAT32, exFAT or ext4) and plug it in. Without a stick the box downloads it from GitHub.</li>
+      <li><b>Flash</b> the ShareOS <code>.bin</code> on the firmware page of Alt-F or of the D-Link interface. Do not cut the power.</li>
+      <li><b>Wait:</b> the box installs the system from the stick (orange USB LED blinks fast, a few minutes) and restarts into ShareOS.</li>
+      <li><b>Open</b> <code>http://&lt;box-IP&gt;/</code>, press the <b>USB button</b> on the front to claim the box, choose the root password and follow the setup wizard. Your disks keep their data.</li>
+    </ol>
+    <div class="callouts">
+      <div class="callout"><h4>Back to Alt-F</h4><p>System → Firmware → <i>Install firmware file</i> → the Alt-F <code>.bin</code>. ShareOS checks the file and reads it back after writing.</p></div>
+      <div class="callout"><h4>Step by step with pictures</h4><p>Details, troubleshooting and the way back to the D-Link firmware: <a href="wiki.html#SWITCHING">Switching guide</a> · <a href="wiki.html#TESTING">Testing</a>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Releases -->
+<section id="releases" class="sec">
+  <div class="wrap">
+    <h2 class="eyebrow">Releases</h2>
+    <h3 class="title">Downloads</h3>
+    <div class="rel" data-release>
+      <div class="rel-head">
+        <div><span class="tag want">pre-release</span> <b class="rel-name" data-rel-name>Loading …</b> <span class="muted" data-rel-date></span></div>
+        <a class="btn sm" data-rel-link href="https://github.com/UniqueDroid/ShareOS/releases" rel="noopener">Release notes ↗</a>
+      </div>
+      <div class="rel-files" data-rel-files><p class="muted">Loading the files of the latest release …</p></div>
+      <details class="rel-notes"><summary>What's new</summary><div class="md" data-rel-notes></div></details>
+    </div>
+    <div class="rel-older" data-rel-older></div>
+    <p class="note">All versions are test versions (beta) for test devices. System apps, all checksums and older releases: <a href="https://github.com/UniqueDroid/ShareOS/releases" rel="noopener">GitHub Releases</a> · full history in the <a href="wiki.html#CHANGELOG">changelog</a>.</p>
+  </div>
+</section>
+
+<!-- Apps -->
+<section id="apps" class="sec alt">
+  <div class="wrap">
+    <h2 class="eyebrow">App store</h2>
+    <h3 class="title"><span data-app-count>50+</span> apps, installed with one click</h3>
+    <p class="intro">Web apps from <a href="https://github.com/UniqueDroid/ShareOS-Apps" rel="noopener">ShareOS-Apps</a> – files and office, media, network, security, development and everyday life – and native system apps built with the firmware. Everyone can submit an app.</p>
+    <div class="app-tools">
+      <input type="search" placeholder="Search apps …" data-app-search aria-label="Search apps">
+      <div class="chips" data-app-cats></div>
+    </div>
+    <div class="apps" data-apps><p class="muted">Loading the app catalog …</p></div>
+  </div>
+</section>
+
+<!-- Compare -->
+<section id="compare" class="sec">
+  <div class="wrap">
+    <h2 class="eyebrow">Compared</h2>
+    <h3 class="title">D-Link firmware, Alt-F and ShareOS on the DNS-320L</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th></th><th>D-Link firmware</th><th>Alt-F</th><th class="hl">ShareOS</th></tr></thead>
+        <tbody>
+          <tr><th>Last release</th><td>1.11, end of life</td><td>1.0 (2017)</td><td class="hl">0.3.0 betas (2026), updated continuously</td></tr>
+          <tr><th>Linux kernel</th><td>2.6.31</td><td>4.4 / 4.14 (trunk)</td><td class="hl"><b>6.18 LTS</b></td></tr>
+          <tr><th>Toolchain</th><td>uClibc</td><td>buildroot 2009.08 fork, GCC 7.4</td><td class="hl">buildroot 2026.08, GCC 15.3, musl</td></tr>
+          <tr><th>SMB</th><td>Samba 3.x, SMB1</td><td>Samba 3.6 (SMB1/2)</td><td class="hl">ksmbd: SMB 2.1/3</td></tr>
+          <tr><th>Web interface</th><td>ShareCenter UI</td><td>shell CGIs</td><td class="hl">uhttpd + ubus/rpcd, light/dark, per user</td></tr>
+          <tr><th>Updates</th><td>manual <code>.bin</code></td><td>manual <code>.bin</code></td><td class="hl">online from GitHub, verified</td></tr>
+          <tr><th>Extensions</th><td>add-ons (discontinued)</td><td>ipkg packages</td><td class="hl">app store: web and system apps</td></tr>
+          <tr><th>Security</th><td>unpatched RCE (CVE-2024-3273)</td><td>old kernel and Samba</td><td class="hl">current kernel and libraries</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The full table with sources is in the <a href="wiki.html#README">README</a>.</p>
+  </div>
+</section>
+
+<!-- Community -->
+<section id="community" class="sec alt">
+  <div class="wrap">
+    <h2 class="eyebrow">Community</h2>
+    <h3 class="title">Questions, ideas and test reports</h3>
+    <div class="comm">
+      <div class="comm-main">
+        <div class="comm-head"><h4>Latest discussions</h4><a class="btn sm" href="https://github.com/UniqueDroid/ShareOS/discussions" rel="noopener">All discussions ↗</a></div>
+        <ul class="disc" data-discussions><li class="muted">Loading …</li></ul>
+      </div>
+      <div class="comm-side">
+        <a class="link-card" href="https://github.com/UniqueDroid/ShareOS/discussions/categories/q-a" rel="noopener"><b>Ask a question</b><span>Q&amp;A in GitHub Discussions</span></a>
+        <a class="link-card" href="https://github.com/UniqueDroid/ShareOS/discussions/88" rel="noopener"><b>Request a feature</b><span>New Feature Requests (#88)</span></a>
+        <a class="link-card" href="https://github.com/UniqueDroid/ShareOS/issues/new" rel="noopener"><b>Report a bug</b><span>with version, model and log</span></a>
+        <a class="link-card" href="wiki.html#TRANSLATING"><b>Translate</b><span>10 languages so far – add yours</span></a>
+        <a class="link-card" href="https://github.com/UniqueDroid/ShareOS-Apps" rel="noopener"><b>Build an app</b><span>HTML/JS with the ShareOS app SDK</span></a>
+        <a class="link-card" href="https://github.com/UniqueDroid/ShareOS-Desktop" rel="noopener"><b>ShareOS Desktop</b><span>find and set up boxes from your PC</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI -->
+<section class="sec ai">
+  <div class="wrap ai-in">
+    <div>
+      <h2 class="eyebrow">How it is made</h2>
+      <h3 class="title">Built by an AI, tested on real boxes</h3>
+      <p>Apart from importing Alt-F, ShareOS was developed by Claude (Anthropic): architecture, all code, builds, tests and docs.
+        Jan started the project, made the decisions and tested every release on the real hardware.
+        The timeline documents with timestamps and screenshots how far that goes.</p>
+      <a class="btn" href="wiki.html#DEVELOPMENT">Read the timeline</a>
+    </div>
+    <img loading="lazy" src="docs/images/zeitstrahl.png" alt="Development timeline">
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <a class="nav-brand" href="./"><img src="assets/icon-192.png" alt="" width="28" height="28"><span>Share<b>OS</b></span></a>
+      <p class="muted">GPLv2. A fork of <a href="https://sourceforge.net/projects/alt-f/" rel="noopener">Alt-F</a> by João Cardoso – all credit for the original design and years of hardware work goes to the Alt-F project.
+        D-Link and ShareCenter are trademarks of D-Link; ShareOS is not affiliated with D-Link.</p>
+    </div>
+    <div class="foot-links">
+      <div><h5>Project</h5><a href="https://github.com/UniqueDroid/ShareOS" rel="noopener">Source</a><a href="https://github.com/UniqueDroid/ShareOS/releases" rel="noopener">Releases</a><a href="wiki.html#CHANGELOG">Changelog</a><a href="https://github.com/UniqueDroid/ShareOS/issues" rel="noopener">Issues</a></div>
+      <div><h5>Docs</h5><a href="wiki.html#SWITCHING">Install / switch</a><a href="wiki.html#DEVICES">Devices</a><a href="wiki.html#BUILD">Build</a><a href="wiki.html#BACKEND">Backend</a></div>
+      <div><h5>More</h5><a href="https://github.com/UniqueDroid/ShareOS-Apps" rel="noopener">ShareOS-Apps</a><a href="https://github.com/UniqueDroid/ShareOS-Desktop" rel="noopener">ShareOS Desktop</a><a href="https://github.com/UniqueDroid/ShareOS/discussions" rel="noopener">Discussions</a></div>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" data-lightbox hidden><button aria-label="Close" data-lb-close>×</button><img alt=""></div>
+<script src="assets/site.js"></script>
+</body>
+</html>

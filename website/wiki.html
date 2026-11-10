@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShareOS Wiki</title>
+<meta name="description" content="ShareOS documentation: installing and switching, devices, testing, build, backend, monitoring, translating and the changelog.">
+<meta name="theme-color" content="#070b12">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/wiki.css">
+<script>try{var t=localStorage.getItem('sos-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-in">
+    <a class="nav-brand" href="./" aria-label="ShareOS home"><img src="assets/icon-192.png" alt="" width="32" height="32"><span>Share<b>OS</b></span></a>
+    <span class="wiki-crumb">/ Wiki</span>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" data-nav-toggle>
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="nav-links" data-nav>
+      <a href="./#features">Features</a>
+      <a href="./#install">Install</a>
+      <a href="./#releases">Download</a>
+      <a href="./#apps">Apps</a>
+      <a href="./#community">Community</a>
+      <a class="nav-gh" href="https://github.com/UniqueDroid/ShareOS" rel="noopener">GitHub ↗</a>
+      <button class="theme-btn" data-theme-toggle aria-label="Switch light/dark">
+        <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<div class="wiki">
+  <aside class="wiki-side" data-side>
+    <div class="wiki-search">
+      <input type="search" placeholder="Search the docs …" aria-label="Search the docs" data-search>
+    </div>
+    <nav data-doclist aria-label="Documents"></nav>
+  </aside>
+  <main class="wiki-main" id="main">
+    <div class="wiki-bar">
+      <button class="btn sm wiki-menu" data-side-toggle>☰ Documents</button>
+      <div class="lang" data-lang hidden></div>
+      <a class="btn sm" data-edit href="https://github.com/UniqueDroid/ShareOS" rel="noopener">Edit on GitHub ↗</a>
+    </div>
+    <div data-results hidden></div>
+    <article class="md" data-doc><p class="muted">Loading …</p></article>
+  </main>
+  <aside class="wiki-toc" data-toc aria-label="On this page"></aside>
+</div>
+
+<footer class="foot"><div class="wrap"><p class="muted">ShareOS · GPLv2 · The wiki shows the documents of the <a href="https://github.com/UniqueDroid/ShareOS" rel="noopener">repository</a> as of the last site build. Corrections are welcome as pull requests.</p></div></footer>
+
+<script src="assets/site.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>
