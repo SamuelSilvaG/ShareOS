@@ -4487,7 +4487,7 @@ return {
 		log: { call: function() { return module_on('dnsfilter') ? df_tool([ 'log' ]) : DF_OFF; } },
 		// switching on starts in the background (the first start sets AdGuard up)
 		set: {
-			args: { enabled: false, web_port: 0, upstream: [], protection: false },
+			args: { enabled: false, web_port: 0, https_port: 0, upstream: [], protection: false },
 			call: function(req) {
 				if (!module_on('dnsfilter')) return DF_OFF;
 				let a = req.args, inp = {};
@@ -4495,14 +4495,17 @@ return {
 					let st = df_tool([ 'status' ]);
 					if (!st.running) return df_tool([ 'start-bg' ]);
 				}
-				for (let k in [ 'enabled', 'web_port', 'upstream', 'protection' ]) if (a[k] != null) inp[k] = a[k];
+				for (let k in [ 'enabled', 'web_port', 'https_port', 'upstream', 'protection' ]) if (a[k] != null) inp[k] = a[k];
 				return df_tool([ 'set' ], inp);
 			}
 		},
 		filter_add: { args: { name: '', url: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-add' ], { name: req.args.name ?? '', url: req.args.url ?? '' }) : DF_OFF; } },
 		filter_remove: { args: { url: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-remove' ], { url: req.args.url ?? '' }) : DF_OFF; } },
 		filter_enable: { args: { url: '', enabled: false }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-enable' ], { url: req.args.url ?? '', enabled: req.args.enabled === true }) : DF_OFF; } },
-		refresh: { call: function() { return module_on('dnsfilter') ? df_tool([ 'refresh' ]) : DF_OFF; } }
+		refresh: { call: function() { return module_on('dnsfilter') ? df_tool([ 'refresh' ]) : DF_OFF; } },
+		rewrites: { call: function() { return module_on('dnsfilter') ? df_tool([ 'rewrites' ]) : DF_OFF; } },
+		rewrite_add: { args: { domain: '', answer: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'rewrite-add' ], { domain: req.args.domain ?? '', answer: req.args.answer ?? '' }) : DF_OFF; } },
+		rewrite_remove: { args: { domain: '', answer: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'rewrite-remove' ], { domain: req.args.domain ?? '', answer: req.args.answer ?? '' }) : DF_OFF; } }
 	},
 
 	// chips in the header of the interface: services and apps of the account

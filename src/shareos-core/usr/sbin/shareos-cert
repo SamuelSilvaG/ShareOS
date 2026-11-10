@@ -14,6 +14,8 @@
 # shareos-ca), acme (Let's Encrypt, shareos-acme), empty (self-signed or own).
 #
 # Files: shareos.web.cert / shareos.web.key (UCI), default /etc/ssl/shareos/.
+# A new certificate also goes to the DNS filter's interface (AdGuard Home
+# restarts in the background when it runs, shareos-dnsfilter reload-cert).
 # The self-signed certificate is valid for 10 years and names the hostname,
 # <hostname>.local and the current IPv4 address.
 #
@@ -22,6 +24,8 @@ CRT=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
 KEY=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
 
 die() { echo "shareos-cert: $*" >&2; exit 1; }
+# other users of the certificate: AdGuard Home (module "dnsfilter")
+others() { [ -x /usr/sbin/shareos-dnsfilter ] && [ -e /tmp/shareos-dnsfilter/pid ] && ( /usr/sbin/shareos-dnsfilter reload-cert >/dev/null 2>&1 & ); return 0; }
 
 # mbedtls programs are installed with or without a prefix depending on the version
 prog() { for p in "mbedtls_$1" "$1"; do command -v "$p" >/dev/null && { echo "$p"; return; }; done; die "mbedtls program $1 missing"; }
@@ -49,6 +53,7 @@ selfsigned() {
 	cp $t/key "$KEY.new" && cp $t/crt "$CRT.new" && mv "$KEY.new" "$KEY" && mv "$CRT.new" "$CRT"
 	chmod 600 "$KEY"; chmod 644 "$CRT"
 	rm -rf $t
+	others
 	echo "self-signed certificate for $host ($san) created"
 }
 
@@ -107,6 +112,7 @@ install_pair() {
 	umask 077
 	cp "$1" "$CRT.new" && cp "$2" "$KEY.new" && mv "$KEY.new" "$KEY" && mv "$CRT.new" "$CRT"
 	chmod 600 "$KEY"; chmod 644 "$CRT"
+	others
 	echo "certificate installed"
 }
 

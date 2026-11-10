@@ -1521,7 +1521,22 @@
 		"OFFEN FÜR": "খোলা থাকবে",
 		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "যারা সিন্দুকটি আনলক করেছেন তাঁদের সবার জন্য এটি নেটওয়ার্ক থেকে উধাও হয়ে যাবে। খোলা সংযোগগুলো প্রবেশাধিকার হারাবে।",
 		"Tresor-Freigaben": "সিন্দুক শেয়ার",
-		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "ব্যবহারকারীর সিন্দুকগুলো (তাঁর পাসওয়ার্ড দেওয়ার পর) আনলক ও লক করতে পারে; প্রশাসকদের জন্য কোন শেয়ারগুলো সিন্দুক হবে তাও ঠিক করতে পারে।"
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "ব্যবহারকারীর সিন্দুকগুলো (তাঁর পাসওয়ার্ড দেওয়ার পর) আনলক ও লক করতে পারে; প্রশাসকদের জন্য কোন শেয়ারগুলো সিন্দুক হবে তাও ঠিক করতে পারে।",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "ADGUARD ইন্টারফেসের HTTPS পোর্ট",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "ডিভাইসের সার্টিফিকেট দিয়ে এনক্রিপ্ট করা (HTTPS); HTTP অনুরোধ রিডাইরেক্ট হয়।",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "ডিভাইসের স্ব-স্বাক্ষরিত সার্টিফিকেট দিয়ে এনক্রিপ্ট করা (HTTPS) – ব্রাউজার ইন্টারফেসের মতোই সতর্ক করে। ডিভাইসের বিশ্বস্ত সার্টিফিকেট থাকলে তবেই HTTP রিডাইরেক্ট হয় (নিজস্ব CA বা Let's Encrypt, এখানে:",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "ডিভাইসের সার্টিফিকেট ছাড়া শুধু এনক্রিপশন ছাড়া (HTTP)।",
+		"Lokale Namen": "স্থানীয় নাম",
+		"Lokale Domäne": "স্থানীয় ডোমেইন",
+		"DNS-Server des Netzwerks": "নেটওয়ার্কের DNS সার্ভার",
+		"System → Netzwerk": "সিস্টেম → নেটওয়ার্ক",
+		"LOKALE EINTRÄGE": "স্থানীয় এন্ট্রি",
+		"Eintrag hinzufügen": "এন্ট্রি যোগ করুন",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "স্থির IP ঠিকানার সেই ডিভাইসগুলোর জন্য যেগুলো রাউটার চেনে না।",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "এর নিচের সব নামের জন্য প্রযোজ্য। বক্সের নিজের নামগুলো ShareOS নিজেই সেট করে।",
+		"Eintrag entfernen?": "এন্ট্রি সরাবেন?",
+		"Eintrag hinzugefügt.": "এন্ট্রি যোগ করা হয়েছে।",
+		"Eintrag entfernt.": "এন্ট্রি সরানো হয়েছে।"
 	},
 	"patterns": [
 		[

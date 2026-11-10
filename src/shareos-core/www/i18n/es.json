@@ -1521,7 +1521,22 @@
 		"OFFEN FÜR": "ABIERTA DURANTE",
 		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "La caja fuerte desaparece de la red para todos los que la desbloquearon. Las conexiones abiertas pierden el acceso.",
 		"Tresor-Freigaben": "Cajas fuertes",
-		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes."
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "PUERTO HTTPS DE LA INTERFAZ DE ADGUARD",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "Sin certificado del equipo, solo sin cifrar (HTTP).",
+		"Lokale Namen": "Nombres locales",
+		"Lokale Domäne": "Dominio local",
+		"DNS-Server des Netzwerks": "Servidor DNS de la red",
+		"System → Netzwerk": "Sistema → Red",
+		"LOKALE EINTRÄGE": "ENTRADAS LOCALES",
+		"Eintrag hinzufügen": "Añadir entrada",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "Para dispositivos con dirección IP fija que el router no conoce.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "se aplica a todos los nombres por debajo. ShareOS añade él mismo los nombres de la caja.",
+		"Eintrag entfernen?": "¿Eliminar la entrada?",
+		"Eintrag hinzugefügt.": "Entrada añadida.",
+		"Eintrag entfernt.": "Entrada eliminada."
 	},
 	"patterns": [
 		[

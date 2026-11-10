@@ -122,7 +122,8 @@
 					"status",
 					"filters",
 					"password",
-					"log"
+					"log",
+					"rewrites"
 				]
 			},
 			"uci": [
@@ -339,7 +340,9 @@
 					"filter_add",
 					"filter_remove",
 					"filter_enable",
-					"refresh"
+					"refresh",
+					"rewrite_add",
+					"rewrite_remove"
 				]
 			},
 			"uci": [

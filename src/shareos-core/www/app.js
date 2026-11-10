@@ -1376,6 +1376,7 @@ async function loadDnsfilter() {
 	try {
 		const d = await rpc('shareos.dnsfilter', 'status');
 		d.filters = d.ready ? (await rpc('shareos.dnsfilter', 'filters')).filters : [];
+		d.rewrites = d.ready ? (await rpc('shareos.dnsfilter', 'rewrites')).rewrites : [];
 		S.df = d;
 		if (d.starting || (d.enabled && !d.running && S.dfStarting)) S.dfTimer = setTimeout(loadDnsfilter, 3000);
 		else S.dfStarting = false;
@@ -1411,8 +1412,13 @@ function dnsfilterView() {
 					<li>Keinen zweiten DNS-Server eintragen, sonst fragen Geräte an der Box vorbei. Ist die Box aus oder startet neu, haben die Geräte so lange kein DNS.</li>
 					<li>Feineinstellungen, Abfrageprotokoll und Statistik in der Oberfläche von AdGuard Home.</li>
 				</ol>
-				<div class="acts">${d.ready ? html`<a class="btn" href="http://${host}:${d.web_port}/" target="_blank" rel="noopener">AdGuard Home öffnen ↗</a>` : ''}
+				<div class="acts">${d.ready ? html`<a class="btn" href="${d.https ? `https://${host}:${d.https_port}/` : `http://${host}:${d.web_port}/`}" target="_blank" rel="noopener">AdGuard Home öffnen ↗</a>` : ''}
 					<button class="btn" type="button" data-act="df-pass">Zugangsdaten anzeigen</button></div>
+				${d.ready ? html`<p class="note">${d.https_forced ? 'Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.'
+					: d.https ? html`<span>Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter</span> <a href="#/system/network">System → Netzwerk</a>).`
+					: 'Ohne Zertifikat der Box nur unverschlüsselt (HTTP).'}</p>` : ''}
+				${d.ready && d.local?.names?.length ? html`<dl class="kv" style="margin-top:12px"><dt>Lokale Namen</dt><dd><code>${d.local.names.join(', ')}</code> → <code>${d.local.ip}</code></dd>
+					${(d.local.domains || []).map((x) => html`<dt>Lokale Domäne</dt><dd><code>${x}</code> → <span>DNS-Server des Netzwerks</span></dd>`)}</dl>` : ''}
 				${S.dfPass ? html`<dl class="kv" style="margin-top:12px"><dt>Benutzer</dt><dd><code>${S.dfPass.user}</code></dd><dt>Passwort</dt><dd><code>${S.dfPass.password}</code></dd></dl>` : ''}
 			</div>
 		</div>
@@ -1426,10 +1432,23 @@ function dnsfilterView() {
 		</div>` : ''}
 		<div class="fields" style="margin-top:12px">
 			<label class="f"><span>PORT DER ADGUARD-OBERFLÄCHE</span><input name="web_port" type="number" min="1024" max="65535" value="${d.web_port}"></label>
+			<label class="f"><span>HTTPS-PORT DER ADGUARD-OBERFLÄCHE</span><input name="https_port" type="number" min="1024" max="65535" value="${d.https_port || d.web_port + 1}"></label>
 		</div>
 		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
 	</form></section>
 	${d.ready ? html`<section class="sec">
+		<h2 class="gh">LOKALE EINTRÄGE <span>${d.rewrites.length}</span></h2>
+		${d.rewrites.length ? html`<div class="tw"><table class="t" style="min-width:480px"><thead><tr><th>NAME</th><th>ADRESSE</th><th></th></tr></thead>
+			<tbody>${d.rewrites.map((w) => html`<tr><td><code>${w.domain}</code></td><td><code>${w.answer}</code></td>
+				<td><button class="btn sm ghost" type="button" data-act="df-rwdel" data-domain="${w.domain}" data-answer="${w.answer}">Entfernen</button></td></tr>`)}</tbody></table></div>` : ''}
+		<form class="panel" id="f-dfrw" style="margin-top:12px;max-width:820px">
+			<div class="fields"><label class="f"><span>NAME</span><input name="domain" maxlength="253" placeholder="drucker.${d.local?.domains?.[0] || 'home.lan'}" autocapitalize="off" spellcheck="false"></label>
+				<label class="f"><span>IP-ADRESSE</span><input name="answer" maxlength="253" placeholder="192.168.1.50" autocapitalize="off" spellcheck="false"></label></div>
+			<div class="acts" style="margin-top:12px"><button class="btn" type="submit">Eintrag hinzufügen</button></div>
+			<p class="note"><span>Für Geräte mit fester IP-Adresse, die der Router nicht kennt.</span> <code>*.name</code> <span>gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.</span></p>
+		</form>
+	</section>
+	<section class="sec">
 		<h2 class="gh">SPERRLISTEN <span>${d.filters.length}</span></h2>
 		<div class="tw"><table class="t" style="min-width:640px"><thead><tr><th>LISTE</th><th>REGELN</th><th>AKTIV</th><th></th></tr></thead>
 			<tbody>${d.filters.map((f) => html`<tr><td><b>${f.name}</b><div class="mut" style="font-size:12px;word-break:break-all">${f.url}</div></td>
@@ -3779,7 +3798,7 @@ const VIEWS_AFTER = {
 		if (!S.df) { loadDnsfilter(); return; }
 		$('#f-df')?.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			const f = e.target, args = { enabled: f.enabled.checked, web_port: +f.web_port.value };
+			const f = e.target, args = { enabled: f.enabled.checked, web_port: +f.web_port.value, https_port: +f.https_port.value };
 			if (f.protection) args.protection = f.protection.checked;
 			if (f.upstream) args.upstream = f.upstream.value.split('\n').map((x) => x.trim()).filter(Boolean);
 			try {
@@ -3793,6 +3812,12 @@ const VIEWS_AFTER = {
 			const f = e.target;
 			try { await rpc('shareos.dnsfilter', 'filter_add', { name: f.name.value.trim(), url: f.url.value.trim() }); toast('Liste hinzugefügt.'); loadDnsfilter(); }
 			catch (err) { toast('Liste: ' + err.message, true); }
+		});
+		$('#f-dfrw')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target;
+			try { await rpc('shareos.dnsfilter', 'rewrite_add', { domain: f.domain.value.trim(), answer: f.answer.value.trim() }); f.reset(); toast('Eintrag hinzugefügt.'); loadDnsfilter(); }
+			catch (err) { toast('Eintrag: ' + err.message, true); }
 		});
 		document.querySelectorAll('.df-en').forEach((c) => c.addEventListener('change', async () => {
 			try { await rpc('shareos.dnsfilter', 'filter_enable', { url: c.dataset.url, enabled: c.checked }); loadDnsfilter(); }
@@ -4412,6 +4437,10 @@ async function refreshUpdateStatus() {
 const ACTIONS = {
 	async 'df-pass'() { try { S.dfPass = S.dfPass ? null : await rpc('shareos.dnsfilter', 'password'); renderMain(); } catch (e) { toast(e.message, true); } },
 	async 'df-refresh'() { try { await rpc('shareos.dnsfilter', 'refresh'); toast('Listen aktualisiert.'); loadDnsfilter(); } catch (e) { toast(e.message, true); } },
+	async 'df-rwdel'(el) {
+		if (!await confirmDlg('Eintrag entfernen?', el.dataset.domain + ' → ' + el.dataset.answer, 'Entfernen', true)) return;
+		try { await rpc('shareos.dnsfilter', 'rewrite_remove', { domain: el.dataset.domain, answer: el.dataset.answer }); toast('Eintrag entfernt.'); loadDnsfilter(); } catch (e) { toast(e.message, true); }
+	},
 	async 'df-del'(el) {
 		if (!await confirmDlg('Liste entfernen?', el.dataset.url, 'Entfernen', true)) return;
 		try { await rpc('shareos.dnsfilter', 'filter_remove', { url: el.dataset.url }); toast('Liste entfernt.'); loadDnsfilter(); } catch (e) { toast(e.message, true); }

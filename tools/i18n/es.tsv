@@ -1901,3 +1901,18 @@ P338	$1: abierta hasta las $2
 P339	$1 minutos
 P340	$1 horas
 P341	Caja fuerte: $1
+E1519	PUERTO HTTPS DE LA INTERFAZ DE ADGUARD
+E1520	Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.
+E1521	Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en
+E1522	Sin certificado del equipo, solo sin cifrar (HTTP).
+E1523	Nombres locales
+E1524	Dominio local
+E1525	Servidor DNS de la red
+E1526	Sistema → Red
+E1527	ENTRADAS LOCALES
+E1528	Añadir entrada
+E1529	Para dispositivos con dirección IP fija que el router no conoce.
+E1530	se aplica a todos los nombres por debajo. ShareOS añade él mismo los nombres de la caja.
+E1531	¿Eliminar la entrada?
+E1532	Entrada añadida.
+E1533	Entrada eliminada.

@@ -1521,7 +1521,22 @@
 		"OFFEN FÜR": "OPEN FOR",
 		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "The vault disappears from the network for everyone who unlocked it. Open connections lose access.",
 		"Tresor-Freigaben": "Vault shares",
-		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "May unlock the user's vault shares (after the user enters their password) and lock them; for admins it can also choose which shares are vaults."
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "May unlock the user's vault shares (after the user enters their password) and lock them; for admins it can also choose which shares are vaults.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "HTTPS PORT OF THE ADGUARD INTERFACE",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "Encrypted (HTTPS) with the box's certificate; HTTP requests are redirected.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "Encrypted (HTTPS) with the box's self-signed certificate – the browser warns as with the interface. HTTP is only redirected once the box has a trusted certificate (own CA or Let's Encrypt under",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "Without a certificate of the box only unencrypted (HTTP).",
+		"Lokale Namen": "Local names",
+		"Lokale Domäne": "Local domain",
+		"DNS-Server des Netzwerks": "DNS server of the network",
+		"System → Netzwerk": "System → Network",
+		"LOKALE EINTRÄGE": "LOCAL ENTRIES",
+		"Eintrag hinzufügen": "Add entry",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "For devices with a fixed IP address that the router does not know.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "applies to all names below it. ShareOS sets the box's own names itself.",
+		"Eintrag entfernen?": "Remove entry?",
+		"Eintrag hinzugefügt.": "Entry added.",
+		"Eintrag entfernt.": "Entry removed."
 	},
 	"patterns": [
 		[

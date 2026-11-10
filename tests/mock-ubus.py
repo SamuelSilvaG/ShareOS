@@ -799,12 +799,22 @@ def call(obj, method, args):
             return {'ok': True}
         return pr
     if obj == 'shareos.dnsfilter':
-        d = STATE.setdefault('dnsfilter', {'installed': True, 'enabled': False, 'running': False, 'ready': False, 'starting': False, 'web_port': 8053, 'memlimit': 32,
+        d = STATE.setdefault('dnsfilter', {'installed': True, 'enabled': False, 'running': False, 'ready': False, 'starting': False, 'web_port': 8053, 'https_port': 8054, 'https': True, 'https_forced': False, 'memlimit': 32,
+            'local': {'ip': '10.241.1.106', 'names': ['skynet-nas', 'skynet-nas.skynet.lan'], 'domains': ['skynet.lan']},
             'drive': True, 'version': 'v0.107.80', 'protection': True, 'rss_mb': None, 'rules': 0, 'lists': 0, 'queries': 0, 'blocked': 0,
             'upstream': ['https://dns10.quad9.net/dns-query'], 'estimate_mb': 25, 'warn': False,
             'filters': [{'name': 'AdGuard DNS filter', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt', 'enabled': True, 'rules': 188364, 'updated': None},
                         {'name': 'AdAway Default Blocklist', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt', 'enabled': False, 'rules': 6540, 'updated': None}]})
         fl = d['filters']
+        rw = STATE.setdefault('dnsfilter_rw', [{'domain': 'drucker.skynet.lan', 'answer': '10.241.1.50'}])
+        if method == 'rewrites':
+            return {'rewrites': rw}
+        if method == 'rewrite_add':
+            if not args.get('domain') or not args.get('answer'):
+                return {'error': 'name: a host name such as printer.home.lan (*.name for all below it)'}
+            rw.append({'domain': args['domain'].lower(), 'answer': args['answer']}); return {'rewrites': rw}
+        if method == 'rewrite_remove':
+            rw[:] = [w for w in rw if not (w['domain'] == args.get('domain') and w['answer'] == args.get('answer'))]; return {'rewrites': rw}
         def upd():
             d['rules'] = sum(f['rules'] for f in fl if f['enabled']); d['lists'] = len(fl)
             d['estimate_mb'] = 25 + d['rules'] // 10000; d['warn'] = d['rules'] > 300000
@@ -812,7 +822,7 @@ def call(obj, method, args):
             if args.get('enabled') is True and not d['running']:
                 d.update({'enabled': True, 'running': True, 'ready': True, 'rss_mb': 41.5, 'queries': 12873, 'blocked': 2214}); upd(); return {'ok': True}
             if args.get('enabled') is False: d.update({'enabled': False, 'running': False, 'ready': False, 'rss_mb': None})
-            for k in ('web_port', 'upstream', 'protection'):
+            for k in ('web_port', 'https_port', 'upstream', 'protection'):
                 if k in args: d[k] = args[k]
         if method == 'filter_add':
             fl.append({'name': args.get('name') or args['url'], 'url': args['url'], 'enabled': True, 'rules': 250000, 'updated': None})

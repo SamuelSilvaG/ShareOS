@@ -1521,7 +1521,22 @@
 		"OFFEN FÜR": "مفتوحة لمدة",
 		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "تختفي الخزنة من الشبكة لكل من فتح قفلها. تفقد الاتصالات المفتوحة الوصول.",
 		"Tresor-Freigaben": "مشاركات الخزنة",
-		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "يمكنه فتح قفل خزائن المستخدم (بعد إدخال كلمة مروره) وقفلها؛ وللمسؤولين يمكنه أيضًا تحديد المشاركات التي تكون خزائن."
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "يمكنه فتح قفل خزائن المستخدم (بعد إدخال كلمة مروره) وقفلها؛ وللمسؤولين يمكنه أيضًا تحديد المشاركات التي تكون خزائن.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "منفذ HTTPS لواجهة AdGuard",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "مشفّر (HTTPS) بشهادة الجهاز؛ يُعاد توجيه طلبات HTTP.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "مشفّر (HTTPS) بالشهادة الموقّعة ذاتيًا للجهاز – يحذّر المتصفح كما في الواجهة. لا يُعاد توجيه HTTP إلا عندما تكون للجهاز شهادة موثوقة (جهة تصديق خاصة أو Let's Encrypt ضمن",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "بدون شهادة للجهاز يكون الاتصال غير مشفّر فقط (HTTP).",
+		"Lokale Namen": "الأسماء المحلية",
+		"Lokale Domäne": "النطاق المحلي",
+		"DNS-Server des Netzwerks": "خادم DNS للشبكة",
+		"System → Netzwerk": "النظام ← الشبكة",
+		"LOKALE EINTRÄGE": "الإدخالات المحلية",
+		"Eintrag hinzufügen": "إضافة إدخال",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "للأجهزة ذات عنوان IP ثابت التي لا يعرفها الموجّه.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "ينطبق على كل الأسماء التي تحته. يضبط ShareOS أسماء الجهاز بنفسه.",
+		"Eintrag entfernen?": "إزالة الإدخال؟",
+		"Eintrag hinzugefügt.": "تمت إضافة الإدخال.",
+		"Eintrag entfernt.": "تمت إزالة الإدخال."
 	},
 	"patterns": [
 		[
