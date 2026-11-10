@@ -1,8 +1,10 @@
 // Desktop view (module "desktop") in Chromium with Playwright, against the
-// mock box (tests/mock-ubus.py): login choice, icons, windows (iframes in
-// frame mode), moving, snapping, resizing, maximising, minimising, control
-// panel, start menu search, wallpaper, theme to all windows, layout saved per
-// account, switching views, plain users, module removed.
+// mock box (tests/mock-ubus.py): login choice, icons, windows (the areas are
+// drawn into them – no page in a frame; parts of an area as a bar, links open
+// the right window, several areas at once), web apps and the terminal as
+// windows, moving, snapping, resizing, maximising, minimising, control panel,
+// start menu search, wallpaper, theme, layout saved per account, switching
+// views (the classic page is unchanged), plain users, module removed.
 //
 //   node tests/ui-desktop.js        (needs playwright and python3)
 //   SHOTS=/tmp/desk node tests/ui-desktop.js   also writes screenshots
@@ -36,6 +38,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	const shot = async (n) => { if (SHOTS) await p.screenshot({ path: path.join(SHOTS, n + '.png') }); };
 	const rect = (sel) => p.$eval(sel, (e) => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
 	const win = (id) => `.dk-win[data-id="${id}"]`;
+	// bring a window to the front through the taskbar (a click on the one in front would minimise it)
+	const front = async (id) => {
+		const on = await p.$eval(win(id), (e) => e.classList.contains('on') && !e.hidden).catch(() => false);
+		if (!on) await p.click(`.dk-tw[data-task="${id}"]`);
+		await sleep(250);
+	};
 	const drag = async (sel, dx, dy, to) => {
 		const r = await rect(sel);
 		const x = r.x + Math.min(120, r.w / 3), y = r.y + r.h / 2;
@@ -66,14 +74,22 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	check('desktop: web app icon (Webpad)', labels.includes('Webpad'));
 	check('desktop: no page header', await p.locator('#hd').count() === 0);
 
-	// a window with the storage page in frame mode
+	// a window with the storage area: drawn into the window, no page in a frame
+	const pops = [];
+	ctx.on('page', (x) => pops.push(x));
 	await p.click('.dk-ico[data-open="storage"]');
-	await p.waitForSelector(win('storage') + ' iframe');
-	const fr = p.frameLocator(win('storage') + ' iframe');
-	await fr.locator('#main .subtabs').waitFor();
-	check('window: page inside (frame mode)', await fr.locator('#main .subtabs a').count() > 0);
-	check('window: no header and tabs inside', !(await fr.locator('#hd').isVisible()) && !(await fr.locator('#tabs').isVisible()));
+	await p.waitForSelector(win('storage') + ' .dk-view .panel, ' + win('storage') + ' .dk-view .card');
+	check('window: the area itself, no frame', await p.locator(win('storage') + ' iframe').count() === 0 && await p.locator(win('storage') + ' .dk-view .sec').count() > 0);
+	check('window: no header, tabs or footer of the page', await p.locator('#hd, #tabs, #ft, #main').count() === 0);
+	const bar = await p.$$eval(win('storage') + ' .subtabs a', (l) => l.map((x) => x.getAttribute('href')));
+	check('window: parts of the area as a bar', bar.join() === '#/storage/volumes,#/storage/health,#/storage/snapshots', bar.join());
 	check('taskbar: window listed', await p.locator('.dk-tw[data-task="storage"]').count() === 1);
+	// a part of the area: the same window shows it
+	await p.click(win('storage') + ' .subtabs a[href="#/storage/health"]');
+	await p.waitForSelector(win('storage') + ' .subtabs a.on[href="#/storage/health"]');
+	check('window: a part opens in the same window', await p.locator('.dk-win').count() === 1 && await p.evaluate(() => location.hash) === '');
+	await p.click(win('storage') + ' .subtabs a[href="#/storage/volumes"]');
+	await p.waitForSelector(win('storage') + ' .subtabs a.on[href="#/storage/volumes"]');
 
 	// move
 	const r0 = await rect(win('storage'));
@@ -109,11 +125,47 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	const hits = await p.$$eval(win('panel') + ' .dk-cat span', (l) => l.map((x) => x.textContent));
 	check('control panel: search', hits.length >= 1 && hits.length < 4, hits.join(','));
 	await p.click(win('panel') + ' .dk-cat[data-id="r:#/system/network"]');
-	await p.waitForSelector(win('r:#/system/network') + ' iframe');
-	check('control panel: setting opens in its own window', await p.locator('.dk-win').count() === 3);
-	check('focus: newest window on top', await p.$eval(win('r:#/system/network'), (e) => e.classList.contains('on')));
-	await p.frameLocator(win('r:#/system/network') + ' iframe').locator('#main form, #main .panel').first().waitFor();
-	await sleep(600);
+	await p.waitForSelector(win('system') + ' .dk-view form, ' + win('system') + ' .dk-view .panel');
+	check('control panel: setting opens in the settings window', await p.locator('.dk-win').count() === 3);
+	check('focus: newest window on top', await p.$eval(win('system'), (e) => e.classList.contains('on')));
+	check('settings: network shown', await p.locator(win('system') + ' .subtabs a.on[href="#/system/network"]').count() === 1);
+	const sb = await p.$$eval(win('system') + ' .subtabs a', (l) => l.filter((x) => x.getClientRects().length).map((x) => x.getAttribute('href').split('/').pop()));
+	check('settings: logs and terminal are windows of their own, not parts', !sb.includes('logs') && !sb.includes('terminal') && sb.includes('time'), sb.join());
+	// the area behind keeps what it showed; a click into it acts at once
+	check('behind: storage still shows its content', await p.locator(win('storage') + ' .dk-view .card, ' + win('storage') + ' .dk-view .panel').count() > 0);
+	// another setting from the control panel: the same settings window
+	await p.click('.dk-tw[data-task="panel"]');
+	await p.fill('#dk-pq', '');
+	await p.click(win('panel') + ' .dk-cat[data-id="r:#/system/time"]');
+	await p.waitForSelector(win('system') + ' .subtabs a.on[href="#/system/time"]');
+	check('control panel: another setting, same window', await p.locator('.dk-win').count() === 3);
+	// typed text survives going to another window and back
+	await p.click(win('system') + ' .subtabs a[href="#/system/general"]');
+	await p.waitForSelector(win('system') + ' input[name=hostname]');
+	await p.fill(win('system') + ' input[name=hostname]', 'typed-name');
+	await front('storage');
+	await sleep(400);
+	check('windows: storage in front', await p.$eval(win('storage'), (e) => e.classList.contains('on')));
+	// a click on a part of the window behind that is not covered: it comes forward and acts with that first click
+	const free = await p.$$eval(win('system') + ' .subtabs a', (l) => l.map((x) => { const r = x.getBoundingClientRect(), cx = r.x + r.width / 2, cy = r.y + r.height / 2;
+		return document.elementFromPoint(cx, cy) === x && !x.classList.contains('on') ? [x.getAttribute('href'), cx, cy] : null; }).filter(Boolean));
+	if (free.length) {
+		await p.mouse.click(free[0][1], free[0][2]);
+		await p.waitForSelector(win('system') + ` .subtabs a.on[href="${free[0][0]}"]`, { timeout: 5000 }).catch(() => {});
+		check('windows: first click into a window behind acts', await p.locator(win('system') + ` .subtabs a.on[href="${free[0][0]}"]`).count() === 1 && await p.$eval(win('system'), (e) => e.classList.contains('on')), free[0][0]);
+	} else {
+		await front('system');
+		check('windows: first click into a window behind acts (window covered, skipped)', true);
+	}
+	await p.click(win('system') + ' .subtabs a[href="#/system/general"]');
+	await p.waitForSelector(win('system') + ' input[name=hostname]');
+	check('windows: typed text kept across a change of window', await p.inputValue(win('system') + ' input[name=hostname]') === 'typed-name');
+	// a link to another area opens that window
+	await p.evaluate(() => { location.hash = '#/services/dlna'; });
+	await p.waitForSelector(win('services') + ' .subtabs a.on[href="#/services/dlna"]');
+	check('link: another area opens its window', await p.locator('.dk-win').count() === 4 && await p.evaluate(() => location.hash) === '');
+	await p.click(win('services') + ' [data-w=close]');
+	await sleep(400);
 	await shot('02-windows');
 
 	// minimise and back from the taskbar
@@ -154,15 +206,54 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	await p.click('#dk-menu [data-dk=theme]');
 	await sleep(300);
 	check('theme: desktop light', await p.$eval('#app', (e) => e.classList.contains('light')));
-	check('theme: window light too', await p.frameLocator(win('storage') + ' iframe').locator('#app.light').count() === 1);
+	check('theme: windows are part of the page (light too)', await p.locator('#app.light ' + win('storage') + ' .dk-view').count() === 1);
 	await shot('05-light');
+	// the look is set in the settings window: desktop and all windows follow
+	await front('system');
+	await p.click(win('system') + ' .subtabs a[href="#/system/appearance"]');
+	await p.waitForSelector(win('system') + ' #opt-theme');
+	await p.selectOption(win('system') + ' #opt-theme', 'dark');
+	await sleep(400);
+	check('theme: from the settings window to the desktop', !(await p.$eval('#app', (e) => e.classList.contains('light'))));
+	check('theme: settings window shows the new choice', await p.inputValue(win('system') + ' #opt-theme') === 'dark');
 
-	// a theme change inside a window reaches the desktop
-	const nf = p.frameLocator(win('r:#/system/network') + ' iframe');
-	await nf.locator('#app').evaluate(() => { S.theme = 'dark'; applyTheme(); });
-	await sleep(300);
-	check('theme: from a window to the desktop', !(await p.$eval('#app', (e) => e.classList.contains('light'))));
-	check('theme: and to the other windows', await p.frameLocator(win('storage') + ' iframe').locator('#app.light').count() === 0);
+	// web apps: a window of the desktop, not a browser window
+	await p.click('.dk-ico[data-open="app:webpad"]');
+	await p.waitForSelector(win('app:webpad') + ' iframe.dk-app');
+	await sleep(500);
+	check('app: opens as a desktop window', await p.locator(win('app:webpad')).count() === 1 && pops.length === 0);
+	check('app: its frame is sandboxed', (await p.getAttribute(win('app:webpad') + ' iframe', 'sandbox')).includes('allow-scripts'));
+	check('app: address of the app with look and account', /\/webpad\/.*theme=.*user=root/.test(await p.getAttribute(win('app:webpad') + ' iframe', 'src')), await p.getAttribute(win('app:webpad') + ' iframe', 'src'));
+	check('app: in the taskbar', await p.locator('.dk-tw[data-task="app:webpad"]').count() === 1);
+	// a file opened with an app: a second window of that app
+	await p.click('.dk-ico[data-open="files"]');
+	await p.waitForSelector(win('files') + ' [data-act="fb-app"], ' + win('files') + ' .fb-row, ' + win('files') + ' tr');
+	check('files: window without the bar of the shares area', !(await p.locator(win('files') + ' .subtabs').isVisible()));
+	const opened = await p.evaluate(async () => { const a = (S.fbApps?.apps || [])[0]; if (!a) return 'no app'; S.fb.root = S.fb.root || 'daten'; await fbOpenIn(a.id, 'notiz.txt'); return a.id; });
+	await sleep(500);
+	check('files: a file opens in a second window of the app', opened === 'webpad' && await p.locator(win('app:webpad#2')).count() === 1 && pops.length === 0, String(opened));
+	check('files: its title names the file', /notiz\.txt/.test(await p.textContent(win('app:webpad#2') + ' .dk-wt h2')));
+	// an app that closes itself (handed its file to the other window): its window closes
+	await p.evaluate(() => dkMsg({ origin: appBase(appSrv()), data: { sos: 'close' }, source: document.querySelector('.dk-win[data-id="app:webpad#2"] iframe').contentWindow }));
+	check('app: window.close() of the app closes its window', await p.locator(win('app:webpad#2')).count() === 0 && await p.$eval(win('app:webpad'), (e) => e.classList.contains('on')));
+	await p.click(win('app:webpad') + ' [data-w=close]');
+	await front('files');
+	await p.click(win('files') + ' [data-w=close]');
+
+	// terminal: the shell fills its window
+	await p.click('.dk-ico[data-open="term"]');
+	await p.waitForSelector(win('term') + ' iframe.dk-term');
+	check('terminal: the shell itself in the window', await p.locator(win('term') + ' .dk-wc > *').count() === 1 && await p.locator(win('term') + ' .panel, ' + win('term') + ' .btn').count() === 0);
+	await shot('05b-terminal');
+	await p.click(win('term') + ' [data-w=close]');
+	// task manager: load and status only, live
+	await p.click('.dk-ico[data-open="task"]');
+	await p.waitForSelector(win('task') + ' .mbars');
+	const parts = await p.$$eval(win('task') + ' .sec', (l) => l.filter((x) => x.getClientRects().length).map((x) => x.dataset.part));
+	check('task manager: load and status, not the whole overview', parts.join() === 'load,status', parts.join());
+	await p.click(win('task') + ' [data-w=close]');
+	await front('system');
+	await p.click(win('system') + ' [data-w=close]');
 
 	// icons can be moved (and are saved)
 	const i0 = await rect('.dk-ico[data-open="term"]');
@@ -171,16 +262,25 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	const i1 = await rect('.dk-ico[data-open="term"]');
 	check('icons: moved to another cell', i1.x - i0.x > 300 && Math.abs(i1.y - i0.y) < 2, JSON.stringify([i0, i1]));
 	check('icons: a drag does not open a window', await p.locator(win('term')).count() === 0);
+	// the part shown is saved with the window
+	await front('storage');
+	await p.click(win('storage') + ' .subtabs a[href="#/storage/health"]');
+	await p.waitForSelector(win('storage') + ' .subtabs a.on[href="#/storage/health"]');
+	await p.click('.dk-ico[data-open="logs"]');
+	await p.waitForSelector(win('logs') + ' #logbox');
 
 	// layout saved on the box, back after a reload
 	await sleep(1200);
 	const saved = await rpc('shareos.me', 'desk_get');
 	const d = saved.result?.[1]?.desk || {};
-	check('saved: open windows, places, icons, wallpaper', (d.open || []).length === 2 && d.geo?.storage && d.icons?.term && d.wall?.name === 'Urlaub_Ostsee_001.jpg', JSON.stringify(d).slice(0, 200));
+	check('saved: open windows with their part, places, icons, wallpaper', (d.open || []).length === 2 && d.open.some((o) => o.id === 'storage' && o.sub === 'health')
+		&& d.geo?.storage && d.icons?.term && d.wall?.name === 'Urlaub_Ostsee_001.jpg', JSON.stringify(d).slice(0, 300));
 	await p.reload();
 	await p.waitForSelector(win('storage'));
-	await sleep(500);
+	await sleep(900);
 	check('reload: windows come back', await p.locator('.dk-win').count() === 2);
+	check('reload: with the part shown before', await p.locator(win('storage') + ' .subtabs a.on[href="#/storage/health"]').count() === 1);
+	check('reload: the window behind is drawn too', await p.locator(win('storage') + ' .dk-view .sec, ' + win('storage') + ' .dk-view .panel').count() > 0 && await p.locator(win('logs') + ' #logbox').count() === 1);
 	check('reload: icon place kept', Math.abs((await rect('.dk-ico[data-open="term"]')).x - i1.x) < 2);
 	check('reload: wallpaper kept', await p.waitForFunction(() => document.querySelector('#dk-wall').classList.contains('img')).then(() => true, () => false));
 
@@ -189,6 +289,16 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	await p.click('#dk-menu [data-dk=classic]');
 	await p.waitForSelector('#hd .clock');
 	check('classic: page with header', await p.locator('#tabs .tab').count() > 3);
+	// the classic page works as before: one page, addresses change it
+	await p.waitForSelector('#main .sec');
+	await p.click('#tabs a[href="#/storage"]');
+	await p.waitForSelector('#main .subtabs a.on[href="#/storage/volumes"]');
+	await p.click('#main .subtabs a[href="#/storage/health"]');
+	await p.waitForSelector('#main .subtabs a.on[href="#/storage/health"]');
+	check('classic: tabs and parts change the page', await p.evaluate(() => location.hash) === '#/storage/health' && await p.locator('#main .subtabs a').count() === 3);
+	await p.click('#tabs a[href="#/overview"]');
+	await p.waitForSelector('#main .mbars');
+	check('classic: overview with all its sections', await p.locator('#main .sec[data-part]').count() === 4);
 	check('classic: button to the desktop', await p.locator('[data-act="desk-view"]').count() === 1);
 	await shot('06-classic');
 	await p.click('[data-act="desk-view"]');
@@ -209,9 +319,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 	const ul = await p.$$eval('.dk-ico', (l) => l.map((x) => x.dataset.open));
 	check('user: own icons', ul.includes('me') && ul.includes('settings') && !ul.includes('panel') && !ul.includes('storage'), ul.join(','));
 	await p.click('.dk-ico[data-open="me"]');
-	await p.waitForSelector(win('me') + ' iframe');
-	await p.frameLocator(win('me') + ' iframe').locator('#main').waitFor();
-	check('user: window with My ShareOS', await p.frameLocator(win('me') + ' iframe').locator('#main section').count() > 0);
+	await p.waitForSelector(win('me') + ' .dk-view section');
+	check('user: window with My ShareOS', await p.locator(win('me') + ' iframe').count() === 0 && await p.locator(win('me') + ' .dk-view section').count() > 0);
+	await p.click('.dk-ico[data-open="settings"]');
+	await p.waitForSelector(win('settings') + ' #f-mypass');
+	check('user: settings in their own window', await p.locator('.dk-win').count() === 2 && await p.locator(win('me') + ' .dk-view section').count() > 0);
 	await shot('07-user');
 	await p.click('[data-dk=start]');
 	await p.click('#dk-start [data-dk=logout]');

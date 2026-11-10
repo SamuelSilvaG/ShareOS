@@ -1583,7 +1583,9 @@
 		"Einpassen": "ملاءمة",
 		"Kacheln": "تجانب",
 		"ShareOS (Standard)": "ShareOS (الافتراضي)",
-		"Hintergrundbild gespeichert.": "تم حفظ الخلفية."
+		"Hintergrundbild gespeichert.": "تم حفظ الخلفية.",
+		"Installierte Apps": "التطبيقات المثبّتة",
+		"App-Quellen": "مصادر التطبيقات"
 	},
 	"patterns": [
 		[

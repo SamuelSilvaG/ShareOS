@@ -240,11 +240,13 @@ Die Desktop-Ansicht ist ein **Modul**. Die klassische Ansicht bleibt daneben.
 
 1. **Apps → Store → Desktop-Ansicht → Installieren.** Abmelden: Über *Anmelden* stehen jetzt **Klassisch** und **Desktop**.
 2. **Desktop wählen, anmelden.** Leiste oben (Startmenü, CPU/RAM-Ringe, Netz, Glocke, Suche, Konto, Uhr), links die Symbole.
-3. **Speicher** anklicken: Fenster mit der Speicherseite. Fenster an der Titelleiste **verschieben**, an den Kanten **Größe ändern**, an den linken/rechten Rand ziehen (halbe Breite), nach oben (ganzer Bildschirm), Doppelklick auf den Titel, minimieren und über die Leiste zurückholen.
-4. **Systemsteuerung** → *Netzwerk*: öffnet ein eigenes Fenster. Suche oben eintippen.
+3. **Speicher** anklicken: Fenster mit dem Bereich selbst (keine Seite darin, öffnet sofort); *Laufwerke / Gesundheit / Snapshots* stehen als Leiste unter dem Titel. Fenster an der Titelleiste **verschieben**, an den Kanten **Größe ändern**, an den linken/rechten Rand ziehen (halbe Breite), nach oben (ganzer Bildschirm), Doppelklick auf den Titel, minimieren und über die Leiste zurückholen.
+4. **Systemsteuerung** → *Netzwerk*: öffnet das Fenster *Einstellungen* beim Teil Netzwerk; *Zeit* danach nutzt dasselbe Fenster. Suche oben eintippen. Mehrere Fenster öffnen: jedes behält, was es zeigt.
+4a. Symbol **Terminal**: Die Shell füllt das Fenster. **Task-Manager:** Auslastung und Status, live.
+4b. Symbol einer **Web-App** anklicken (z. B. Webpad): Sie öffnet als Fenster im Desktop, nicht als Browser-Fenster. In **Dateien** eine Textdatei damit öffnen: ein zweites Fenster mit der Datei.
 5. **Startmenü** → „proto“ eintippen → *Protokolle*.
 6. **Konto (Buchstabe oben rechts) → Hintergrundbild:** ein Bild von der Box wählen, *Füllen/Einpassen/Kacheln* probieren, *ShareOS (Standard)* zurück.
-7. **Konto → Hell/Dunkel umschalten:** Desktop und alle Fenster wechseln. In einem Fenster *Darstellung* ändern: der Desktop folgt.
+7. **Konto → Hell/Dunkel umschalten:** Desktop und alle Fenster wechseln. Im Fenster *Einstellungen* die *Darstellung* ändern: der Desktop folgt.
 8. Symbol auf eine andere Stelle ziehen, Seite neu laden (F5): Fenster, Plätze und Hintergrund sind wieder da – auch in einem anderen Browser mit demselben Konto.
 9. **Konto → Klassische Ansicht:** normale Seite; oben rechts das Desktop-Symbol führt zurück.
 10. Als **Benutzer** (kein Admin) anmelden: Desktop mit *Mein ShareOS*, Dateien, Apps, Einstellungen.

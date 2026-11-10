@@ -1583,7 +1583,9 @@
 		"Einpassen": "Ajustar",
 		"Kacheln": "Lado a lado",
 		"ShareOS (Standard)": "ShareOS (padrão)",
-		"Hintergrundbild gespeichert.": "Papel de parede salvo."
+		"Hintergrundbild gespeichert.": "Papel de parede salvo.",
+		"Installierte Apps": "Aplicações instaladas",
+		"App-Quellen": "Fontes de aplicações"
 	},
 	"patterns": [
 		[

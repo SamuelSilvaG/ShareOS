@@ -1583,7 +1583,9 @@
 		"Einpassen": "适应",
 		"Kacheln": "平铺",
 		"ShareOS (Standard)": "ShareOS（默认）",
-		"Hintergrundbild gespeichert.": "壁纸已保存。"
+		"Hintergrundbild gespeichert.": "壁纸已保存。",
+		"Installierte Apps": "已安装的应用",
+		"App-Quellen": "应用来源"
 	},
 	"patterns": [
 		[

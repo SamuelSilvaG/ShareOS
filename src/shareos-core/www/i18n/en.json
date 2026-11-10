@@ -1583,7 +1583,9 @@
 		"Einpassen": "Fit",
 		"Kacheln": "Tile",
 		"ShareOS (Standard)": "ShareOS (default)",
-		"Hintergrundbild gespeichert.": "Wallpaper saved."
+		"Hintergrundbild gespeichert.": "Wallpaper saved.",
+		"Installierte Apps": "Installed apps",
+		"App-Quellen": "App sources"
 	},
 	"patterns": [
 		[

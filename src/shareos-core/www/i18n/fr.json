@@ -1583,7 +1583,9 @@
 		"Einpassen": "Ajuster",
 		"Kacheln": "Mosaïque",
 		"ShareOS (Standard)": "ShareOS (par défaut)",
-		"Hintergrundbild gespeichert.": "Fond d’écran enregistré."
+		"Hintergrundbild gespeichert.": "Fond d’écran enregistré.",
+		"Installierte Apps": "Applications installées",
+		"App-Quellen": "Sources d’applications"
 	},
 	"patterns": [
 		[

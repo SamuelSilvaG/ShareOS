@@ -1583,7 +1583,9 @@
 		"Einpassen": "Вписать",
 		"Kacheln": "Плиткой",
 		"ShareOS (Standard)": "ShareOS (по умолчанию)",
-		"Hintergrundbild gespeichert.": "Обои сохранены."
+		"Hintergrundbild gespeichert.": "Обои сохранены.",
+		"Installierte Apps": "Установленные приложения",
+		"App-Quellen": "Источники приложений"
 	},
 	"patterns": [
 		[

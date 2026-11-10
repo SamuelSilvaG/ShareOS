@@ -1583,7 +1583,9 @@
 		"Einpassen": "মানানসই",
 		"Kacheln": "টাইল",
 		"ShareOS (Standard)": "ShareOS (ডিফল্ট)",
-		"Hintergrundbild gespeichert.": "ওয়ালপেপার সংরক্ষিত।"
+		"Hintergrundbild gespeichert.": "ওয়ালপেপার সংরক্ষিত।",
+		"Installierte Apps": "ইনস্টল করা অ্যাপ",
+		"App-Quellen": "অ্যাপের উৎস"
 	},
 	"patterns": [
 		[

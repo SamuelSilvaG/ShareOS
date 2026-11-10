@@ -20,7 +20,16 @@ const RTL = { ar: 1, he: 1, fa: 1, ur: 1 };
 
 /* ---------- helpers --------------------------------------------------------- */
 
-const $ = (sel, el = document) => el.querySelector(sel);
+// VIEW: the window of the desktop view an area is drawn into or acts in
+// ({ el, route }, see desktop.js). The classic view has one page and no VIEW.
+let VIEW = null;
+const viewNow = () => VIEW || (typeof deskView === 'function' ? deskView() : null);
+// several areas can be on the page at once (desktop): look in the current one first
+const $ = (sel, el) => {
+	if (el) return el.querySelector(sel);
+	const v = viewNow();
+	return (v && v.el.querySelector(sel)) || document.querySelector(sel);
+};
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 class Raw { constructor(s) { this.s = s; } toString() { return this.s; } }
 const raw = (s) => new Raw(s);
@@ -58,12 +67,17 @@ const store = {
 	del(k) { try { localStorage.removeItem('shareos.' + k); sessionStorage.removeItem('shareos.' + k); } catch (e) { } }
 };
 
-// desktop view (module "desktop", desktop.js): its windows show this interface
-// with ?frame=1 – only the page, without header, tabs and footer. Windows and
-// desktop talk through postMessage (same origin): look, session, modules.
-const FRAME = /[?&]frame=1(&|$)/.test(location.search) && window.parent !== window;
+// desktop view (module "desktop", desktop.js): its windows show the areas of
+// this interface directly – an area is drawn into the window (VIEW) instead
+// of #main, see withView, mainEl and the accessors of S.route below.
 const deskOn = () => !!S.areas?.desktop;
-const deskPost = (m) => { try { window.parent.postMessage({ sos: 'desk', ...m }, location.origin); } catch (e) { } };
+function withView(v, fn) {
+	const old = VIEW;
+	VIEW = v;
+	try { return fn(); } finally { VIEW = old; }
+}
+// where the page is drawn: the window of the desktop view or #main
+const mainEl = () => { const v = viewNow(); return v ? v.el : S.desk ? null : document.querySelector('#main'); };
 
 /* ---------- icons ----------------------------------------------------------- */
 
@@ -161,6 +175,18 @@ const S = {
 	logo: store.get('logo') !== '0'   // global setting (UCI shareos.ui.logo), cached for the login page
 };
 
+// The page shown. In the desktop view every window has its own (VIEW, or the
+// window in front); the classic view has exactly one.
+{
+	const own = { route: S.route, utab: S.utab, uapp: S.uapp };
+	const NONE = { route: { tab: 'desktop', sub: '' }, utab: null, uapp: null };
+	for (const k of ['route', 'utab', 'uapp']) Object.defineProperty(S, k, {
+		enumerable: true,
+		get() { const v = viewNow(); return v ? v[k] : S.desk ? NONE[k] : own[k]; },
+		set(x) { const v = viewNow(); if (v) v[k] = x; else if (!S.desk) own[k] = x; }
+	});
+}
+
 const TABS = [
 	['overview', 'ÜBERSICHT'], ['storage', 'SPEICHER'], ['shares', 'FREIGABEN'], ['services', 'DIENSTE'],
 	['apps', 'APPS'], ['cloud', 'CLOUD'], ['paperless', 'PAPERLESS'], ['dnsfilter', 'DNS-FILTER'], ['system', 'SYSTEM']
@@ -176,8 +202,9 @@ const SUB_MOVED = { hardware: 'power', https: 'network', about: 'general' };
 const OLD_ROUTE = { uebersicht: 'overview', speicher: 'storage', freigaben: 'shares', dienste: 'services', allgemein: 'general',
 	zeit: 'time', netzwerk: 'network', energie: 'power', protokolle: 'logs', darstellung: 'appearance', ueber: 'about',
 	dateien: 'files', benutzer: 'users', gruppen: 'groups', installiert: 'installed', quellen: 'sources', mein: 'me' };
-function routeParts() {
-	const parts = location.hash.replace(/^#\/?/, '').split('/');
+function routeParts(hash) {
+	const parts = (hash ?? location.hash).replace(/^#\/?/, '').split('/');
+	if (hash != null) return parts.map((p) => OLD_ROUTE[p] || p);
 	if (parts.some((p) => OLD_ROUTE[p])) {
 		const now = parts.map((p) => OLD_ROUTE[p] || p);
 		history.replaceState(null, '', '#/' + now.join('/'));
@@ -199,15 +226,14 @@ MQ_DARK?.addEventListener?.('change', () => { if (S.theme === 'system') { applyT
 
 function applyTheme() {
 	const app = $('#app');
-	app.className = 'sos acc-' + S.accent + (effTheme() === 'light' ? ' light' : '') + (FRAME ? ' frame' : '') + (S.desk ? ' desk' : '');
+	app.className = 'sos acc-' + S.accent + (effTheme() === 'light' ? ' light' : '') + (S.desk ? ' desk' : '');
 	$('.scan', app).hidden = !S.scan;
 	const bg = getComputedStyle(app).getPropertyValue('--bg').trim();
 	document.body.style.background = bg;
 	$('meta[name=theme-color]')?.setAttribute('content', bg || '#1b2433');
 	tintFavicon();
 	if (typeof themeToApps === 'function') themeToApps();
-	if (FRAME) deskPost({ type: 'look', theme: S.theme, accent: S.accent, scan: S.scan });
-	else if (S.desk && typeof deskLook === 'function') deskLook();
+	if (S.desk && typeof deskLook === 'function') deskLook();
 }
 
 // favicon = the logo symbol in the accent colour
@@ -423,7 +449,7 @@ function sessionExpired() {
 	S.sid = null;
 	store.del('sid');
 	stopPolling();
-	if (FRAME) { deskPost({ type: 'expired' }); return; }
+	if (S.desk && typeof deskStop === 'function') deskStop();
 	renderLogin('Sitzung abgelaufen – bitte neu anmelden.');
 }
 
@@ -451,7 +477,7 @@ function applyOwnLook() {
 function enter() {
 	applyOwnLook();
 	if (location.hash === '#/shared') history.replaceState(null, '', isUser() ? '#/me' : '#/overview');
-	if (!FRAME && deskOn() && store.get('view') === 'desktop') { deskStart(); shareInbox(); return; }
+	if (deskOn() && store.get('view') === 'desktop') { deskStart(); shareInbox(); return; }
 	if (isUser()) renderUserShell();
 	else renderShell();
 	shareInbox();
@@ -459,7 +485,6 @@ function enter() {
 
 // the desktop view lives in desktop.js and desktop.css, loaded only when used
 function deskStart() {
-	S.route = { tab: 'desktop', sub: '' };
 	if (typeof deskRun === 'function') { deskRun(); return; }
 	$('#root').innerHTML = html`<div class="login"><div class="spin"></div></div>`.s;
 	const css = document.createElement('link');
@@ -582,12 +607,6 @@ async function tick() {
 
 function startPolling() {
 	stopPolling();
-	if (FRAME) {
-		// a window asks only what its page shows: the live values on the overview
-		tick(); refreshUpdateStatus(); loadNotes();
-		S.timer = setInterval(() => { if (S.route?.tab === 'overview') tick(); }, 5000);
-		return;
-	}
 	tick();
 	S.timer = setInterval(tick, 5000);
 	refreshUpdateStatus();
@@ -623,7 +642,6 @@ async function loadUiSettings() {
 }
 
 function renderLogin(msg = '') {
-	if (FRAME) { deskPost({ type: 'expired' }); return; }
 	// with the desktop module: classic or desktop view (the last choice, else desktop)
 	let view = store.get('view') === 'classic' ? 'classic' : 'desktop';
 	$('#root').innerHTML = html`
@@ -636,7 +654,7 @@ function renderLogin(msg = '') {
 			<label class="f"><span>PASSWORT</span><input name="pass" type="password" autocomplete="current-password" required autofocus></label>
 			<label class="chk"><input name="keep" type="checkbox">Angemeldet bleiben (7 Tage)</label>
 			<p class="err" id="login-err">${msg}</p>
-			${deskOn() && !FRAME ? html`<div class="viewpick" role="radiogroup" aria-label="Ansicht">
+			${deskOn() ? html`<div class="viewpick" role="radiogroup" aria-label="Ansicht">
 				<button class="vbtn${view === 'classic' ? ' on' : ''}" type="button" role="radio" aria-checked="${view === 'classic'}" data-view="classic">${svg(I.classic)}<span>Klassisch</span></button>
 				<button class="vbtn${view === 'desktop' ? ' on' : ''}" type="button" role="radio" aria-checked="${view === 'desktop'}" data-view="desktop">${svg(I.desk)}<span>Desktop</span></button>
 			</div>` : ''}
@@ -817,7 +835,7 @@ function renderHeader(offline = false) {
 				<button class="chip more" type="button" data-act="chips-more" hidden></button>
 				${offline ? html`<span class="chip warn keep"><i></i>OFFLINE</span>`
 					: html`<span class="chip keep"><i></i>ONLINE <small>seit ${fmtUptime(i.uptime)}</small></span>`}
-				${deskOn() && !FRAME ? html`<button class="ib" type="button" data-act="desk-view" aria-label="Desktop-Ansicht" title="Desktop-Ansicht">${svg(I.desk)}</button>` : ''}
+				${deskOn() ? html`<button class="ib" type="button" data-act="desk-view" aria-label="Desktop-Ansicht" title="Desktop-Ansicht">${svg(I.desk)}</button>` : ''}
 				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden">${svg(I.power)}</button>
 			</div>
@@ -866,19 +884,25 @@ document.addEventListener('click', (e) => {
 // areas switched off under System -> Appearance are not shown
 const tabOn = (id) => !S.areas || S.areas[id] !== false;
 function renderTabs() {
+	if (S.desk) return;
 	$('#tabs').innerHTML = TABS.filter(([id]) => tabOn(id)).map(([id, label, isNew]) =>
 		html`<a class="tab${S.route.tab === id ? ' on' : ''}" href="#/${id}"${S.route.tab === id ? raw(' aria-current="page"') : ''}><span class="tl">${label}</span>${isNew ? html` <span class="nb">NEU</span>` : ''}</a>`.s).join('');
 }
 
+// the page of an address (#/tab/sub); hash: an address other than the current one
+function routeOf(hash) {
+	const [tab, sub, id] = routeParts(hash);
+	const r = { tab: TABS.some((t) => t[0] === tab) && tabOn(tab) ? tab : 'overview', sub: SUB_MOVED[sub] || sub || '' };
+	if (r.tab === 'system' && !SYS_SUBS.some((x) => x[0] === r.sub)) r.sub = 'general';
+	if (r.tab === 'services' && !SVC_SUBS.some((x) => x[0] === r.sub)) r.sub = 'status';
+	if (r.tab === 'shares' && !SHR_SUBS.some((x) => x[0] === r.sub)) r.sub = 'shares';
+	if (r.tab === 'storage' && !STO_SUBS.some((x) => x[0] === r.sub)) r.sub = 'volumes';
+	if (r.tab === 'apps' && r.sub === 'run') r.app = id || '';
+	else if (r.tab === 'apps' && !APP_SUBS.some((x) => x[0] === r.sub)) r.sub = 'installed';
+	return r;
+}
 function parseRoute() {
-	const [tab, sub] = routeParts();
-	S.route = { tab: TABS.some((t) => t[0] === tab) && tabOn(tab) ? tab : 'overview', sub: SUB_MOVED[sub] || sub || '' };
-	if (S.route.tab === 'system' && !SYS_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'general';
-	if (S.route.tab === 'services' && !SVC_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'status';
-	if (S.route.tab === 'shares' && !SHR_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'shares';
-	if (S.route.tab === 'storage' && !STO_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'volumes';
-	if (S.route.tab === 'apps' && S.route.sub === 'run') S.route.app = routeParts()[2] || '';
-	else if (S.route.tab === 'apps' && !APP_SUBS.some((x) => x[0] === S.route.sub)) S.route.sub = 'installed';
+	S.route = routeOf();
 	if (!(S.route.tab === 'apps' && S.route.sub === 'run')) S.appPage = null;
 }
 
@@ -982,9 +1006,10 @@ document.addEventListener('cancel', (e) => { if (e.target.matches?.('input[type=
 window.addEventListener('focus', () => setTimeout(fileDialogDone, 500));
 
 function renderMain() {
-	const main = $('#main');
+	const main = mainEl();
 	if (!main) return;
-	const page = location.hash + (S.rec ? '|rec' : S.fr ? '|fr' : '');
+	if (S.desk && isUser()) { renderUserMain(); return; }
+	const page = (S.desk ? S.route.tab + '/' + S.route.sub : location.hash) + (S.rec ? '|rec' : S.fr ? '|fr' : '');
 	const same = main.dataset.page === page;
 	// same page while a file dialog is open: render when it closes
 	if (same && fileDialog && Date.now() - fileDialog < 120000) {
@@ -994,6 +1019,7 @@ function renderMain() {
 	S.renderPending = false;
 	const ui = same ? uiCapture(main) : null;
 	main.dataset.page = page;
+	if (!same && S.desk) main.scrollTop = 0;   // desktop view: the window scrolls, not the page
 	if (S.rec) main.innerHTML = recoveryView().s;
 	else if (S.fr) { main.innerHTML = firstRunView().s; firstRunAfter(); }
 	else {
@@ -1071,7 +1097,7 @@ const VIEWS = {
 		const bootTxt = { flash: 'Flash (UBI)', netroot: 'Netzwerk (RAM)', ram: 'RAM' }[i.boot] || i.boot;
 		const svcUp = S.services ? S.services.filter((x) => x.running).length : null;
 		return html`
-		<section class="sec">
+		<section class="sec" data-part="load">
 			<h2 class="gh">SYSTEM <span>live · alle 5 s</span></h2>
 			<div class="g2">
 				<div class="panel">
@@ -1098,7 +1124,7 @@ const VIEWS = {
 			</div>
 		</section>
 		${favBar(S.apps?.installed?.apps || [])}
-		<section class="sec">
+		<section class="sec" data-part="status">
 			${secHead('status', 'STATUS')}
 			${statusTiles([
 				['Firmware', i.release?.version || '–', S.check?.update_available ? 'Update ' + S.check.latest + ' verfügbar' : 'Kanal ' + (S.check?.channel || 'stable')],
@@ -1109,11 +1135,11 @@ const VIEWS = {
 				['Laufwerke', String((i.disks || []).length), (i.disks || []).length ? 'erkannt' : 'keine eingesteckt']
 			], isTable('status'))}
 		</section>
-		<section class="sec">
+		<section class="sec" data-part="disks">
 			${secHead('disks', 'LAUFWERKE', `${(i.disks || []).length} erkannt`)}
 			${diskCards(i, isTable('disks'))}
 		</section>
-		<section class="sec">
+		<section class="sec" data-part="services">
 			${secHead('services', 'DIENSTE', html`<a href="#/services">alle verwalten</a>`)}
 			${serviceCards(false, isTable('services'))}
 		</section>`;
@@ -2233,6 +2259,7 @@ function parseUserRoute() {
 }
 
 function renderUserTabs() {
+	if (S.desk) return;
 	$('#tabs').innerHTML = userTabs().map(([id, label]) =>
 		html`<a class="tab${S.utab === id ? ' on' : ''}" href="#/${id}"${S.utab === id ? raw(' aria-current="page"') : ''}><span class="tl">${label}</span></a>`.s).join('');
 }
@@ -2247,7 +2274,7 @@ function renderUserShell() {
 	renderUserHeader();
 	renderUserTabs();
 	renderUserMain();
-	if (!FRAME) startChips();
+	startChips();
 }
 
 function userLookView() {
@@ -2291,7 +2318,7 @@ function renderUserHeader() {
 			<div class="row">
 				${chipsHtml()}
 				<button class="chip more" type="button" data-act="chips-more" hidden></button>
-				${deskOn() && !FRAME ? html`<button class="ib" type="button" data-act="desk-view" aria-label="Desktop-Ansicht" title="Desktop-Ansicht">${svg(I.desk)}</button>` : ''}
+				${deskOn() ? html`<button class="ib" type="button" data-act="desk-view" aria-label="Desktop-Ansicht" title="Desktop-Ansicht">${svg(I.desk)}</button>` : ''}
 				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden" title="Abmelden">${svg(I.power)}</button>
 			</div>
@@ -2330,7 +2357,7 @@ function myPaperless() {
 }
 
 function renderUserMain() {
-	const main = $('#main');
+	const main = mainEl();
 	if (!main) return;
 	if (S.utab === 'files' && S.me?.files) { main.innerHTML = filesView().s; return; }
 	if (S.utab === 'app') {
@@ -2399,7 +2426,7 @@ function userAppsView() {
 
 function renderUserHome() {
 	const m = S.me || {}, host = m.host || location.hostname, ip = location.hostname;
-	$('#main').innerHTML = html`
+	mainEl().innerHTML = html`
 	${favBar(m.apps || [], m.apps_server)}
 	<section class="sec">
 		<h2 class="gh">MEIN SHAREOS <span>${m.name}</span></h2>
@@ -3810,7 +3837,7 @@ const VIEWS_AFTER = {
 				const k = e.target.dataset.area, on = e.target.checked;
 				try {
 					const r = await rpc('shareos.ui', 'set', { areas: { [k]: on } });
-					S.areas = r.areas; renderTabs(); toast(on ? 'Bereich eingeschaltet.' : 'Bereich ausgeschaltet.');
+					S.areas = r.areas; renderTabs(); if (S.desk && typeof deskAreas === 'function') deskAreas(); toast(on ? 'Bereich eingeschaltet.' : 'Bereich ausgeschaltet.');
 				} catch (err) { e.target.checked = !on; toast('Bereich: ' + err.message, true); }
 			}));
 		}
@@ -5058,29 +5085,48 @@ document.addEventListener('change', (e) => {
 	if (e.target.classList.contains('wiz-fs') && S.wiz) { wizardCollect(); renderMain(); }
 });
 
-window.addEventListener('hashchange', () => {
-	if (!S.sid || !$('#main')) return;
+// The page changed (classic: another address; desktop: another window came to
+// the front): stop what only the page left behind needs, load what the new one
+// shows. Edits in progress are dropped in the classic view only – in the
+// desktop view the other window is still there (see pageClosed).
+function pageChanged() {
 	if (isUser()) {
-		parseUserRoute();
 		if (S.fb && S.utab === 'files') S.fb.roots = null;
-		renderUserTabs(); renderUserMain(); window.scrollTo(0, 0);
+		renderUserTabs(); renderUserMain();
 		return;
 	}
-	parseRoute();
+	const keep = !!S.desk;
 	if (S.route.tab !== 'storage') { clearTimeout(S.stTimer); S.stTimer = null; S.stActive = false; }
-	if (S.route.tab !== 'storage' || S.route.sub !== 'snapshots') { clearTimeout(S.snapTimer); if (S.snap) { S.snap.edit = null; S.snap.log = null; } }
-	if (S.route.tab !== 'shares') { S.shEdit = null; S.uEdit = null; }
+	if (S.route.tab !== 'storage' || S.route.sub !== 'snapshots') { clearTimeout(S.snapTimer); if (S.snap && !keep) { S.snap.edit = null; S.snap.log = null; } }
+	if (S.route.tab !== 'shares' && !keep) { S.shEdit = null; S.uEdit = null; }
 	if (S.route.tab !== 'services' || S.route.sub !== 'dlna') clearTimeout(S.dlnaTimer);
 	if (S.route.tab !== 'services' || S.route.sub !== 'printer') { clearTimeout(S.prnTimer); S.prnTimer = null; }
 	if (S.route.tab !== 'services' || S.route.sub !== 'ups') { clearTimeout(S.upsTimer); S.upsTimer = null; }
 	if (S.fb && S.route.sub === 'files') S.fb.roots = null;   // volumes may have changed
-	if (S.route.tab !== 'paperless') { S.plEdit = null; S.plLog = null; } else if (S.pl) loadPaperless();
-	if (S.route.tab !== 'dnsfilter') { clearTimeout(S.dfTimer); S.dfPass = null; } else if (S.df) loadDnsfilter();
-	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
+	if (S.route.tab !== 'paperless') { if (!keep) { S.plEdit = null; S.plLog = null; } } else if (S.pl) loadPaperless();
+	if (S.route.tab !== 'dnsfilter') { clearTimeout(S.dfTimer); if (!keep) S.dfPass = null; } else if (S.df) loadDnsfilter();
+	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin' && !keep) { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
 	else if (S.cloud?.scope === 'admin') loadCloud('admin');
 	else if (S.shares) loadShareData();
 	renderTabs();
 	renderMain();
+}
+// desktop view: the window of a page was closed – drop its edits in progress
+function pageClosed(r) {
+	if (r.tab === 'storage' && r.sub === 'snapshots' && S.snap) { S.snap.edit = null; S.snap.log = null; }
+	if (r.tab === 'shares') { S.shEdit = null; S.uEdit = null; }
+	if (r.tab === 'paperless') { S.plEdit = null; S.plLog = null; }
+	if (r.tab === 'dnsfilter') S.dfPass = null;
+	if (r.tab === 'cloud' && S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; }
+}
+
+window.addEventListener('hashchange', () => {
+	if (!S.sid) return;
+	// desktop view: an address opens (or brings forward) the window of that page
+	if (S.desk) { if (typeof deskNav === 'function') deskNav(location.hash); return; }
+	if (!mainEl()) return;
+	if (isUser()) parseUserRoute(); else parseRoute();
+	pageChanged();
 	window.scrollTo(0, 0);
 });
 
@@ -5264,6 +5310,13 @@ async function loadOpeners() {
 async function fbOpenIn(appId, name) {
 	const a = (S.fbApps?.apps || []).find((x) => x.id === appId);
 	if (!a) return;
+	if (S.desk && typeof deskApp === 'function') {
+		try {
+			const r = await rpc('shareos.files', 'app_ticket', { root: S.fb.root, path: S.fb.path, name, app: appId });
+			deskApp(a, `${appBase(r)}/${r.app}/${r.entry || 'index.html'}?${appParams({ file: r.ticket, name, ...(r.grant ? { fs: r.grant } : {}) })}`, name);
+		} catch (e) { toast('Öffnen: ' + e.message, true); }
+		return;
+	}
 	const w = window.open('about:blank', a.window ? 'sosfile-' + Date.now() : '_blank', winFeatures(a));
 	try {
 		const r = await rpc('shareos.files', 'app_ticket', { root: S.fb.root, path: S.fb.path, name, app: appId });
@@ -5561,7 +5614,8 @@ const appWins = new Set();
 const winFeatures = (a) => `popup,width=${a.window?.width || 1000},height=${a.window?.height || 700}`;
 // "page": shown in the ShareOS page (apps with the permission "embed", unless the admin chose
 // "eigenes Fenster" for it); "window": a window of its own
-const appMode = (a) => ((a?.permissions || []).includes('embed') && a.display !== 'window' ? 'page' : 'window');
+// (in the desktop view every app is a window of the desktop)
+const appMode = (a) => (S.desk || ((a?.permissions || []).includes('embed') && a.display !== 'window') ? 'page' : 'window');
 const findApp = (id) => (S.apps?.installed?.apps || []).find((x) => x.id === id) || (S.me?.apps || []).find((x) => x.id === id)
 	|| (S.fbApps?.apps || []).find((x) => x.id === id);
 const appSrv = () => S.apps?.installed || S.me?.apps_server || S.fbApps;
@@ -5585,6 +5639,8 @@ async function appGrant(a) {
 
 // apps shown in the page get their own address in this interface, the others a window
 function launchApp(a) {
+	// desktop view: every app is a window of the desktop
+	if (S.desk && typeof deskApp === 'function') { deskApp(a); return; }
 	if (appMode(a) === 'page') { location.hash = isUser() ? '#/app/' + a.id : '#/apps/run/' + a.id; return; }
 	openAppWindow(a);
 }
@@ -5631,21 +5687,9 @@ async function appFrameLoad() {
 function themeToApps() {
 	const msg = { sos: 'theme', theme: effTheme(), accent: S.accent }, origin = appBase(appSrv());
 	for (const w of appWins) { if (w.closed) appWins.delete(w); else try { w.postMessage(msg, origin); } catch (e) { } }
-	try { $('#appframe')?.contentWindow?.postMessage(msg, origin); } catch (e) { }
+	// the app shown in the page and the app windows of the desktop view
+	for (const f of document.querySelectorAll('#appframe, iframe.dk-app')) try { f.contentWindow?.postMessage(msg, origin); } catch (e) { }
 }
-
-// a window of the desktop view: the desktop tells it about a new look
-if (FRAME) window.addEventListener('message', (ev) => {
-	const m = ev.data || {};
-	if (ev.origin !== location.origin || ev.source !== window.parent || m.sos !== 'desk-in') return;
-	if (m.type === 'look' && (m.theme !== S.theme || m.accent !== S.accent || m.scan !== S.scan)) {
-		S.theme = m.theme; S.accent = m.accent; S.scan = m.scan;
-		applyTheme();
-		if (!S.me) return;
-		if (isUser()) { if (S.utab === 'settings') renderUserMain(); }
-		else if (S.route?.sub === 'appearance') renderMain();
-	}
-});
 
 // messages from apps: a file was saved -> refresh the file list
 window.addEventListener('message', (ev) => {
@@ -5692,8 +5736,11 @@ async function refreshCatalog(quiet = false) {
 
 // modules (system apps like "paperless") switch tabs on and off: read the areas again
 function refreshAreas() {
-	rpc('shareos.ui', 'get', {}, ZERO_SID).then((r) => { if (r.areas) { S.areas = r.areas; renderTabs(); } }).catch(() => {});
-	if (FRAME) deskPost({ type: 'areas' });
+	rpc('shareos.ui', 'get', {}, ZERO_SID).then((r) => {
+		if (!r.areas) return;
+		S.areas = r.areas; renderTabs();
+		if (S.desk && typeof deskAreas === 'function') deskAreas();
+	}).catch(() => {});
 }
 
 async function pollAppJob() {

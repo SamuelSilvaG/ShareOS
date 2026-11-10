@@ -7,9 +7,14 @@
  *
  * - bar: start menu, open windows, CPU/RAM/network, messages, search, account
  * - icons: one per area (and installed web apps), freely placed on a grid
- * - windows: the classic pages in an iframe (?frame=1#/<route>, see FRAME in
- *   app.js); move, resize, snap to a half or maximise, minimise to the bar
- * - control panel: categories that open the settings pages in windows
+ * - windows: an area of the interface is drawn into its window directly – the
+ *   view functions of app.js with the window as their place (VIEW, withView,
+ *   pageChanged in app.js); the window in front is "the page", the others
+ *   keep what they showed. Areas with several parts (storage, services …)
+ *   show them as a bar in the window. The terminal and the web apps are
+ *   windows of their own kind (ttyd / the app in its sandboxed frame).
+ *   Move, resize, snap to a half or maximise, minimise to the bar.
+ * - control panel: categories that open the settings in their windows
  * - layout per account on the box (shareos.me desk_get / desk_set): window
  *   places, open windows, icon places, wallpaper (an image on the box)
  */
@@ -64,7 +69,8 @@ const DK_I = {
 const dkIco = (k) => svg(DK_I[k] || DK_I.app);
 
 const D = {
-	wins: [],        // open windows: { id, title, route, ico, app, x, y, w, h, max, snap, min, z, el }
+	wins: [],        // open windows: { id, kind, title, ico, app, view, x, y, w, h, max, snap, min, z, el }
+	                 // kind: view (an area: view = { el, route, utab, uapp }), app, term, panel
 	z: 20,
 	geo: {},         // last normal place of a window per id
 	icons: {},       // icon places per id: [column, row]
@@ -79,34 +85,45 @@ const D = {
 
 /* ---------- what the desktop offers --------------------------------------------- */
 
-// desktop icons (and start menu entries): id, title, icon, route of the window
+// The areas of the interface as windows. An area with several parts is one
+// window (its parts are a bar in it), except the ones that are tools of their
+// own: files, logs, terminal. id -> the page it starts with.
+const DK_AREA = { files: ['shares', 'files'], storage: ['storage', 'volumes'], shares: ['shares', 'shares'], services: ['services', 'status'],
+	store: ['apps', 'store'], task: ['overview', ''], logs: ['system', 'logs'], system: ['system', 'general'],
+	cloud: ['cloud', ''], paperless: ['paperless', ''], dnsfilter: ['dnsfilter', ''] };
+const DK_TITLE = { files: ['Dateien', 'files'], storage: ['Speicher', 'storage'], shares: ['Freigaben', 'shares'], services: ['Dienste', 'services'],
+	store: ['App-Store', 'store'], task: ['Task-Manager', 'task'], logs: ['Protokolle', 'logs'], system: ['Einstellungen', 'settings'], term: ['Terminal', 'term'],
+	panel: ['Systemsteuerung', 'panel'], cloud: ['Cloud', 'cloud'], paperless: ['Paperless', 'paperless'], dnsfilter: ['DNS-Filter', 'dnsfilter'],
+	me: ['Mein ShareOS', 'me'], settings: ['Einstellungen', 'settings'] };
+// the window of a page (admins)
+function dkAreaOf(r) {
+	if (r.tab === 'shares' && r.sub === 'files') return 'files';
+	if (r.tab === 'system') return r.sub === 'logs' ? 'logs' : r.sub === 'terminal' ? 'term' : 'system';
+	if (r.tab === 'apps') return 'store';
+	if (r.tab === 'overview') return 'task';
+	return r.tab;
+}
+
+// desktop icons (and start menu entries): id, title, icon
 function dkItems() {
 	const L = [];
-	const add = (id, title, ico, route, extra = {}) => L.push({ id, title, ico, route, ...extra });
+	const add = (id, extra = {}) => L.push({ id, title: DK_TITLE[id][0], ico: DK_TITLE[id][1], ...extra });
 	if (isUser()) {
-		add('me', 'Mein ShareOS', 'me', '#/me');
-		if (S.me?.files) add('files', 'Dateien', 'files', '#/files');
-		for (const a of S.me?.apps || []) if (a.type !== 'system') add('app:' + a.id, a.name, 'app', '#/app/' + a.id, { app: a });
-		add('settings', 'Einstellungen', 'settings', '#/settings');
+		add('me');
+		if (S.me?.files) add('files');
+		for (const a of S.me?.apps || []) if (a.type !== 'system') L.push({ id: 'app:' + a.id, title: a.name, ico: 'app', app: a });
+		add('settings');
 		return L;
 	}
-	add('files', 'Dateien', 'files', '#/shares/files');
-	add('storage', 'Speicher', 'storage', '#/storage');
-	add('shares', 'Freigaben', 'shares', '#/shares');
-	add('services', 'Dienste', 'services', '#/services');
-	add('panel', 'Systemsteuerung', 'panel', null, { native: true });
-	if (tabOn('apps')) add('store', 'App-Store', 'store', '#/apps/store');
-	add('task', 'Task-Manager', 'task', '#/overview');
-	add('logs', 'Protokolle', 'logs', '#/system/logs');
-	add('term', 'Terminal', 'term', '#/system/terminal');
-	if (S.areas?.cloud) add('cloud', 'Cloud', 'cloud', '#/cloud');
-	if (S.areas?.paperless) add('paperless', 'Paperless', 'paperless', '#/paperless');
-	if (S.areas?.dnsfilter) add('dnsfilter', 'DNS-Filter', 'dnsfilter', '#/dnsfilter');
-	for (const a of S.apps?.installed?.apps || []) if (a.type !== 'system') add('app:' + a.id, a.name, 'app', '#/apps/run/' + a.id, { app: a });
+	add('files'); add('storage'); add('shares'); add('services'); add('panel');
+	if (tabOn('apps')) add('store');
+	add('task'); add('logs'); add('term');
+	for (const m of ['cloud', 'paperless', 'dnsfilter']) if (S.areas?.[m]) add(m);
+	for (const a of S.apps?.installed?.apps || []) if (a.type !== 'system') L.push({ id: 'app:' + a.id, title: a.name, ico: 'app', app: a });
 	return L;
 }
 
-// control panel: settings pages by category (admins)
+// control panel: the settings by category (admins) – [title, icon, page, action]
 function dkPanel() {
 	return [
 		['Zugang & Verbindung', [['Benutzer', 'users', '#/shares/users'], ['Gruppen', 'group', '#/shares/groups'], ['Freigaben', 'shares', '#/shares/shares'], ['Terminal', 'term', '#/system/terminal']]],
@@ -114,7 +131,8 @@ function dkPanel() {
 			['Hintergrundbild', 'image', null, 'wall'], ['Meldungen', 'notes', '#/system/notifications'], ['Energie & Reset', 'power', '#/system/power']]],
 		['Dienste', [['Status', 'services', '#/services/status'], ['Autostart', 'autostart', '#/services/autostart'], ['Medienserver', 'media', '#/services/dlna'], ['Drucker', 'printer', '#/services/printer'], ['USV', 'ups', '#/services/ups']]],
 		['Speicher', [['Laufwerke', 'storage', '#/storage/volumes'], ['Gesundheit', 'health', '#/storage/health'], ['Snapshots', 'snap', '#/storage/snapshots']]],
-		['System', [['Firmware', 'firmware', '#/system/firmware'], ['Protokolle', 'logs', '#/system/logs']]]
+		['System', [['Firmware', 'firmware', '#/system/firmware'], ['Protokolle', 'logs', '#/system/logs'],
+			...(tabOn('apps') ? [['Installierte Apps', 'store', '#/apps/installed'], ['App-Quellen', 'store', '#/apps/sources']] : [])]]
 	];
 }
 const dkPanelFlat = () => dkPanel().flatMap(([, l]) => l.map(([t, ico, route, act]) => ({ id: route ? 'r:' + route : act, title: t, ico, route, act })));
@@ -128,6 +146,8 @@ async function deskRun() {
 		if ((st && !st.done) || rec?.active) { renderShell(); return; }
 	}
 	S.desk = true;
+	stopPolling();
+	if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 	D.ac?.abort();
 	D.ac = new AbortController();
 	applyTheme();
@@ -158,7 +178,9 @@ async function deskRun() {
 	dk.addEventListener('keydown', dkKey, sig);
 	window.addEventListener('resize', () => { dkIcons(); D.wins.forEach(dkPlace); }, sig);
 	window.addEventListener('message', dkMsg, sig);
-	// a click into a window (an iframe) does not reach this page: the page loses the focus
+	// the keyboard reaches a window without a click: it comes to the front as well
+	dk.addEventListener('focusin', (e) => { const w = dkWin(e.target.closest?.('.dk-win')?.dataset.id); if (w && dkTop() !== w) dkFocus(w); }, sig);
+	// a click into an app or the terminal (a frame) does not reach this page: the page loses the focus
 	window.addEventListener('blur', () => setTimeout(() => {
 		const f = document.activeElement;
 		if (f?.tagName === 'IFRAME') { const w = dkWin(f.closest('.dk-win')?.dataset.id); if (w) dkFocus(w); dkPopsClose(); }
@@ -172,13 +194,14 @@ async function deskRun() {
 	D.loaded = true;
 	dkTick();
 	D.timers.push(setInterval(dkTick, 5000));
-	if (!isUser()) { dkNotes(); D.timers.push(setInterval(dkNotes, 60000)); }
+	D.timers.push(setInterval(dkBehind, 1500));
+	if (!isUser()) { refreshUpdateStatus(); dkNotes(); D.timers.push(setInterval(dkNotes, 60000)); }
 }
 
 function deskStop() {
 	D.ac?.abort();
 	D.timers.forEach(clearInterval); D.timers = [];
-	clearTimeout(D.saveT);
+	clearTimeout(D.saveT); clearTimeout(D.refT);
 	if (D.wallUrl) URL.revokeObjectURL(D.wallUrl);
 	D.wins = []; D.wallUrl = null; D.loaded = false;
 	S.desk = false;
@@ -197,14 +220,17 @@ function dkRestore(desk) {
 	D.wall = desk.wall && desk.wall.name ? desk.wall : null;
 	dkIcons();
 	dkWall();
-	const items = [...dkItems(), ...(isUser() ? [] : dkPanelFlat())];
+	const items = dkItems();
 	for (const o of Array.isArray(desk.open) ? desk.open : []) {
-		const it = items.find((x) => x.id === o.id);
-		if (!it || (!it.route && !it.native)) continue;
-		const w = dkOpen(it, true);
+		const it = items.find((x) => x.id === o.id) || (o.id === 'system' && !isUser() ? { id: 'system' } : null);
+		if (!it) continue;
+		const w = dkOpen(it, true, typeof o.sub === 'string' ? o.sub : null);
 		if (w) { w.max = !!o.max; w.snap = o.snap === 'left' || o.snap === 'right' ? o.snap : null; w.min = !!o.min; dkPlace(w); }
 	}
 	dkTask();
+	// every restored area is drawn once; the one in front like a page just opened
+	for (const w of D.wins) if (w.view && !w.min && w !== dkTop()) withView(w.view, renderMain);
+	dkShow();
 }
 
 /* ---------- saving the layout ----------------------------------------------------- */
@@ -213,7 +239,9 @@ function dkSave() {
 	if (!D.loaded) return;
 	clearTimeout(D.saveT);
 	D.saveT = setTimeout(() => {
-		const open = D.wins.slice().sort((a, b) => a.z - b.z).map((w) => ({ id: w.id, max: w.max || undefined, snap: w.snap || undefined, min: w.min || undefined }));
+		// a file opened in an app is not opened again at the next login
+		const open = D.wins.filter((w) => !w.id.includes('#')).sort((a, b) => a.z - b.z)
+			.map((w) => ({ id: w.id, sub: w.view?.route?.sub || undefined, max: w.max || undefined, snap: w.snap || undefined, min: w.min || undefined }));
 		// keep the places of the 40 windows used last
 		const ids = Object.keys(D.geo);
 		if (ids.length > 40) ids.slice(0, ids.length - 40).forEach((k) => delete D.geo[k]);
@@ -245,6 +273,8 @@ const dkRing = (p, label) => {
 async function dkTick() {
 	if (document.hidden || isUser()) return;
 	await tick();
+	// the window in front is drawn by tick() itself; a task manager behind it here
+	for (const w of D.wins) if (w.id === 'task' && !w.min && w !== dkTop()) withView(w.view, renderMain);
 	const st = $('#dk-stat');
 	if (!st || !S.info) return;
 	const m = S.info.memory || {};
@@ -310,50 +340,188 @@ const dkWin = (id) => D.wins.find((w) => w.id === id);
 const dkTop = () => D.wins.filter((w) => !w.min).sort((a, b) => b.z - a.z)[0] || null;
 const dkNarrow = () => innerWidth < 760;
 
-function dkDefault(id) {
+function dkDefault(id, app) {
 	const vw = innerWidth, vh = innerHeight - DK_TOP;
-	const w = Math.min(id === 'panel' ? 820 : 980, vw - 40), h = Math.min(id === 'panel' ? 600 : 680, vh - 30);
+	// a web app: the size of its manifest (plus the title bar)
+	const want = app ? [app.window?.width || 1000, (app.window?.height || 700) + 42] : id === 'panel' ? [820, 600] : id === 'term' ? [900, 560] : [980, 680];
+	const w = Math.min(want[0], vw - 40), h = Math.min(want[1], vh - 30);
 	const n = D.wins.length % 6;
 	return { x: Math.max(0, Math.round((vw - w) / 2) - 100 + n * 36), y: DK_TOP + Math.max(8, Math.round((vh - h) / 2) - 60 + n * 30), w, h };
 }
 
-// open (or bring back) the window of an item; web apps that want their own
-// browser window open there as before
-function dkOpen(it, quiet = false) {
-	dkPopsClose();
-	if (it.act === 'wall') { dkWallDlg(); return null; }
-	if (it.app && appMode(it.app) !== 'page') { openAppWindow(it.app); return null; }
-	let w = dkWin(it.id);
-	if (w) { w.min = false; dkFocus(w); dkPlace(w); dkTask(); if (!quiet) dkSave(); return w; }
-	const g = D.geo[it.id] || dkDefault(it.id);
-	w = { id: it.id, title: it.title, route: it.route, ico: it.ico, app: it.app || null, native: !!it.native, x: g.x, y: g.y, w: g.w, h: g.h, max: false, snap: null, min: false, z: ++D.z };
+// app.js asks which area is "the page": the one of the window in front
+function deskView() {
+	if (!S.desk) return null;
+	const w = dkTop();
+	return w && w.view ? w.view : null;
+}
+
+// The window in front shows an area: load and draw it like a page that was
+// just opened (pageChanged in app.js). later: after the click that brought
+// the window forward – drawing at once would take its target away.
+function dkShow(later = false) {
+	clearTimeout(D.refT);
+	const go = () => { if (S.desk && deskView()) pageChanged(); };
+	if (later) D.refT = setTimeout(go, 120); else go();
+}
+
+// An area behind the window in front that still waits for its data: what it
+// asked for arrives while another window is "the page" – draw it again until
+// it shows its content (at most 20 times; in front it is drawn anyway).
+function dkBehind() {
+	if (document.hidden) return;
+	const top = dkTop();
+	for (const w of D.wins) {
+		if (!w.view || w.min || w === top) { w.tries = 0; continue; }
+		if (!$('.spin', w.view.el) || (w.tries = (w.tries || 0) + 1) > 20) continue;
+		withView(w.view, renderMain);
+	}
+}
+
+function dkWinEl(w) {
 	const el = document.createElement('section');
 	el.className = 'dk-win';
 	el.dataset.id = w.id;
+	el.dataset.kind = w.kind;
 	el.setAttribute('aria-label', w.title);
 	el.innerHTML = html`<div class="dk-wt">
 			<span class="dk-wi">${w.app ? appIcon(w.app, appSrv()) : dkIco(w.ico)}</span><h2>${w.title}</h2>
-			${w.route ? html`<button class="dk-wb" type="button" data-w="reload" aria-label="Neu laden" title="Neu laden">${dkIco('reload')}</button>` : ''}
+			${w.kind !== 'panel' ? html`<button class="dk-wb" type="button" data-w="reload" aria-label="Neu laden" title="Neu laden">${dkIco('reload')}</button>` : ''}
 			<button class="dk-wb" type="button" data-w="min" aria-label="Minimieren" title="Minimieren">${dkIco('min')}</button>
 			<button class="dk-wb" type="button" data-w="max" aria-label="Maximieren" title="Maximieren">${dkIco('max')}</button>
 			<button class="dk-wb x" type="button" data-w="close" aria-label="Schließen" title="Schließen">${dkIco('close')}</button>
 		</div>
-		<div class="dk-wc">${w.route ? html`<iframe title="${w.title}" src="${location.pathname}?frame=1${w.route}"></iframe>` : ''}</div>
+		<div class="dk-wc${w.kind === 'view' ? ' dk-view' : ''}"></div>
 		<div class="dk-rs" data-rs="e"></div><div class="dk-rs" data-rs="w"></div><div class="dk-rs" data-rs="s"></div>
 		<div class="dk-rs" data-rs="se"></div><div class="dk-rs" data-rs="sw"></div>`.s;
-	w.el = el;
+	return el;
+}
+
+// Open (or bring back) the window of an item. sub: the part of the area to
+// show (storage -> health …); url/name: a file opened in a web app.
+function dkOpen(it, quiet = false, sub = null) {
+	dkPopsClose();
+	if (it.act === 'wall') { dkWallDlg(); return null; }
+	if (it.route) return dkOpenPage(routeOf(it.route), quiet);
+	if (it.app) return deskApp(it.app, null, null, quiet);
+	let w = dkWin(it.id);
+	const user = isUser();
+	if (w) {
+		if (sub != null && w.view && !user && w.view.route.sub !== sub) w.view.route = { tab: w.view.route.tab, sub };
+		w.min = false; dkFocus(w, true); dkPlace(w); dkTask();
+		if (!quiet) { dkSave(); dkShow(); }
+		return w;
+	}
+	const [title, ico] = DK_TITLE[it.id] || [it.title, it.ico];
+	const kind = it.id === 'panel' || it.id === 'term' ? it.id : 'view';
+	if (kind === 'view' && !user && !DK_AREA[it.id]) return null;
+	const g = D.geo[it.id] || dkDefault(it.id);
+	w = { id: it.id, kind, title, ico, app: null, view: null, x: g.x, y: g.y, w: g.w, h: g.h, max: false, snap: null, min: false, z: ++D.z };
+	w.el = dkWinEl(w);
+	if (kind === 'view') {
+		const el = $('.dk-wc', w.el);
+		w.view = user ? { el, route: { tab: 'desktop', sub: '' }, utab: it.id, uapp: null }
+			: { el, route: { tab: DK_AREA[it.id][0], sub: sub ?? DK_AREA[it.id][1] }, utab: null, uapp: null };
+		// the parts that are tools of their own are not offered in the bar of the area
+		if (!user) w.view.route = routeOf('#/' + w.view.route.tab + '/' + w.view.route.sub);
+	}
 	D.wins.push(w);
-	$('#dk-wins').append(el);
-	if (w.native) dkNative(w);
+	$('#dk-wins').append(w.el);
+	if (kind === 'panel') dkPanelDraw();
+	if (kind === 'term') dkTerm(w);
 	dkPlace(w);
-	dkFocus(w);
+	dkFocus(w, true);
+	dkTask();
+	if (!quiet) { dkSave(); dkShow(); }
+	return w;
+}
+
+// the window of a page of the interface (a link, the control panel, a message)
+function dkOpenPage(r, quiet = false) {
+	const id = dkAreaOf(r);
+	return dkOpen({ id }, quiet, id === 'term' || id === 'panel' ? null : r.sub);
+}
+
+// app.js: an address was asked for (a link in a window, location.hash = …)
+function deskNav(hash) {
+	history.replaceState(null, '', location.pathname + location.search);
+	if (!hash || hash === '#' || !S.desk) return;
+	const [t, sub, id] = routeParts(hash);
+	if (isUser()) {
+		if (t === 'app') { const a = findApp(sub); if (a) deskApp(a); return; }
+		const it = dkItems().find((x) => x.id === (t === 'appearance' ? 'settings' : t));
+		if (it) dkOpen(it);
+		return;
+	}
+	if (t === 'apps' && sub === 'run') { const a = findApp(id); if (a) deskApp(a); return; }
+	dkOpenPage(routeOf(hash));
+}
+
+// modules or apps changed: icons, start menu, windows of areas that are gone
+async function deskAreas() {
+	if (!deskOn()) { setView('classic'); return; }
+	await dkLoadApps();
+	dkIcons();
+	if (!$('#dk-start').hidden) dkStartList();
+	for (const w of D.wins.slice()) if (w.view && !isUser() && !tabOn(w.view.route.tab)) dkClose(w);
+}
+
+/* ---------- web apps: every app is a window of the desktop -------------------------------- */
+
+// url/name: a file opened with the app (its own window next to the app's)
+function deskApp(a, url = null, name = null, quiet = false) {
+	dkPopsClose();
+	let id = 'app:' + a.id;
+	let w = dkWin(id);
+	if (w && !url) {
+		w.min = false; dkFocus(w, true); dkPlace(w); dkTask();
+		if (!quiet) dkSave();
+		return w;
+	}
+	if (url) { let n = 2; while (dkWin(id + '#' + n)) n++; id += '#' + n; }
+	const g = D.geo['app:' + a.id] || dkDefault(id, a);
+	w = { id, kind: 'app', title: name ? `${name} – ${a.name}` : a.name, ico: 'app', app: a, view: null, url,
+		x: g.x + (url ? 28 : 0), y: g.y + (url ? 24 : 0), w: g.w, h: g.h, max: false, snap: null, min: false, z: ++D.z };
+	w.el = dkWinEl(w);
+	D.wins.push(w);
+	$('#dk-wins').append(w.el);
+	dkAppLoad(w);
+	dkPlace(w);
+	dkFocus(w, true);
 	dkTask();
 	if (!quiet) dkSave();
 	return w;
 }
 
-function dkNative(w) {
-	if (w.id === 'panel') dkPanelDraw();
+// the app in its frame: the same sandbox as an app shown in the classic page
+async function dkAppLoad(w) {
+	const body = $('.dk-wc', w.el);
+	body.innerHTML = html`<iframe class="dk-app" data-id="${w.app.id}" title="${w.title}" src="about:blank"
+		sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-downloads allow-modals"
+		allow="clipboard-read; clipboard-write; fullscreen; autoplay"></iframe>`.s;
+	let url = w.url;
+	if (!url) {
+		const g = await appGrant(w.app);
+		url = appLaunchUrl(w.app, appSrv(), g ? { fs: g } : {});
+	}
+	const f = $('iframe', body);
+	if (f && D.wins.includes(w)) f.src = url;
+}
+
+/* ---------- terminal: the shell fills its window ----------------------------------------- */
+
+// one session per window (ttyd takes one client and ends when it leaves)
+async function dkTerm(w) {
+	const body = $('.dk-wc', w.el);
+	body.innerHTML = html`<div class="dk-wait"><div class="spin"></div></div>`.s;
+	try {
+		const t = await termStart();
+		if (!D.wins.includes(w)) return;
+		body.innerHTML = html`<iframe class="dk-term" title="Terminal" src="${termUrl(t)}" allow="clipboard-read; clipboard-write"></iframe>`.s;
+	} catch (e) {
+		if (!D.wins.includes(w)) return;
+		body.innerHTML = html`<div class="dk-wait"><p class="mut">Terminal: ${e.message}</p><button class="btn" type="button" data-w="reload">Neu laden</button></div>`.s;
+	}
 }
 
 // where a window is drawn: maximised, a half or its own place (kept on screen)
@@ -378,11 +546,14 @@ function dkPlace(w) {
 	}
 }
 
-function dkFocus(w) {
+// quiet: the caller draws the area itself (a window that just opened)
+function dkFocus(w, quiet = false, later = false) {
 	if (!w) return;
-	if (dkTop() !== w) w.z = ++D.z;
+	const was = dkTop();
+	if (was !== w) w.z = ++D.z;
 	D.wins.forEach((x) => { x.el.classList.toggle('on', x === w); x.el.style.zIndex = x.z; });
 	dkTask();
+	if (was !== w && !quiet) dkShow(later);
 }
 
 function dkMax(w) {
@@ -395,13 +566,16 @@ function dkMin(w) {
 	w.min = true;
 	dkPlace(w); dkTask(); dkSave();
 	const t = dkTop();
-	if (t) dkFocus(t);
+	if (t) { dkFocus(t, true); dkShow(); }
 }
 
 function dkClose(w) {
 	w.el.remove();
 	D.wins = D.wins.filter((x) => x !== w);
+	if (w.view && !isUser()) pageClosed(w.view.route);
 	dkTask(); dkSave();
+	const t = dkTop();
+	if (t) { dkFocus(t, true); dkShow(); }
 }
 
 /* ---------- moving and resizing (pointer events, captured by the grip) ------------------- */
@@ -413,7 +587,7 @@ function dkDown(e) {
 	const sec = e.target.closest('.dk-win');
 	if (!sec) return;
 	const w = dkWin(sec.dataset.id);
-	dkFocus(w);
+	dkFocus(w, false, true);
 	dkPopsClose();
 	const rs = e.target.closest('[data-rs]'), bar = e.target.closest('.dk-wt');
 	if ((!rs && !bar) || e.target.closest('button') || dkNarrow()) return;
@@ -517,6 +691,7 @@ function dkFind(id) {
 	return [...dkItems(), ...(isUser() ? [] : dkPanelFlat())].find((x) => x.id === id);
 }
 
+
 async function dkClick(e) {
 	const b = e.target.closest('button, a');
 	if (!b) { if (!e.target.closest('.dk-pop')) dkPopsClose(); return; }
@@ -531,12 +706,12 @@ async function dkClick(e) {
 		if (b.dataset.w === 'close') dkClose(w);
 		else if (b.dataset.w === 'min') dkMin(w);
 		else if (b.dataset.w === 'max') dkMax(w);
-		else if (b.dataset.w === 'reload') { const f = $('iframe', w.el); if (f) f.src = `${location.pathname}?frame=1${w.route}`; }
+		else if (b.dataset.w === 'reload') { if (w.kind === 'app') dkAppLoad(w); else if (w.kind === 'term') dkTerm(w); else dkShow(); }
 		return;
 	}
 	if (b.dataset.task) {
 		const w = dkWin(b.dataset.task);
-		if (w.min || dkTop() !== w) { w.min = false; dkPlace(w); dkFocus(w); } else dkMin(w);
+		if (w.min || dkTop() !== w) { w.min = false; dkPlace(w); dkFocus(w, true); dkShow(); } else dkMin(w);
 		dkTask(); dkSave();
 		return;
 	}
@@ -544,12 +719,12 @@ async function dkClick(e) {
 	if (!k) return;
 	if (k === 'start' || k === 'search') { dkStartToggle(k === 'search' ? true : null); return; }
 	if (k === 'menu') { dkMenuToggle(); return; }
-	if (k === 'notes') { dkOpen({ id: 'r:#/system/notifications', title: 'Meldungen', ico: 'notes', route: '#/system/notifications' }); return; }
+	if (k === 'notes') { dkOpenPage(routeOf('#/system/notifications')); return; }
 	dkPopsClose();
 	if (k === 'classic') setView('classic');
 	else if (k === 'logout') { await logout(); deskStop(); location.reload(); }
 	else if (k === 'wall') dkWallDlg();
-	else if (k === 'look') dkOpen({ id: isUser() ? 'settings' : 'r:#/system/appearance', title: isUser() ? 'Einstellungen' : 'Darstellung', ico: 'look', route: isUser() ? '#/settings' : '#/system/appearance' });
+	else if (k === 'look') { if (isUser()) dkOpen({ id: 'settings' }); else dkOpenPage(routeOf('#/system/appearance')); }
 	else if (k === 'arrange') {
 		if (!await confirmDlg('Anordnung zurücksetzen?', 'Symbole und Fenster kommen an ihre Standardplätze.', 'Zurücksetzen')) return;
 		D.icons = {}; D.geo = {};
@@ -564,31 +739,24 @@ function dkKey(e) {
 	if (!$('#dk-start').hidden || !$('#dk-menu').hidden) { dkPopsClose(); e.preventDefault(); }
 }
 
-// messages of the windows (app.js FRAME): look, session, modules
+// messages of the web apps in the windows: an app that closes itself (it handed
+// its file to a window of the same app that is already open) closes its window
 function dkMsg(ev) {
 	const m = ev.data || {};
-	if (ev.origin !== location.origin || m.sos !== 'desk') return;
-	if (m.type === 'look' && (m.theme !== S.theme || m.accent !== S.accent || m.scan !== S.scan)) {
-		S.theme = m.theme; S.accent = m.accent; S.scan = m.scan;
-		applyTheme();
-	}
-	if (m.type === 'expired') { deskStop(); sessionExpired(); }
-	if (m.type === 'areas') {
-		rpc('shareos.ui', 'get', {}, ZERO_SID).then(async (r) => {
-			if (r.areas) S.areas = r.areas;
-			if (!deskOn()) { setView('classic'); return; }
-			await dkLoadApps();
-			dkIcons();
-			if (!$('#dk-start').hidden) dkStartList();
-		}).catch(() => {});
-	}
+	if (!appSrv() || ev.origin !== appBase(appSrv()) || m.sos !== 'close') return;
+	const w = D.wins.find((x) => x.kind === 'app' && $('iframe', x.el)?.contentWindow === ev.source);
+	if (!w) return;
+	const other = D.wins.find((x) => x !== w && x.kind === 'app' && x.app.id === w.app.id);
+	dkClose(w);
+	if (other) { other.min = false; dkPlace(other); dkFocus(other); }
 }
 
-// app.js applyTheme: tell every window about the new look
+// app.js applyTheme: the areas shown take the new look with the page; the
+// settings that show the look are drawn again
 function deskLook() {
 	for (const w of D.wins) {
-		const f = $('iframe', w.el);
-		try { f?.contentWindow?.postMessage({ sos: 'desk-in', type: 'look', theme: S.theme, accent: S.accent, scan: S.scan }, location.origin); } catch (e) { }
+		if (!w.view || w.min) continue;
+		if (isUser() ? w.view.utab === 'settings' : w.view.route.tab === 'system' && w.view.route.sub === 'appearance') withView(w.view, renderMain);
 	}
 }
 
@@ -626,7 +794,7 @@ function dkStartList() {
 	const items = dkItems();
 	if (q) {
 		// the visible (translated) names are searched as well as the German ones
-		const all = [...items, ...(isUser() ? [] : dkPanelFlat().filter((p) => !items.some((x) => x.route === p.route)))];
+		const all = [...items, ...(isUser() ? [] : dkPanelFlat().filter((p) => !items.some((x) => x.title === p.title)))];
 		const hit = all.filter((it) => it.title.toLowerCase().includes(q) || (typeof i18nText === 'function' && i18nText(it.title).toLowerCase().includes(q)));
 		box.innerHTML = hit.length ? html`<div class="dk-sg">${hit.map(tile)}</div>`.s : html`<p class="dk-none">Nichts gefunden.</p>`.s;
 		return;
