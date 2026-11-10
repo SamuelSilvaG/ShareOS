@@ -286,6 +286,7 @@ the box for why the web server was not running.
 | 10:17 | **Project website** on GitHub Pages: [uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/) – features, downloads per model, the app catalog, discussions and these docs as a wiki. It builds itself from the repository on every push, release and once a day. |
 | 13:00 | **Cloud as the third module:** system app "Cloud", CLOUD tab and "My ShareOS" part only while it is installed. Boxes with jobs, accounts or rclone get it by themselves on the update. All three planned modules are done; *Areas* now only switches Apps. |
 | 11:30 | Docs for **0.3.0-beta.4** (DNS filter, website). |
+| 14:30 | **Vault shares** (discussion #88, idea of SamuelSilvaG): a share stays locked and invisible until a user unlocks it with the password for some minutes – then only for that user, and it locks itself again (cron). While locked the top folder's ACL shuts out open connections and apps too. App permission `vault` with `ShareOS.vault`, so Samuel can build the companion app. For 0.3.0-beta.5. |
 | 16:00 | **Desktop view as the fourth module:** Jan wants the interface as a desktop like other NAS systems have (icons, start menu, windows, control panel). First a clickable design, then the code: a small `desktop.js` without a framework, the windows show the existing pages (`?frame=1`), layout and wallpaper per account on the box. Both views stay, the login page asks. `tests/ui-desktop.js` checks it all in Chromium (47 checks). |
 
 ### Monday, 09.11.2026

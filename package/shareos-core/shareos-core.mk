@@ -75,6 +75,7 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/sysinfo $(TARGET_DIR)/www-apps/_shareos/cgi/sysinfo
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/netcheck $(TARGET_DIR)/www-apps/_shareos/cgi/netcheck
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/notify $(TARGET_DIR)/www-apps/_shareos/cgi/notify
+	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/vault $(TARGET_DIR)/www-apps/_shareos/cgi/vault
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/docker $(TARGET_DIR)/www-apps/_shareos/cgi/docker
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/tuya $(TARGET_DIR)/www-apps/_shareos/cgi/tuya
 	$(INSTALL) -D -m 0644 $(@D)/etc/config/dockerhosts $(TARGET_DIR)/etc/config/dockerhosts

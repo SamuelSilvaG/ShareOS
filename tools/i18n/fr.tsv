@@ -1878,50 +1878,73 @@ E1501	Filtrage actif (désactivé = transfert seul)
 E1502	Chaque règle coûte de la mémoire (environ 0,1 Ko). À partir de 300 000 règles, ShareOS avertit.
 E1503	Le filtre DNS (AdGuard Home) est aussi un module : onglet FILTRE DNS une fois installé sous APPS.
 E1504	Paperless, Cloud et le filtre DNS sont des modules : leur onglet apparaît une fois installés sous APPS et disparaît quand on les retire – réglages et données sont conservés.
-E1505	Affichage
-E1506	Classique
-E1507	Bureau
-E1508	Vue bureau
-E1509	Menu Démarrer
-E1510	Fenêtres ouvertes
-E1511	Messages
-E1512	Recherche
-E1513	Menu utilisateur
-E1514	Fichiers
-E1515	Stockage
-E1516	Panneau de configuration
-E1517	Boutique d’apps
-E1518	Gestionnaire des tâches
-E1519	Journaux
-E1520	Cloud
-E1521	Paperless
-E1522	Filtre DNS
-E1523	Accès et connexion
-E1524	Général
-E1525	Heure
-E1526	Apparence
-E1527	Fond d’écran
-E1528	Alimentation et réinitialisation
-E1529	État
-E1530	Démarrage auto
-E1531	Serveur multimédia
-E1532	Réduire
-E1533	Agrandir
-E1534	Rechercher des apps et réglages
-E1535	Vue classique
-E1536	Aucun résultat.
-E1537	MODULES ET APPS
-E1538	Réinitialiser la disposition
-E1539	Réinitialiser la disposition ?
-E1540	Les icônes et fenêtres reprennent leur place par défaut.
-E1541	Rechercher dans tous les réglages
-E1542	Aucun disque ni partage.
-E1543	Aucune image dans ce dossier.
-E1544	Un fond d’écran depuis la box demande le droit « Fichiers » pour votre compte.
-E1545	Une image (JPG, PNG, WebP, GIF) de la box – enregistrée pour vous seul.
-E1546	AJUSTEMENT DE L’IMAGE
-E1547	Remplir
-E1548	Ajuster
-E1549	Mosaïque
-E1550	ShareOS (par défaut)
-E1551	Fond d’écran enregistré.
+E1505	COFFRE
+E1506	verrouillé
+E1507	Déverrouiller
+E1508	Verrouiller
+E1509	Verrouiller maintenant
+E1510	Comme coffre : partager seulement sur demande, pendant quelques minutes
+E1511	DURÉE PAR DÉFAUT AU DÉVERROUILLAGE
+E1512	Un coffre n’est pas visible sur le réseau. Un utilisateur qui y a droit le déverrouille sous « Mon ShareOS » (ou dans une app) avec son mot de passe – il est alors accessible pour lui seul pendant la durée choisie, sous
+E1513	puis se verrouille tout seul. Verrouillé, personne n’accède aux fichiers, même par des connexions ouvertes ou des apps. Un coffre n’est partagé qu’en SMB, sans invités ni NFS.
+E1514	Ton mot de passe encore une fois, par sécurité. Le coffre est ensuite accessible sur le réseau pour toi seul et se reverrouille tout seul.
+E1515	OUVERT PENDANT
+E1516	Le coffre disparaît du réseau pour tous ceux qui l’ont déverrouillé. Les connexions ouvertes perdent l’accès.
+E1517	Partages coffres
+E1518	Peut déverrouiller (après saisie du mot de passe de l’utilisateur) et verrouiller ses partages coffres ; pour les administrateurs, peut aussi choisir quels partages sont des coffres.
+P333	Déverrouiller le coffre « $1 »
+P334	Le coffre « $1 » est ouvert jusqu’à $2.
+P335	Verrouiller le coffre « $1 » maintenant ?
+P336	Coffre « $1 » verrouillé.
+P337	ouvert jusqu’à $1
+P338	$1 : ouvert jusqu’à $2
+P339	$1 minutes
+P340	$1 heures
+P341	Coffre : $1
+E1519	Affichage
+E1520	Classique
+E1521	Bureau
+E1522	Vue bureau
+E1523	Menu Démarrer
+E1524	Fenêtres ouvertes
+E1525	Messages
+E1526	Recherche
+E1527	Menu utilisateur
+E1528	Fichiers
+E1529	Stockage
+E1530	Panneau de configuration
+E1531	Boutique d’apps
+E1532	Gestionnaire des tâches
+E1533	Journaux
+E1534	Cloud
+E1535	Paperless
+E1536	Filtre DNS
+E1537	Accès et connexion
+E1538	Général
+E1539	Heure
+E1540	Apparence
+E1541	Fond d’écran
+E1542	Alimentation et réinitialisation
+E1543	État
+E1544	Démarrage auto
+E1545	Serveur multimédia
+E1546	Réduire
+E1547	Agrandir
+E1548	Rechercher des apps et réglages
+E1549	Vue classique
+E1550	Aucun résultat.
+E1551	MODULES ET APPS
+E1552	Réinitialiser la disposition
+E1553	Réinitialiser la disposition ?
+E1554	Les icônes et fenêtres reprennent leur place par défaut.
+E1555	Rechercher dans tous les réglages
+E1556	Aucun disque ni partage.
+E1557	Aucune image dans ce dossier.
+E1558	Un fond d’écran depuis la box demande le droit « Fichiers » pour votre compte.
+E1559	Une image (JPG, PNG, WebP, GIF) de la box – enregistrée pour vous seul.
+E1560	AJUSTEMENT DE L’IMAGE
+E1561	Remplir
+E1562	Ajuster
+E1563	Mosaïque
+E1564	ShareOS (par défaut)
+E1565	Fond d’écran enregistré.

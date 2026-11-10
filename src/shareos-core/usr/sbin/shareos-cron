@@ -14,8 +14,8 @@
 # shareos-notify; SMART self-tests (storage.global.smart_test); the power
 # schedule (shareos.power, shareos-power); SMART values for the Zabbix agent
 # (zabbix.main.disk_interval, shareos-zabbix collect); DynDNS (shareos.ddns,
-# every 5 minutes) and the renewal of the web certificate (own CA or Let's
-# Encrypt, daily). Areas
+# every 5 minutes), the renewal of the web certificate (own CA or Let's
+# Encrypt, daily) and every minute the vault shares that ran out. Areas
 # switched off under System -> Appearance
 # (shareos.ui.area_apps = 0) get no entries, nor modules that are not
 # installed (system apps "paperless", "cloud").
@@ -62,6 +62,8 @@ entries() {
 		done
 		echo "1 * * * * /usr/sbin/shareos-power arm >/dev/null 2>&1"
 	fi
+	# vault shares: lock what ran out (shareos-shares, only with a vault)
+	uci -q show shares | grep -q "\.vault='1'" && echo "* * * * * /usr/sbin/shareos-shares vault-expire >/dev/null 2>&1"
 	# dynamic DNS (shareos.ddns): every 5 minutes, sent only when the address changed
 	[ "$(uci -q get shareos.ddns.enabled)" = 1 ] && echo "*/5 * * * * /usr/sbin/shareos-ddns update >/dev/null 2>&1"
 	# web certificate: of the own CA (renewed before it runs out) or Let's Encrypt

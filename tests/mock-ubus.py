@@ -24,7 +24,8 @@ STATE = {'setup_done': False, 'fan': {'preset': 'balanced', 'off_temp': 0, 'full
                    'tv': {'role': 'share', 'fullname': 'Fernseher', 'groups': ['medien'], 'home': '', 'quota': 0, 'web': True, 'pw': 'tv1234'}},
          'groups': {'familie': 'Familie', 'medien': 'Mediengeräte'},
          'shares': {'fotos': {'volume': 'daten', 'path': 'Fotos', 'comment': 'Familienfotos', 'smb': True, 'nfs': False, 'guest': False, 'rw': ['jan'], 'ro': ['@familie'], 'nfs_rw': False, 'nfs_hosts': []},
-                    'medien': {'volume': 'daten', 'path': 'Medien', 'comment': 'Filme und Musik', 'smb': True, 'nfs': True, 'guest': True, 'rw': ['jan'], 'ro': ['@medien'], 'nfs_rw': False, 'nfs_hosts': ['10.241.1.0/24']}},
+                    'medien': {'volume': 'daten', 'path': 'Medien', 'comment': 'Filme und Musik', 'smb': True, 'nfs': True, 'guest': True, 'rw': ['jan'], 'ro': ['@medien'], 'nfs_rw': False, 'nfs_hosts': ['10.241.1.0/24']},
+                    'tresor': {'volume': 'daten', 'path': 'Tresor', 'comment': 'Verträge und Ausweise', 'smb': True, 'nfs': False, 'guest': False, 'rw': ['jan', 'anna'], 'ro': [], 'nfs_rw': False, 'nfs_hosts': [], 'vault': True, 'vault_ttl': 30}},
          'sessions': {},
          'widget': {'enabled': False, 'token': ''},
          'pl': {'url': 'http://10.241.1.20:8000', 'enabled': True, 'interval': 2, 'after': 'delete',
@@ -128,8 +129,16 @@ def accounts():
     return {'users': users, 'groups': groups}
 
 
+VAULT = {}   # share -> {user: until} (mock of /tmp/shareos-vault)
+
+
+def vault_open(n):
+    return [{'user': u, 'until': t} for u, t in sorted(VAULT.get(n, {}).items()) if t > time.time()]
+
+
 def shares():
-    return {'shares': [{'name': n, **x, 'fullpath': f"/mnt/{x['volume']}/{x['path']}", 'mounted': True} for n, x in sorted(STATE['shares'].items())],
+    return {'shares': [{'name': n, 'vault': False, 'vault_ttl': 15, **x, 'vault_open': vault_open(n) if x.get('vault') else [],
+                        'fullpath': f"/mnt/{x['volume']}/{x['path']}", 'mounted': True} for n, x in sorted(STATE['shares'].items())],
             'workgroup': 'WORKGROUP', 'smb_enabled': True, 'smb_compat': False, 'nfs_enabled': True, 'smb_running': True, 'nfs_running': True}
 
 
@@ -143,7 +152,8 @@ def me(user):
         tags = [user] + ['@' + g for g in x['groups']]
         acc = 'rw' if any(t in sh['rw'] for t in tags) else 'ro' if any(t in sh['ro'] for t in tags) or sh['guest'] else None
         if acc:
-            mine.append({'name': n, 'access': acc, 'comment': sh['comment'], 'volume': sh['volume']})
+            mine.append({'name': n, 'access': acc, 'comment': sh['comment'], 'volume': sh['volume'], 'vault': bool(sh.get('vault')),
+                         'vault_ttl': sh.get('vault_ttl', 15), 'vault_until': VAULT.get(n, {}).get(user, 0) if sh.get('vault') else 0})
     return {'name': user, 'role': x['role'], 'fullname': x['fullname'], 'groups': x['groups'], 'quota': x['quota'],
             'home': {'volume': x['home'], 'path': f"/mnt/{x['home']}/home/{user}", 'smb': user} if x['home'] else None,
             'usage': [{'volume': 'daten', 'used': 61_500_000_000, 'limit': x['quota'] * 1000000}], 'shares': mine, 'host': 'skynet-nas',
@@ -439,6 +449,15 @@ def call(obj, method, args):
         u = STATE['sessions'].get(SID, 'root')
         if method == 'passwd':
             return {'ok': True}
+        if method == 'vault_unlock':
+            if args.get('password') != STATE['users'].get(u, {}).get('pw'):
+                return {'error': 'wrong password'}
+            until = int(time.time()) + 60 * int(args.get('minutes') or 15)
+            VAULT.setdefault(args['share'], {})[u] = until
+            return {'ok': True, 'share': args['share'], 'until': until, **me(u)}
+        if method == 'vault_lock':
+            VAULT.get(args['share'], {}).pop(u, None)
+            return {'ok': True, **me(u)}
         if method == 'share_ticket':
             d = FS['home'].setdefault('Geteilt', [])
             if not any(n == 'Geteilt' for n, _, _ in FS['home']['']):
@@ -709,6 +728,8 @@ def call(obj, method, args):
             STATE['shares'][args['name']] = {k: v for k, v in args.items() if k != 'name'}
         if method == 'del':
             STATE['shares'].pop(args['name'], None)
+        if method == 'vault_lock':
+            VAULT.pop(args['name'], None)
         return shares()
     if obj == 'session':
         return {}

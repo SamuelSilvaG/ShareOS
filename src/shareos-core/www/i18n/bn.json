@@ -1508,6 +1508,20 @@
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "প্রতিটি নিয়ম মেমরি নেয় (প্রায় 0.1 KB)। 300,000 নিয়ম থেকে ShareOS সতর্ক করে।",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS ফিল্টারও (AdGuard Home) একটি মডিউল: APPS-এ ইনস্টল হলে DNS ফিল্টার ট্যাব আসে।",
 		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, ক্লাউড ও DNS ফিল্টার মডিউল: APPS-এ ইনস্টল করলে এদের ট্যাব দেখা যায় এবং সরালে চলে যায় – সেটিংস ও ডেটা থাকে।",
+		"TRESOR": "সিন্দুক",
+		"gesperrt": "লক করা",
+		"Entsperren": "আনলক করুন",
+		"Sperren": "লক করুন",
+		"Jetzt sperren": "এখনই লক করুন",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "সিন্দুক হিসেবে: শুধু অনুরোধে, কয়েক মিনিটের জন্য শেয়ার করুন",
+		"STANDARD-DAUER BEIM ENTSPERREN": "আনলক করার সময় ডিফল্ট সময়কাল",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "সিন্দুক নেটওয়ার্কে দেখা যায় না। যার অধিকার আছে এমন ব্যবহারকারী „আমার ShareOS“-এ (বা কোনো অ্যাপে) নিজের পাসওয়ার্ড দিয়ে এটি আনলক করেন – তখন বেছে নেওয়া সময় ধরে এটি শুধু তাঁর জন্য এভাবে পাওয়া যায়:",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "এবং তারপর নিজে থেকেই লক হয়ে যায়। লক থাকা অবস্থায় কেউ ফাইলে পৌঁছাতে পারে না, খোলা সংযোগ বা অ্যাপ দিয়েও না। সিন্দুক শুধু SMB দিয়ে শেয়ার হয়, অতিথি ও NFS ছাড়া।",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "নিরাপত্তার জন্য আবার আপনার পাসওয়ার্ড দিন। এরপর সিন্দুকটি নেটওয়ার্কে শুধু আপনার জন্য খোলা থাকবে এবং নিজে থেকেই আবার লক হয়ে যাবে।",
+		"OFFEN FÜR": "খোলা থাকবে",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "যারা সিন্দুকটি আনলক করেছেন তাঁদের সবার জন্য এটি নেটওয়ার্ক থেকে উধাও হয়ে যাবে। খোলা সংযোগগুলো প্রবেশাধিকার হারাবে।",
+		"Tresor-Freigaben": "সিন্দুক শেয়ার",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "ব্যবহারকারীর সিন্দুকগুলো (তাঁর পাসওয়ার্ড দেওয়ার পর) আনলক ও লক করতে পারে; প্রশাসকদের জন্য কোন শেয়ারগুলো সিন্দুক হবে তাও ঠিক করতে পারে।",
 		"Ansicht": "ভিউ",
 		"Klassisch": "ক্লাসিক",
 		"Desktop": "ডেস্কটপ",
@@ -2888,6 +2902,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"ক্লিপবোর্ডে $1টি আইটেম – গন্তব্য ফোল্ডারে “পেস্ট করুন” বাছুন।"
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"সিন্দুক „$1“ আনলক করুন"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"সিন্দুক „$1“ $2 পর্যন্ত খোলা।"
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"সিন্দুক „$1“ এখনই লক করবেন?"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"সিন্দুক „$1“ লক করা হয়েছে।"
+		],
+		[
+			"^offen bis (.+)$",
+			"$1 পর্যন্ত খোলা"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1: $2 পর্যন্ত খোলা"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 মিনিট"
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 ঘণ্টা"
+		],
+		[
+			"^Tresor: (.+)$",
+			"সিন্দুক: $1"
 		]
 	],
 	"words": [

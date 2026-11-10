@@ -1878,50 +1878,73 @@ E1501	Filtragem ativa (desligada = só reencaminhar)
 E1502	Cada regra gasta memória (cerca de 0,1 KB). A partir de 300 000 regras, o ShareOS avisa.
 E1503	O filtro DNS (AdGuard Home) também é um módulo: separador FILTRO DNS quando instalado em APPS.
 E1504	Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se.
-E1505	Visualização
-E1506	Clássica
-E1507	Área de trabalho
-E1508	Visualização de área de trabalho
-E1509	Menu Iniciar
-E1510	Janelas abertas
-E1511	Mensagens
-E1512	Pesquisar
-E1513	Menu do usuário
-E1514	Arquivos
-E1515	Armazenamento
-E1516	Painel de controle
-E1517	Loja de apps
-E1518	Gerenciador de tarefas
-E1519	Logs
-E1520	Nuvem
-E1521	Paperless
-E1522	Filtro DNS
-E1523	Acesso e conexão
-E1524	Geral
-E1525	Hora
-E1526	Aparência
-E1527	Papel de parede
-E1528	Energia e redefinição
-E1529	Status
-E1530	Início automático
-E1531	Servidor de mídia
-E1532	Minimizar
-E1533	Maximizar
-E1534	Pesquisar apps e configurações
-E1535	Visualização clássica
-E1536	Nada encontrado.
-E1537	MÓDULOS E APPS
-E1538	Redefinir disposição
-E1539	Redefinir a disposição?
-E1540	Ícones e janelas voltam aos lugares padrão.
-E1541	Pesquisar em todas as configurações
-E1542	Nenhuma unidade ou compartilhamento.
-E1543	Nenhuma imagem nesta pasta.
-E1544	Um papel de parede da caixa precisa da permissão “Arquivos” na sua conta.
-E1545	Uma imagem (JPG, PNG, WebP, GIF) da caixa – salva só para você.
-E1546	AJUSTE DA IMAGEM
-E1547	Preencher
-E1548	Ajustar
-E1549	Lado a lado
-E1550	ShareOS (padrão)
-E1551	Papel de parede salvo.
+E1505	COFRE
+E1506	bloqueado
+E1507	Desbloquear
+E1508	Bloquear
+E1509	Bloquear agora
+E1510	Como cofre: compartilhar só sob pedido, por alguns minutos
+E1511	DURAÇÃO PADRÃO AO DESBLOQUEAR
+E1512	Um cofre não aparece na rede. Um usuário com direito a ele o desbloqueia em “Meu ShareOS” (ou num app) com sua senha – então, pelo tempo escolhido, só ele o acessa como
+E1513	e depois ele se bloqueia sozinho. Bloqueado, ninguém chega aos arquivos, nem por conexões abertas nem por apps. Um cofre só é compartilhado por SMB, sem convidados e sem NFS.
+E1514	Sua senha mais uma vez, por segurança. Depois o cofre fica acessível na rede só para você e se bloqueia sozinho de novo.
+E1515	ABERTO POR
+E1516	O cofre some da rede para todos que o desbloquearam. Conexões abertas perdem o acesso.
+E1517	Compartilhamentos cofre
+E1518	Pode desbloquear (após o usuário digitar a senha) e bloquear os cofres do usuário; para administradores, também pode definir quais compartilhamentos são cofres.
+P333	Desbloquear o cofre “$1”
+P334	O cofre “$1” está aberto até $2.
+P335	Bloquear o cofre “$1” agora?
+P336	Cofre “$1” bloqueado.
+P337	aberto até $1
+P338	$1: aberto até $2
+P339	$1 minutos
+P340	$1 horas
+P341	Cofre: $1
+E1519	Visualização
+E1520	Clássica
+E1521	Área de trabalho
+E1522	Visualização de área de trabalho
+E1523	Menu Iniciar
+E1524	Janelas abertas
+E1525	Mensagens
+E1526	Pesquisar
+E1527	Menu do usuário
+E1528	Arquivos
+E1529	Armazenamento
+E1530	Painel de controle
+E1531	Loja de apps
+E1532	Gerenciador de tarefas
+E1533	Logs
+E1534	Nuvem
+E1535	Paperless
+E1536	Filtro DNS
+E1537	Acesso e conexão
+E1538	Geral
+E1539	Hora
+E1540	Aparência
+E1541	Papel de parede
+E1542	Energia e redefinição
+E1543	Status
+E1544	Início automático
+E1545	Servidor de mídia
+E1546	Minimizar
+E1547	Maximizar
+E1548	Pesquisar apps e configurações
+E1549	Visualização clássica
+E1550	Nada encontrado.
+E1551	MÓDULOS E APPS
+E1552	Redefinir disposição
+E1553	Redefinir a disposição?
+E1554	Ícones e janelas voltam aos lugares padrão.
+E1555	Pesquisar em todas as configurações
+E1556	Nenhuma unidade ou compartilhamento.
+E1557	Nenhuma imagem nesta pasta.
+E1558	Um papel de parede da caixa precisa da permissão “Arquivos” na sua conta.
+E1559	Uma imagem (JPG, PNG, WebP, GIF) da caixa – salva só para você.
+E1560	AJUSTE DA IMAGEM
+E1561	Preencher
+E1562	Ajustar
+E1563	Lado a lado
+E1564	ShareOS (padrão)
+E1565	Papel de parede salvo.

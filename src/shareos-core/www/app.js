@@ -105,6 +105,7 @@ const I = {
 	user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
 	users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
 	key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/>',
+	lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
 	net: '<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/>'
 };
 const SVC_ICON = { dropbear: I.term, uhttpd: I.globe, ntpd: I.clock, crond: I.clock, rpcd: I.bus, ubus: I.bus, syslogd: I.list, board: I.fan };
@@ -293,6 +294,28 @@ function promptDlg(title, text, value, okLabel, type = 'text', max = 0) {
 		d.addEventListener('close', () => { d.remove(); resolve(result); });
 		d.showModal();
 		$('input', d).select();
+	});
+}
+
+// unlocking a vault: password again and how long; resolves {password, minutes} or null
+const VAULT_TTLS = [5, 15, 30, 60, 120, 240, 480];
+const vaultMin = (m) => (m < 60 ? `${m} Minuten` : m === 60 ? '1 Stunde' : `${m / 60} Stunden`);
+function vaultDlg(share, ttl) {
+	return new Promise((resolve) => {
+		const d = document.createElement('dialog');
+		d.className = 'dlg';
+		d.innerHTML = html`<form method="dialog"><h3>Tresor „${share}“ entsperren</h3><p>Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.</p>
+			<label class="f" style="margin-bottom:12px"><span>PASSWORT</span><input name="pw" type="password" autocomplete="current-password" maxlength="128" required></label>
+			<label class="f" style="margin-bottom:16px"><span>OFFEN FÜR</span><select name="min">${VAULT_TTLS.map((m) => html`<option value="${m}"${m === ttl ? raw(' selected') : ''}>${vaultMin(m)}</option>`)}</select></label>
+			<div class="acts"><button class="btn ghost" type="button" value="no">Abbrechen</button>
+			<button class="btn primary" type="submit" value="yes">Entsperren</button></div></form>`.s;
+		$('#app').append(d);
+		let result = null;
+		$('button[value=no]', d).addEventListener('click', () => d.close());
+		$('form', d).addEventListener('submit', () => { result = { password: $('input', d).value, minutes: +$('select', d).value }; });
+		d.addEventListener('close', () => { d.remove(); resolve(result); });
+		d.showModal();
+		$('input', d).focus();
 	});
 }
 
@@ -1198,6 +1221,11 @@ async function loadShareData() {
 }
 
 function accessOf(sh, tag) { return sh.rw.includes(tag) ? 'rw' : sh.ro.includes(tag) ? 'ro' : ''; }
+// the logged-in admin account's own access to a share (directly or by a group)
+function accessOfUser(sh) {
+	const u = S.acc?.users.find((x) => x.name === S.me?.name);
+	return u ? [u.name, ...u.groups.map((g) => '@' + g)].map((t) => accessOf(sh, t)).find(Boolean) || '' : '';
+}
 
 function shareAccessSummary(sh) {
 	const parts = [...sh.rw.map((x) => x + ' (rw)'), ...sh.ro.map((x) => x + ' (r)')];
@@ -1256,11 +1284,21 @@ function sharesView() {
 	</section>`;
 }
 
+// vault share: who unlocked it until when
+const vaultTime = (t) => new Date(t * 1000).toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' });
+function vaultTag(x) {
+	if (!x.vault) return '';
+	const open = x.vault_open || [];
+	return html`<span class="tag warn">TRESOR</span> ${open.length ? open.map((o) => html`<span class="tag ok">${o.user}: offen bis ${vaultTime(o.until)}</span> `) : html`<span class="tag">gesperrt</span> `}`;
+}
 function shareTags(x) {
-	return html`${x.smb ? html`<span class="tag">SMB</span> ` : ''}${x.nfs ? html`<span class="tag">NFS${x.nfs_rw ? '' : ' (r)'}</span> ` : ''}${x.guest ? html`<span class="tag warn">GAST</span>` : ''}${!x.smb && !x.nfs ? html`<span class="tag err">kein Protokoll</span>` : ''}`;
+	return html`${vaultTag(x)}${x.smb ? html`<span class="tag">SMB</span> ` : ''}${x.nfs ? html`<span class="tag">NFS${x.nfs_rw ? '' : ' (r)'}</span> ` : ''}${x.guest ? html`<span class="tag warn">GAST</span>` : ''}${!x.smb && !x.nfs ? html`<span class="tag err">kein Protokoll</span>` : ''}`;
 }
 function shareActions(x) {
-	return html`<button class="btn sm" type="button" data-act="sh-edit" data-name="${x.name}">Bearbeiten</button>
+	const me = S.me?.name, mine = (x.vault_open || []).some((o) => o.user === me);
+	return html`${x.vault && me && me !== 'root' && !mine && accessOfUser(x) ? html`<button class="btn sm" type="button" data-act="vault-unlock" data-share="${x.name}" data-ttl="${x.vault_ttl}">${svg(I.key)}Entsperren</button> ` : ''}
+		${x.vault && (x.vault_open || []).length ? html`<button class="btn sm" type="button" data-act="sh-vlock" data-name="${x.name}">${svg(I.lock)}Jetzt sperren</button> ` : ''}
+		<button class="btn sm" type="button" data-act="sh-edit" data-name="${x.name}">Bearbeiten</button>
 		<button class="btn sm ghost" type="button" data-act="sh-del" data-name="${x.name}">Entfernen</button>`;
 }
 
@@ -1285,6 +1323,10 @@ function shareEditor(e) {
 			<tbody>${rows.map(([tag, label, icon]) => html`<tr><td><span style="display:inline-flex;gap:8px;align-items:center">${svg(icon)}${label}</span></td>
 				<td><select class="acl" data-tag="${tag}" aria-label="Recht für ${label}">${['', 'ro', 'rw'].map((v) => html`<option value="${v}"${accessOf(x, tag) === v ? raw(' selected') : ''}>${ACCESS_TXT[v]}</option>`)}</select></td></tr>`)}</tbody></table></div>`
 			: html`<p class="note">Noch keine Benutzer – unter <a href="#/shares/users">Benutzer</a> anlegen, oder Gastzugang erlauben.</p>`}
+		<div class="pt" style="margin:18px 0 8px">TRESOR</div>
+		<label class="chk"><input type="checkbox" name="vault"${x.vault ? raw(' checked') : ''}>Als Tresor: nur auf Anfrage für einige Minuten freigeben</label>
+		<div class="fields" style="grid-template-columns:1fr;margin-top:10px"><label class="f"><span>STANDARD-DAUER BEIM ENTSPERREN</span><select name="vault_ttl">${VAULT_TTLS.map((m) => html`<option value="${m}"${(x.vault_ttl || 15) === m ? raw(' selected') : ''}>${vaultMin(m)}</option>`)}</select></label></div>
+		<p class="note">Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als <code>\\box\${x.name || 'name'}</code> erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.</p>
 		<div class="pt" style="margin:18px 0 8px">ZUGRIFF ÜBER NFS</div>
 		<div style="display:grid;gap:6px">
 			<label class="chk"><input type="checkbox" name="nfs"${x.nfs ? raw(' checked') : ''}>Über NFS freigeben</label>
@@ -2349,8 +2391,12 @@ function renderUserHome() {
 		${(m.shares || []).length ? html`<div class="grid">${m.shares.map((x) => html`<div class="card">
 			<div class="icon">${svg(I.folder)}<span class="dot up"></span></div>
 			<div class="info"><div class="name">${x.name}</div><div class="desc">${x.comment || ''}</div>
-				<div class="desc" style="margin-top:6px"><span class="tag ${x.access === 'rw' ? 'ok' : ''}">${ACCESS_TXT[x.access]}</span></div>
-				<div class="ip">\\\\${host}\\${x.name}</div></div></div>`)}</div>`
+				<div class="desc" style="margin-top:6px"><span class="tag ${x.access === 'rw' ? 'ok' : ''}">${ACCESS_TXT[x.access]}</span>
+					${x.vault ? html` <span class="tag warn">TRESOR</span> ${x.vault_until ? html`<span class="tag ok">offen bis ${vaultTime(x.vault_until)}</span>` : html`<span class="tag">gesperrt</span>`}` : ''}</div>
+				${x.vault && !x.vault_until ? '' : html`<div class="ip">\\\\${host}\\${x.name}</div>`}
+				${x.vault ? html`<div class="acts" style="margin-top:10px">${x.vault_until
+					? html`<button class="btn sm" type="button" data-act="vault-lock" data-share="${x.name}">${svg(I.lock)}Sperren</button>`
+					: html`<button class="btn sm primary" type="button" data-act="vault-unlock" data-share="${x.name}" data-ttl="${x.vault_ttl}">${svg(I.key)}Entsperren</button>`}</div>` : ''}</div></div>`)}</div>`
 			: html`<div class="panel"><div class="empty">${svg(I.info)}<span>Dir wurde noch keine Freigabe zugewiesen.</span></div></div>`}
 	</section>
 	${m.paperless ? myPaperless() : ''}
@@ -3837,13 +3883,24 @@ const VIEWS_AFTER = {
 		$('#opt-wg')?.addEventListener('change', (e) => shareGlobal({ workgroup: e.target.value.trim() }));
 		$('#opt-smbcompat')?.addEventListener('change', (e) => shareGlobal({ smb_compat: e.target.checked }));
 		$('#f-user select[name=role]')?.addEventListener('change', (e) => { $('#u-web-row').hidden = e.target.value !== 'user'; });
+		// a vault: SMB only, no guests, no NFS
+		const vaultSync = () => {
+			const f = $('#f-share'); if (!f) return;
+			const v = f.vault.checked;
+			for (const n of ['guest', 'nfs', 'nfs_rw']) { if (v) f[n].checked = false; f[n].disabled = v; }
+			if (v) f.smb.checked = true;
+			f.smb.disabled = v; f.vault_ttl.disabled = !v;
+		};
+		$('#f-share input[name=vault]')?.addEventListener('change', vaultSync);
+		vaultSync();
 		$('#f-share')?.addEventListener('submit', async (e) => {
 			e.preventDefault();
 			const f = e.target, rw = [], ro = [];
 			document.querySelectorAll('#f-share select.acl').forEach((s2) => { if (s2.value === 'rw') rw.push(s2.dataset.tag); if (s2.value === 'ro') ro.push(s2.dataset.tag); });
 			const args = { name: f.name.value.trim().toLowerCase(), volume: f.volume.value, path: f.path.value.trim() || f.name.value.trim().toLowerCase(), comment: f.comment.value.trim(),
 				smb: f.smb.checked, guest: f.guest.checked, nfs: f.nfs.checked, nfs_rw: f.nfs_rw.checked,
-				nfs_hosts: f.nfs_hosts.value.split(/[\s,;]+/).filter(Boolean), rw, ro };
+				nfs_hosts: f.nfs_hosts.value.split(/[\s,;]+/).filter(Boolean), rw, ro, vault: f.vault.checked, vault_ttl: +f.vault_ttl.value };
+			if (args.vault) { args.guest = false; args.nfs = false; }
 			if (args.nfs && !args.nfs_hosts.length) { toast('Für NFS mindestens einen Client (IP oder Netz) eintragen.', true); return; }
 			try { S.shares = await rpc('shareos.shares', 'set', args); S.shEdit = null; toast(`Freigabe „${args.name}“ gespeichert.`); renderMain(); }
 			catch (err) { toast('Freigabe: ' + err.message, true); }
@@ -4617,6 +4674,24 @@ const ACTIONS = {
 		const f = $('#f-share'), v = f.volume.value;
 		const r = await folderDlg('Ordner wählen', [{ name: v, root: v, base: '' }], { path: f.path.value.trim() || f.name.value.trim() });
 		if (r) f.path.value = r.path;
+	},
+	async 'vault-unlock'(el) {
+		const r0 = await vaultDlg(el.dataset.share, +el.dataset.ttl || 15);
+		if (!r0) return;
+		try {
+			const r = await rpc('shareos.me', 'vault_unlock', { share: el.dataset.share, minutes: r0.minutes, password: r0.password });
+			toast(`Tresor „${el.dataset.share}“ ist bis ${vaultTime(r.until)} offen.`);
+			if (isUser()) { S.me = { ...S.me, ...r }; renderUserMain(); } else loadShareData();
+		} catch (e) { toast('Tresor: ' + e.message, true); }
+	},
+	async 'vault-lock'(el) {
+		try { S.me = { ...S.me, ...await rpc('shareos.me', 'vault_lock', { share: el.dataset.share }) }; toast(`Tresor „${el.dataset.share}“ gesperrt.`); renderUserMain(); }
+		catch (e) { toast('Tresor: ' + e.message, true); }
+	},
+	async 'sh-vlock'(el) {
+		const n = el.dataset.name;
+		if (!await confirmDlg(`Tresor „${n}“ jetzt sperren?`, 'Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.', 'Sperren')) return;
+		try { S.shares = await rpc('shareos.shares', 'vault_lock', { name: n }); toast(`Tresor „${n}“ gesperrt.`); renderMain(); } catch (e) { toast(e.message, true); }
 	},
 	async 'sh-del'(el) {
 		const n = el.dataset.name;
@@ -5677,7 +5752,7 @@ function appActions(a, upd) {
 }
 
 // permissions an app can ask for (app.json "permissions")
-const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', torrent: 'Eigene Torrents (Transmission)', syncthing: 'Ordner synchronisieren (Syncthing)', media: 'Medien umwandeln (FFmpeg)', vpn: 'VPN der Box (OpenVPN)', tailscale: 'Fernzugriff (Tailscale)', autobrr: 'Download-Automatik (autobrr)', zabbix: 'Überwachung (Zabbix-Agent)', sysinfo: 'Werte der Box', netcheck: 'Netzwerk prüfen', docker: 'Docker-Hosts', tuya: 'Smart Home (Tuya)', module: 'Modul · eigener Reiter', notify: 'Meldungen senden', status: 'Anzeige im Kopf', internet: 'Nutzt das Internet', system: 'System-App · Terminal' };
+const PERM_TAG = { cron: 'Zeitgesteuerte Aufgaben', embed: 'In ShareOS anzeigen', files: 'Zugriff auf Dateien', torrent: 'Eigene Torrents (Transmission)', syncthing: 'Ordner synchronisieren (Syncthing)', media: 'Medien umwandeln (FFmpeg)', vpn: 'VPN der Box (OpenVPN)', tailscale: 'Fernzugriff (Tailscale)', autobrr: 'Download-Automatik (autobrr)', zabbix: 'Überwachung (Zabbix-Agent)', sysinfo: 'Werte der Box', netcheck: 'Netzwerk prüfen', docker: 'Docker-Hosts', tuya: 'Smart Home (Tuya)', vault: 'Tresor-Freigaben', module: 'Modul · eigener Reiter', notify: 'Meldungen senden', status: 'Anzeige im Kopf', internet: 'Nutzt das Internet', system: 'System-App · Terminal' };
 // permissions plus "internet" (manifest field: the app loads data from the internet – not a restriction, shown for transparency)
 // and "system" for system apps (programs for the terminal)
 const appPerms = (x) => [...(x?.module ? ['module'] : x?.type === 'system' ? ['system'] : []), ...(x?.permissions || []), ...(x?.internet ? ['internet'] : [])];
@@ -5696,6 +5771,7 @@ const PERM_TXT = { module: 'Schaltet einen Bereich von ShareOS frei, mit eigenem
 	netcheck: 'Darf von der Box aus prüfen, ob Geräte und Dienste im Netz erreichbar sind (Ping, Port, HTTP/HTTPS) – nur für Administratoren.',
 	docker: 'Darf die Docker-Hosts verwalten, die der Administrator einträgt, und dort Container ansehen, starten, stoppen und neu starten sowie ihre Protokolle lesen (Docker-API) – nur für Administratoren.',
 	tuya: 'Darf von der Box aus Tuya-Geräte im Heimnetz suchen, ihren Zustand lesen und sie schalten (lokal, ohne Cloud) – nur für Administratoren.',
+	vault: 'Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.',
 	notify: 'Darf Meldungen über die Benachrichtigungen der Box senden (Oberfläche, E-Mail, Push) – höchstens 20 pro Stunde, mit dem Namen der App davor; im Browser nur für Administratoren.',
 	status: 'Darf oben in der Kopfzeile der ShareOS-Oberfläche einen kurzen Zustand anzeigen (z. B. „verbunden“) – nur für den Benutzer, der die App geöffnet hat; er verschwindet nach höchstens 10 Minuten von selbst.',
 	internet: 'Lädt Daten aus dem Internet (z. B. Online-Dienste, Streams, Karten). Ohne Internetverbindung funktionieren diese Teile der App nicht.',

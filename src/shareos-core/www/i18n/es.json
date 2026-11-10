@@ -1508,6 +1508,20 @@
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.",
 		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan.",
+		"TRESOR": "CAJA FUERTE",
+		"gesperrt": "bloqueada",
+		"Entsperren": "Desbloquear",
+		"Sperren": "Bloquear",
+		"Jetzt sperren": "Bloquear ahora",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "Como caja fuerte: compartir solo bajo demanda, durante unos minutos",
+		"STANDARD-DAUER BEIM ENTSPERREN": "DURACIÓN PREDETERMINADA AL DESBLOQUEAR",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "Una caja fuerte no es visible en la red. Un usuario con derechos la desbloquea en «Mi ShareOS» (o en una app) con su contraseña; entonces, durante el tiempo elegido, solo él puede acceder a ella como",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "y después se bloquea sola. Bloqueada, nadie accede a los archivos, tampoco por conexiones abiertas ni apps. Una caja fuerte solo se comparte por SMB, sin invitados ni NFS.",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "Tu contraseña otra vez, por seguridad. Después la caja fuerte solo es accesible en la red para ti y se vuelve a bloquear sola.",
+		"OFFEN FÜR": "ABIERTA DURANTE",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "La caja fuerte desaparece de la red para todos los que la desbloquearon. Las conexiones abiertas pierden el acceso.",
+		"Tresor-Freigaben": "Cajas fuertes",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes.",
 		"Ansicht": "Vista",
 		"Klassisch": "Clásica",
 		"Desktop": "Escritorio",
@@ -2888,6 +2902,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"$1 elemento(s) en el portapapeles: elige «Pegar» en la carpeta de destino."
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"Desbloquear la caja fuerte «$1»"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"La caja fuerte «$1» está abierta hasta las $2."
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"¿Bloquear ahora la caja fuerte «$1»?"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"Caja fuerte «$1» bloqueada."
+		],
+		[
+			"^offen bis (.+)$",
+			"abierta hasta las $1"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1: abierta hasta las $2"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 minutos"
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 horas"
+		],
+		[
+			"^Tresor: (.+)$",
+			"Caja fuerte: $1"
 		]
 	],
 	"words": [

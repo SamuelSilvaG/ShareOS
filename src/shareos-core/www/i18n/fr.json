@@ -1508,6 +1508,20 @@
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Chaque règle coûte de la mémoire (environ 0,1 Ko). À partir de 300 000 règles, ShareOS avertit.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "Le filtre DNS (AdGuard Home) est aussi un module : onglet FILTRE DNS une fois installé sous APPS.",
 		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud et le filtre DNS sont des modules : leur onglet apparaît une fois installés sous APPS et disparaît quand on les retire – réglages et données sont conservés.",
+		"TRESOR": "COFFRE",
+		"gesperrt": "verrouillé",
+		"Entsperren": "Déverrouiller",
+		"Sperren": "Verrouiller",
+		"Jetzt sperren": "Verrouiller maintenant",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "Comme coffre : partager seulement sur demande, pendant quelques minutes",
+		"STANDARD-DAUER BEIM ENTSPERREN": "DURÉE PAR DÉFAUT AU DÉVERROUILLAGE",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "Un coffre n’est pas visible sur le réseau. Un utilisateur qui y a droit le déverrouille sous « Mon ShareOS » (ou dans une app) avec son mot de passe – il est alors accessible pour lui seul pendant la durée choisie, sous",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "puis se verrouille tout seul. Verrouillé, personne n’accède aux fichiers, même par des connexions ouvertes ou des apps. Un coffre n’est partagé qu’en SMB, sans invités ni NFS.",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "Ton mot de passe encore une fois, par sécurité. Le coffre est ensuite accessible sur le réseau pour toi seul et se reverrouille tout seul.",
+		"OFFEN FÜR": "OUVERT PENDANT",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "Le coffre disparaît du réseau pour tous ceux qui l’ont déverrouillé. Les connexions ouvertes perdent l’accès.",
+		"Tresor-Freigaben": "Partages coffres",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "Peut déverrouiller (après saisie du mot de passe de l’utilisateur) et verrouiller ses partages coffres ; pour les administrateurs, peut aussi choisir quels partages sont des coffres.",
 		"Ansicht": "Affichage",
 		"Klassisch": "Classique",
 		"Desktop": "Bureau",
@@ -2888,6 +2902,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"$1 élément(s) dans le presse-papiers – choisissez « Coller » dans le dossier cible."
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"Déverrouiller le coffre « $1 »"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"Le coffre « $1 » est ouvert jusqu’à $2."
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"Verrouiller le coffre « $1 » maintenant ?"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"Coffre « $1 » verrouillé."
+		],
+		[
+			"^offen bis (.+)$",
+			"ouvert jusqu’à $1"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1 : ouvert jusqu’à $2"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 minutes"
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 heures"
+		],
+		[
+			"^Tresor: (.+)$",
+			"Coffre : $1"
 		]
 	],
 	"words": [
