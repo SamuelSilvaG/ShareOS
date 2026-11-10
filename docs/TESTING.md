@@ -486,6 +486,16 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zp. Vault shares (0.3.0-beta.5)
+
+Needs a drive with ext4 (or Btrfs) and two users with SMB access, e.g. `jan` (admin) and `anna`.
+1. *Freigaben → Neue Freigabe* `tresor`, *jan* and *anna* "lesen & schreiben", tick *Als Tresor …*, default time 15 minutes, *Speichern*. *Gäste* and *NFS* are greyed out. The card shows *TRESOR* and *gesperrt*.
+2. On a PC: `\\<box>` does not list `tresor`, `\\<box>\tresor` is refused. In the terminal: `getfacl /mnt/<drive>/tresor` shows no `user:anna` / `user:jan`.
+3. Log in as `anna` → *Mein ShareOS*: the card *tresor* has *Entsperren*. A wrong password: "wrong password". The right one with 5 minutes: *offen bis HH:MM*, `\\<box>\tresor` works for anna (copy a file in). Log in to the share as `jan` from another PC: refused.
+4. Admin *Freigaben*: the card shows *anna: offen bis …* and *Jetzt sperren*. Wait until the time is over (or *Jetzt sperren*): within a minute the share disappears; an open Explorer window of anna gets "access denied".
+5. `reboot`: every vault is locked after the start.
+6. Edit the share, untick *Als Tresor*: it is a normal share again for jan and anna.
+
 ## 14zo. Redraws keep input and scroll position (0.3.0-beta.2)
 
 1. *System → Firmware*: *Datei* → choose a `.sysupgrade.tar` and take your time in the dialog (> 30 s): the file is shown at the first try.

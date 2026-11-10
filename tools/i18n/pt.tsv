@@ -1878,3 +1878,26 @@ E1501	Filtragem ativa (desligada = só reencaminhar)
 E1502	Cada regra gasta memória (cerca de 0,1 KB). A partir de 300 000 regras, o ShareOS avisa.
 E1503	O filtro DNS (AdGuard Home) também é um módulo: separador FILTRO DNS quando instalado em APPS.
 E1504	Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se.
+E1505	COFRE
+E1506	bloqueado
+E1507	Desbloquear
+E1508	Bloquear
+E1509	Bloquear agora
+E1510	Como cofre: compartilhar só sob pedido, por alguns minutos
+E1511	DURAÇÃO PADRÃO AO DESBLOQUEAR
+E1512	Um cofre não aparece na rede. Um usuário com direito a ele o desbloqueia em “Meu ShareOS” (ou num app) com sua senha – então, pelo tempo escolhido, só ele o acessa como
+E1513	e depois ele se bloqueia sozinho. Bloqueado, ninguém chega aos arquivos, nem por conexões abertas nem por apps. Um cofre só é compartilhado por SMB, sem convidados e sem NFS.
+E1514	Sua senha mais uma vez, por segurança. Depois o cofre fica acessível na rede só para você e se bloqueia sozinho de novo.
+E1515	ABERTO POR
+E1516	O cofre some da rede para todos que o desbloquearam. Conexões abertas perdem o acesso.
+E1517	Compartilhamentos cofre
+E1518	Pode desbloquear (após o usuário digitar a senha) e bloquear os cofres do usuário; para administradores, também pode definir quais compartilhamentos são cofres.
+P333	Desbloquear o cofre “$1”
+P334	O cofre “$1” está aberto até $2.
+P335	Bloquear o cofre “$1” agora?
+P336	Cofre “$1” bloqueado.
+P337	aberto até $1
+P338	$1: aberto até $2
+P339	$1 minutos
+P340	$1 horas
+P341	Cofre: $1

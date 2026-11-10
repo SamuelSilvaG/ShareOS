@@ -1507,7 +1507,21 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "Фильтрация включена (выкл. = только пересылать)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Каждое правило занимает память (около 0,1 КБ). Начиная с 300 000 правил ShareOS предупреждает.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS-фильтр (AdGuard Home) тоже модуль: вкладка DNS-ФИЛЬТР после установки в разделе ПРИЛОЖЕНИЯ.",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Облако и DNS-фильтр — модули: их вкладка появляется после установки в разделе ПРИЛОЖЕНИЯ и исчезает при удалении — настройки и данные сохраняются."
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Облако и DNS-фильтр — модули: их вкладка появляется после установки в разделе ПРИЛОЖЕНИЯ и исчезает при удалении — настройки и данные сохраняются.",
+		"TRESOR": "СЕЙФ",
+		"gesperrt": "заблокирован",
+		"Entsperren": "Разблокировать",
+		"Sperren": "Заблокировать",
+		"Jetzt sperren": "Заблокировать сейчас",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "Как сейф: открывать доступ только по запросу на несколько минут",
+		"STANDARD-DAUER BEIM ENTSPERREN": "ВРЕМЯ ПО УМОЛЧАНИЮ ПРИ РАЗБЛОКИРОВКЕ",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "Сейф не виден в сети. Пользователь с правами на него разблокирует его в «Мой ShareOS» (или в приложении) своим паролем – тогда на выбранное время он доступен только ему как",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "и затем блокируется сам. Пока сейф заблокирован, к файлам никто не получит доступ – ни через открытые подключения, ни через приложения. Сейф доступен только по SMB, без гостей и без NFS.",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "Ещё раз ваш пароль – для безопасности. После этого сейф доступен в сети только вам и снова заблокируется сам.",
+		"OFFEN FÜR": "ОТКРЫТ НА",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "Сейф исчезнет из сети для всех, кто его разблокировал. Открытые подключения потеряют доступ.",
+		"Tresor-Freigaben": "Сейфы",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "Может разблокировать (после ввода пароля пользователя) и блокировать его сейфы; администраторам также позволяет выбирать, какие общие папки являются сейфами."
 	},
 	"patterns": [
 		[
@@ -2841,6 +2855,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"Элементов в буфере обмена: $1 – выберите «Вставить» в папке назначения."
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"Разблокировать сейф «$1»"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"Сейф «$1» открыт до $2."
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"Заблокировать сейф «$1» сейчас?"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"Сейф «$1» заблокирован."
+		],
+		[
+			"^offen bis (.+)$",
+			"открыт до $1"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1: открыт до $2"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 мин."
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 ч."
+		],
+		[
+			"^Tresor: (.+)$",
+			"Сейф: $1"
 		]
 	],
 	"words": [

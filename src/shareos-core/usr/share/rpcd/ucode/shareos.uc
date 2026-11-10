@@ -5,7 +5,7 @@
 //   shareos.service  list | action | autostart
 //   shareos.net      get | set | confirm   (network with automatic rollback)
 //   shareos.accounts list | add | set | passwd | del | group_add | group_del | import_altf
-//   shareos.shares   list | set | del | global
+//   shareos.shares   list | set | del | global | vault_lock
 //   shareos.me       bind | get | passwd | ui_set | fav_set   (the logged-in account, also for plain users)
 //   shareos.backup   offer | export | restore   (settings as JSON, optionally encrypted)
 //   shareos.recovery status | apply | discard | apps_install | apps_dismiss   (after a restore)
@@ -805,9 +805,26 @@ function accounts() {
 	return { users: sort(users, (a, b) => a.name < b.name ? -1 : 1), groups: sort(groups, (a, b) => a.name < b.name ? -1 : 1) };
 }
 
+/* ---------- vault shares (discussion #88): locked, unlocked on demand ---------- */
+
+const VAULT_FAILS = '/tmp/shareos-vault-fails';
+const VAULT_TTLS = [ 5, 15, 30, 60, 120, 240, 480 ];
+
+function vault_ttl(v) { let n = +(v ?? 15); return n >= 1 && n <= 480 ? int(n) : 15; }
+
+// share -> [{user, until}] of the vaults that are unlocked now
+function vault_state() {
+	let st = {};
+	for (let line in split(sh(SHARES + ' vault-status').out, '\n')) {
+		let m = match(line, /^vault=([^:]+):([^:]+):([0-9]+)$/);
+		if (m) push(st[m[1]] ??= [], { user: m[2], until: +m[3] });
+	}
+	return st;
+}
+
 function share_list() {
 	let c = cursor(), list = [];
-	let st = {}, svc = sh(SHARES + ' status').out;
+	let st = {}, svc = sh(SHARES + ' status').out, open = vault_state();
 	for (let line in split(svc, '\n')) {
 		let m = match(line, /^share=([^:]*):([^:]*):([01])$/);
 		if (m) st[m[1]] = { path: m[2], mounted: m[3] == '1' };
@@ -818,6 +835,7 @@ function share_list() {
 			name: n, volume: x.volume ?? '', path: x.path ?? n, comment: x.comment ?? '',
 			smb: x.smb == '1', nfs: x.nfs == '1', guest: x.guest == '1',
 			rw: list_of(x.rw), ro: list_of(x.ro), nfs_rw: x.nfs_rw == '1', nfs_hosts: list_of(x.nfs_hosts),
+			vault: x.vault == '1', vault_ttl: vault_ttl(x.vault_ttl), vault_open: x.vault == '1' ? (open[n] ?? []) : [],
 			fullpath: st[n]?.path ?? null, mounted: st[n]?.mounted ?? false
 		});
 	});
@@ -881,6 +899,81 @@ function claim_window() {
 // lines of a text file and a field of a passwd-style line
 function lines_of(path) { return filter(split(readfile(path) ?? '', '\n'), (l) => l != ''); }
 function field(l, i) { return split(l, ':')[i]; }
+
+// access of an account to a vault from its lists: 'rw', 'ro' or null (no guests)
+function vault_access(c, share, u) {
+	let rw = list_of(c.get('shares', share, 'rw')), ro = list_of(c.get('shares', share, 'ro')), access = null;
+	for (let t in [ u, ...map(list_of(c.get('accounts', u, 'groups')), (g) => '@' + g) ]) {
+		if (index(rw, t) >= 0) return 'rw';
+		if (index(ro, t) >= 0) access = 'ro';
+	}
+	return access;
+}
+
+// vaults an account can unlock: [{name, comment, access, ttl, until}]
+function vault_list(u) {
+	let c = cursor(), open = vault_state(), out = [];
+	c.foreach('shares', 'share', (x) => {
+		if (x.vault != '1') return;
+		let access = u == 'root' ? null : vault_access(c, x['.name'], u);
+		if (!access && u != 'root') return;
+		let mine = filter(open[x['.name']] ?? [], (o) => o.user == u)[0];
+		push(out, { name: x['.name'], comment: x.comment ?? '', access, ttl: vault_ttl(x.vault_ttl), until: mine?.until ?? 0,
+			open_for: length(open[x['.name']] ?? []) });
+	});
+	return sort(out, (a, b) => a.name < b.name ? -1 : 1);
+}
+
+// unlock a vault for an account after it entered its password again; five
+// wrong passwords within 10 minutes block unlocking for that account
+function vault_unlock(u, share, minutes, password) {
+	let c = cursor();
+	if (!valid_name(share) || c.get('shares', share) != 'share' || c.get('shares', share, 'vault') != '1') return { error: 'not a vault' };
+	if (u == 'root' || !acc_name_ok(u)) return { error: 'only accounts with an SMB password can unlock a vault' };
+	if (!vault_access(c, share, u)) return { error: 'no access to this share' };
+	let f = VAULT_FAILS + '.' + u, now = time();
+	let fails = filter(map(split(readfile(f) ?? '', '\n'), (x) => +x), (t) => t > now - 600);
+	if (length(fails) >= 5) return { error: 'too many wrong passwords – try again in 10 minutes' };
+	if (type(password) != 'string' || !password_ok(u, password)) {
+		push(fails, now);
+		writefile(f, join('\n', fails) + '\n');
+		return { error: 'wrong password' };
+	}
+	unlink(f);
+	let m = minutes != null && minutes !== '' ? int(+minutes) : vault_ttl(c.get('shares', share, 'vault_ttl'));
+	if (!(m >= 1 && m <= 480)) return { error: 'invalid time (1–480 minutes)' };
+	let r = sh(SHARES + ' vault-unlock ' + shq(share) + ' ' + shq(u) + ' ' + m);
+	let t = match(r.out, /until=([0-9]+)/);
+	if (r.rc != 0 || !t) return tool_result(r);
+	return { ok: true, share, until: +t[1] };
+}
+
+function vault_lock(share, u) {
+	let c = cursor();
+	if (!valid_name(share) || c.get('shares', share) != 'share' || c.get('shares', share, 'vault') != '1') return { error: 'not a vault' };
+	let r = sh(SHARES + ' vault-lock ' + shq(share) + (u ? ' ' + shq(u) : ''));
+	return r.rc == 0 ? { ok: true, share } : tool_result(r);
+}
+
+// change the vault settings of a share (admins)
+function vault_set(share, on, ttl) {
+	let c = cursor();
+	if (!valid_name(share) || c.get('shares', share) != 'share') return { error: 'unknown share' };
+	if (on) {
+		if (c.get('shares', share, 'smb') != '1') return { error: 'a vault needs SMB' };
+		c.set('shares', share, 'guest', '0');
+		c.set('shares', share, 'nfs', '0');
+	}
+	if (on != null) c.set('shares', share, 'vault', on ? '1' : '0');
+	if (ttl != null) {
+		if (!(+ttl >= 1 && +ttl <= 480)) return { error: 'invalid time (1–480 minutes)' };
+		c.set('shares', share, 'vault_ttl', '' + int(+ttl));
+	}
+	c.commit('shares');
+	sh(SHARES + ' apply');
+	sh('/usr/sbin/shareos-cron sync');
+	return { ok: true };
+}
 
 /* ---------- Paperless ---------- */
 
@@ -1599,8 +1692,13 @@ function me_info(u) {
 		let rw = list_of(x.rw), ro = list_of(x.ro), access = null;
 		for (let t in tags) { if (index(rw, t) >= 0) access = 'rw'; else if (!access && index(ro, t) >= 0) access = 'ro'; }
 		if (!access && x.guest == '1') access = 'ro';
-		if (access && x.smb == '1') push(mine, { name: x['.name'], access, comment: x.comment ?? '', volume: x.volume ?? '' });
+		if (access && x.smb == '1') push(mine, { name: x['.name'], access, comment: x.comment ?? '', volume: x.volume ?? '',
+			vault: x.vault == '1', vault_ttl: vault_ttl(x.vault_ttl), vault_until: 0 });
 	});
+	if (length(filter(mine, (x) => x.vault))) {
+		let open = vault_state();
+		for (let x in mine) if (x.vault) x.vault_until = filter(open[x.name] ?? [], (o) => o.user == u)[0]?.until ?? 0;
+	}
 	info.shares = mine;
 	// the drives of the personal folder and the shares: size and free space
 	// ("SPEICHER" table of Mein ShareOS)
@@ -3357,7 +3455,7 @@ return {
 		// create or change a share
 		set: {
 			args: { name: '', volume: '', path: '', comment: '', smb: true, nfs: false, guest: false,
-				rw: [], ro: [], nfs_rw: false, nfs_hosts: [] },
+				rw: [], ro: [], nfs_rw: false, nfs_hosts: [], vault: false, vault_ttl: 0 },
 			call: function(req) {
 				let a = req.args, c = cursor();
 				if (!valid_name(a.name)) return { error: 'invalid name (a-z, 0-9, - and _, max. 16)' };
@@ -3373,6 +3471,11 @@ return {
 				for (let x in [ ...(a.rw ?? []), ...(a.ro ?? []) ]) if (!known[x]) return { error: 'unknown user or group ' + x };
 				for (let h in a.nfs_hosts ?? [])
 					if (!match(h, /^([0-9]{1,3}\.){3}[0-9]{1,3}(\/[0-9]{1,2})?$|^\*$|^[A-Za-z0-9.-]+$/)) return { error: 'invalid NFS client ' + h };
+				// a vault: only over SMB, only for named users (no guests, no NFS)
+				let vault = a.vault ?? (c.get('shares', a.name, 'vault') == '1');
+				if (vault && (!a.smb || a.guest || a.nfs)) return { error: 'a vault is shared over SMB only, without guests and NFS' };
+				if (vault && !length([ ...(a.rw ?? []), ...(a.ro ?? []) ])) return { error: 'a vault needs at least one user or group' };
+				if (a.vault_ttl != null && a.vault_ttl !== 0 && !(+a.vault_ttl >= 1 && +a.vault_ttl <= 480)) return { error: 'invalid time (1–480 minutes)' };
 				c.set('shares', 'global', 'global');
 				c.set('shares', a.name, 'share');
 				c.set('shares', a.name, 'volume', a.volume);
@@ -3383,8 +3486,14 @@ return {
 					c.delete('shares', a.name, k);
 					if (length(a[k] ?? [])) c.set('shares', a.name, k, a[k]);
 				}
+				let was = c.get('shares', a.name, 'vault') == '1';
+				c.set('shares', a.name, 'vault', vault ? '1' : '0');
+				if (a.vault_ttl) c.set('shares', a.name, 'vault_ttl', '' + int(+a.vault_ttl));
 				c.commit('shares');
+				// switched off: forget who unlocked it; on or off: the cron entry
+				if (was && !vault) sh(SHARES + ' vault-lock ' + shq(a.name));
 				sh(SHARES + ' apply');
+				if (was != vault) sh(CRON + ' sync');
 				return { ok: true, ...share_list() };
 			}
 		},
@@ -3394,10 +3503,24 @@ return {
 			call: function(req) {
 				let c = cursor();
 				if (!valid_name(req.args.name) || c.get('shares', req.args.name) != 'share') return { error: 'unknown share' };
+				let was = c.get('shares', req.args.name, 'vault') == '1';
+				if (was) sh(SHARES + ' vault-lock ' + shq(req.args.name));
 				c.delete('shares', req.args.name);
 				c.commit('shares');
 				sh(SHARES + ' apply');
+				if (was) sh(CRON + ' sync');
 				return { ok: true, ...share_list() };   // the folder and its files stay
+			}
+		},
+
+		// lock a vault now (for everybody, or for one user)
+		vault_lock: {
+			args: { name: '', user: '' },
+			call: function(req) {
+				let u = req.args.user;
+				if (u && !acc_name_ok(u)) return { error: 'unknown user' };
+				let r = vault_lock(req.args.name, u || null);
+				return r.error ? r : { ok: true, ...share_list() };
 			}
 		},
 
@@ -3454,6 +3577,28 @@ return {
 				let t = new_token();
 				writefile(FILES_TICKETS + '/' + t, sprintf('put\n%s\n%s\n%d\n%s\n', acc_role(u) == 'admin' ? 'root' : u, d + '/' + n, time() + 120, pct_enc(n)));
 				return { url: '/cgi-bin/files?t=' + t, name: n, folder: SHARE_IN };
+			}
+		},
+
+		// vault shares of this account: unlock (password again) and lock
+		vault_unlock: {
+			args: { share: '', minutes: 0, password: '' },
+			call: function(req) {
+				let u = session_user(req), a = req.args;
+				if (!u) return { error: 'not allowed' };
+				let r = vault_unlock(u, a.share, a.minutes || null, a.password);
+				return r.error ? r : { ...r, ...me_info(u) };
+			}
+		},
+		vault_lock: {
+			args: { share: '' },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u) return { error: 'not allowed' };
+				let c = cursor();
+				if (!valid_name(req.args.share) || !vault_access(c, req.args.share, u)) return { error: 'not a vault' };
+				let r = vault_lock(req.args.share, u);
+				return r.error ? r : { ok: true, ...me_info(u) };
 			}
 		},
 
@@ -4050,6 +4195,47 @@ return {
 
 	// called only by /_shareos/cgi/notify: messages of an app (permission
 	// "notify", admins) – checked and sent by shareos-apps notify
+	// called only by /_shareos/cgi/vault: vault shares of the account that
+	// opened the app (permissions "files" + "vault"); set: admins only
+	'shareos.appvault': {
+		status: {
+			args: { grant: '' },
+			call: function(req) {
+				let g = app_grant_perm(req.args.grant, 'vault');
+				if (!g) return { error: 'no access' };
+				return { user: g.u, host: trim(readfile('/proc/sys/kernel/hostname') ?? ''), vaults: vault_list(g.u) };
+			}
+		},
+		unlock: {
+			args: { grant: '', share: '', minutes: 0, password: '' },
+			call: function(req) {
+				let a = req.args, g = app_grant_perm(a.grant, 'vault');
+				if (!g) return { error: 'no access' };
+				return vault_unlock(g.u, a.share, a.minutes || null, a.password);
+			}
+		},
+		lock: {
+			args: { grant: '', share: '' },
+			call: function(req) {
+				let a = req.args, g = app_grant_perm(a.grant, 'vault');
+				if (!g) return { error: 'no access' };
+				let admin = acc_role(g.u) == 'admin';
+				if (!valid_name(a.share) || !(admin || vault_access(cursor(), a.share, g.u))) return { error: 'not a vault' };
+				// users lock their own access, admins the whole vault
+				return vault_lock(a.share, admin ? null : g.u);
+			}
+		},
+		set: {
+			args: { grant: '', share: '', vault: false, default_ttl: 0 },
+			call: function(req) {
+				let a = req.args, g = app_grant_perm(a.grant, 'vault');
+				if (!g) return { error: 'no access' };
+				if (acc_role(g.u) != 'admin') return { error: 'admins only' };
+				return vault_set(a.share, a.vault, a.default_ttl || null);
+			}
+		}
+	},
+
 	'shareos.appnotify': {
 		send: {
 			args: { grant: '', level: '', key: '', title: '', text: '' },

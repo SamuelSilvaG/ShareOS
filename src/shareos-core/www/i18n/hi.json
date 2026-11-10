@@ -1507,7 +1507,21 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "फ़िल्टरिंग चालू (बंद = केवल आगे भेजें)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "हर नियम मेमोरी लेता है (लगभग 0.1 KB)। 3,00,000 नियमों से ShareOS चेतावनी देता है।",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS फ़िल्टर (AdGuard Home) भी एक मॉड्यूल है: APPS में इंस्टॉल होते ही DNS फ़िल्टर टैब।",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, क्लाउड और DNS फ़िल्टर मॉड्यूल हैं: APPS में इंस्टॉल होने पर इनका टैब दिखता है और हटाने पर गायब हो जाता है – सेटिंग्स और डेटा बने रहते हैं।"
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, क्लाउड और DNS फ़िल्टर मॉड्यूल हैं: APPS में इंस्टॉल होने पर इनका टैब दिखता है और हटाने पर गायब हो जाता है – सेटिंग्स और डेटा बने रहते हैं।",
+		"TRESOR": "तिजोरी",
+		"gesperrt": "लॉक",
+		"Entsperren": "अनलॉक करें",
+		"Sperren": "लॉक करें",
+		"Jetzt sperren": "अभी लॉक करें",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "तिजोरी के रूप में: केवल मांगने पर, कुछ मिनटों के लिए साझा करें",
+		"STANDARD-DAUER BEIM ENTSPERREN": "अनलॉक करते समय डिफ़ॉल्ट समय",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "तिजोरी नेटवर्क में दिखाई नहीं देती। जिस उपयोगकर्ता के पास इसके अधिकार हैं, वह „मेरा ShareOS“ में (या किसी ऐप में) अपने पासवर्ड से इसे अनलॉक करता है – तब चुने गए समय तक यह केवल उसी के लिए इस रूप में उपलब्ध रहती है:",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "और फिर अपने आप लॉक हो जाती है। लॉक रहने पर कोई भी फ़ाइलों तक नहीं पहुँच सकता, खुले कनेक्शनों और ऐप्स से भी नहीं। तिजोरी केवल SMB से साझा होती है, बिना अतिथियों और बिना NFS के।",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "सुरक्षा के लिए एक बार फिर अपना पासवर्ड दें। इसके बाद तिजोरी नेटवर्क में केवल आपके लिए उपलब्ध रहेगी और अपने आप फिर से लॉक हो जाएगी।",
+		"OFFEN FÜR": "इतनी देर खुली",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "जिन्होंने भी तिजोरी अनलॉक की है, उन सबके लिए वह नेटवर्क से गायब हो जाएगी। खुले कनेक्शन पहुँच खो देंगे।",
+		"Tresor-Freigaben": "तिजोरी शेयर",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "उपयोगकर्ता की तिजोरियों को (उसका पासवर्ड डालने के बाद) अनलॉक और लॉक कर सकता है; प्रशासकों के लिए यह भी तय कर सकता है कि कौन से शेयर तिजोरी हैं।"
 	},
 	"patterns": [
 		[
@@ -2841,6 +2855,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"क्लिपबोर्ड में $1 आइटम – लक्ष्य फ़ोल्डर में “चिपकाएँ” चुनें।"
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"तिजोरी „$1“ अनलॉक करें"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"तिजोरी „$1“ $2 तक खुली है।"
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"तिजोरी „$1“ अभी लॉक करें?"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"तिजोरी „$1“ लॉक हो गई।"
+		],
+		[
+			"^offen bis (.+)$",
+			"$1 तक खुली"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1: $2 तक खुली"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 मिनट"
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 घंटे"
+		],
+		[
+			"^Tresor: (.+)$",
+			"तिजोरी: $1"
 		]
 	],
 	"words": [
