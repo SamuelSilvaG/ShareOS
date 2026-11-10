@@ -470,7 +470,7 @@ const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
 // modules: system apps with "module" (see shareos-apps) that switch on an
 // area of the firmware – tab, "My ShareOS" part, background work. The code
 // stays here; the area exists only while the system app is installed.
-const MODULES = [ 'paperless', 'dnsfilter' ];
+const MODULES = [ 'paperless', 'cloud', 'dnsfilter' ];
 function module_on(id) {
 	let a = null;
 	try { a = json(readfile('/opt/shareos/sysapps/' + id + '/app.json') ?? 'null'); } catch (e) { }
@@ -478,9 +478,9 @@ function module_on(id) {
 }
 
 // areas that can be switched off under System -> Appearance (tab hidden,
-// background work stopped): apps (apps web server, app tasks), cloud
-// (scheduled jobs); a module's area is on while it is installed
-const AREAS = [ 'apps', 'cloud' ];
+// background work stopped): apps (apps web server, app tasks); a module's
+// area (paperless, cloud, dnsfilter) is on while it is installed
+const AREAS = [ 'apps' ];
 function area_on(a) {
 	if (index(MODULES, a) >= 0) return module_on(a);
 	return cursor().get('shareos', 'ui', 'area_' + a) != '0';
@@ -1044,6 +1044,7 @@ function token_ok(t) { return type(t) == 'string' && match(t, /^[A-Za-z0-9]{20,1
 /* ---------- cloud (rclone) ---------- */
 
 const CLOUD = '/usr/sbin/shareos-cloud';
+const CLOUD_OFF = { error: 'Cloud is not installed (system app cloud)' };
 const CLOUD_ST = '/tmp/shareos-cloud';
 const REMOTE_KEYS = {
 	webdav: { plain: [ 'url', 'vendor', 'user' ], secret: [ 'pass' ] },
@@ -3660,7 +3661,7 @@ return {
 		},
 
 		cloud: {
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req);
 				if (!u || !me_cloud_allowed(u)) return { allowed: false };
 				let c = cursor(), st = cloud_status();
@@ -3672,7 +3673,7 @@ return {
 
 		cloud_remote_add: {
 			args: { name: '', type: '', params: {}, raw: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req);
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				let r = cloud_remote_add(u, req.args);
@@ -3682,7 +3683,7 @@ return {
 
 		cloud_auth_start: {
 			args: { type: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req);
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				return cloud_auth_start(u, req.args.type);
@@ -3691,7 +3692,7 @@ return {
 
 		cloud_auth_finish: {
 			args: { url: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req);
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				return cloud_auth_finish(u, req.args.url);
@@ -3700,7 +3701,7 @@ return {
 
 		cloud_remote_del: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req);
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				if (!match(req.args.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name' };
@@ -3711,7 +3712,7 @@ return {
 
 		cloud_job_set: {
 			args: { name: '', remote: '', remote_path: '', local: '', mode: '', schedule: '', bwlimit: '', enabled: true },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req), c = cursor();
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				let r = cloud_job_save(c, u, req.args);
@@ -3721,7 +3722,7 @@ return {
 
 		cloud_job_del: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req), c = cursor();
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				if (c.get('cloud', req.args.name) != 'job' || c.get('cloud', req.args.name, 'owner') != u) return { error: 'unknown job' };
@@ -3733,7 +3734,7 @@ return {
 
 		cloud_job_run: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let u = session_user(req), c = cursor();
 				if (!u || !me_cloud_allowed(u)) return { error: 'not allowed' };
 				if (c.get('cloud', req.args.name) != 'job' || c.get('cloud', req.args.name, 'owner') != u) return { error: 'unknown job' };
@@ -3988,10 +3989,10 @@ return {
 	},
 
 	'shareos.cloud': {
-		status: { call: function() { return cloud_status(); } },
+		status: { call: function() { if (!module_on('cloud')) return CLOUD_OFF; return cloud_status(); } },
 
 		install: {
-			call: function() {
+			call: function() { if (!module_on('cloud')) return CLOUD_OFF;
 				let st = cloud_status();
 				if (!st.apps) return { error: 'no apps area – set up a volume first (Storage)' };
 				system('mkdir -p ' + CLOUD_ST + ' && echo state=installing > ' + CLOUD_ST + '/install');
@@ -4000,26 +4001,26 @@ return {
 			}
 		},
 
-		remotes: { call: function() { return { remotes: cloud_remotes('-') }; } },
+		remotes: { call: function() { if (!module_on('cloud')) return CLOUD_OFF; return { remotes: cloud_remotes('-') }; } },
 
 		remote_add: {
 			args: { name: '', type: '', params: {}, raw: '' },
-			call: function(req) { let r = cloud_remote_add('', req.args); return r.error ? r : { ok: true, remotes: cloud_remotes('-') }; }
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF; let r = cloud_remote_add('', req.args); return r.error ? r : { ok: true, remotes: cloud_remotes('-') }; }
 		},
 
 		auth_start: {
 			args: { type: '' },
-			call: function(req) { return cloud_auth_start('', req.args.type); }
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF; return cloud_auth_start('', req.args.type); }
 		},
 
 		auth_finish: {
 			args: { url: '' },
-			call: function(req) { return cloud_auth_finish('', req.args.url); }
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF; return cloud_auth_finish('', req.args.url); }
 		},
 
 		remote_del: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				if (!match(req.args.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name' };
 				let r = tool_result(sh(CLOUD + ' remote-del - ' + shq(req.args.name)));
 				return r.error ? r : { ok: true, remotes: cloud_remotes('-') };
@@ -4028,7 +4029,7 @@ return {
 
 		remote_test: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				if (!match(req.args.name ?? '', /^[a-z][a-z0-9_]{0,31}$/)) return { error: 'invalid name' };
 				let r = sh(CLOUD + ' remote-test - ' + shq(req.args.name));
 				let m = match(r.out, /ok folders=([0-9]+)/);
@@ -4036,11 +4037,11 @@ return {
 			}
 		},
 
-		jobs: { call: function() { return { jobs: cloud_jobs(cursor(), null) }; } },
+		jobs: { call: function() { if (!module_on('cloud')) return CLOUD_OFF; return { jobs: cloud_jobs(cursor(), null) }; } },
 
 		job_set: {
 			args: { name: '', remote: '', remote_path: '', local: '', mode: '', schedule: '', bwlimit: '', enabled: true },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let c = cursor();
 				// the admin edits system jobs here; a user's job keeps its owner
 				let owner = c.get('cloud', req.args.name) == 'job' ? (c.get('cloud', req.args.name, 'owner') ?? '') : '';
@@ -4051,7 +4052,7 @@ return {
 
 		job_del: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let c = cursor();
 				if (c.get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
 				c.delete('cloud', req.args.name); c.commit('cloud');
@@ -4062,7 +4063,7 @@ return {
 
 		job_run: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				if (cursor().get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
 				system(sprintf('mkdir -p %s; printf "state=running\\nstarted=%%s\\n" "$(date +%%s)" > %s/%s.state; start-stop-daemon -S -b -x %s -- run %s',
 					CLOUD_ST, CLOUD_ST, req.args.name, CLOUD, req.args.name));
@@ -4072,7 +4073,7 @@ return {
 
 		job_stop: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				if (cursor().get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
 				return tool_result(sh(CLOUD + ' stop ' + shq(req.args.name)));
 			}
@@ -4080,7 +4081,7 @@ return {
 
 		job_log: {
 			args: { name: '' },
-			call: function(req) {
+			call: function(req) { if (!module_on('cloud')) return CLOUD_OFF;
 				let c = cursor();
 				if (c.get('cloud', req.args.name) != 'job') return { error: 'unknown job' };
 				return { lines: cloud_log(c, req.args.name, 80) };

@@ -304,6 +304,9 @@ APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Back
                        'dnsfilter': {'id': 'dnsfilter', 'name': 'DNS-Filter', 'version': '0.107.80', 'publisher': 'UniqueDroid', 'description': {'de': 'DNS-Filter mit AdGuard Home (Modul)', 'en': 'DNS filter with AdGuard Home (module)'},
                                      'type': 'system', 'module': 'dnsfilter', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'network', 'permissions': [], 'verified': True, 'source': 'store',
                                      'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
+                       'cloud': {'id': 'cloud', 'name': 'Cloud', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Abgleich mit Cloud-Speichern (Modul)', 'en': 'Cloud sync (module)'},
+                                 'type': 'system', 'module': 'cloud', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'network', 'permissions': [], 'verified': True, 'source': 'store',
+                                 'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
                        'paperless': {'id': 'paperless', 'name': 'Paperless', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Anbindung an Paperless-ngx (Modul)', 'en': 'Paperless-ngx connection (module)'},
                                      'type': 'system', 'module': 'paperless', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'office', 'permissions': [], 'verified': True, 'source': 'store',
                                      'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []}},
@@ -718,11 +721,11 @@ def call(obj, method, args):
                 if args.get(k):
                     STATE[k] = args[k]
             for k, v in (args.get('areas') or {}).items():
-                if k in ('apps', 'cloud'):
-                    STATE.setdefault('areas', {'apps': True, 'cloud': True})[k] = bool(v)
+                if k == 'apps':
+                    STATE.setdefault('areas', {'apps': True})[k] = bool(v)
         # modules (Paperless): on while the system app is installed
         return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent'],
-                'areas': {**STATE.get('areas', {'apps': True, 'cloud': True}), 'paperless': 'paperless' in APPS['installed'], 'dnsfilter': 'dnsfilter' in APPS['installed']}, 'default_password': True}
+                'areas': {**STATE.get('areas', {'apps': True}), **{m: m in APPS['installed'] for m in ('paperless', 'cloud', 'dnsfilter')}}, 'default_password': True}
     if obj == 'shareos.net':
         if method == 'set':
             STATE['net'] = {k: args.get(k, STATE['net'][k]) for k in STATE['net']}

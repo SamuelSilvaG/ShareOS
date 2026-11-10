@@ -1224,7 +1224,7 @@ E965	ID DU CHAT
 E966	JETON DU BOT (DE @BOTFATHER)
 E967	Telegram (bot)
 E968	ZONES
-E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées). Réglages et données sont conservés ; réactiver remet tout en marche.
+E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps). Réglages et données sont conservés ; réactiver remet tout en marche.
 E970	Apps (boutique, apps web, tâches des apps)
 E971	Cloud (synchronisation avec le stockage en ligne)
 E972	Paperless (dossiers d’entrée pour Paperless-ngx)
@@ -1877,20 +1877,21 @@ E1500	Ouvrir AdGuard Home ↗
 E1501	Filtrage actif (désactivé = transfert seul)
 E1502	Chaque règle coûte de la mémoire (environ 0,1 Ko). À partir de 300 000 règles, ShareOS avertit.
 E1503	Le filtre DNS (AdGuard Home) est aussi un module : onglet FILTRE DNS une fois installé sous APPS.
-E1504	COFFRE
-E1505	verrouillé
-E1506	Déverrouiller
-E1507	Verrouiller
-E1508	Verrouiller maintenant
-E1509	Comme coffre : partager seulement sur demande, pendant quelques minutes
-E1510	DURÉE PAR DÉFAUT AU DÉVERROUILLAGE
-E1511	Un coffre n’est pas visible sur le réseau. Un utilisateur qui y a droit le déverrouille sous « Mon ShareOS » (ou dans une app) avec son mot de passe – il est alors accessible pour lui seul pendant la durée choisie, sous
-E1512	puis se verrouille tout seul. Verrouillé, personne n’accède aux fichiers, même par des connexions ouvertes ou des apps. Un coffre n’est partagé qu’en SMB, sans invités ni NFS.
-E1513	Ton mot de passe encore une fois, par sécurité. Le coffre est ensuite accessible sur le réseau pour toi seul et se reverrouille tout seul.
-E1514	OUVERT PENDANT
-E1515	Le coffre disparaît du réseau pour tous ceux qui l’ont déverrouillé. Les connexions ouvertes perdent l’accès.
-E1516	Partages coffres
-E1517	Peut déverrouiller (après saisie du mot de passe de l’utilisateur) et verrouiller ses partages coffres ; pour les administrateurs, peut aussi choisir quels partages sont des coffres.
+E1504	Paperless, Cloud et le filtre DNS sont des modules : leur onglet apparaît une fois installés sous APPS et disparaît quand on les retire – réglages et données sont conservés.
+E1505	COFFRE
+E1506	verrouillé
+E1507	Déverrouiller
+E1508	Verrouiller
+E1509	Verrouiller maintenant
+E1510	Comme coffre : partager seulement sur demande, pendant quelques minutes
+E1511	DURÉE PAR DÉFAUT AU DÉVERROUILLAGE
+E1512	Un coffre n’est pas visible sur le réseau. Un utilisateur qui y a droit le déverrouille sous « Mon ShareOS » (ou dans une app) avec son mot de passe – il est alors accessible pour lui seul pendant la durée choisie, sous
+E1513	puis se verrouille tout seul. Verrouillé, personne n’accède aux fichiers, même par des connexions ouvertes ou des apps. Un coffre n’est partagé qu’en SMB, sans invités ni NFS.
+E1514	Ton mot de passe encore une fois, par sécurité. Le coffre est ensuite accessible sur le réseau pour toi seul et se reverrouille tout seul.
+E1515	OUVERT PENDANT
+E1516	Le coffre disparaît du réseau pour tous ceux qui l’ont déverrouillé. Les connexions ouvertes perdent l’accès.
+E1517	Partages coffres
+E1518	Peut déverrouiller (après saisie du mot de passe de l’utilisateur) et verrouiller ses partages coffres ; pour les administrateurs, peut aussi choisir quels partages sont des coffres.
 P333	Déverrouiller le coffre « $1 »
 P334	Le coffre « $1 » est ouvert jusqu’à $2.
 P335	Verrouiller le coffre « $1 » maintenant ?

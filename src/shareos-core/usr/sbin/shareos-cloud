@@ -23,6 +23,14 @@
 #   shareos-cloud run <job>            run a job now (also from cron)
 #   shareos-cloud stop <job>
 #   shareos-cloud status               key=value lines for the web interface
+#   shareos-cloud module-configured    exit 0 when cloud sync was in use (jobs,
+#                                      remotes or rclone) and its area not
+#                                      switched off – boxes from before the module
+#   shareos-cloud module-installed     after installing the module
+#
+# shareos-module: Cloud is a module (system app "cloud", see shareos-apps) –
+# tab, "My ShareOS" part and the scheduled jobs exist only while it is
+# installed (module_on below).
 #
 # owner "-" = the system (admin), otherwise a ShareOS user. Remotes live in
 # the owner's rclone.conf (system: /etc/shareos/cloud/rclone.conf, user:
@@ -333,6 +341,9 @@ cmd_status() {
 	return 0
 }
 
+# the module (system app "cloud") is installed
+module_on() { [ -f /opt/shareos/sysapps/cloud/app.json ]; }
+
 [ -f /etc/config/cloud ] || : > /etc/config/cloud
 case "$1" in
 	install) cmd_install ;;
@@ -342,8 +353,14 @@ case "$1" in
 	remote-del) cmd_remote_del "$2" "$3" ;;
 	remote-test) cmd_remote_test "$2" "$3" ;;
 	remotes) cmd_remotes "$2" ;;
-	run) cmd_run "$2" ;;
+	run) module_on || die "Cloud is not installed (system app cloud)"; cmd_run "$2" ;;
 	stop) cmd_stop "$2" ;;
 	status) cmd_status ;;
-	*) sed -n '3,32s/^# \{0,1\}//p' "$0"; exit 2 ;;
+	module-configured)
+		[ "$(uci -q get shareos.ui.area_cloud)" != 0 ] || exit 1
+		uci -q show cloud | grep -q '=job$' && exit 0
+		grep -q '^\[' $SYSCONF 2>/dev/null && exit 0
+		rclone_bin >/dev/null ;;
+	module-installed) /usr/sbin/shareos-cron sync >/dev/null 2>&1; exit 0 ;;
+	*) sed -n '3,41s/^# \{0,1\}//p' "$0"; exit 2 ;;
 esac

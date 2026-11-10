@@ -153,6 +153,13 @@ run "ubus call shareos.me bind '{\"username\":\"anna\",\"password\":\"anna1234\"
 check "me: own Paperless inbox" "run \"ubus call shareos.me paperless '{\\\"ubus_rpc_session\\\":\\\"$SID\\\"}'\" | js \"d['available'] and d['inbox']['owner']=='anna'\""
 check "me: token test" "run \"ubus call shareos.me paperless_set '{\\\"test\\\":true,\\\"ubus_rpc_session\\\":\\\"$SID\\\"}'\" | js \"d['ok'] and d['documents']=='42'\""
 
+# --- Cloud is a module (system app "cloud") --------------------------------------------
+check "cloud module not installed: rpc and run refused" "run 'ubus call shareos.cloud status' | grep -q 'not installed' && run 'shareos-cloud run x' | grep -q 'not installed'"
+check "cloud module: not taken over while unused" "[ -f $R/etc/shareos/module-migrated.cloud ] && [ ! -e $R/opt/shareos/sysapps/cloud ]"
+run "uci set cloud.mig=job; uci commit cloud; rm -f /etc/shareos/module-migrated.cloud" >/dev/null
+check "cloud module: taken over where jobs exist" "run 'shareos-apps modules migrate' | js \"d['installed']==['cloud']\" && run 'ubus call shareos.ui get' | js \"d['areas']['cloud']\""
+run "uci delete cloud.mig; uci commit cloud" >/dev/null
+
 # --- cloud ----------------------------------------------------------------------------
 if [ -n "$RDL" ] && [ -d "$RDL" ]; then
 	(cd "$RDL" && python3 -m http.server $RPORT --bind 127.0.0.1 >/dev/null 2>&1) & PIDS="$PIDS $!"
@@ -241,6 +248,8 @@ if [ -n "$RDL" ] && [ -d "$RDL" ]; then
 	check "me: share without access refused" "run \"ubus call shareos.me cloud_job_set '{\\\"name\\\":\\\"x\\\",\\\"remote\\\":\\\"mine\\\",\\\"local\\\":\\\"share:fotos\\\",\\\"mode\\\":\\\"download\\\",\\\"ubus_rpc_session\\\":\\\"$SID\\\"}'\" | grep -q 'not allowed'"
 	J=$(run "ubus call shareos.cloud jobs")
 	check "rpc: all jobs with state" "echo '$J' | js \"sorted(j['name'] for j in d['jobs'])==['annajob','fotos'] and [j for j in d['jobs'] if j['name']=='fotos'][0]['state']=='ok'\""
+	run "shareos-apps remove cloud" >/dev/null
+	check "cloud module removed: no cron entry, jobs and accounts kept" "! grep -q 'shareos-cloud run' $R/etc/crontabs/root && [ \"\$(run 'uci -q get cloud.fotos')\" = job ] && grep -q '^\[target\]' $R/etc/shareos/cloud/rclone.conf"
 else
 	echo "SKIP  cloud (no rclone download dir given)"
 fi

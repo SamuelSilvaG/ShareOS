@@ -1224,7 +1224,7 @@ E965	ID DE CHAT
 E966	TOKEN DEL BOT (DE @BOTFATHER)
 E967	Telegram (bot)
 E968	ÁREAS
-E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas). Ajustes y datos se conservan; al activar vuelve todo.
+E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps). Ajustes y datos se conservan; al activar vuelve todo.
 E970	Apps (tienda, apps web, tareas de las apps)
 E971	Nube (sincronización con almacenamiento en la nube)
 E972	Paperless (carpetas de entrada para Paperless-ngx)
@@ -1877,20 +1877,21 @@ E1500	Abrir AdGuard Home ↗
 E1501	Filtrado activo (desactivado = solo reenviar)
 E1502	Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.
 E1503	El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.
-E1504	CAJA FUERTE
-E1505	bloqueada
-E1506	Desbloquear
-E1507	Bloquear
-E1508	Bloquear ahora
-E1509	Como caja fuerte: compartir solo bajo demanda, durante unos minutos
-E1510	DURACIÓN PREDETERMINADA AL DESBLOQUEAR
-E1511	Una caja fuerte no es visible en la red. Un usuario con derechos la desbloquea en «Mi ShareOS» (o en una app) con su contraseña; entonces, durante el tiempo elegido, solo él puede acceder a ella como
-E1512	y después se bloquea sola. Bloqueada, nadie accede a los archivos, tampoco por conexiones abiertas ni apps. Una caja fuerte solo se comparte por SMB, sin invitados ni NFS.
-E1513	Tu contraseña otra vez, por seguridad. Después la caja fuerte solo es accesible en la red para ti y se vuelve a bloquear sola.
-E1514	ABIERTA DURANTE
-E1515	La caja fuerte desaparece de la red para todos los que la desbloquearon. Las conexiones abiertas pierden el acceso.
-E1516	Cajas fuertes
-E1517	Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes.
+E1504	Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan.
+E1505	CAJA FUERTE
+E1506	bloqueada
+E1507	Desbloquear
+E1508	Bloquear
+E1509	Bloquear ahora
+E1510	Como caja fuerte: compartir solo bajo demanda, durante unos minutos
+E1511	DURACIÓN PREDETERMINADA AL DESBLOQUEAR
+E1512	Una caja fuerte no es visible en la red. Un usuario con derechos la desbloquea en «Mi ShareOS» (o en una app) con su contraseña; entonces, durante el tiempo elegido, solo él puede acceder a ella como
+E1513	y después se bloquea sola. Bloqueada, nadie accede a los archivos, tampoco por conexiones abiertas ni apps. Una caja fuerte solo se comparte por SMB, sin invitados ni NFS.
+E1514	Tu contraseña otra vez, por seguridad. Después la caja fuerte solo es accesible en la red para ti y se vuelve a bloquear sola.
+E1515	ABIERTA DURANTE
+E1516	La caja fuerte desaparece de la red para todos los que la desbloquearon. Las conexiones abiertas pierden el acceso.
+E1517	Cajas fuertes
+E1518	Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes.
 P333	Desbloquear la caja fuerte «$1»
 P334	La caja fuerte «$1» está abierta hasta las $2.
 P335	¿Bloquear ahora la caja fuerte «$1»?

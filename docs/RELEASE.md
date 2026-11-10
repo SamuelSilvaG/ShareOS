@@ -14,7 +14,7 @@
    check (every 6 hours) or with *Check now*.
 
 The website ([uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/),
-built from `website/` and the docs) rebuilds itself when the release is published;
+built from `website/` and the docs) rebuilds itself when the release build has finished;
 nothing to do by hand.
 
 Apps are released from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps)

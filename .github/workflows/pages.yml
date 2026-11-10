@@ -12,8 +12,11 @@ on:
       - 'README.md'
       - 'CHANGELOG.md'
       - '.github/workflows/pages.yml'
-  release:
-    types: [published, edited]
+  # After a release build: the github-pages environment only accepts runs on
+  # main, and a "release" event runs on the tag – workflow_run runs on main.
+  workflow_run:
+    workflows: [build]
+    types: [completed]
   schedule:
     - cron: '23 4 * * *'   # daily: fresh app catalog, discussions and stars in data.json
   workflow_dispatch:
@@ -29,6 +32,8 @@ concurrency:
 
 jobs:
   build:
+    # only release builds (tags v*) and the other triggers, not every build of main
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'v'))
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5

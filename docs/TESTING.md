@@ -212,6 +212,12 @@ The DNS filter is a **module** (AdGuard Home). It needs the apps drive.
 
 ## 9. Cloud sync
 
+Cloud is a **module** (0.3.0-beta.5+): the *CLOUD* tab appears once the system
+app **Cloud** is installed under **Apps → Store**. A box that used cloud sync
+before the update (job, account or rclone) gets the module by itself at the
+first start (`cat /etc/shareos/module-migrated.cloud`).
+
+0. **Apps → Store → Cloud → Install.** The *CLOUD* tab appears behind *APPS*.
 1. **Cloud → install rclone** (downloads rclone from GitHub, needs an apps area).
 2. **Add account**: Nextcloud/WebDAV, S3 or SFTP directly; Google Drive, OneDrive, Dropbox: run `rclone config` on a PC and paste the finished section from `rclone.conf`. **Test** shows whether the login works.
 3. **New job**: folder on the NAS, account, folder in the cloud, direction (upload is the safe choice, mirroring deletes on the target side), schedule. **Start now** and look at the **log**.
