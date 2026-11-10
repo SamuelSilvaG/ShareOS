@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "Nomes locais",
 		"Lokale Domäne": "Domínio local",
 		"DNS-Server des Netzwerks": "Servidor DNS da rede",
-		"System → Netzwerk": "Sistema → Rede"
+		"System → Netzwerk": "Sistema → Rede",
+		"LOKALE EINTRÄGE": "ENTRADAS LOCAIS",
+		"Eintrag hinzufügen": "Adicionar entrada",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "Para dispositivos com endereço IP fixo que o router não conhece.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "aplica-se a todos os nomes abaixo. O ShareOS define ele próprio os nomes da caixa.",
+		"Eintrag entfernen?": "Remover a entrada?",
+		"Eintrag hinzugefügt.": "Entrada adicionada.",
+		"Eintrag entfernt.": "Entrada removida."
 	},
 	"patterns": [
 		[

@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "Noms locaux",
 		"Lokale Domäne": "Domaine local",
 		"DNS-Server des Netzwerks": "Serveur DNS du réseau",
-		"System → Netzwerk": "Système → Réseau"
+		"System → Netzwerk": "Système → Réseau",
+		"LOKALE EINTRÄGE": "ENTRÉES LOCALES",
+		"Eintrag hinzufügen": "Ajouter une entrée",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "Pour les appareils à adresse IP fixe que le routeur ne connaît pas.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "s’applique à tous les noms en dessous. ShareOS définit lui-même les noms du boîtier.",
+		"Eintrag entfernen?": "Supprimer l’entrée ?",
+		"Eintrag hinzugefügt.": "Entrée ajoutée.",
+		"Eintrag entfernt.": "Entrée supprimée."
 	},
 	"patterns": [
 		[

@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "स्थानीय नाम",
 		"Lokale Domäne": "स्थानीय डोमेन",
 		"DNS-Server des Netzwerks": "नेटवर्क का DNS सर्वर",
-		"System → Netzwerk": "सिस्टम → नेटवर्क"
+		"System → Netzwerk": "सिस्टम → नेटवर्क",
+		"LOKALE EINTRÄGE": "स्थानीय प्रविष्टियाँ",
+		"Eintrag hinzufügen": "प्रविष्टि जोड़ें",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "स्थिर IP पते वाले उन उपकरणों के लिए जिन्हें राउटर नहीं जानता।",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "इसके नीचे के सभी नामों पर लागू होता है। बॉक्स के अपने नाम ShareOS स्वयं सेट करता है।",
+		"Eintrag entfernen?": "प्रविष्टि हटाएँ?",
+		"Eintrag hinzugefügt.": "प्रविष्टि जोड़ी गई।",
+		"Eintrag entfernt.": "प्रविष्टि हटाई गई।"
 	},
 	"patterns": [
 		[

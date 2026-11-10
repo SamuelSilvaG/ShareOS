@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "本地名称",
 		"Lokale Domäne": "本地域",
 		"DNS-Server des Netzwerks": "网络的 DNS 服务器",
-		"System → Netzwerk": "系统 → 网络"
+		"System → Netzwerk": "系统 → 网络",
+		"LOKALE EINTRÄGE": "本地条目",
+		"Eintrag hinzufügen": "添加条目",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "用于路由器不认识的、具有固定 IP 地址的设备。",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "适用于其下的所有名称。设备自身的名称由 ShareOS 自动设置。",
+		"Eintrag entfernen?": "删除条目？",
+		"Eintrag hinzugefügt.": "条目已添加。",
+		"Eintrag entfernt.": "条目已删除。"
 	},
 	"patterns": [
 		[

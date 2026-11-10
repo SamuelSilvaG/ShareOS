@@ -1909,3 +1909,10 @@ E1523	Noms locaux
 E1524	Domaine local
 E1525	Serveur DNS du réseau
 E1526	Système → Réseau
+E1527	ENTRÉES LOCALES
+E1528	Ajouter une entrée
+E1529	Pour les appareils à adresse IP fixe que le routeur ne connaît pas.
+E1530	s’applique à tous les noms en dessous. ShareOS définit lui-même les noms du boîtier.
+E1531	Supprimer l’entrée ?
+E1532	Entrée ajoutée.
+E1533	Entrée supprimée.

@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "স্থানীয় নাম",
 		"Lokale Domäne": "স্থানীয় ডোমেইন",
 		"DNS-Server des Netzwerks": "নেটওয়ার্কের DNS সার্ভার",
-		"System → Netzwerk": "সিস্টেম → নেটওয়ার্ক"
+		"System → Netzwerk": "সিস্টেম → নেটওয়ার্ক",
+		"LOKALE EINTRÄGE": "স্থানীয় এন্ট্রি",
+		"Eintrag hinzufügen": "এন্ট্রি যোগ করুন",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "স্থির IP ঠিকানার সেই ডিভাইসগুলোর জন্য যেগুলো রাউটার চেনে না।",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "এর নিচের সব নামের জন্য প্রযোজ্য। বক্সের নিজের নামগুলো ShareOS নিজেই সেট করে।",
+		"Eintrag entfernen?": "এন্ট্রি সরাবেন?",
+		"Eintrag hinzugefügt.": "এন্ট্রি যোগ করা হয়েছে।",
+		"Eintrag entfernt.": "এন্ট্রি সরানো হয়েছে।"
 	},
 	"patterns": [
 		[

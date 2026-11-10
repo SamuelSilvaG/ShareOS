@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "Local names",
 		"Lokale Domäne": "Local domain",
 		"DNS-Server des Netzwerks": "DNS server of the network",
-		"System → Netzwerk": "System → Network"
+		"System → Netzwerk": "System → Network",
+		"LOKALE EINTRÄGE": "LOCAL ENTRIES",
+		"Eintrag hinzufügen": "Add entry",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "For devices with a fixed IP address that the router does not know.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "applies to all names below it. ShareOS sets the box's own names itself.",
+		"Eintrag entfernen?": "Remove entry?",
+		"Eintrag hinzugefügt.": "Entry added.",
+		"Eintrag entfernt.": "Entry removed."
 	},
 	"patterns": [
 		[

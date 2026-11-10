@@ -1529,7 +1529,14 @@
 		"Lokale Namen": "Локальные имена",
 		"Lokale Domäne": "Локальный домен",
 		"DNS-Server des Netzwerks": "DNS-сервер сети",
-		"System → Netzwerk": "Система → Сеть"
+		"System → Netzwerk": "Система → Сеть",
+		"LOKALE EINTRÄGE": "ЛОКАЛЬНЫЕ ЗАПИСИ",
+		"Eintrag hinzufügen": "Добавить запись",
+		"Für Geräte mit fester IP-Adresse, die der Router nicht kennt.": "Для устройств с фиксированным IP-адресом, которых не знает роутер.",
+		"gilt für alle Namen darunter. Die Namen der Box trägt ShareOS selbst ein.": "действует для всех имён ниже. Имена самого устройства ShareOS задаёт сам.",
+		"Eintrag entfernen?": "Удалить запись?",
+		"Eintrag hinzugefügt.": "Запись добавлена.",
+		"Eintrag entfernt.": "Запись удалена."
 	},
 	"patterns": [
 		[

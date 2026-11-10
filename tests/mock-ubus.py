@@ -806,6 +806,15 @@ def call(obj, method, args):
             'filters': [{'name': 'AdGuard DNS filter', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt', 'enabled': True, 'rules': 188364, 'updated': None},
                         {'name': 'AdAway Default Blocklist', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt', 'enabled': False, 'rules': 6540, 'updated': None}]})
         fl = d['filters']
+        rw = STATE.setdefault('dnsfilter_rw', [{'domain': 'drucker.skynet.lan', 'answer': '10.241.1.50'}])
+        if method == 'rewrites':
+            return {'rewrites': rw}
+        if method == 'rewrite_add':
+            if not args.get('domain') or not args.get('answer'):
+                return {'error': 'name: a host name such as printer.home.lan (*.name for all below it)'}
+            rw.append({'domain': args['domain'].lower(), 'answer': args['answer']}); return {'rewrites': rw}
+        if method == 'rewrite_remove':
+            rw[:] = [w for w in rw if not (w['domain'] == args.get('domain') and w['answer'] == args.get('answer'))]; return {'rewrites': rw}
         def upd():
             d['rules'] = sum(f['rules'] for f in fl if f['enabled']); d['lists'] = len(fl)
             d['estimate_mb'] = 25 + d['rules'] // 10000; d['warn'] = d['rules'] > 300000

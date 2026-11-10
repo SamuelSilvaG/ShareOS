@@ -4502,7 +4502,10 @@ return {
 		filter_add: { args: { name: '', url: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-add' ], { name: req.args.name ?? '', url: req.args.url ?? '' }) : DF_OFF; } },
 		filter_remove: { args: { url: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-remove' ], { url: req.args.url ?? '' }) : DF_OFF; } },
 		filter_enable: { args: { url: '', enabled: false }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-enable' ], { url: req.args.url ?? '', enabled: req.args.enabled === true }) : DF_OFF; } },
-		refresh: { call: function() { return module_on('dnsfilter') ? df_tool([ 'refresh' ]) : DF_OFF; } }
+		refresh: { call: function() { return module_on('dnsfilter') ? df_tool([ 'refresh' ]) : DF_OFF; } },
+		rewrites: { call: function() { return module_on('dnsfilter') ? df_tool([ 'rewrites' ]) : DF_OFF; } },
+		rewrite_add: { args: { domain: '', answer: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'rewrite-add' ], { domain: req.args.domain ?? '', answer: req.args.answer ?? '' }) : DF_OFF; } },
+		rewrite_remove: { args: { domain: '', answer: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'rewrite-remove' ], { domain: req.args.domain ?? '', answer: req.args.answer ?? '' }) : DF_OFF; } }
 	},
 
 	// chips in the header of the interface: services and apps of the account
