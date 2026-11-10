@@ -169,6 +169,10 @@ installed (ShareOS 0.3.0-beta.3+). [`sysapps/paperless`](paperless):
     installed by `shareos-core.mk`).
 - Background work checks `[ -f /opt/shareos/sysapps/<id>/app.json ]`
   (`shareos-cron`, init scripts); `shareos-apps modules` lists the installed ones.
+- The modules of the firmware: `paperless` (0.3.0-beta.3), `dnsfilter`
+  (0.3.0-beta.4, brings AdGuard Home), `cloud` (0.3.0-beta.5) and `desktop`
+  (0.3.0-beta.5: the desktop view, `www/desktop.js`; new, so its
+  `module-configured` always answers no and it is not taken over on update).
 
 ## The services of the box
 

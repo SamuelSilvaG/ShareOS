@@ -69,7 +69,8 @@
 				"shareos.me": [
 					"get",
 					"paperless",
-					"cloud"
+					"cloud",
+					"desk_get"
 				],
 				"shareos.paperless": [
 					"get",
@@ -249,6 +250,7 @@
 					"cloud_job_run",
 					"fav_set",
 					"share_ticket",
+					"desk_set",
 					"vault_unlock",
 					"vault_lock"
 				],
@@ -361,7 +363,8 @@
 				"shareos.me": [
 					"get",
 					"paperless",
-					"cloud"
+					"cloud",
+					"desk_get"
 				],
 				"shareos.ui": [
 					"get"
@@ -393,6 +396,7 @@
 					"fav_set",
 					"ui_set",
 					"share_ticket",
+					"desk_set",
 					"vault_unlock",
 					"vault_lock"
 				],

@@ -113,7 +113,7 @@ if [ "$CHECK" = "--check" ]; then
 	t "notify: list" "$(rpc $SID shareos.notify list)" "'items' in d['result'][1]"
 	t "language can be changed" "$(rpc $SID shareos.ui set '{"lang":"de"}')" "d['result'][1]['lang']=='de'"
 	t "invalid language rejected" "$(rpc $SID shareos.ui set '{"lang":"../x"}')" "'invalid' in d['result'][1]['error']"
-	t "Cloud is a module: off until installed, not switchable" "$(rpc $SID shareos.ui set '{"areas":{"cloud":true}}')" "d['result'][1]['areas']=={'apps':True,'cloud':False,'paperless':False,'dnsfilter':False}"
+	t "Cloud is a module: off until installed, not switchable" "$(rpc $SID shareos.ui set '{"areas":{"cloud":true}}')" "d['result'][1]['areas']=={'apps':True,'cloud':False,'paperless':False,'dnsfilter':False,'desktop':False}"
 	t "no cloud module: no cloud jobs in crontab" "$(chroot "$R" /bin/sh -c 'uci set cloud.x=job; uci set cloud.x.schedule="5 1 * * *"; uci commit cloud; shareos-cron sync; grep -c "shareos-cloud run" /etc/crontabs/root; true' | python3 -c 'import sys,json; print(json.dumps({"n": sys.stdin.read().strip()}))')" "d['n']=='0'"
 	t "Paperless is a module: off until installed, not switchable" "$(rpc $SID shareos.ui set '{"areas":{"paperless":true}}')" "d['result'][1]['areas']['paperless']==False"
 	t "Paperless methods refused without the module" "$(rpc $SID shareos.paperless get)" "'not installed' in d['result'][1]['error']"

@@ -1,0 +1,19 @@
+{
+	"id": "desktop",
+	"name": "Desktop-Ansicht",
+	"version": "1.0.0",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Die Weboberfläche als Desktop im Browser: Symbole, Startmenü, Fenster zum Verschieben, Vergrößern und Einrasten, Leiste mit CPU, RAM, Netz und Meldungen, Systemsteuerung mit Kategorien und ein eigenes Hintergrundbild von der Box. Modul: Installiert bietet die Anmeldeseite „Klassisch“ oder „Desktop“ an – beide Ansichten bleiben nutzbar. Anordnung und Hintergrund werden je Benutzer gespeichert.",
+		"en": "The web interface as a desktop in the browser: icons, start menu, windows to move, resize and snap, a bar with CPU, RAM, network and messages, a control panel with categories and your own wallpaper from the box. Module: once installed, the login page offers “Classic” or “Desktop” – both views stay available. Layout and wallpaper are saved per user."
+	},
+	"type": "system",
+	"module": "desktop",
+	"commands": [],
+	"flash": true,
+	"icon": "icon.svg",
+	"category": "system",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://github.com/UniqueDroid/ShareOS",
+	"min_shareos": "0.3.0-beta.5"
+}

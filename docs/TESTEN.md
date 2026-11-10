@@ -234,6 +234,23 @@ Benutzer dürfen eigene Konten und Aufträge anlegen, wenn im Benutzerkonto
 „Darf eigene Cloud-Sync-Aufträge anlegen“ gesetzt ist (braucht einen
 persönlichen Ordner). Ihre Aufträge laufen mit ihren Rechten.
 
+## 9a. Desktop-Ansicht (0.3.0-beta.5)
+
+Die Desktop-Ansicht ist ein **Modul**. Die klassische Ansicht bleibt daneben.
+
+1. **Apps → Store → Desktop-Ansicht → Installieren.** Abmelden: Über *Anmelden* stehen jetzt **Klassisch** und **Desktop**.
+2. **Desktop wählen, anmelden.** Leiste oben (Startmenü, CPU/RAM-Ringe, Netz, Glocke, Suche, Konto, Uhr), links die Symbole.
+3. **Speicher** anklicken: Fenster mit der Speicherseite. Fenster an der Titelleiste **verschieben**, an den Kanten **Größe ändern**, an den linken/rechten Rand ziehen (halbe Breite), nach oben (ganzer Bildschirm), Doppelklick auf den Titel, minimieren und über die Leiste zurückholen.
+4. **Systemsteuerung** → *Netzwerk*: öffnet ein eigenes Fenster. Suche oben eintippen.
+5. **Startmenü** → „proto“ eintippen → *Protokolle*.
+6. **Konto (Buchstabe oben rechts) → Hintergrundbild:** ein Bild von der Box wählen, *Füllen/Einpassen/Kacheln* probieren, *ShareOS (Standard)* zurück.
+7. **Konto → Hell/Dunkel umschalten:** Desktop und alle Fenster wechseln. In einem Fenster *Darstellung* ändern: der Desktop folgt.
+8. Symbol auf eine andere Stelle ziehen, Seite neu laden (F5): Fenster, Plätze und Hintergrund sind wieder da – auch in einem anderen Browser mit demselben Konto.
+9. **Konto → Klassische Ansicht:** normale Seite; oben rechts das Desktop-Symbol führt zurück.
+10. Als **Benutzer** (kein Admin) anmelden: Desktop mit *Mein ShareOS*, Dateien, Apps, Einstellungen.
+11. Auf dem **Handy**: Fenster füllen den Bildschirm.
+12. **Apps → Installiert → Desktop-Ansicht → Entfernen:** auf der Anmeldeseite keine Auswahl mehr, nach dem Anmelden die klassische Seite.
+
 ## 10. App und Widgets
 
 - **Als App:** Chrome und Edge bieten „App installieren“ nur über HTTPS mit einem vertrauenswürdigen Zertifikat an (z. B. Let's Encrypt, unter System → Netzwerk einspielen). Über http:// geht „Zum Startbildschirm hinzufügen“ (Lesezeichen-Symbol). Langes Drücken auf das App-Symbol zeigt die Kurzbefehle.

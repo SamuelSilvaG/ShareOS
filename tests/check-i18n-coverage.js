@@ -12,7 +12,8 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..', 'src/shareos-core/www');
-const src = fs.readFileSync(path.join(ROOT, 'app.js'), 'utf8');
+// app.js and the desktop view (module "desktop")
+const src = ['app.js', 'desktop.js'].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
 const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'i18n/en.json'), 'utf8'));
 const exact = en.exact, patterns = en.patterns.map(([r, x]) => [new RegExp(r), x]), words = en.words.map(([r, x, f]) => [new RegExp(r, f || ''), x]);
 

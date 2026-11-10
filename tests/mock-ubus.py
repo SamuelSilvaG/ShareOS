@@ -212,6 +212,16 @@ TICKETS = {}
 TRASH_CONF = {'enabled': True, 'days': 30}
 TRASH = {}   # root -> trash entries (file browser)
 SHARED = []   # names given out by shareos.me share_ticket
+DESK = {}     # desktop layouts per account (shareos.me desk_get/desk_set)
+
+
+def mock_png(w=160, h=90):
+    # a blue gradient as stand-in for photos (wallpaper of the desktop view)
+    import struct
+    import zlib
+    rows = b''.join(b'\0' + b''.join(bytes((20 + x // 3, 40 + y, 90 + x // 2)) for x in range(w)) for y in range(h))
+    chunk = lambda t, d: struct.pack('>I', len(d)) + t + d + struct.pack('>I', zlib.crc32(t + d) & 0xffffffff)
+    return b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(rows)) + chunk(b'IEND', b'')
 
 
 def fs_entries(root, path):
@@ -307,6 +317,9 @@ APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Back
                        'cloud': {'id': 'cloud', 'name': 'Cloud', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Abgleich mit Cloud-Speichern (Modul)', 'en': 'Cloud sync (module)'},
                                  'type': 'system', 'module': 'cloud', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'network', 'permissions': [], 'verified': True, 'source': 'store',
                                  'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
+                       'desktop': {'id': 'desktop', 'name': 'Desktop-Ansicht', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Die Weboberfläche als Desktop (Modul)', 'en': 'The web interface as a desktop (module)'},
+                                   'type': 'system', 'module': 'desktop', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'system', 'permissions': [], 'verified': True, 'source': 'store',
+                                   'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
                        'paperless': {'id': 'paperless', 'name': 'Paperless', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Anbindung an Paperless-ngx (Modul)', 'en': 'Paperless-ngx connection (module)'},
                                      'type': 'system', 'module': 'paperless', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'office', 'permissions': [], 'verified': True, 'source': 'store',
                                      'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []}},
@@ -461,6 +474,15 @@ def call(obj, method, args):
             TICKETS[t] = ('home', 'Geteilt', n, 'put')
             SHARED.append(n)
             return {'url': '/cgi-bin/files?t=' + t, 'name': n, 'folder': 'Geteilt'}
+        if method in ('desk_get', 'desk_set'):
+            if 'desktop' not in APPS['installed']:
+                return {'error': 'not installed'}
+            if method == 'desk_set':
+                if not isinstance(args.get('desk'), dict) or len(json.dumps(args['desk'])) > 16384:
+                    return {'error': 'invalid desk'}
+                DESK[u] = args['desk']
+                return {'ok': True}
+            return {'desk': DESK.get(u, {})}
         if method == 'fav_set':
             f = FAV.setdefault(u, {'apps': [], 'bar': True, 'text': True})
             if 'apps' in args:
@@ -725,7 +747,7 @@ def call(obj, method, args):
                     STATE.setdefault('areas', {'apps': True})[k] = bool(v)
         # modules (Paperless): on while the system app is installed
         return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent'],
-                'areas': {**STATE.get('areas', {'apps': True}), **{m: m in APPS['installed'] for m in ('paperless', 'cloud', 'dnsfilter')}}, 'default_password': True}
+                'areas': {**STATE.get('areas', {'apps': True}), **{m: m in APPS['installed'] for m in ('paperless', 'cloud', 'dnsfilter', 'desktop')}}, 'default_password': True}
     if obj == 'shareos.net':
         if method == 'set':
             STATE['net'] = {k: args.get(k, STATE['net'][k]) for k in STATE['net']}
@@ -1029,7 +1051,7 @@ class H(SimpleHTTPRequestHandler):
             return self.reply(403, {'error': 'invalid ticket'})
         root, path, name, mode = tk
         if mode == 'get' and self.command == 'GET':
-            data = (f'ShareOS mock file {name}\n').encode()
+            data = mock_png() if name.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')) else (f'ShareOS mock file {name}\n').encode()
             self.send_response(200)
             self.send_header('Content-Type', 'application/octet-stream')
             self.send_header('Content-Disposition', f'attachment; filename="{name}"')
