@@ -1,0 +1,343 @@
+#!/usr/bin/ucode -S
+//
+// shareos-dnsfilter – DNS filter with AdGuard Home (module, system app "dnsfilter")
+//
+//   shareos-dnsfilter status           settings and state (JSON)
+//   shareos-dnsfilter set              stdin JSON, all optional: {enabled,
+//                                      web_port, upstream: [..], protection}
+//   shareos-dnsfilter filters          the block lists with their rules (JSON)
+//   shareos-dnsfilter filter-add       stdin {name, url}
+//   shareos-dnsfilter filter-remove    stdin {url}
+//   shareos-dnsfilter filter-enable    stdin {url, enabled}
+//   shareos-dnsfilter refresh          download the lists again
+//   shareos-dnsfilter password         user and password of AdGuard's own interface
+//   shareos-dnsfilter start | boot     start now (switches on) / at boot (when on)
+//   shareos-dnsfilter start-bg         start in the background (web interface)
+//   shareos-dnsfilter stop-all         stop (system app removed, shutdown)
+//   shareos-dnsfilter restart | stop
+//   shareos-dnsfilter log              the last lines of AdGuard Home's log
+//   shareos-dnsfilter module-installed | module-configured   (shareos-apps)
+//
+// shareos-service: boot start stop-all
+// shareos-module: the DNS-FILTER tab exists only while the system app
+// "dnsfilter" is installed (see shareos-apps).
+//
+// AdGuard Home (official linux_armv5 build, in the system app) answers DNS on
+// port 53 of the box and blocks advertising, trackers and malware with block
+// lists; its own interface runs on web_port (default 8053, user "admin", a
+// random password in /etc/shareos/dnsfilter.pass, root only).
+//
+// Guard rails for the 256 MB of the box (measured 10.11.2026, see
+// docs/DEVELOPMENT.md): memory grows with the rules (about 0.1 KB each, the
+// default list has ~190 000 rules = ~40 MB in all) – GOMEMLIMIT is always set
+// (memlimit, MiB), the status estimates the memory and warns from WARN_RULES
+// rules on. The query log and the statistics stay in RAM (/tmp, lost at a
+// restart) – nothing is written to the apps drive except the lists once a day.
+//
+// Files: /etc/shareos/dnsfilter/AdGuardHome.yaml (AdGuard's settings, written
+// by AdGuard itself; created at the first start through its setup API, in the
+// settings backup), work folder <apps drive>/.shareos/dnsfilter (block lists).
+// AdGuard Home runs as root: it binds port 53, and the box has neither setcap
+// nor a firewall to redirect the port (its own user switch "os.user" drops
+// root before it binds – tried 10.11.2026). Only admins reach its interface.
+//
+// Settings: UCI dnsfilter.main – enabled, web_port, memlimit.
+//
+import { readfile, writefile, unlink, stat, popen, mkdir } from 'fs';
+import { cursor } from 'uci';
+
+const ROOT = getenv('SHAREOS_ROOT') ?? '';
+const APP = ROOT + '/opt/shareos/sysapps/dnsfilter';
+const BIN = APP + '/bin/AdGuardHome';
+const CONFDIR = ROOT + '/etc/shareos/dnsfilter';
+const CONF = CONFDIR + '/AdGuardHome.yaml';
+const PASS = ROOT + '/etc/shareos/dnsfilter.pass';
+const RUN = ROOT + '/tmp/shareos-dnsfilter';
+const PID = RUN + '/pid';
+const LOG = RUN + '/log';
+const DATA = RUN + '/data';
+const SETUP_PORT = 3053;
+const WARN_RULES = 300000;
+// ports of the box that the interface of AdGuard must not take
+const RESERVED = { '80': 1, '443': 1, '8081': 1, '8444': 1, '3053': 1, '5353': 1, '8384': 1, '9091': 1, '10050': 1, '6060': 1 };
+const UPSTREAM_RE = /^(https:\/\/[A-Za-z0-9.-]+(:[0-9]{1,5})?(\/[A-Za-z0-9._~\/{}-]*)?|(tls|quic):\/\/[A-Za-z0-9.-]+(:[0-9]{1,5})?|[0-9.]{7,15}(:[0-9]{1,5})?|\[[0-9A-Fa-f:]{2,45}\](:[0-9]{1,5})?|[0-9A-Fa-f:]{2,45})$/;
+const LIST_URL_RE = /^https?:\/\/[A-Za-z0-9.-]+(:[0-9]{1,5})?\/[A-Za-z0-9._~\/%?&=+:-]*$/;
+const MAX_LISTS = 12;
+
+function shq(s) { return "'" + replace(s, "'", "'\\''") + "'"; }
+function sh(cmd) {
+	let p = popen(cmd + ' 2>&1', 'r');
+	if (!p) return { rc: -1, out: '' };
+	let o = p.read('all') ?? '';
+	return { rc: p.close(), out: o };
+}
+function out(o) { print(sprintf('%J\n', o)); }
+function die(msg) { out({ error: msg }); exit(1); }
+function stdin_json() { let j = null; try { j = json(readfile('/dev/stdin') ?? 'null'); } catch (e) { } return type(j) == 'object' ? j : null; }
+function installed() { return stat(BIN)?.type == 'file'; }
+function uci() { return ROOT ? cursor(ROOT + '/etc/config') : cursor(); }
+
+function conf() {
+	let c = uci();
+	let g = (k) => c.get('dnsfilter', 'main', k);
+	let ml = +(g('memlimit') ?? 32);
+	return {
+		enabled: g('enabled') == '1',
+		web_port: +(g('web_port') ?? 8053),
+		memlimit: ml >= 24 && ml <= 128 ? ml : 32
+	};
+}
+function set_conf(k, v) {
+	let c = uci();
+	c.set('dnsfilter', 'main', 'dnsfilter');
+	c.set('dnsfilter', 'main', k, v);
+	c.commit('dnsfilter');
+}
+
+function password() {
+	let p = trim(readfile(PASS) ?? '');
+	if (match(p, /^[A-Za-z0-9]{16,64}$/)) return p;
+	p = trim(sh('head -c 600 /dev/urandom | tr -dc A-Za-z0-9 | head -c 20').out);
+	if (length(p) < 16) die('no random password');
+	sh(sprintf('mkdir -p %s && umask 077 && : > %s', shq(ROOT + '/etc/shareos'), shq(PASS)));
+	writefile(PASS, p + '\n');
+	sh('chmod 600 ' + shq(PASS));
+	return p;
+}
+
+// the work folder on the apps drive (block lists)
+function work_dir() {
+	let area = uci().get('storage', 'global', 'apps');
+	if (!area || !match(area, /^[A-Za-z0-9_-]+$/)) return null;
+	if (!ROOT && index(readfile('/proc/mounts') ?? '', ' /mnt/' + area + ' ') < 0) return null;
+	return ROOT + '/mnt/' + area + '/.shareos/dnsfilter';
+}
+
+function pid() {
+	let p = +trim(readfile(PID) ?? '0');
+	return p > 1 && index(readfile('/proc/' + p + '/cmdline') ?? '', 'AdGuardHome') >= 0 ? p : null;
+}
+function rss_mb(p) {
+	let m = match(readfile('/proc/' + p + '/status') ?? '', /\nVmRSS:\s+([0-9]+) kB/);
+	return m ? +sprintf('%.1f', +m[1] / 1024.0) : null;
+}
+
+/* ---------- AdGuard Home's HTTP API (on 127.0.0.1) ---------- */
+
+function api(method, path, body, port) {
+	let p = port ?? conf().web_port;
+	let cmd = sprintf('curl -sS -m 30 -o - -w "\\n%%{http_code}" -u %s -X %s', shq('admin:' + password()), method);
+	let f = null;
+	if (body != null) {
+		f = RUN + '/.in';
+		sh('mkdir -p ' + shq(RUN) + ' && umask 077 && : > ' + shq(f));
+		writefile(f, sprintf('%J', body));
+		cmd += ' -H "Content-Type: application/json" --data-binary @' + shq(f);
+	}
+	let r = sh(cmd + ' ' + shq(sprintf('http://127.0.0.1:%d/control/%s', p, path)));
+	if (f) unlink(f);
+	let lines = split(trim(r.out), '\n');
+	let code = +pop(lines);
+	let text = join('\n', lines);
+	let j = null;
+	try { j = json(text || 'null'); } catch (e) { }
+	return { ok: code >= 200 && code < 300, code, data: j, text };
+}
+
+function api_up() { return api('GET', 'status').ok; }
+
+/* ---------- AdGuard's settings file: small line edits in a section ---------- */
+
+// set "  key: value" (two spaces, top-level section) in the file AdGuard wrote
+function yaml_set(text, section, key, value) {
+	let lines = split(text, '\n'), cur = null, done = false;
+	for (let i = 0; i < length(lines); i++) {
+		let s = match(lines[i], /^([a-z_]+):\s*$/);
+		if (s) { cur = s[1]; continue; }
+		if (match(lines[i], /^[a-z_]+:/)) { cur = null; continue; }
+		if (cur == section && index(lines[i], '  ' + key + ':') == 0) { lines[i] = '  ' + key + ': ' + value; done = true; break; }
+	}
+	if (!done) die('settings of AdGuard Home: ' + section + '.' + key + ' not found');
+	return join('\n', lines);
+}
+
+function own(d) { sh(sprintf('mkdir -p %s && chmod 700 %s', shq(d), shq(d))); }
+
+function wait_for(fn, secs) {
+	for (let i = 0; i < secs * 2; i++) { if (fn()) return true; sh('sleep 0.5'); }
+	return false;
+}
+
+function stop_proc() {
+	let p = pid();
+	if (p) {
+		sh('kill ' + p);
+		for (let i = 0; i < 50 && pid(); i++) sh('sleep 0.2');
+		if (pid()) sh('kill -9 ' + p);
+	}
+	unlink(PID);
+}
+
+// first start: AdGuard's own setup API writes a valid settings file for its
+// version; then the guard rails are set in it
+function first_setup(work) {
+	let c = conf(), pw = password();
+	mkdir(RUN); mkdir(CONFDIR);
+	let cmd = sprintf('exec %s -c %s -w %s --no-check-update --host 127.0.0.1 --port %d >>%s 2>&1',
+		shq(BIN), shq(CONF), shq(work), SETUP_PORT, shq(LOG));
+	sh(sprintf('start-stop-daemon -S -b -m -p %s -x /bin/sh -- -c %s', shq(PID), shq(cmd)));
+	let ready = () => match(sh(sprintf('curl -s -m 5 http://127.0.0.1:%d/control/install/get_addresses', SETUP_PORT)).out, /"interfaces"/);
+	if (!wait_for(ready, 60)) { stop_proc(); die('AdGuard Home did not start: ' + trim(sh('tail -n 3 ' + shq(LOG)).out)); }
+	let f = RUN + '/.in';
+	sh('umask 077 && : > ' + shq(f));
+	writefile(f, sprintf('%J', { web: { ip: '0.0.0.0', port: c.web_port }, dns: { ip: '0.0.0.0', port: 53 }, username: 'admin', password: pw }));
+	let r = sh(sprintf('curl -sS -m 60 -X POST -H "Content-Type: application/json" --data-binary @%s http://127.0.0.1:%d/control/install/configure', shq(f), SETUP_PORT));
+	unlink(f);
+	wait_for(() => stat(CONF) != null, 20);
+	stop_proc();
+	if (!stat(CONF)) die('setup of AdGuard Home failed: ' + trim(r.out));
+	let y = readfile(CONF);
+	y = yaml_set(y, 'querylog', 'file_enabled', 'false');
+	y = yaml_set(y, 'querylog', 'interval', '24h');
+	y = yaml_set(y, 'querylog', 'dir_path', DATA);
+	y = yaml_set(y, 'statistics', 'dir_path', DATA);
+	writefile(CONF, y);
+}
+
+function start() {
+	if (!installed()) die('the system app "dnsfilter" is not installed');
+	if (pid()) return;
+	let work = work_dir();
+	if (!work) die('the DNS filter needs the apps drive (Storage → apps area)');
+	sh(sprintf('mkdir -p %s %s %s', shq(RUN), shq(CONFDIR), shq(work)));
+	if (!stat(CONF)) first_setup(work);
+	// the web port may have changed in the settings
+	let c = conf();
+	writefile(CONF, yaml_set(readfile(CONF), 'http', 'address', '0.0.0.0:' + c.web_port));
+	own(CONFDIR); own(work); own(RUN); own(DATA);
+	let cmd = sprintf('GOMEMLIMIT=%dMiB exec %s -c %s -w %s --no-check-update --no-permcheck >>%s 2>&1',
+		c.memlimit, shq(BIN), shq(CONF), shq(work), shq(LOG));
+	sh(sprintf('start-stop-daemon -S -b -m -p %s -x /bin/sh -- -c %s', shq(PID), shq(cmd)));
+	if (!wait_for(() => !pid() || api_up(), 90)) die('AdGuard Home does not answer: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
+	if (!pid()) die('AdGuard Home stopped: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
+}
+
+function filters() {
+	let r = api('GET', 'filtering/status');
+	if (!r.ok || type(r.data) != 'object') return null;
+	let l = [], rules = 0;
+	for (let f in r.data.filters ?? []) {
+		push(l, { name: f.name, url: f.url, enabled: !!f.enabled, rules: f.rules_count ?? 0, updated: f.last_updated ?? null });
+		if (f.enabled) rules += f.rules_count ?? 0;
+	}
+	return { filters: l, rules, filtering: !!r.data.enabled };
+}
+
+function status() {
+	let c = conf(), p = pid(), up = p ? api('GET', 'status') : null, st = {};
+	st.installed = installed();
+	st.enabled = c.enabled;
+	st.running = !!p;
+	st.ready = !!up?.ok;
+	st.starting = !!p && !st.ready;
+	st.web_port = c.web_port;
+	st.memlimit = c.memlimit;
+	st.drive = work_dir() != null;
+	st.version = up?.data?.version ?? null;
+	st.protection = up?.data?.protection_enabled ?? null;
+	st.rss_mb = p ? rss_mb(p) : null;
+	if (st.ready) {
+		let f = filters();
+		st.rules = f?.rules ?? 0;
+		st.lists = length(f?.filters ?? []);
+		let s = api('GET', 'stats');
+		st.queries = s.data?.num_dns_queries ?? 0;
+		st.blocked = s.data?.num_blocked_filtering ?? 0;
+		let d = api('GET', 'dns_info');
+		st.upstream = d.data?.upstream_dns ?? [];
+		// about 15 MB + 0.1 KB per rule, plus the program (measured 10.11.2026)
+		st.estimate_mb = 25 + int(st.rules / 10000);
+		st.warn = st.rules > WARN_RULES;
+	}
+	return st;
+}
+
+function need_up() { if (!pid() || !api_up()) die('the DNS filter is not running'); }
+
+function cmd_set() {
+	let a = stdin_json();
+	if (!a) die('expected a JSON object on stdin');
+	let restart = false;
+	if (a.web_port != null) {
+		if (type(a.web_port) != 'int' || a.web_port < 1024 || a.web_port > 65535 || RESERVED['' + a.web_port]) die('web_port: 1024 … 65535, not a port of the box');
+		if (a.web_port != conf().web_port) { set_conf('web_port', '' + a.web_port); restart = true; }
+	}
+	if (a.upstream != null) {
+		if (type(a.upstream) != 'array' || !length(a.upstream) || length(a.upstream) > 8) die('upstream: 1 … 8 servers');
+		for (let u in a.upstream) if (type(u) != 'string' || !match(u, UPSTREAM_RE)) die('invalid upstream server: ' + u);
+	}
+	if (a.enabled != null) set_conf('enabled', a.enabled ? '1' : '0');
+	if (a.enabled === false) { stop_proc(); out(status()); return; }
+	if (restart) stop_proc();
+	if (conf().enabled && !pid()) start();
+	if (a.upstream != null) {
+		need_up();
+		let r = api('POST', 'dns_config', { upstream_dns: a.upstream });
+		if (!r.ok) die('upstream: ' + trim(r.text));
+	}
+	if (a.protection != null) {
+		need_up();
+		let r = api('POST', 'protection', { enabled: !!a.protection });
+		if (!r.ok) die('protection: ' + trim(r.text));
+	}
+	out(status());
+}
+
+function cmd_filter(verb) {
+	need_up();
+	let a = stdin_json();
+	if (verb != 'refresh' && (!a || type(a.url) != 'string' || !match(a.url, LIST_URL_RE) || length(a.url) > 512)) die('url: an http(s) address of a block list');
+	let r;
+	if (verb == 'add') {
+		let n = a.name ?? '';
+		if (type(n) != 'string' || length(n) > 64 || match(n, /[[:cntrl:]]/)) die('name: at most 64 characters');
+		if (length(filters()?.filters ?? []) >= MAX_LISTS) die('at most ' + MAX_LISTS + ' lists');
+		r = api('POST', 'filtering/add_url', { name: n != '' ? n : a.url, url: a.url, whitelist: false });
+	}
+	else if (verb == 'remove') r = api('POST', 'filtering/remove_url', { url: a.url, whitelist: false });
+	else if (verb == 'enable') {
+		let f = filter(filters()?.filters ?? [], (x) => x.url == a.url)[0];
+		if (!f) die('no such list');
+		r = api('POST', 'filtering/set_url', { url: a.url, whitelist: false, data: { name: f.name, url: a.url, enabled: !!a.enabled } });
+	}
+	else r = api('POST', 'filtering/refresh', { whitelist: false });
+	if (!r.ok) die(trim(r.text) || 'AdGuard Home: HTTP ' + r.code);
+	out(filters());
+}
+
+switch (ARGV[0]) {
+case 'status': out(status()); break;
+case 'set': cmd_set(); break;
+case 'filters': need_up(); out(filters()); break;
+case 'filter-add': cmd_filter('add'); break;
+case 'filter-remove': cmd_filter('remove'); break;
+case 'filter-enable': cmd_filter('enable'); break;
+case 'refresh': cmd_filter('refresh'); break;
+case 'password': out({ user: 'admin', password: password(), port: conf().web_port }); break;
+case 'start': set_conf('enabled', '1'); start(); out(status()); break;
+case 'start-bg':
+	set_conf('enabled', '1');
+	sh('( /usr/sbin/shareos-dnsfilter start >/dev/null 2>&1 & )');
+	out({ ok: true });
+	break;
+case 'boot': if (installed() && conf().enabled) { start(); out(status()); } else out({ started: false }); break;
+case 'stop-all': case 'stop': stop_proc(); out({ ok: true }); break;
+case 'restart': stop_proc(); if (conf().enabled) start(); out(status()); break;
+case 'log': { let t = readfile(LOG) ?? ''; out({ log: length(t) > 16384 ? substr(t, length(t) - 16384) : t }); break; }
+case 'module-installed': exit(0);
+// nothing to take over from versions before the module
+case 'module-configured': exit(1);
+default:
+	print('usage: shareos-dnsfilter status|set|filters|filter-add|filter-remove|filter-enable|refresh|password|start|start-bg|boot|stop-all|stop|restart|log\n');
+	exit(2);
+}

@@ -113,7 +113,7 @@ check "module removed: no cron entry, folder stays" "! grep -q 'shareos-paperles
 check "module removed: migration does not bring it back" "run 'shareos-apps modules migrate' | js \"d['installed']==[]\""
 (cd "$TOP/sysapps/paperless" && tar -cf - app.json icon.svg | gzip -c > "$R/tmp/paperless.sapp")
 check "module: installed from its package" "run 'shareos-apps install-file /tmp/paperless.sapp' | js \"d['ok'] and d['module']\""
-mkdir -p $T/fake && printf '{"id":"dnsfilter","name":"x","version":"1.0.0","type":"system","module":"dnsfilter","commands":[]}' > $T/fake/app.json
+mkdir -p $T/fake && printf '{"id":"nosuchmodule","name":"x","version":"1.0.0","type":"system","module":"nosuchmodule","commands":[]}' > $T/fake/app.json
 (cd $T/fake && tar -cf - app.json | gzip -c > "$R/tmp/fake.sapp")
 check "module: unknown module refused" "run 'shareos-apps install-file /tmp/fake.sapp' | grep -q 'no module'"
 printf '{"id":"paperless2","name":"x","version":"1.0.0","type":"system","module":"paperless","commands":[]}' > $T/fake/app.json

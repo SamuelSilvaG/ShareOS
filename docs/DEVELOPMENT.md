@@ -277,6 +277,13 @@ the box for why the web server was not running.
 | evening | Discussion #88 (lgustavod) turns into a **folder browser** for shares, media server and cloud jobs, plus copy/paste in the file browser (#127). |
 | night | A technical audit brings kernel hardening (#128; `FORTIFY_SOURCE` fails in the ARM decompressor) and **claim mode** (#129): a new box no longer has a known password, it is claimed with the USB button – updates never lock. Desktop 0.2.3 does it too. |
 
+### Tuesday, 10.11.2026
+
+| Time | What happened |
+|---|---|
+| 06:50 | **0.3.0-beta.3** is out (Paperless as a module). Measurement of AdGuard Home v0.107.80 (official ARMv5 build) in the ShareOS userland: default list (188,000 rules) 45 MB of Go memory, 30 MB with `GOMEMLIMIT=32MiB`; 696,000 rules 107 and 77 MB – plus the program code. Much more than Pi-hole (lists in SQLite). Jan decides: AdGuard Home with guard rails. |
+| 07:30 | **DNS filter as the second module:** system app "DNS-Filter", controller `shareos-dnsfilter`, tab DNS-FILTER. Set up through AdGuard's own setup API, memory limit, query log and statistics in RAM only, warning from 300,000 rules on. AdGuard's user switch drops root too early (port 53 fails) – it runs as root. `test-dnsfilter` with 34 checks, blocking over port 53 included. |
+
 ### Monday, 09.11.2026
 
 | Time | What happened |

@@ -470,7 +470,7 @@ const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
 // modules: system apps with "module" (see shareos-apps) that switch on an
 // area of the firmware – tab, "My ShareOS" part, background work. The code
 // stays here; the area exists only while the system app is installed.
-const MODULES = [ 'paperless' ];
+const MODULES = [ 'paperless', 'dnsfilter' ];
 function module_on(id) {
 	let a = null;
 	try { a = json(readfile('/opt/shareos/sysapps/' + id + '/app.json') ?? 'null'); } catch (e) { }
@@ -1898,6 +1898,25 @@ function docker_hosts(c) {
 // shareos-autobrr <args> (JSON on stdin for set, password, api)
 const AUTOBRR = '/usr/sbin/shareos-autobrr';
 
+/* ---------- DNS filter (module "dnsfilter", AdGuard Home) ---------- */
+
+function df_tool(args, input) {
+	let cmd = '/usr/sbin/shareos-dnsfilter ' + join(' ', map(args, shq));
+	let f = null;
+	if (input != null) {
+		f = '/tmp/.shareos-df-in.' + substr(new_token(), 0, 12);
+		system('umask 077; : > ' + shq(f));
+		writefile(f, sprintf('%J', input));
+		cmd += ' < ' + shq(f);
+	}
+	let r = sh(cmd);
+	if (f) unlink(f);
+	let j = null;
+	try { j = json(trim(r.out) || 'null'); } catch (e) { }
+	return type(j) == 'object' ? j : { error: trim(r.out) || 'failed' };
+}
+const DF_OFF = { error: 'the DNS filter is not installed (system app dnsfilter)' };
+
 /* ---------- permission "zabbix": the box's Zabbix agent for apps (admins) ---------- */
 
 const ZB_SET = [ 'enabled', 'server', 'hostname', 'metadata', 'psk_identity', 'psk', 'passive', 'allow', 'port', 'disk_interval' ];
@@ -2062,9 +2081,10 @@ const RECOVERY = '/etc/shareos/recovery.json';
 const RECOVERY_APPS = '/etc/shareos/recovery-apps';
 const RESTORE_APPS = '/usr/sbin/shareos-restore-apps';
 const BACKUP_ESSENTIAL = [ 'shareos', 'network', 'storage' ];
-const BACKUP_SERVICES = [ 'paperless', 'cloud', 'snapshots', 'dlna', 'dockerhosts', 'zabbix', 'printer', 'ups' ];
+const BACKUP_SERVICES = [ 'paperless', 'cloud', 'snapshots', 'dlna', 'dockerhosts', 'zabbix', 'printer', 'ups', 'dnsfilter' ];
 const BACKUP_CONFIGS = [ ...BACKUP_ESSENTIAL, 'accounts', 'shares', 'apps', ...BACKUP_SERVICES ];
-const BACKUP_FILES = [ '/etc/hostname', '/etc/timezone', '/etc/ksmbd/ksmbdpwd.db', '/etc/shareos/zabbix.psk' ];
+const BACKUP_FILES = [ '/etc/hostname', '/etc/timezone', '/etc/ksmbd/ksmbdpwd.db', '/etc/shareos/zabbix.psk',
+	'/etc/shareos/dnsfilter.pass', '/etc/shareos/dnsfilter/AdGuardHome.yaml' ];
 const CERT_CRT = '/etc/ssl/shareos/server.crt', CERT_KEY = '/etc/ssl/shareos/server.key';
 const CA_DIR = '/etc/shareos/ca';
 const CA_FILE = /^(ca\.(crt|key)|certs\/[A-Za-z0-9*._-]{1,64}\.(crt|key))$/;
@@ -2270,6 +2290,10 @@ function recovery_apply(b, a) {
 		writefile('/etc/config/' + s, b.configs[s]);
 		if (s == 'zabbix' && type(b.files?.['/etc/shareos/zabbix.psk']) == 'string')
 			put_file('/etc/shareos/zabbix.psk', b.files['/etc/shareos/zabbix.psk'], true);
+		// DNS filter: AdGuard's settings (lists, upstream) and the password of its interface
+		if (s == 'dnsfilter')
+			for (let f in [ '/etc/shareos/dnsfilter.pass', '/etc/shareos/dnsfilter/AdGuardHome.yaml' ])
+				if (type(b.files?.[f]) == 'string') { system('mkdir -p /etc/shareos/dnsfilter'); put_file(f, b.files[f], true); }
 		push(done, s);
 	}
 	let ca_back = false;
@@ -4266,6 +4290,32 @@ return {
 				return ups_status();
 			}
 		}
+	},
+
+	// DNS filter (module): AdGuard Home on port 53, admins
+	'shareos.dnsfilter': {
+		status: { call: function() { return module_on('dnsfilter') ? df_tool([ 'status' ]) : DF_OFF; } },
+		filters: { call: function() { return module_on('dnsfilter') ? df_tool([ 'filters' ]) : DF_OFF; } },
+		password: { call: function() { return module_on('dnsfilter') ? df_tool([ 'password' ]) : DF_OFF; } },
+		log: { call: function() { return module_on('dnsfilter') ? df_tool([ 'log' ]) : DF_OFF; } },
+		// switching on starts in the background (the first start sets AdGuard up)
+		set: {
+			args: { enabled: false, web_port: 0, upstream: [], protection: false },
+			call: function(req) {
+				if (!module_on('dnsfilter')) return DF_OFF;
+				let a = req.args, inp = {};
+				if (a.enabled === true) {
+					let st = df_tool([ 'status' ]);
+					if (!st.running) return df_tool([ 'start-bg' ]);
+				}
+				for (let k in [ 'enabled', 'web_port', 'upstream', 'protection' ]) if (a[k] != null) inp[k] = a[k];
+				return df_tool([ 'set' ], inp);
+			}
+		},
+		filter_add: { args: { name: '', url: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-add' ], { name: req.args.name ?? '', url: req.args.url ?? '' }) : DF_OFF; } },
+		filter_remove: { args: { url: '' }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-remove' ], { url: req.args.url ?? '' }) : DF_OFF; } },
+		filter_enable: { args: { url: '', enabled: false }, call: function(req) { return module_on('dnsfilter') ? df_tool([ 'filter-enable' ], { url: req.args.url ?? '', enabled: req.args.enabled === true }) : DF_OFF; } },
+		refresh: { call: function() { return module_on('dnsfilter') ? df_tool([ 'refresh' ]) : DF_OFF; } }
 	},
 
 	// chips in the header of the interface: services and apps of the account

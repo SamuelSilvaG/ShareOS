@@ -291,6 +291,9 @@ APPS = {'installed': {'notes-backup': {'id': 'notes-backup', 'name': 'Notes Back
                        'nano': {'id': 'nano', 'name': 'nano', 'version': '8.7.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Einfacher Texteditor für das Terminal (System → Terminal oder SSH): „nano datei“. Mit Rückgängig, Suchen und Ersetzen und UTF-8.', 'en': 'text editor for the terminal'},
                                 'type': 'system', 'commands': ['nano'], 'entry': 'index.html', 'icon': None, 'category': 'tools', 'permissions': [], 'verified': True, 'source': 'store',
                                 'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
+                       'dnsfilter': {'id': 'dnsfilter', 'name': 'DNS-Filter', 'version': '0.107.80', 'publisher': 'UniqueDroid', 'description': {'de': 'DNS-Filter mit AdGuard Home (Modul)', 'en': 'DNS filter with AdGuard Home (module)'},
+                                     'type': 'system', 'module': 'dnsfilter', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'network', 'permissions': [], 'verified': True, 'source': 'store',
+                                     'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []},
                        'paperless': {'id': 'paperless', 'name': 'Paperless', 'version': '1.0.0', 'publisher': 'UniqueDroid', 'description': {'de': 'Anbindung an Paperless-ngx (Modul)', 'en': 'Paperless-ngx connection (module)'},
                                      'type': 'system', 'module': 'paperless', 'commands': [], 'entry': 'index.html', 'icon': None, 'category': 'office', 'permissions': [], 'verified': True, 'source': 'store',
                                      'installed': 0, 'users': [], 'jobs': [], 'window': None, 'opens': []}},
@@ -698,7 +701,7 @@ def call(obj, method, args):
                     STATE.setdefault('areas', {'apps': True, 'cloud': True})[k] = bool(v)
         # modules (Paperless): on while the system app is installed
         return {'lang': STATE['lang'], 'logo': STATE['logo'], 'theme': STATE['theme'], 'accent': STATE['accent'],
-                'areas': {**STATE.get('areas', {'apps': True, 'cloud': True}), 'paperless': 'paperless' in APPS['installed']}, 'default_password': True}
+                'areas': {**STATE.get('areas', {'apps': True, 'cloud': True}), 'paperless': 'paperless' in APPS['installed'], 'dnsfilter': 'dnsfilter' in APPS['installed']}, 'default_password': True}
     if obj == 'shareos.net':
         if method == 'set':
             STATE['net'] = {k: args.get(k, STATE['net'][k]) for k in STATE['net']}
@@ -771,6 +774,35 @@ def call(obj, method, args):
         if method == 'test':
             return {'ok': True}
         return pr
+    if obj == 'shareos.dnsfilter':
+        d = STATE.setdefault('dnsfilter', {'installed': True, 'enabled': False, 'running': False, 'ready': False, 'starting': False, 'web_port': 8053, 'memlimit': 32,
+            'drive': True, 'version': 'v0.107.80', 'protection': True, 'rss_mb': None, 'rules': 0, 'lists': 0, 'queries': 0, 'blocked': 0,
+            'upstream': ['https://dns10.quad9.net/dns-query'], 'estimate_mb': 25, 'warn': False,
+            'filters': [{'name': 'AdGuard DNS filter', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt', 'enabled': True, 'rules': 188364, 'updated': None},
+                        {'name': 'AdAway Default Blocklist', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt', 'enabled': False, 'rules': 6540, 'updated': None}]})
+        fl = d['filters']
+        def upd():
+            d['rules'] = sum(f['rules'] for f in fl if f['enabled']); d['lists'] = len(fl)
+            d['estimate_mb'] = 25 + d['rules'] // 10000; d['warn'] = d['rules'] > 300000
+        if method == 'set':
+            if args.get('enabled') is True and not d['running']:
+                d.update({'enabled': True, 'running': True, 'ready': True, 'rss_mb': 41.5, 'queries': 12873, 'blocked': 2214}); upd(); return {'ok': True}
+            if args.get('enabled') is False: d.update({'enabled': False, 'running': False, 'ready': False, 'rss_mb': None})
+            for k in ('web_port', 'upstream', 'protection'):
+                if k in args: d[k] = args[k]
+        if method == 'filter_add':
+            fl.append({'name': args.get('name') or args['url'], 'url': args['url'], 'enabled': True, 'rules': 250000, 'updated': None})
+        if method == 'filter_remove':
+            fl[:] = [f for f in fl if f['url'] != args.get('url')]
+        if method == 'filter_enable':
+            for f in fl:
+                if f['url'] == args.get('url'): f['enabled'] = bool(args.get('enabled'))
+        if method == 'password':
+            return {'user': 'admin', 'password': 'Kq3vT9mZ2pLx8RbN4wYe', 'port': d['web_port']}
+        upd()
+        if method in ('filters', 'filter_add', 'filter_remove', 'filter_enable', 'refresh'):
+            return {'filters': fl, 'rules': d['rules'], 'filtering': True}
+        return {k: v for k, v in d.items() if k != 'filters'}
     if obj == 'shareos.ups':
         u = STATE.setdefault('ups', {'installed': True, 'enabled': False, 'running': False, 'detected': '051d:0002', 'driver': 'usbhid-ups',
             'status': None, 'charge': None, 'runtime': None, 'load': None, 'voltage': None, 'mfr': None, 'model': None, 'charge_low': None, 'battery_date': None,

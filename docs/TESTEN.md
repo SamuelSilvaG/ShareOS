@@ -196,6 +196,25 @@ wird beim nächsten Lauf erneut gesendet.
 Neustart ist der Reiter *PAPERLESS* da, unter **Apps → Installiert** steht
 „Paperless“ (Modul), `cat /etc/shareos/module-migrated.paperless` zeigt die Zeit.
 
+## 8a. DNS-Filter (0.3.0-beta.4)
+
+Der DNS-Filter ist ein **Modul** (AdGuard Home). Er braucht das Apps-Laufwerk.
+
+1. **Apps → Store → DNS-Filter → Installieren.** Der Reiter *DNS-FILTER* erscheint hinter *PAPERLESS*.
+2. **DNS-FILTER → „DNS-Filter einschalten“ → Speichern.** Beim ersten Start richtet die Box AdGuard Home ein (dauert etwas). Danach: Status „läuft“, Regeln der Standardliste (etwa 190 000).
+3. Per SSH prüfen:
+   ```
+   nslookup doubleclick.net 127.0.0.1      # geblockt: 0.0.0.0
+   nslookup github.com 127.0.0.1           # normale Antwort
+   cat /proc/$(cat /tmp/shareos-dnsfilter/pid)/status | grep VmRSS   # RAM, Erwartung etwa 40–45 MB
+   ```
+4. **Zugangsdaten anzeigen → AdGuard Home öffnen ↗**: Anmeldung mit `admin` und dem angezeigten Passwort.
+5. Am PC als DNS-Server die Adresse der Box eintragen (oder im Router) und ein paar Seiten aufrufen: *ANFRAGEN* und *GEBLOCKT* zählen hoch.
+6. Liste hinzufügen (z. B. `https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts`), ausschalten, entfernen. Mit vielen Regeln (> 300 000) erscheint die Warnung.
+7. Box neu starten: Der Filter läuft danach von selbst wieder, die Einstellungen sind noch da.
+8. **Plattenschlaf:** Mit laufendem Filter ein paar Stunden warten – schläft die Platte trotzdem ein? (Speicher → Gesundheit)
+9. **Apps → Installiert → DNS-Filter → Entfernen:** Reiter weg, `nslookup … 127.0.0.1` antwortet nicht mehr. Wieder installieren: Listen und Passwort sind wie vorher.
+
 ## 9. Cloud-Sync
 
 1. **Cloud → rclone installieren** (lädt rclone von GitHub, braucht einen eingerichteten Apps-Bereich).

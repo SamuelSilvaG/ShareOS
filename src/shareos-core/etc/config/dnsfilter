@@ -1,0 +1,4 @@
+config dnsfilter 'main'
+	option enabled '0'
+	option web_port '8053'
+	option memlimit '32'

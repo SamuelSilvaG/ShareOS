@@ -1,0 +1,9 @@
+config BR2_PACKAGE_SHAREOS_ADGUARDHOME
+	bool "shareos-adguardhome"
+	depends on BR2_arm
+	help
+	  AdGuard Home for the system app "dnsfilter" (DNS filter module):
+	  the official static linux_armv5 build, checked with its
+	  SHA-256 – nothing is compiled.
+
+	  https://github.com/AdguardTeam/AdGuardHome

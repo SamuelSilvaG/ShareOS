@@ -153,7 +153,7 @@ const S = {
 
 const TABS = [
 	['overview', 'ÜBERSICHT'], ['storage', 'SPEICHER'], ['shares', 'FREIGABEN'], ['services', 'DIENSTE'],
-	['apps', 'APPS'], ['cloud', 'CLOUD'], ['paperless', 'PAPERLESS'], ['system', 'SYSTEM']
+	['apps', 'APPS'], ['cloud', 'CLOUD'], ['paperless', 'PAPERLESS'], ['dnsfilter', 'DNS-FILTER'], ['system', 'SYSTEM']
 ];
 const SYS_SUBS = [['general', 'ALLGEMEIN'], ['appearance', 'DARSTELLUNG'], ['network', 'NETZWERK'], ['notifications', 'MELDUNGEN'], ['logs', 'PROTOKOLLE'], ['terminal', 'TERMINAL'], ['time', 'ZEIT'], ['power', 'ENERGIE & RESET'], ['firmware', 'FIRMWARE']];
 const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART'], ['dlna', 'MEDIENSERVER'], ['printer', 'DRUCKER'], ['ups', 'USV']];
@@ -1062,6 +1062,7 @@ const VIEWS = {
 	apps: () => appsView(),
 	cloud: () => cloudSection('admin'),
 	paperless: () => paperlessView(),
+	dnsfilter: () => dnsfilterView(),
 
 	services() {
 		const sub = S.route.sub;
@@ -1324,6 +1325,84 @@ function groupsView() {
 	</section>`;
 }
 
+
+
+/* ---------- DNS filter (module "dnsfilter", AdGuard Home) ------------------------ */
+
+async function loadDnsfilter() {
+	clearTimeout(S.dfTimer);
+	try {
+		const d = await rpc('shareos.dnsfilter', 'status');
+		d.filters = d.ready ? (await rpc('shareos.dnsfilter', 'filters')).filters : [];
+		S.df = d;
+		if (d.starting || (d.enabled && !d.running && S.dfStarting)) S.dfTimer = setTimeout(loadDnsfilter, 3000);
+		else S.dfStarting = false;
+	} catch (e) { if (e.code !== 'auth') toast('DNS-Filter: ' + e.message, true); }
+	if (S.route.tab === 'dnsfilter' && !document.activeElement?.matches('input,select,textarea')) renderMain();
+}
+
+function dnsfilterView() {
+	const d = S.df;
+	if (!d) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	const host = location.hostname, num = (n) => (n ?? 0).toLocaleString(LOC);
+	const state = d.ready ? html`<span class="tag ok ml">läuft</span>` : d.starting || S.dfStarting ? html`<span class="tag warn ml">startet …</span>` : html`<span class="tag ml">aus</span>`;
+	return html`
+	<section class="sec">
+		<h2 class="gh">DNS-FILTER <span>AdGuard Home${d.version ? ' ' + d.version : ''}</span></h2>
+		${!d.drive ? html`<div class="panel" style="margin-bottom:12px"><div class="empty">${svg(I.warn)}<span>Der DNS-Filter braucht das Apps-Laufwerk (Speicher → Laufwerke).</span></div></div>` : ''}
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">STATUS</span>${state}${d.ready && d.protection === false ? html`<span class="tag warn">Filterung pausiert</span>` : ''}</div>
+				${d.ready ? html`<div class="tiles" style="margin:0">
+					<div class="tile"><div class="k">ANFRAGEN</div><div class="v">${num(d.queries)}</div></div>
+					<div class="tile"><div class="k">GEBLOCKT</div><div class="v">${num(d.blocked)}</div></div>
+					<div class="tile"><div class="k">REGELN</div><div class="v">${num(d.rules)}</div></div>
+					<div class="tile"><div class="k">RAM</div><div class="v">${d.rss_mb != null ? Math.round(d.rss_mb) + ' MB' : '–'}</div></div></div>
+					<p class="note"><span>Geschätzter Bedarf mit diesen Listen:</span> ~${d.estimate_mb} MB</p>
+					${d.warn ? html`<p class="note" style="color:var(--amber)">Viele Regeln: Große Listen kosten viel Arbeitsspeicher. Für die 256 MB der Box besser bei der Standardliste bleiben.</p>` : ''}`
+				: html`<p class="mut" style="margin:0;font-size:13px">${d.starting || S.dfStarting ? 'AdGuard Home startet – beim ersten Mal dauert das etwas.' : 'Unten einschalten.'}</p>`}
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">SO NUTZT DU IHN</span></div>
+				<ol class="plan" style="padding-left:20px">
+					<li><span>Im Router als DNS-Server die Adresse der Box eintragen – oder nur an einzelnen Geräten:</span> <code>${S.info?.network?.eth0?.ipv4?.address || host}</code></li>
+					<li>Keinen zweiten DNS-Server eintragen, sonst fragen Geräte an der Box vorbei. Ist die Box aus oder startet neu, haben die Geräte so lange kein DNS.</li>
+					<li>Feineinstellungen, Abfrageprotokoll und Statistik in der Oberfläche von AdGuard Home.</li>
+				</ol>
+				<div class="acts">${d.ready ? html`<a class="btn" href="http://${host}:${d.web_port}/" target="_blank" rel="noopener">AdGuard Home öffnen ↗</a>` : ''}
+					<button class="btn" type="button" data-act="df-pass">Zugangsdaten anzeigen</button></div>
+				${S.dfPass ? html`<dl class="kv" style="margin-top:12px"><dt>Benutzer</dt><dd><code>${S.dfPass.user}</code></dd><dt>Passwort</dt><dd><code>${S.dfPass.password}</code></dd></dl>` : ''}
+			</div>
+		</div>
+	</section>
+	<section class="sec"><form class="panel" id="f-df" style="max-width:820px">
+		<div class="ph"><span class="pt">EINSTELLUNGEN</span></div>
+		<label class="chk"><input type="checkbox" name="enabled"${d.enabled ? raw(' checked') : ''}>DNS-Filter einschalten (startet auch nach einem Neustart)</label>
+		${d.ready ? html`<label class="chk" style="margin-top:8px;display:flex"><input type="checkbox" name="protection"${d.protection !== false ? raw(' checked') : ''}>Filterung aktiv (aus = nur weiterleiten)</label>
+		<div class="fields" style="grid-template-columns:1fr;margin-top:12px">
+			<label class="f"><span>UPSTREAM-SERVER (EINER PRO ZEILE)</span><textarea name="upstream" rows="3">${(d.upstream || []).join('\n')}</textarea></label>
+		</div>` : ''}
+		<div class="fields" style="margin-top:12px">
+			<label class="f"><span>PORT DER ADGUARD-OBERFLÄCHE</span><input name="web_port" type="number" min="1024" max="65535" value="${d.web_port}"></label>
+		</div>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>
+	${d.ready ? html`<section class="sec">
+		<h2 class="gh">SPERRLISTEN <span>${d.filters.length}</span></h2>
+		<div class="tw"><table class="t" style="min-width:640px"><thead><tr><th>LISTE</th><th>REGELN</th><th>AKTIV</th><th></th></tr></thead>
+			<tbody>${d.filters.map((f) => html`<tr><td><b>${f.name}</b><div class="mut" style="font-size:12px;word-break:break-all">${f.url}</div></td>
+				<td>${num(f.rules)}</td>
+				<td><input type="checkbox" class="df-en" data-url="${f.url}"${f.enabled ? raw(' checked') : ''}></td>
+				<td><button class="btn sm ghost" type="button" data-act="df-del" data-url="${f.url}">Entfernen</button></td></tr>`)}</tbody></table></div>
+		<form class="panel" id="f-dfadd" style="margin-top:12px;max-width:820px">
+			<div class="fields"><label class="f"><span>NAME</span><input name="name" maxlength="64"></label>
+				<label class="f"><span>ADRESSE DER LISTE</span><input name="url" inputmode="url" placeholder="https://…"></label></div>
+			<div class="acts" style="margin-top:12px"><button class="btn" type="submit">Liste hinzufügen</button>
+				<button class="btn" type="button" data-act="df-refresh">Listen aktualisieren</button></div>
+			<p class="note">Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.</p>
+		</form>
+	</section>` : ''}`;
+}
 
 /* ---------- Paperless ----------------------------------------------------------- */
 
@@ -3272,6 +3351,7 @@ const SYS = {
 			</div>
 			<p class="note">Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.</p>
 			<p class="note">Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).</p>
+			<p class="note">Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.</p>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
@@ -3650,6 +3730,30 @@ const VIEWS_AFTER = {
 		if (S.cloud?.scope !== 'admin') { loadCloud('admin'); return; }
 		cloudAfter('admin');
 	},
+	dnsfilter() {
+		if (!S.df) { loadDnsfilter(); return; }
+		$('#f-df')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target, args = { enabled: f.enabled.checked, web_port: +f.web_port.value };
+			if (f.protection) args.protection = f.protection.checked;
+			if (f.upstream) args.upstream = f.upstream.value.split('\n').map((x) => x.trim()).filter(Boolean);
+			try {
+				const r = await rpc('shareos.dnsfilter', 'set', args);
+				if (args.enabled && !S.df.running) S.dfStarting = true;
+				toast(r.ok && args.enabled && !S.df.running ? 'DNS-Filter startet …' : 'Gespeichert.'); loadDnsfilter();
+			} catch (err) { toast('DNS-Filter: ' + err.message, true); }
+		});
+		$('#f-dfadd')?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const f = e.target;
+			try { await rpc('shareos.dnsfilter', 'filter_add', { name: f.name.value.trim(), url: f.url.value.trim() }); toast('Liste hinzugefügt.'); loadDnsfilter(); }
+			catch (err) { toast('Liste: ' + err.message, true); }
+		});
+		document.querySelectorAll('.df-en').forEach((c) => c.addEventListener('change', async () => {
+			try { await rpc('shareos.dnsfilter', 'filter_enable', { url: c.dataset.url, enabled: c.checked }); loadDnsfilter(); }
+			catch (err) { toast('Liste: ' + err.message, true); }
+		}));
+	},
 	paperless() {
 		if (!S.pl || !S.acc || !S.shares) { loadPaperless(); return; }
 		const kind = $('#f-inbox select[name=kind]');
@@ -3855,7 +3959,7 @@ async function netSubmit(e) {
 
 /* ---------- recovery mode (after restoring a settings backup) ---------- */
 
-const REC_SERVICES = { paperless: 'Paperless-Anbindung', cloud: 'Cloud-Speicher', snapshots: 'Snapshots', dlna: 'Medienserver (DLNA)',
+const REC_SERVICES = { dnsfilter: 'DNS-Filter (AdGuard Home)', paperless: 'Paperless-Anbindung', cloud: 'Cloud-Speicher', snapshots: 'Snapshots', dlna: 'Medienserver (DLNA)',
 	dockerhosts: 'Docker-Hosts', zabbix: 'Zabbix-Agent', printer: 'Drucker', ups: 'USV' };
 
 // admin only: shareos.recovery is not granted to other accounts
@@ -4250,6 +4354,12 @@ async function refreshUpdateStatus() {
 /* ---------- actions (delegated clicks) -------------------------------------- */
 
 const ACTIONS = {
+	async 'df-pass'() { try { S.dfPass = S.dfPass ? null : await rpc('shareos.dnsfilter', 'password'); renderMain(); } catch (e) { toast(e.message, true); } },
+	async 'df-refresh'() { try { await rpc('shareos.dnsfilter', 'refresh'); toast('Listen aktualisiert.'); loadDnsfilter(); } catch (e) { toast(e.message, true); } },
+	async 'df-del'(el) {
+		if (!await confirmDlg('Liste entfernen?', el.dataset.url, 'Entfernen', true)) return;
+		try { await rpc('shareos.dnsfilter', 'filter_remove', { url: el.dataset.url }); toast('Liste entfernt.'); loadDnsfilter(); } catch (e) { toast(e.message, true); }
+	},
 	async 'rec-apply'() {
 		const on = (k) => !!$(`input[data-rec="${k}"]`)?.checked;
 		const pick = (p) => [...document.querySelectorAll(`input[data-rec^="${p}:"]`)].filter((x) => x.checked).map((x) => x.dataset.rec.slice(p.length + 1));
@@ -4809,6 +4919,7 @@ window.addEventListener('hashchange', () => {
 	if (S.route.tab !== 'services' || S.route.sub !== 'ups') { clearTimeout(S.upsTimer); S.upsTimer = null; }
 	if (S.fb && S.route.sub === 'files') S.fb.roots = null;   // volumes may have changed
 	if (S.route.tab !== 'paperless') { S.plEdit = null; S.plLog = null; } else if (S.pl) loadPaperless();
+	if (S.route.tab !== 'dnsfilter') { clearTimeout(S.dfTimer); S.dfPass = null; } else if (S.df) loadDnsfilter();
 	if (S.route.tab !== 'cloud') { clearTimeout(S.cloudTimer); if (S.cloud?.scope === 'admin') { S.cloud.remoteEdit = null; S.cloud.jobEdit = null; S.cloud.log = null; } }
 	else if (S.cloud?.scope === 'admin') loadCloud('admin');
 	else if (S.shares) loadShareData();

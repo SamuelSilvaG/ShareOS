@@ -117,6 +117,12 @@
 				],
 				"shareos.ups": [
 					"status"
+				],
+				"shareos.dnsfilter": [
+					"status",
+					"filters",
+					"password",
+					"log"
 				]
 			},
 			"uci": [
@@ -324,6 +330,13 @@
 				],
 				"shareos.ups": [
 					"set"
+				],
+				"shareos.dnsfilter": [
+					"set",
+					"filter_add",
+					"filter_remove",
+					"filter_enable",
+					"refresh"
 				]
 			},
 			"uci": [

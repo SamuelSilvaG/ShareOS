@@ -191,6 +191,25 @@ the next run.
 restart the *PAPERLESS* tab is there, **Apps → Installed** lists "Paperless"
 (module), `cat /etc/shareos/module-migrated.paperless` shows the time.
 
+## 8a. DNS filter (0.3.0-beta.4)
+
+The DNS filter is a **module** (AdGuard Home). It needs the apps drive.
+
+1. **Apps → Store → DNS-Filter → Install.** The *DNS-FILTER* tab appears behind *PAPERLESS*.
+2. **DNS-FILTER → "Switch on the DNS filter" → Save.** At the first start the box sets AdGuard Home up (takes a moment). Then: status "running", rules of the default list (about 190,000).
+3. Over SSH:
+   ```
+   nslookup doubleclick.net 127.0.0.1      # blocked: 0.0.0.0
+   nslookup github.com 127.0.0.1           # normal answer
+   cat /proc/$(cat /tmp/shareos-dnsfilter/pid)/status | grep VmRSS   # RAM, expected about 40–45 MB
+   ```
+4. **Show login → Open AdGuard Home ↗**: sign in with `admin` and the password shown.
+5. On a PC enter the box as DNS server (or in the router) and open a few pages: *QUERIES* and *BLOCKED* count up.
+6. Add a list (e.g. `https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts`), switch it off, remove it. With many rules (> 300,000) the warning appears.
+7. Restart the box: the filter runs again by itself, the settings are still there.
+8. **Disk sleep:** wait a few hours with the filter running – does the disk still go to sleep? (Storage → Health)
+9. **Apps → Installed → DNS-Filter → Remove:** tab gone, `nslookup … 127.0.0.1` no longer answers. Install again: lists and password are as before.
+
 ## 9. Cloud sync
 
 1. **Cloud → install rclone** (downloads rclone from GitHub, needs an apps area).
