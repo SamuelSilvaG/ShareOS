@@ -13,5 +13,9 @@
    `.sysupgrade.tar`, `.bin` and checksums. Boxes see the release on their next
    check (every 6 hours) or with *Check now*.
 
+The website ([uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/),
+built from `website/` and the docs) rebuilds itself when the release is published;
+nothing to do by hand.
+
 Apps are released from [ShareOS-Apps](https://github.com/UniqueDroid/ShareOS-Apps)
 by raising `version` in `apps/<id>/app.json` (see its README).

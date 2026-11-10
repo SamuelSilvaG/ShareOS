@@ -12,6 +12,8 @@ pre-releases for test devices only.
   - AdGuard Home runs as root: it must bind port 53, and the box has no setcap or port redirection (AdGuard's own user switch drops root before it binds).
   - Removing the module stops AdGuard Home and hides the tab; its settings stay. Tests: `test-dnsfilter` (34 checks: module, first start, guard rails, blocking over port 53, lists, settings, restart, boot, removal).
 
+- **Project website:** [uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/) – features, screenshots, devices, install steps, the files of the latest release per model, the app catalog with search, the latest discussions, and the docs of this repository as a wiki (English/German, search). Built from `website/` by `.github/workflows/pages.yml` on every push to `main` that touches the site or the docs, on every release and daily. Not part of the firmware.
+
 ## 0.3.0-beta.3
 
 - **Modules: Paperless only when you need it.** A system app can now switch on an area of the firmware (`"module"` in its `app.json`): its tab, its part of "My ShareOS" and its background work exist only while it is installed. **Paperless is the first module** – the new system app **"paperless"** in the store (Apps → Store) shows the *PAPERLESS* tab behind *CLOUD*; removing it hides the tab again and stops the scheduled uploads (settings, inboxes and folders stay for a later reinstall).
