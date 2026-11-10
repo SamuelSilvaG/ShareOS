@@ -58,11 +58,20 @@ const store = {
 	del(k) { try { localStorage.removeItem('shareos.' + k); sessionStorage.removeItem('shareos.' + k); } catch (e) { } }
 };
 
+// desktop view (module "desktop", desktop.js): its windows show this interface
+// with ?frame=1 – only the page, without header, tabs and footer. Windows and
+// desktop talk through postMessage (same origin): look, session, modules.
+const FRAME = /[?&]frame=1(&|$)/.test(location.search) && window.parent !== window;
+const deskOn = () => !!S.areas?.desktop;
+const deskPost = (m) => { try { window.parent.postMessage({ sos: 'desk', ...m }, location.origin); } catch (e) { } };
+
 /* ---------- icons ----------------------------------------------------------- */
 
 const svg = (d, cls = '') => raw(`<svg ${cls ? `class="${cls}" ` : ''}viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`);
 const I = {
 	moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+	desk: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 7h18"/><rect x="9" y="10" width="9" height="7" rx="1"/><path d="M5.5 11h1M5.5 14h1"/>',
+	classic: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 13h10M7 16h6"/>',
 	star: '<path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"/>',
 	power: '<path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/>',
 	disk: '<rect x="3" y="13" width="18" height="8" rx="2"/><path d="M5 13 7.5 4h9L19 13"/><path d="M7 17h.01M11 17h6"/>',
@@ -189,13 +198,15 @@ MQ_DARK?.addEventListener?.('change', () => { if (S.theme === 'system') { applyT
 
 function applyTheme() {
 	const app = $('#app');
-	app.className = 'sos acc-' + S.accent + (effTheme() === 'light' ? ' light' : '');
+	app.className = 'sos acc-' + S.accent + (effTheme() === 'light' ? ' light' : '') + (FRAME ? ' frame' : '') + (S.desk ? ' desk' : '');
 	$('.scan', app).hidden = !S.scan;
 	const bg = getComputedStyle(app).getPropertyValue('--bg').trim();
 	document.body.style.background = bg;
 	$('meta[name=theme-color]')?.setAttribute('content', bg || '#1b2433');
 	tintFavicon();
 	if (typeof themeToApps === 'function') themeToApps();
+	if (FRAME) deskPost({ type: 'look', theme: S.theme, accent: S.accent, scan: S.scan });
+	else if (S.desk && typeof deskLook === 'function') deskLook();
 }
 
 // favicon = the logo symbol in the accent colour
@@ -389,6 +400,7 @@ function sessionExpired() {
 	S.sid = null;
 	store.del('sid');
 	stopPolling();
+	if (FRAME) { deskPost({ type: 'expired' }); return; }
 	renderLogin('Sitzung abgelaufen – bitte neu anmelden.');
 }
 
@@ -416,10 +428,28 @@ function applyOwnLook() {
 function enter() {
 	applyOwnLook();
 	if (location.hash === '#/shared') history.replaceState(null, '', isUser() ? '#/me' : '#/overview');
+	if (!FRAME && deskOn() && store.get('view') === 'desktop') { deskStart(); shareInbox(); return; }
 	if (isUser()) renderUserShell();
 	else renderShell();
 	shareInbox();
 }
+
+// the desktop view lives in desktop.js and desktop.css, loaded only when used
+function deskStart() {
+	S.route = { tab: 'desktop', sub: '' };
+	if (typeof deskRun === 'function') { deskRun(); return; }
+	$('#root').innerHTML = html`<div class="login"><div class="spin"></div></div>`.s;
+	const css = document.createElement('link');
+	css.rel = 'stylesheet'; css.href = 'desktop.css';
+	document.head.append(css);
+	const js = document.createElement('script');
+	js.src = 'desktop.js';
+	js.onload = () => deskRun();
+	js.onerror = () => { store.set('view', 'classic'); enter(); };
+	document.head.append(js);
+}
+// switch between the views (the page starts again with the session it has)
+function setView(v) { store.set('view', v); location.reload(); }
 
 /* ---------- share target ("share with" on the phone, see sw.js) ----------------
  * what was shared with the installed app waits in IndexedDB until someone is
@@ -529,6 +559,12 @@ async function tick() {
 
 function startPolling() {
 	stopPolling();
+	if (FRAME) {
+		// a window asks only what its page shows: the live values on the overview
+		tick(); refreshUpdateStatus(); loadNotes();
+		S.timer = setInterval(() => { if (S.route?.tab === 'overview') tick(); }, 5000);
+		return;
+	}
 	tick();
 	S.timer = setInterval(tick, 5000);
 	refreshUpdateStatus();
@@ -564,6 +600,9 @@ async function loadUiSettings() {
 }
 
 function renderLogin(msg = '') {
+	if (FRAME) { deskPost({ type: 'expired' }); return; }
+	// with the desktop module: classic or desktop view (the last choice, else desktop)
+	let view = store.get('view') === 'classic' ? 'classic' : 'desktop';
 	$('#root').innerHTML = html`
 	<div class="login">
 		<form class="panel" id="login-form" autocomplete="on">
@@ -574,6 +613,10 @@ function renderLogin(msg = '') {
 			<label class="f"><span>PASSWORT</span><input name="pass" type="password" autocomplete="current-password" required autofocus></label>
 			<label class="chk"><input name="keep" type="checkbox">Angemeldet bleiben (7 Tage)</label>
 			<p class="err" id="login-err">${msg}</p>
+			${deskOn() && !FRAME ? html`<div class="viewpick" role="radiogroup" aria-label="Ansicht">
+				<button class="vbtn${view === 'classic' ? ' on' : ''}" type="button" role="radio" aria-checked="${view === 'classic'}" data-view="classic">${svg(I.classic)}<span>Klassisch</span></button>
+				<button class="vbtn${view === 'desktop' ? ' on' : ''}" type="button" role="radio" aria-checked="${view === 'desktop'}" data-view="desktop">${svg(I.desk)}<span>Desktop</span></button>
+			</div>` : ''}
 			<button class="btn primary" type="submit" style="min-height:44px">Anmelden</button>
 			<p class="note" id="login-hint"${S.defaultPw ? '' : raw(' hidden')}>Erste Anmeldung: Benutzer root, Passwort shareos – danach ein eigenes Passwort setzen.</p>
 		</form>
@@ -584,9 +627,16 @@ function renderLogin(msg = '') {
 		const h = $('#login-hint');
 		if (h) h.hidden = !S.defaultPw;
 	}).catch(() => { });
+	$('#login-form').addEventListener('click', (e) => {
+		const b = e.target.closest('[data-view]');
+		if (!b) return;
+		view = b.dataset.view;
+		$('#login-form').querySelectorAll('[data-view]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', String(x === b)); });
+	});
 	$('#login-form').addEventListener('submit', async (e) => {
 		e.preventDefault();
 		const f = e.target;
+		if (deskOn()) store.set('view', view);
 		const btn = $('button[type=submit]', f);
 		btn.disabled = true;
 		$('#login-err').textContent = '';
@@ -744,6 +794,7 @@ function renderHeader(offline = false) {
 				<button class="chip more" type="button" data-act="chips-more" hidden></button>
 				${offline ? html`<span class="chip warn keep"><i></i>OFFLINE</span>`
 					: html`<span class="chip keep"><i></i>ONLINE <small>seit ${fmtUptime(i.uptime)}</small></span>`}
+				${deskOn() && !FRAME ? html`<button class="ib" type="button" data-act="desk-view" aria-label="Desktop-Ansicht" title="Desktop-Ansicht">${svg(I.desk)}</button>` : ''}
 				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden">${svg(I.power)}</button>
 			</div>
@@ -2135,7 +2186,7 @@ function renderUserShell() {
 	renderUserHeader();
 	renderUserTabs();
 	renderUserMain();
-	startChips();
+	if (!FRAME) startChips();
 }
 
 function userLookView() {
@@ -2179,6 +2230,7 @@ function renderUserHeader() {
 			<div class="row">
 				${chipsHtml()}
 				<button class="chip more" type="button" data-act="chips-more" hidden></button>
+				${deskOn() && !FRAME ? html`<button class="ib" type="button" data-act="desk-view" aria-label="Desktop-Ansicht" title="Desktop-Ansicht">${svg(I.desk)}</button>` : ''}
 				<button class="ib" type="button" data-act="theme" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten">${svg(I.moon)}</button>
 				<button class="ib" type="button" data-act="logout" aria-label="Abmelden" title="Abmelden">${svg(I.power)}</button>
 			</div>
@@ -4382,6 +4434,7 @@ const ACTIONS = {
 	'rel-all'() { S.relAll = !S.relAll; renderMain(); },
 	'chips-more'() { S.chipsAll = !S.chipsAll; fitChips(); },
 	'page-reload': () => location.reload(),
+	'desk-view': () => setView('desktop'),
 	theme() {
 		S.theme = effTheme() === 'light' ? 'dark' : 'light';
 		if (isUser()) S.me.ui = { ...S.me.ui, theme: S.theme };
@@ -5477,6 +5530,19 @@ function themeToApps() {
 	try { $('#appframe')?.contentWindow?.postMessage(msg, origin); } catch (e) { }
 }
 
+// a window of the desktop view: the desktop tells it about a new look
+if (FRAME) window.addEventListener('message', (ev) => {
+	const m = ev.data || {};
+	if (ev.origin !== location.origin || ev.source !== window.parent || m.sos !== 'desk-in') return;
+	if (m.type === 'look' && (m.theme !== S.theme || m.accent !== S.accent || m.scan !== S.scan)) {
+		S.theme = m.theme; S.accent = m.accent; S.scan = m.scan;
+		applyTheme();
+		if (!S.me) return;
+		if (isUser()) { if (S.utab === 'settings') renderUserMain(); }
+		else if (S.route?.sub === 'appearance') renderMain();
+	}
+});
+
 // messages from apps: a file was saved -> refresh the file list
 window.addEventListener('message', (ev) => {
 	if (!appSrv() || ev.origin !== appBase(appSrv())) return;
@@ -5523,6 +5589,7 @@ async function refreshCatalog(quiet = false) {
 // modules (system apps like "paperless") switch tabs on and off: read the areas again
 function refreshAreas() {
 	rpc('shareos.ui', 'get', {}, ZERO_SID).then((r) => { if (r.areas) { S.areas = r.areas; renderTabs(); } }).catch(() => {});
+	if (FRAME) deskPost({ type: 'areas' });
 }
 
 async function pollAppJob() {

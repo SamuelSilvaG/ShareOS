@@ -287,6 +287,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 10:17 | **Projekt-Webseite** auf GitHub Pages: [uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/) – Funktionen, Downloads je Modell, App-Katalog, Diskussionen und diese Doku als Wiki. Sie baut sich bei jedem Push, Release und einmal täglich selbst aus dem Repository. |
 | 13:00 | **Cloud als drittes Modul:** System-App „Cloud“, Reiter CLOUD und „Mein ShareOS“-Teil nur, solange sie installiert ist. Boxen mit Aufträgen, Konten oder rclone bekommen sie beim Update von selbst. Damit sind alle drei geplanten Module fertig; *Bereiche* schaltet nur noch Apps. |
 | 11:30 | Doku für **0.3.0-beta.4** (DNS-Filter, Webseite). |
+| 16:00 | **Desktop-Ansicht als viertes Modul:** Jan wünscht sich die Oberfläche als Desktop wie bei anderen NAS (Symbole, Startmenü, Fenster, Systemsteuerung). Zuerst ein klickbarer Entwurf, dann der Code: eigene kleine `desktop.js` ohne Framework, die Fenster zeigen die vorhandenen Seiten (`?frame=1`), Anordnung und Hintergrundbild je Konto auf der Box. Beide Ansichten bleiben, die Anmeldeseite fragt. `tests/ui-desktop.js` prüft alles in Chromium (47 Prüfungen). |
 
 ### Montag, 09.11.2026
 

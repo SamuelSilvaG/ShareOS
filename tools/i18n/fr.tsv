@@ -1878,3 +1878,50 @@ E1501	Filtrage actif (désactivé = transfert seul)
 E1502	Chaque règle coûte de la mémoire (environ 0,1 Ko). À partir de 300 000 règles, ShareOS avertit.
 E1503	Le filtre DNS (AdGuard Home) est aussi un module : onglet FILTRE DNS une fois installé sous APPS.
 E1504	Paperless, Cloud et le filtre DNS sont des modules : leur onglet apparaît une fois installés sous APPS et disparaît quand on les retire – réglages et données sont conservés.
+E1505	Affichage
+E1506	Classique
+E1507	Bureau
+E1508	Vue bureau
+E1509	Menu Démarrer
+E1510	Fenêtres ouvertes
+E1511	Messages
+E1512	Recherche
+E1513	Menu utilisateur
+E1514	Fichiers
+E1515	Stockage
+E1516	Panneau de configuration
+E1517	Boutique d’apps
+E1518	Gestionnaire des tâches
+E1519	Journaux
+E1520	Cloud
+E1521	Paperless
+E1522	Filtre DNS
+E1523	Accès et connexion
+E1524	Général
+E1525	Heure
+E1526	Apparence
+E1527	Fond d’écran
+E1528	Alimentation et réinitialisation
+E1529	État
+E1530	Démarrage auto
+E1531	Serveur multimédia
+E1532	Réduire
+E1533	Agrandir
+E1534	Rechercher des apps et réglages
+E1535	Vue classique
+E1536	Aucun résultat.
+E1537	MODULES ET APPS
+E1538	Réinitialiser la disposition
+E1539	Réinitialiser la disposition ?
+E1540	Les icônes et fenêtres reprennent leur place par défaut.
+E1541	Rechercher dans tous les réglages
+E1542	Aucun disque ni partage.
+E1543	Aucune image dans ce dossier.
+E1544	Un fond d’écran depuis la box demande le droit « Fichiers » pour votre compte.
+E1545	Une image (JPG, PNG, WebP, GIF) de la box – enregistrée pour vous seul.
+E1546	AJUSTEMENT DE L’IMAGE
+E1547	Remplir
+E1548	Ajuster
+E1549	Mosaïque
+E1550	ShareOS (par défaut)
+E1551	Fond d’écran enregistré.

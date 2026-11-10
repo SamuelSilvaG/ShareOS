@@ -6,7 +6,7 @@
 //   shareos.net      get | set | confirm   (network with automatic rollback)
 //   shareos.accounts list | add | set | passwd | del | group_add | group_del | import_altf
 //   shareos.shares   list | set | del | global
-//   shareos.me       bind | get | passwd | ui_set | fav_set   (the logged-in account, also for plain users)
+//   shareos.me       bind | get | passwd | ui_set | fav_set | desk_get | desk_set   (the logged-in account, also for plain users)
 //   shareos.backup   offer | export | restore   (settings as JSON, optionally encrypted)
 //   shareos.recovery status | apply | discard | apps_install | apps_dismiss   (after a restore)
 //   shareos.paperless get | set_global | test | inbox_set | inbox_del | run | tags | log
@@ -24,7 +24,7 @@
 // rpcd's main loop is never blocked; the UI polls shareos.update.status.
 'use strict';
 
-import { readfile, writefile, popen, glob, stat, lstat, lsdir, realpath, readlink, symlink, unlink } from 'fs';
+import { readfile, writefile, popen, glob, stat, lstat, lsdir, realpath, readlink, symlink, unlink, rename } from 'fs';
 import { cursor } from 'uci';
 
 const UPDATER = '/usr/sbin/shareos-update';
@@ -470,7 +470,8 @@ const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
 // modules: system apps with "module" (see shareos-apps) that switch on an
 // area of the firmware – tab, "My ShareOS" part, background work. The code
 // stays here; the area exists only while the system app is installed.
-const MODULES = [ 'paperless', 'cloud', 'dnsfilter' ];
+const DESK_DIR = '/etc/shareos/desktop', DESK_MAX = 16384;   // desktop layouts (module desktop)
+const MODULES = [ 'paperless', 'cloud', 'dnsfilter', 'desktop' ];
 function module_on(id) {
 	let a = null;
 	try { a = json(readfile('/opt/shareos/sysapps/' + id + '/app.json') ?? 'null'); } catch (e) { }
@@ -479,7 +480,7 @@ function module_on(id) {
 
 // areas that can be switched off under System -> Appearance (tab hidden,
 // background work stopped): apps (apps web server, app tasks); a module's
-// area (paperless, cloud, dnsfilter) is on while it is installed
+// area (paperless, cloud, dnsfilter, desktop) is on while it is installed
 const AREAS = [ 'apps' ];
 function area_on(a) {
 	if (index(MODULES, a) >= 0) return module_on(a);
@@ -3641,6 +3642,35 @@ return {
 				}
 				c.commit(cfg[0]);
 				return fav_of(cursor(), u);
+			}
+		},
+
+		// desktop view (module "desktop"): layout of the account – window
+		// places, open windows, wallpaper; a small JSON object per account
+		desk_get: {
+			call: function(req) {
+				let u = session_user(req);
+				if (!u) return { error: 'session not bound' };
+				if (!module_on('desktop')) return { error: 'not installed' };
+				let d = null;
+				try { d = json(readfile(DESK_DIR + '/' + u + '.json') ?? 'null'); } catch (e) { }
+				return { desk: type(d) == 'object' ? d : {} };
+			}
+		},
+
+		desk_set: {
+			args: { desk: {} },
+			call: function(req) {
+				let u = session_user(req);
+				if (!u) return { error: 'session not bound' };
+				if (!module_on('desktop')) return { error: 'not installed' };
+				if (type(req.args.desk) != 'object') return { error: 'invalid desk' };
+				let s = sprintf('%J', req.args.desk);
+				if (length(s) > DESK_MAX) return { error: 'too large' };
+				system('mkdir -p ' + DESK_DIR + ' && chmod 700 ' + DESK_DIR);
+				let f = DESK_DIR + '/' + u + '.json';
+				if (!writefile(f + '.new', s) || !rename(f + '.new', f)) return { error: 'cannot save' };
+				return { ok: true };
 			}
 		},
 

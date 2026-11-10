@@ -226,6 +226,23 @@ Users may create their own accounts and jobs when "May create own cloud sync
 jobs" is set in their account (needs a personal folder). Their jobs run with
 their permissions.
 
+## 9a. Desktop view (0.3.0-beta.6)
+
+The desktop view is a **module**. The classic view stays next to it.
+
+1. **Apps → Store → Desktop-Ansicht → Install.** Log out: above *Anmelden* there are now **Klassisch** and **Desktop**.
+2. **Choose Desktop, log in.** Bar at the top (start menu, CPU/RAM rings, network, bell, search, account, clock), icons on the left.
+3. Click **Storage**: a window with the storage page. **Move** it by the title bar, **resize** it at the edges, drag it to the left/right edge (half the screen), to the top (whole screen), double click the title, minimise it and bring it back from the bar.
+4. **Control panel** → *Network*: opens its own window. Type into the search at the top.
+5. **Start menu** → type "log" → *Logs*.
+6. **Account (letter at the top right) → Wallpaper:** pick an image on the box, try *Fill/Fit/Tile*, *ShareOS (default)* back.
+7. **Account → Toggle light/dark:** the desktop and all windows change. Change *Appearance* in a window: the desktop follows.
+8. Drag an icon somewhere else, reload the page (F5): windows, places and wallpaper are back – also in another browser with the same account.
+9. **Account → Classic view:** the normal page; the desktop icon at the top right leads back.
+10. Log in as a **plain user**: desktop with *My ShareOS*, files, apps, settings.
+11. On a **phone**: windows fill the screen.
+12. **Apps → Installed → Desktop-Ansicht → Remove:** no choice on the login page any more, the classic page after logging in.
+
 ## 10. App and widgets
 
 - **As an app:** Chrome and Edge offer "Install app" only over HTTPS with a trusted certificate (e.g. Let's Encrypt, install it under System → Network). Over http:// "Add to home screen" works (bookmark icon). Long-pressing the app icon shows the shortcuts.

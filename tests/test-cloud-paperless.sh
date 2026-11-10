@@ -153,6 +153,24 @@ run "ubus call shareos.me bind '{\"username\":\"anna\",\"password\":\"anna1234\"
 check "me: own Paperless inbox" "run \"ubus call shareos.me paperless '{\\\"ubus_rpc_session\\\":\\\"$SID\\\"}'\" | js \"d['available'] and d['inbox']['owner']=='anna'\""
 check "me: token test" "run \"ubus call shareos.me paperless_set '{\\\"test\\\":true,\\\"ubus_rpc_session\\\":\\\"$SID\\\"}'\" | js \"d['ok'] and d['documents']=='42'\""
 
+# --- the desktop view is a module (system app "desktop") ----------------------------------
+me() { run "ubus call shareos.me $1 '$2'"; }
+S1="\"ubus_rpc_session\":\"$SID\""
+check "desktop module not installed: area off, desk_get refused" "run 'ubus call shareos.ui get' | js \"not d['areas']['desktop']\" && me desk_get '{'\"\$S1\"'}' | grep -q 'not installed'"
+check "desktop module: not taken over by the migration" "run 'shareos-apps modules migrate' | js \"'desktop' not in d['installed']\" && [ ! -e $R/opt/shareos/sysapps/desktop ]"
+(cd "$TOP/sysapps/desktop" && tar -cf - app.json icon.svg | gzip -c > "$R/tmp/desktop.sapp")
+check "desktop module: installed from its package, area on" "run 'shareos-apps install-file /tmp/desktop.sapp' | js \"d['ok'] and d['module']\" && run 'ubus call shareos.ui get' | js \"d['areas']['desktop']\""
+check "desktop: empty layout at first" "me desk_get '{'\"\$S1\"'}' | js \"d['desk']=={}\""
+DESK='{"v":1,"open":[{"id":"storage","max":true}],"geo":{"storage":{"x":40,"y":80,"w":900,"h":600}},"wall":{"root":"home","path":"Bilder","name":"berg.jpg","fit":"cover"}}'
+check "desktop: layout saved for the account" "me desk_set '{\"desk\":'\"\$DESK\"','\"\$S1\"'}' | js \"d['ok']\" && [ -f $R/etc/shareos/desktop/anna.json ] && [ \"\$(stat -c %a $R/etc/shareos/desktop)\" = 700 ]"
+check "desktop: layout read back" "me desk_get '{'\"\$S1\"'}' | js \"d['desk']['open'][0]['id']=='storage' and d['desk']['wall']['name']=='berg.jpg' and d['desk']['geo']['storage']['w']==900\""
+BIG=$(python3 -c "import json; print(json.dumps({'v': 1, 'x': 'a' * 17000}))")
+check "desktop: too large refused" "me desk_set '{\"desk\":'\"\$BIG\"','\"\$S1\"'}' | grep -q 'too large'"
+check "desktop: without a bound session refused" "run \"ubus call shareos.me desk_get '{}'\" | grep -q 'session not bound'"
+run "shareos-apps remove desktop" >/dev/null
+check "desktop module removed: area off, refused, layout kept" "run 'ubus call shareos.ui get' | js \"not d['areas']['desktop']\" && me desk_get '{'\"\$S1\"'}' | grep -q 'not installed' && [ -f $R/etc/shareos/desktop/anna.json ]"
+check "desktop controller: forget removes the layout" "run 'shareos-desktop forget anna' && [ ! -e $R/etc/shareos/desktop/anna.json ] && ! run 'shareos-desktop forget ../x' >/dev/null"
+
 # --- Cloud is a module (system app "cloud") --------------------------------------------
 check "cloud module not installed: rpc and run refused" "run 'ubus call shareos.cloud status' | grep -q 'not installed' && run 'shareos-cloud run x' | grep -q 'not installed'"
 check "cloud module: not taken over while unused" "[ -f $R/etc/shareos/module-migrated.cloud ] && [ ! -e $R/opt/shareos/sysapps/cloud ]"

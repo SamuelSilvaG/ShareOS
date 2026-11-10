@@ -1878,3 +1878,50 @@ E1501	Filtragem ativa (desligada = só reencaminhar)
 E1502	Cada regra gasta memória (cerca de 0,1 KB). A partir de 300 000 regras, o ShareOS avisa.
 E1503	O filtro DNS (AdGuard Home) também é um módulo: separador FILTRO DNS quando instalado em APPS.
 E1504	Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se.
+E1505	Visualização
+E1506	Clássica
+E1507	Área de trabalho
+E1508	Visualização de área de trabalho
+E1509	Menu Iniciar
+E1510	Janelas abertas
+E1511	Mensagens
+E1512	Pesquisar
+E1513	Menu do usuário
+E1514	Arquivos
+E1515	Armazenamento
+E1516	Painel de controle
+E1517	Loja de apps
+E1518	Gerenciador de tarefas
+E1519	Logs
+E1520	Nuvem
+E1521	Paperless
+E1522	Filtro DNS
+E1523	Acesso e conexão
+E1524	Geral
+E1525	Hora
+E1526	Aparência
+E1527	Papel de parede
+E1528	Energia e redefinição
+E1529	Status
+E1530	Início automático
+E1531	Servidor de mídia
+E1532	Minimizar
+E1533	Maximizar
+E1534	Pesquisar apps e configurações
+E1535	Visualização clássica
+E1536	Nada encontrado.
+E1537	MÓDULOS E APPS
+E1538	Redefinir disposição
+E1539	Redefinir a disposição?
+E1540	Ícones e janelas voltam aos lugares padrão.
+E1541	Pesquisar em todas as configurações
+E1542	Nenhuma unidade ou compartilhamento.
+E1543	Nenhuma imagem nesta pasta.
+E1544	Um papel de parede da caixa precisa da permissão “Arquivos” na sua conta.
+E1545	Uma imagem (JPG, PNG, WebP, GIF) da caixa – salva só para você.
+E1546	AJUSTE DA IMAGEM
+E1547	Preencher
+E1548	Ajustar
+E1549	Lado a lado
+E1550	ShareOS (padrão)
+E1551	Papel de parede salvo.

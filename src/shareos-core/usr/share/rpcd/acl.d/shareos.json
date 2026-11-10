@@ -69,7 +69,8 @@
 				"shareos.me": [
 					"get",
 					"paperless",
-					"cloud"
+					"cloud",
+					"desk_get"
 				],
 				"shareos.paperless": [
 					"get",
@@ -246,7 +247,8 @@
 					"cloud_job_del",
 					"cloud_job_run",
 					"fav_set",
-					"share_ticket"
+					"share_ticket",
+					"desk_set"
 				],
 				"shareos.backup": [
 					"offer",
@@ -355,7 +357,8 @@
 				"shareos.me": [
 					"get",
 					"paperless",
-					"cloud"
+					"cloud",
+					"desk_get"
 				],
 				"shareos.ui": [
 					"get"
@@ -386,7 +389,8 @@
 					"cloud_job_run",
 					"fav_set",
 					"ui_set",
-					"share_ticket"
+					"share_ticket",
+					"desk_set"
 				],
 				"shareos.files": [
 					"mkdir",

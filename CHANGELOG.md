@@ -5,6 +5,18 @@ GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
 ## 0.3.0-beta.5
+## 0.3.0-beta.6
+
+- **Desktop view (new module).** The new system app **"Desktop-Ansicht"** in the store turns the web interface into a desktop in the browser – both views stay: the login page offers **Klassisch** or **Desktop** above *Anmelden* (the last choice is kept), the classic page gets a button to the desktop, the desktop's account menu one back.
+  - **Bar:** start menu (all areas and apps as tiles, search over areas, apps and settings), the open windows, CPU and RAM as rings, network ↑/↓, messages with the number of unread ones, search, account menu (light/dark, look, wallpaper, reset layout, classic view, log out), clock.
+  - **Icons** for every area – Files, Storage, Shares, Services, Control panel, App store, Task manager, Logs, Terminal – plus Cloud, Paperless and DNS filter when they are installed, and the installed web apps. Drag them to another place.
+  - **Windows** show the pages of the interface: move by the title bar, resize at the edges, drag to the left or right edge for a half or to the top to maximise (double click on the title too), minimise into the bar, several at once. The look changes in all windows at once; a window that runs into an expired session brings back the login.
+  - **Control panel** with categories (access & connection, general, services, storage, system) and a search; every setting opens in its own window.
+  - **Wallpaper:** the ShareOS look by default, or an image from the box chosen in a file dialog (fill, fit or tile).
+  - Layout per account on the box (`/etc/shareos/desktop/<account>.json`: open windows, window places, icon places, wallpaper; `shareos.me desk_get`/`desk_set`, at most 16 KB). Plain users get a desktop with *Mein ShareOS*, their files, their apps and their settings.
+  - The pages stay in the firmware (`/www/desktop.js`, `/www/desktop.css`, loaded only for the desktop; the windows show the existing pages with `?frame=1`) – nothing runs on the box for it. Without the module there is no choice on the login page and `desk_get`/`desk_set` answer "not installed". During the first-run wizard and in recovery mode the classic page opens.
+  - Tests: `tests/ui-desktop.js` (Chromium against the mock box, 47 checks: login choice, icons, windows, moving, snapping, resizing, control panel, start menu, wallpaper, look in all windows, layout saved and back after a reload, switching views, plain users, module removed); `test-cloud-paperless` (module install/removal, layout saved per account, size limit, sessions).
+
 
 - **Cloud becomes the third module.** Cloud sync (rclone) is now the system app **"Cloud"** in the store: once installed, the *CLOUD* tab and the cloud part of "My ShareOS" appear; removed, the tab is gone and no scheduled job runs – accounts (`rclone.conf`), jobs and logs stay for a later reinstall. rclone itself is still downloaded to the apps drive when Cloud is set up.
   - **Updating boxes:** a box that used cloud sync (a job, an account of the box or rclone installed, area not switched off) gets the module once at the first start, from a copy in the firmware – no internet needed. Unused, it stays out until installed from the store.

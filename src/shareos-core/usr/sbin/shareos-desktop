@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# shareos-desktop – desktop view of the web interface
+#
+#   shareos-desktop module-configured   exit 1: the desktop view is new, no
+#                                       box used it before it became a module
+#   shareos-desktop module-installed    after installing the module (nothing
+#                                       to set up: the pages are in /www)
+#   shareos-desktop forget <account>    remove the saved layout of an account
+#
+# shareos-module: the desktop view is a module (system app "desktop", see
+# shareos-apps). The pages (/www/desktop.js, /www/desktop.css) and the rpcd
+# methods (shareos.me desk_get/desk_set) stay in the firmware; the login page
+# offers "Desktop" and the methods answer only while it is installed.
+# Layouts: /etc/shareos/desktop/<account>.json (window places, open windows,
+# wallpaper).
+#
+DIR=/etc/shareos/desktop
+
+case "$1" in
+	module-configured)
+		exit 1
+		;;
+	module-installed)
+		mkdir -p "$DIR" && chmod 700 "$DIR"
+		;;
+	forget)
+		case "$2" in ''|*/*|.*) echo "usage: shareos-desktop forget <account>" >&2; exit 2 ;; esac
+		rm -f "$DIR/$2.json"
+		;;
+	*)
+		echo "usage: shareos-desktop module-configured | module-installed | forget <account>" >&2
+		exit 2
+		;;
+esac
