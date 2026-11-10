@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "ТОКЕН БОТА (ОТ @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (бот)",
 		"BEREICHE": "РАЗДЕЛЫ",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Выключено: вкладка исчезает, в том числе у пользователей в «Мой ShareOS», и фоновая работа останавливается (веб-сервер и задачи приложений, плановые облачные задания). Настройки и данные сохраняются; при включении всё возвращается.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Выключено: вкладка исчезает, в том числе у пользователей в «Мой ShareOS», и фоновая работа останавливается (веб-сервер и задачи приложений). Настройки и данные сохраняются; при включении всё возвращается.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Приложения (магазин, веб-приложения, задачи приложений)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Облако (синхронизация с облачными хранилищами)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (входящие папки для Paperless-ngx)",
@@ -1506,7 +1506,8 @@
 		"AdGuard Home öffnen ↗": "Открыть AdGuard Home ↗",
 		"Filterung aktiv (aus = nur weiterleiten)": "Фильтрация включена (выкл. = только пересылать)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Каждое правило занимает память (около 0,1 КБ). Начиная с 300 000 правил ShareOS предупреждает.",
-		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS-фильтр (AdGuard Home) тоже модуль: вкладка DNS-ФИЛЬТР после установки в разделе ПРИЛОЖЕНИЯ."
+		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS-фильтр (AdGuard Home) тоже модуль: вкладка DNS-ФИЛЬТР после установки в разделе ПРИЛОЖЕНИЯ.",
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Облако и DNS-фильтр — модули: их вкладка появляется после установки в разделе ПРИЛОЖЕНИЯ и исчезает при удалении — настройки и данные сохраняются."
 	},
 	"patterns": [
 		[

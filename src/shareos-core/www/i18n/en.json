@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "BOT TOKEN (FROM @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (bot)",
 		"BEREICHE": "AREAS",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Switched off: the tab disappears, also for users in “My ShareOS”, and the background work rests (apps web server and app tasks, scheduled cloud jobs). Settings and data stay; switching on brings everything back.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "Switched off: the tab disappears, also for users in “My ShareOS”, and the background work rests (apps web server and app tasks). Settings and data stay; switching on brings everything back.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "Apps (app store, web apps, app tasks)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "Cloud (sync with cloud storage)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (inboxes for Paperless-ngx)",
@@ -1506,7 +1506,8 @@
 		"AdGuard Home öffnen ↗": "Open AdGuard Home ↗",
 		"Filterung aktiv (aus = nur weiterleiten)": "Filtering on (off = only forward)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Every rule costs memory (about 0.1 KB). From 300,000 rules on, ShareOS warns.",
-		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "The DNS filter (AdGuard Home) is a module too: DNS FILTER tab once it is installed under APPS."
+		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "The DNS filter (AdGuard Home) is a module too: DNS FILTER tab once it is installed under APPS.",
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud and the DNS filter are modules: their tab appears when they are installed under APPS and disappears when removed – settings and data stay."
 	},
 	"patterns": [
 		[

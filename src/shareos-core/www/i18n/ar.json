@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "رمز البوت (من @BOTFATHER)",
 		"Telegram (Bot)": "Telegram (بوت)",
 		"BEREICHE": "الأقسام",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "عند الإيقاف: يختفي التبويب، حتى للمستخدمين في «ShareOS الخاص بي»، ويتوقف العمل في الخلفية (خادم ويب التطبيقات ومهامها، ومهام السحابة المجدولة). تبقى الإعدادات والبيانات؛ والتشغيل يعيد كل شيء.",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "عند الإيقاف: يختفي التبويب، حتى للمستخدمين في «ShareOS الخاص بي»، ويتوقف العمل في الخلفية (خادم ويب التطبيقات ومهامها). تبقى الإعدادات والبيانات؛ والتشغيل يعيد كل شيء.",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "التطبيقات (المتجر، تطبيقات الويب، مهام التطبيقات)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "السحابة (مزامنة مع التخزين السحابي)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (مجلدات وارد لـ Paperless-ngx)",
@@ -1506,7 +1506,8 @@
 		"AdGuard Home öffnen ↗": "فتح AdGuard Home ↗",
 		"Filterung aktiv (aus = nur weiterleiten)": "التصفية مفعّلة (إيقاف = تمرير فقط)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "كل قاعدة تستهلك ذاكرة (نحو 0.1 كيلوبايت). من 300000 قاعدة يحذّر ShareOS.",
-		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "مرشّح DNS (AdGuard Home) وحدة أيضًا: تبويب مرشّح DNS بعد تثبيته ضمن التطبيقات."
+		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "مرشّح DNS (AdGuard Home) وحدة أيضًا: تبويب مرشّح DNS بعد تثبيته ضمن التطبيقات.",
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless والسحابة ومرشّح DNS وحدات: يظهر تبويبها عند تثبيتها ضمن التطبيقات ويختفي عند إزالتها – تبقى الإعدادات والبيانات."
 	},
 	"patterns": [
 		[

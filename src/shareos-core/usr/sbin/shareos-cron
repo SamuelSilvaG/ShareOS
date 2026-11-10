@@ -17,8 +17,8 @@
 # every 5 minutes) and the renewal of the web certificate (own CA or Let's
 # Encrypt, daily). Areas
 # switched off under System -> Appearance
-# (shareos.ui.area_apps/area_cloud = 0) get no entries, nor modules that are
-# not installed (Paperless: system app "paperless").
+# (shareos.ui.area_apps = 0) get no entries, nor modules that are not
+# installed (system apps "paperless", "cloud").
 #
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 TAB=/etc/crontabs/root
@@ -42,7 +42,7 @@ entries() {
 		i=$(uci -q get paperless.global.interval); echo "$i" | grep -qE '^[0-9]+$' && [ "$i" -ge 1 ] && [ "$i" -le 60 ] || i=2
 		echo "*/$i * * * * /usr/sbin/shareos-paperless run >/dev/null 2>&1"
 	fi
-	area_on cloud && for j in $(uci -q show cloud | sed -n "s/^cloud\.\([^.=]*\)=job$/\1/p"); do
+	module_on cloud && for j in $(uci -q show cloud | sed -n "s/^cloud\.\([^.=]*\)=job$/\1/p"); do
 		[ "$(uci -q get cloud."$j".enabled)" = 0 ] && continue
 		s=$(uci -q get cloud."$j".schedule)
 		echo "$s" | grep -qE '^[0-9*/,-]+( [0-9*/,-]+){4}$' || continue

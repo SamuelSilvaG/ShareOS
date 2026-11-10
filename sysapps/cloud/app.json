@@ -1,0 +1,19 @@
+{
+	"id": "cloud",
+	"name": "Cloud",
+	"version": "1.0.0",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "Abgleich mit Cloud-Speichern über rclone: Nextcloud, WebDAV, Google Drive, OneDrive, Dropbox, S3 und viele mehr – Hochladen, Herunterladen oder Spiegeln, nach Zeitplan und mit Bandbreitengrenze, für die Box und (wenn erlaubt) für jeden Benutzer. Modul: Installiert erscheint der Reiter CLOUD und der Abschnitt in „Mein ShareOS“. rclone selbst lädt die Box beim ersten Einrichten auf das Apps-Laufwerk. Entfernen behält Konten und Aufträge.",
+		"en": "Sync with cloud storage through rclone: Nextcloud, WebDAV, Google Drive, OneDrive, Dropbox, S3 and many more – upload, download or mirror, on a schedule and with a bandwidth limit, for the box and (when allowed) for every user. Module: once installed, the CLOUD tab and its part of “My ShareOS” appear. The box downloads rclone itself to the apps drive when it is set up. Removing it keeps accounts and jobs."
+	},
+	"type": "system",
+	"module": "cloud",
+	"commands": [],
+	"flash": true,
+	"icon": "icon.svg",
+	"category": "network",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://rclone.org/",
+	"min_shareos": "0.3.0-beta.5"
+}

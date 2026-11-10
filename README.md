@@ -94,7 +94,7 @@ Version in brackets = first release with the feature.
 - System apps: native programs for the terminal from the store – nano, htop (0.2.0-beta.1); strace, iperf3 (0.2.0-beta.2); bash (0.2.0-beta.5); store in sections with search (0.2.0-beta.5)
 - Feature lock 0.2.0-beta.2: faster interface (results kept between requests, store refresh in the background), smaller system without OpenSSL, GIO and unused tools
 - App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (0.2.0-beta.1)
-- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4); a subfolder of a share as the local folder, picked in a folder browser (0.3.0-beta.2)
+- Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4); a subfolder of a share as the local folder, picked in a folder browser (0.3.0-beta.2); a module from the store since 0.3.0-beta.5
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4); a module from the store since 0.3.0-beta.3 – the tab is there only when it is installed
 - DNS filter with AdGuard Home (module from the store, 0.3.0-beta.4): the box answers the network's DNS and blocks ads, trackers and malicious sites, encrypted to the internet; about 40 MB of RAM with the default list
 - Installable as an app (PWA), status address for widget apps (beta.4)
@@ -126,7 +126,7 @@ Version in brackets = first release with the feature.
 - Start log: the logs of the last 3 starts are kept on the flash (System → Protokolle → *Start-Protokoll*), so a box that was unreachable after a start can be looked into afterwards (0.2.0-beta.15)
 - Reset button: access reset (5–10 s: network, root password, certificate) or factory reset (≥ 15 s), USB button removes USB drives (beta.9) or copies them into a dated folder (0.2.0-beta.12); the buttons work again on the DNS-320L and DNS-325 (0.2.0-beta.10)
 - Messages: RAID, volumes, temperature, SMART, updates, failed cloud jobs and app tasks – in the interface, by e-mail (SMTP) and push (ntfy, Gotify, webhook) (beta.9), Telegram bot (beta.12)
-- Terminal in the browser (System → Terminal, root shell, beta.12); Apps and Cloud can be switched off (beta.12); Paperless is a module (0.3.0-beta.3)
+- Terminal in the browser (System → Terminal, root shell, beta.12); Apps can be switched off (beta.12); Paperless, Cloud and the DNS filter are modules from the store (0.3.0-beta.3 … beta.5)
 - Services with autostart, fan curve and LEDs, logs, settings backup and restore (JSON, optionally AES-256; recovery mode picks users, shares, services, apps, certificate and own CA), messages that can be closed
 - Look: light/dark/system, accent colours, tiles or tables, per user; Appearance page in two columns on wide screens (0.2.0-beta.10)
 - FAV APPS: favourite apps per account as an icon bar above the overview status, the installed apps and in *Mein ShareOS* (with names or icons only, 0.2.0-beta.10)

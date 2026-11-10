@@ -1224,7 +1224,7 @@ E965	ID DU CHAT
 E966	JETON DU BOT (DE @BOTFATHER)
 E967	Telegram (bot)
 E968	ZONES
-E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps, tâches cloud planifiées). Réglages et données sont conservés ; réactiver remet tout en marche.
+E969	Désactivé : l’onglet disparaît, aussi pour les utilisateurs dans « Mon ShareOS », et le travail en arrière-plan s’arrête (serveur web des apps et tâches des apps). Réglages et données sont conservés ; réactiver remet tout en marche.
 E970	Apps (boutique, apps web, tâches des apps)
 E971	Cloud (synchronisation avec le stockage en ligne)
 E972	Paperless (dossiers d’entrée pour Paperless-ngx)
@@ -1877,3 +1877,4 @@ E1500	Ouvrir AdGuard Home ↗
 E1501	Filtrage actif (désactivé = transfert seul)
 E1502	Chaque règle coûte de la mémoire (environ 0,1 Ko). À partir de 300 000 règles, ShareOS avertit.
 E1503	Le filtre DNS (AdGuard Home) est aussi un module : onglet FILTRE DNS une fois installé sous APPS.
+E1504	Paperless, Cloud et le filtre DNS sont des modules : leur onglet apparaît une fois installés sous APPS et disparaît quand on les retire – réglages et données sont conservés.

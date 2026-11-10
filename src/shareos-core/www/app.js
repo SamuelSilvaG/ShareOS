@@ -3346,12 +3346,11 @@ const SYS = {
 		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">BEREICHE</span><span class="tag ml">gilt für alle</span></div>
 			<div style="display:grid;gap:6px">
-				${[['apps', 'Apps (App-Store, Web-Apps, Aufgaben der Apps)'], ['cloud', 'Cloud (Abgleich mit Cloud-Speichern)']].map(([k, t]) =>
+				${[['apps', 'Apps (App-Store, Web-Apps, Aufgaben der Apps)']].map(([k, t]) =>
 					html`<label class="chk"><input type="checkbox" class="opt-area" data-area="${k}"${tabOn(k) ? raw(' checked') : ''}>${t}</label>`)}
 			</div>
-			<p class="note">Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.</p>
-			<p class="note">Paperless ist ein Modul: Es erscheint, wenn es unter APPS installiert ist, und verschwindet beim Entfernen (Einstellungen und Ordner bleiben).</p>
-			<p class="note">Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.</p>
+			<p class="note">Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.</p>
+			<p class="note">Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.</p>
 		</div>
 		<div class="panel" style="max-width:560px;margin-top:16px">
 			<div class="ph"><span class="pt">LOGO</span><span class="tag ml">gilt für alle</span></div>
