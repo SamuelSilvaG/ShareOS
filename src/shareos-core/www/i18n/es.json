@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "Filtrado activo (desactivado = solo reenviar)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan."
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "PUERTO HTTPS DE LA INTERFAZ DE ADGUARD",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "Sin certificado del equipo, solo sin cifrar (HTTP).",
+		"Lokale Namen": "Nombres locales",
+		"Lokale Domäne": "Dominio local",
+		"DNS-Server des Netzwerks": "Servidor DNS de la red",
+		"System → Netzwerk": "Sistema → Red"
 	},
 	"patterns": [
 		[

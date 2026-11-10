@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "Filtering on (off = only forward)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Every rule costs memory (about 0.1 KB). From 300,000 rules on, ShareOS warns.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "The DNS filter (AdGuard Home) is a module too: DNS FILTER tab once it is installed under APPS.",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud and the DNS filter are modules: their tab appears when they are installed under APPS and disappears when removed – settings and data stay."
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud and the DNS filter are modules: their tab appears when they are installed under APPS and disappears when removed – settings and data stay.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "HTTPS PORT OF THE ADGUARD INTERFACE",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "Encrypted (HTTPS) with the box's certificate; HTTP requests are redirected.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "Encrypted (HTTPS) with the box's self-signed certificate – the browser warns as with the interface. HTTP is only redirected once the box has a trusted certificate (own CA or Let's Encrypt under",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "Without a certificate of the box only unencrypted (HTTP).",
+		"Lokale Namen": "Local names",
+		"Lokale Domäne": "Local domain",
+		"DNS-Server des Netzwerks": "DNS server of the network",
+		"System → Netzwerk": "System → Network"
 	},
 	"patterns": [
 		[

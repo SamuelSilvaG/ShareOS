@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "ফিল্টারিং চালু (বন্ধ = শুধু ফরোয়ার্ড)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "প্রতিটি নিয়ম মেমরি নেয় (প্রায় 0.1 KB)। 300,000 নিয়ম থেকে ShareOS সতর্ক করে।",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS ফিল্টারও (AdGuard Home) একটি মডিউল: APPS-এ ইনস্টল হলে DNS ফিল্টার ট্যাব আসে।",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, ক্লাউড ও DNS ফিল্টার মডিউল: APPS-এ ইনস্টল করলে এদের ট্যাব দেখা যায় এবং সরালে চলে যায় – সেটিংস ও ডেটা থাকে।"
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, ক্লাউড ও DNS ফিল্টার মডিউল: APPS-এ ইনস্টল করলে এদের ট্যাব দেখা যায় এবং সরালে চলে যায় – সেটিংস ও ডেটা থাকে।",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "ADGUARD ইন্টারফেসের HTTPS পোর্ট",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "ডিভাইসের সার্টিফিকেট দিয়ে এনক্রিপ্ট করা (HTTPS); HTTP অনুরোধ রিডাইরেক্ট হয়।",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "ডিভাইসের স্ব-স্বাক্ষরিত সার্টিফিকেট দিয়ে এনক্রিপ্ট করা (HTTPS) – ব্রাউজার ইন্টারফেসের মতোই সতর্ক করে। ডিভাইসের বিশ্বস্ত সার্টিফিকেট থাকলে তবেই HTTP রিডাইরেক্ট হয় (নিজস্ব CA বা Let's Encrypt, এখানে:",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "ডিভাইসের সার্টিফিকেট ছাড়া শুধু এনক্রিপশন ছাড়া (HTTP)।",
+		"Lokale Namen": "স্থানীয় নাম",
+		"Lokale Domäne": "স্থানীয় ডোমেইন",
+		"DNS-Server des Netzwerks": "নেটওয়ার্কের DNS সার্ভার",
+		"System → Netzwerk": "সিস্টেম → নেটওয়ার্ক"
 	},
 	"patterns": [
 		[

@@ -1878,3 +1878,11 @@ E1501	Filtrado activo (desactivado = solo reenviar)
 E1502	Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.
 E1503	El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.
 E1504	Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan.
+E1505	PUERTO HTTPS DE LA INTERFAZ DE ADGUARD
+E1506	Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.
+E1507	Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en
+E1508	Sin certificado del equipo, solo sin cifrar (HTTP).
+E1509	Nombres locales
+E1510	Dominio local
+E1511	Servidor DNS de la red
+E1512	Sistema → Red

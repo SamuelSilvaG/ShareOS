@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "过滤已开启（关闭 = 仅转发）",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "每条规则都占用内存（约 0.1 KB）。超过 300,000 条规则时 ShareOS 会警告。",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS 过滤（AdGuard Home）也是一个模块：在“应用”中安装后出现“DNS 过滤”标签页。",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless、云和 DNS 过滤都是模块：在“应用”中安装后出现对应标签页，移除后消失——设置和数据保留。"
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless、云和 DNS 过滤都是模块：在“应用”中安装后出现对应标签页，移除后消失——设置和数据保留。",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "ADGUARD 界面的 HTTPS 端口",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "使用设备证书加密（HTTPS）；HTTP 访问会被重定向。",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "使用设备的自签名证书加密（HTTPS）——浏览器会像访问管理界面时一样发出警告。只有当设备拥有受信任的证书（自有 CA 或 Let's Encrypt，见",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "没有设备证书时仅能以未加密方式（HTTP）访问。",
+		"Lokale Namen": "本地名称",
+		"Lokale Domäne": "本地域",
+		"DNS-Server des Netzwerks": "网络的 DNS 服务器",
+		"System → Netzwerk": "系统 → 网络"
 	},
 	"patterns": [
 		[

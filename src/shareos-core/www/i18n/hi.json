@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "फ़िल्टरिंग चालू (बंद = केवल आगे भेजें)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "हर नियम मेमोरी लेता है (लगभग 0.1 KB)। 3,00,000 नियमों से ShareOS चेतावनी देता है।",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS फ़िल्टर (AdGuard Home) भी एक मॉड्यूल है: APPS में इंस्टॉल होते ही DNS फ़िल्टर टैब।",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, क्लाउड और DNS फ़िल्टर मॉड्यूल हैं: APPS में इंस्टॉल होने पर इनका टैब दिखता है और हटाने पर गायब हो जाता है – सेटिंग्स और डेटा बने रहते हैं।"
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, क्लाउड और DNS फ़िल्टर मॉड्यूल हैं: APPS में इंस्टॉल होने पर इनका टैब दिखता है और हटाने पर गायब हो जाता है – सेटिंग्स और डेटा बने रहते हैं।",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "ADGUARD इंटरफ़ेस का HTTPS पोर्ट",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "डिवाइस के प्रमाणपत्र से एन्क्रिप्टेड (HTTPS); HTTP अनुरोध रीडायरेक्ट होते हैं।",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "डिवाइस के स्व-हस्ताक्षरित प्रमाणपत्र से एन्क्रिप्टेड (HTTPS) – ब्राउज़र इंटरफ़ेस की तरह चेतावनी देता है। HTTP तभी रीडायरेक्ट होता है जब डिवाइस के पास भरोसेमंद प्रमाणपत्र हो (अपना CA या Let's Encrypt, यहाँ:",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "डिवाइस के प्रमाणपत्र के बिना केवल बिना एन्क्रिप्शन (HTTP)।",
+		"Lokale Namen": "स्थानीय नाम",
+		"Lokale Domäne": "स्थानीय डोमेन",
+		"DNS-Server des Netzwerks": "नेटवर्क का DNS सर्वर",
+		"System → Netzwerk": "सिस्टम → नेटवर्क"
 	},
 	"patterns": [
 		[

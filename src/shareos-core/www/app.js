@@ -1369,8 +1369,13 @@ function dnsfilterView() {
 					<li>Keinen zweiten DNS-Server eintragen, sonst fragen Geräte an der Box vorbei. Ist die Box aus oder startet neu, haben die Geräte so lange kein DNS.</li>
 					<li>Feineinstellungen, Abfrageprotokoll und Statistik in der Oberfläche von AdGuard Home.</li>
 				</ol>
-				<div class="acts">${d.ready ? html`<a class="btn" href="http://${host}:${d.web_port}/" target="_blank" rel="noopener">AdGuard Home öffnen ↗</a>` : ''}
+				<div class="acts">${d.ready ? html`<a class="btn" href="${d.https ? `https://${host}:${d.https_port}/` : `http://${host}:${d.web_port}/`}" target="_blank" rel="noopener">AdGuard Home öffnen ↗</a>` : ''}
 					<button class="btn" type="button" data-act="df-pass">Zugangsdaten anzeigen</button></div>
+				${d.ready ? html`<p class="note">${d.https_forced ? 'Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.'
+					: d.https ? html`<span>Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter</span> <a href="#/system/network">System → Netzwerk</a>).`
+					: 'Ohne Zertifikat der Box nur unverschlüsselt (HTTP).'}</p>` : ''}
+				${d.ready && d.local?.names?.length ? html`<dl class="kv" style="margin-top:12px"><dt>Lokale Namen</dt><dd><code>${d.local.names.join(', ')}</code> → <code>${d.local.ip}</code></dd>
+					${(d.local.domains || []).map((x) => html`<dt>Lokale Domäne</dt><dd><code>${x}</code> → <span>DNS-Server des Netzwerks</span></dd>`)}</dl>` : ''}
 				${S.dfPass ? html`<dl class="kv" style="margin-top:12px"><dt>Benutzer</dt><dd><code>${S.dfPass.user}</code></dd><dt>Passwort</dt><dd><code>${S.dfPass.password}</code></dd></dl>` : ''}
 			</div>
 		</div>
@@ -1384,6 +1389,7 @@ function dnsfilterView() {
 		</div>` : ''}
 		<div class="fields" style="margin-top:12px">
 			<label class="f"><span>PORT DER ADGUARD-OBERFLÄCHE</span><input name="web_port" type="number" min="1024" max="65535" value="${d.web_port}"></label>
+			<label class="f"><span>HTTPS-PORT DER ADGUARD-OBERFLÄCHE</span><input name="https_port" type="number" min="1024" max="65535" value="${d.https_port || d.web_port + 1}"></label>
 		</div>
 		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
 	</form></section>
@@ -3733,7 +3739,7 @@ const VIEWS_AFTER = {
 		if (!S.df) { loadDnsfilter(); return; }
 		$('#f-df')?.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			const f = e.target, args = { enabled: f.enabled.checked, web_port: +f.web_port.value };
+			const f = e.target, args = { enabled: f.enabled.checked, web_port: +f.web_port.value, https_port: +f.https_port.value };
 			if (f.protection) args.protection = f.protection.checked;
 			if (f.upstream) args.upstream = f.upstream.value.split('\n').map((x) => x.trim()).filter(Boolean);
 			try {

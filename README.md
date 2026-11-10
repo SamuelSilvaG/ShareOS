@@ -96,7 +96,7 @@ Version in brackets = first release with the feature.
 - App data per account in the browser, file dialog of the box for apps (WinWeb Player plays music from the box) (0.2.0-beta.1)
 - Cloud sync with rclone (Nextcloud/WebDAV, S3, SFTP, Google Drive …) for the device and per user, with schedule and bandwidth limit (beta.4); a subfolder of a share as the local folder, picked in a folder browser (0.3.0-beta.2); a module from the store since 0.3.0-beta.5
 - Paperless-ngx: inbox folders per user or shared (e.g. for a scanner), upload through the Paperless API (beta.4); a module from the store since 0.3.0-beta.3 – the tab is there only when it is installed
-- DNS filter with AdGuard Home (module from the store, 0.3.0-beta.4): the box answers the network's DNS and blocks ads, trackers and malicious sites, encrypted to the internet; about 40 MB of RAM with the default list
+- DNS filter with AdGuard Home (module from the store, 0.3.0-beta.4): the box answers the network's DNS and blocks ads, trackers and malicious sites, encrypted to the internet; about 40 MB of RAM with the default list; the interface over HTTPS, and the box keeps its local name (0.3.0-beta.5)
 - Installable as an app (PWA), status address for widget apps (beta.4)
 - "Share with" on Android: the installed app saves shared photos, files and links into `Geteilt` in the personal folder (0.2.0-beta.11)
 - Remote access with Tailscale (system app `tailscaled`, starts by itself, admins only, permission `tailscale` for apps): the box in a tailnet without port forwarding, also behind DS-Lite (0.2.0-beta.7)

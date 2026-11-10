@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "Filtragem ativa (desligada = só reencaminhar)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Cada regra gasta memória (cerca de 0,1 KB). A partir de 300 000 regras, o ShareOS avisa.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "O filtro DNS (AdGuard Home) também é um módulo: separador FILTRO DNS quando instalado em APPS.",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se."
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "PORTA HTTPS DA INTERFACE DO ADGUARD",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "Criptografado (HTTPS) com o certificado do aparelho; acessos por HTTP são redirecionados.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "Criptografado (HTTPS) com o certificado autoassinado do aparelho – o navegador avisa como na interface. O HTTP só é redirecionado quando o aparelho tem um certificado confiável (CA própria ou Let’s Encrypt em",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "Sem certificado do aparelho, só sem criptografia (HTTP).",
+		"Lokale Namen": "Nomes locais",
+		"Lokale Domäne": "Domínio local",
+		"DNS-Server des Netzwerks": "Servidor DNS da rede",
+		"System → Netzwerk": "Sistema → Rede"
 	},
 	"patterns": [
 		[

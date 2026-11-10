@@ -96,6 +96,10 @@ check "off after installing" "ub status | js \"d['installed'] and not d['enabled
 check "boot does nothing while off" "df boot | js \"d.get('started')==False\""
 
 # --- first start ----------------------------------------------------------------------
+# local names: host name, search domain and the DNS server from the network
+hostname shareos-t
+run 'rm -f /etc/resolv.conf; printf "search test.lan\nnameserver 10.9.8.7\n" > /etc/resolv.conf'
+BOXIP=$(ip -4 -o addr show dev eth0 2>/dev/null | sed -n 's/.*inet \([0-9.]*\).*/\1/p' | head -1)
 check "switch on: starts in the background" "ub set '{\"enabled\":true}' | js \"d.get('ok')\""
 wait_ready 180
 check "first start: running and ready" "ub status | js \"d['ready'] and d['web_port']==8053 and d['version']\""
@@ -110,6 +114,32 @@ PW=$(ub password | python3 -c 'import json,sys; print(json.load(sys.stdin)["pass
 check "AdGuard's interface: login with that password" "curl -s -o /dev/null -w '%{http_code}' -u admin:$PW http://127.0.0.1:8053/control/status | grep -q 200"
 check "AdGuard's interface: wrong password refused" "curl -s -o /dev/null -w '%{http_code}' -u admin:wrong http://127.0.0.1:8053/control/status | grep -q 401"
 check "lists: the default lists of AdGuard" "ub filters | js \"len(d['filters'])>=1\""
+# the rewrites are set right after AdGuard answers (the start runs in the background)
+i=0; until [ -s $R/etc/shareos/dnsfilter/local.json ] || [ $i -ge 60 ]; do sleep 1; i=$((i + 1)); done
+check "local names: the box answers for its own names" "[ -n \"$BOXIP\" ] && [ \"\$(dnsq shareos-t.test.lan)\" = $BOXIP ] && [ \"\$(dnsq shareos-t)\" = $BOXIP ]"
+check "local names: the local domain goes to the network's DNS server, hidden from the upstream list" "curl -s -u admin:$PW http://127.0.0.1:8053/control/dns_info | js \"'[/test.lan/]10.9.8.7' in d['upstream_dns']\" && ub status | js \"d['local']['names']==['shareos-t','shareos-t.test.lan'] and d['local']['domains']==['test.lan'] and not [u for u in d['upstream'] if u.startswith('[/')]\""
+
+# --- HTTPS of AdGuard's interface: the certificate of the web interface ---------------
+check "https: off without a certificate" "ub status | js \"d['https']==False and d['https_port']==8054\" && grep -A2 '^tls:' $Y | grep -q 'enabled: false'"
+run 'shareos-cert selfsigned' >/dev/null
+i=0; until curl -sk -o /dev/null https://127.0.0.1:8054/ 2>/dev/null || [ $i -ge 120 ]; do sleep 1; i=$((i + 1)); done; wait_ready 120
+check "https: self-signed certificate → HTTPS on 8054, HTTP not redirected (no HSTS)" "ub status | js \"d['ready'] and d['https'] and not d['https_forced']\" && curl -sk -o /dev/null -w '%{http_code}' https://127.0.0.1:8054/login.html | grep -q 200 && curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8053/login.html | grep -q 200 && ! curl -skI https://127.0.0.1:8054/login.html | grep -qi strict-transport"
+check "https: DNS over TLS and QUIC stay off" "grep -A6 '^tls:' $Y | grep -q 'port_dns_over_tls: 0' && grep -A6 '^tls:' $Y | grep -q 'port_dns_over_quic: 0' && ! python3 -c 'import socket; socket.create_connection((\"127.0.0.1\",853),2)' 2>/dev/null"
+# a certificate of a CA (issuer differs from the subject), like the own CA or Let's Encrypt
+C=$T/ca; mkdir -p $C
+openssl ecparam -name prime256v1 -genkey -noout -out $C/ca.key 2>/dev/null
+openssl req -new -x509 -key $C/ca.key -out $C/ca.crt -days 30 -subj '/CN=Test CA' 2>/dev/null
+openssl ecparam -name prime256v1 -genkey -noout -out $C/web.key 2>/dev/null
+openssl req -new -key $C/web.key -out $C/web.csr -subj '/CN=shareos' 2>/dev/null
+printf 'subjectAltName=DNS:shareos,IP:127.0.0.1\n' > $C/ext
+openssl x509 -req -in $C/web.csr -CA $C/ca.crt -CAkey $C/ca.key -CAcreateserial -out $C/web.crt -days 30 -extfile $C/ext 2>/dev/null
+cp $C/web.crt $C/web.key $R/tmp/
+o=$(run 'shareos-cert install /tmp/web.crt /tmp/web.key')
+i=0; until curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8053/login.html 2>/dev/null | grep -q 307 || [ $i -ge 120 ]; do sleep 1; i=$((i + 1)); done; wait_ready 120
+check "https: trusted certificate → HTTP redirects to HTTPS (same host name)" "echo \"\$o\" | grep -q installed && ub status | js \"d['ready'] and d['https_forced']\" && curl -s -o /dev/null -w '%{redirect_url}' -H 'Host: shareos.lan:8053' http://127.0.0.1:8053/login.html | grep -qx 'https://shareos.lan:8054/login.html'"
+check "https: AdGuard serves the new certificate" "echo | openssl s_client -connect 127.0.0.1:8054 2>/dev/null | grep -q 'issuer=CN.*Test CA'"
+check "https: the controller still talks to AdGuard (over HTTPS)" "ub filters | js \"len(d['filters'])>=1\""
+check "https: the same port as HTTP refused" "ub set '{\"https_port\":8053}' | grep -q 'must differ'"
 
 # --- block lists ----------------------------------------------------------------------
 check "list added" "ub filter_add '{\"name\":\"Test\",\"url\":\"http://127.0.0.1:$LPORT/list.txt\"}' | js \"[f for f in d['filters'] if f['name']=='Test' and f['rules']==3]\""
@@ -122,10 +152,13 @@ check "lists refreshed" "ub refresh | js \"'filters' in d\""
 
 # --- settings -------------------------------------------------------------------------
 check "upstream set" "ub set '{\"upstream\":[\"https://dns.quad9.net/dns-query\",\"1.1.1.1\"]}' | js \"d['upstream']==['https://dns.quad9.net/dns-query','1.1.1.1']\""
+check "upstream set: the local domain stays" "run 'shareos-dnsfilter status' | js \"d['local']['domains']==['test.lan']\" && [ \"\$(dnsq shareos-t.test.lan)\" = $BOXIP ]"
+hostname shareos-u
+check "host name changed: rewrites follow (old name gone)" "df local-names | js \"d['names']==['shareos-u','shareos-u.test.lan']\" && [ \"\$(dnsq shareos-u.test.lan)\" = $BOXIP ] && [ \"\$(dnsq shareos-t.test.lan)\" != $BOXIP ]"
 check "invalid upstream refused" "ub set '{\"upstream\":[\"rm -rf /\"]}' | grep -q 'invalid upstream'"
 check "port of the box refused" "ub set '{\"web_port\":443}' | grep -q 'not a port of the box'"
 check "filtering paused and on again" "ub set '{\"protection\":false}' | js \"d['protection']==False\" && ub set '{\"protection\":true}' | js \"d['protection']==True\""
-check "web port changed: restarted on the new port" "ub set '{\"web_port\":8063}' | js \"d['ready'] and d['web_port']==8063\" && curl -s -o /dev/null -w '%{http_code}' -u admin:$PW http://127.0.0.1:8063/control/status | grep -q 200"
+check "web port changed: restarted on the new ports (HTTPS one above)" "ub set '{\"web_port\":8063}' | js \"d['ready'] and d['web_port']==8063 and d['https_port']==8064\" && curl -s -o /dev/null -w '%{http_code}' -u admin:$PW http://127.0.0.1:8063/control/status | grep -q 307 && curl -sk -o /dev/null -w '%{http_code}' -u admin:$PW https://127.0.0.1:8064/control/status | grep -q 200"
 check "settings kept over a restart" "df restart | js \"d['ready'] and d['upstream'][0]=='https://dns.quad9.net/dns-query'\""
 
 # --- switching off, boot, removal -------------------------------------------------------

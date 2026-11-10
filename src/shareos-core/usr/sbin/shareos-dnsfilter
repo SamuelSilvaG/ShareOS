@@ -16,6 +16,8 @@
 //   shareos-dnsfilter stop-all         stop (system app removed, shutdown)
 //   shareos-dnsfilter restart | stop
 //   shareos-dnsfilter log              the last lines of AdGuard Home's log
+//   shareos-dnsfilter reload-cert      the web certificate changed: restart if running
+//   shareos-dnsfilter local-names      set the rewrites for the box and the local domains again
 //   shareos-dnsfilter module-installed | module-configured   (shareos-apps)
 //
 // shareos-service: boot start stop-all
@@ -26,6 +28,23 @@
 // port 53 of the box and blocks advertising, trackers and malware with block
 // lists; its own interface runs on web_port (default 8053, user "admin", a
 // random password in /etc/shareos/dnsfilter.pass, root only).
+//
+// Local names: clients that ask the box for DNS still reach the box and the
+// other devices by their local names. After every start the box sets DNS
+// rewrites for its own names (host name, host name + the search domains of
+// /etc/resolv.conf, shareos.web.host) to its IPv4 address, and sends queries
+// for the local domains ([/<domain>/]) to the DNS servers it got from the
+// network (the router). Both are kept apart from the upstream servers set
+// in the web interface; the names set last are in LOCAL_STATE.
+//
+// HTTPS: AdGuard's interface also runs on https_port (default web_port + 1)
+// with the certificate of the box's web interface (shareos.web.cert/key). With
+// a trusted certificate (own CA, Let's Encrypt or an own one – not the
+// self-signed) plain HTTP redirects to HTTPS; with the self-signed one it does
+// not, because AdGuard then sends HSTS for the host name, and browsers refuse
+// a self-signed certificate under HSTS on every port of that name (the web
+// interface too). DNS over TLS/QUIC stay off; DNS over HTTPS answers on the
+// HTTPS port. shareos-cert restarts AdGuard when the certificate changes.
 //
 // Guard rails for the 256 MB of the box (measured 10.11.2026, see
 // docs/DEVELOPMENT.md): memory grows with the rules (about 0.1 KB each, the
@@ -41,7 +60,7 @@
 // nor a firewall to redirect the port (its own user switch "os.user" drops
 // root before it binds – tried 10.11.2026). Only admins reach its interface.
 //
-// Settings: UCI dnsfilter.main – enabled, web_port, memlimit.
+// Settings: UCI dnsfilter.main – enabled, web_port, https_port, memlimit.
 //
 import { readfile, writefile, unlink, stat, popen, mkdir } from 'fs';
 import { cursor } from 'uci';
@@ -58,6 +77,8 @@ const LOG = RUN + '/log';
 const DATA = RUN + '/data';
 const SETUP_PORT = 3053;
 const WARN_RULES = 300000;
+const LOCAL_STATE = ROOT + '/etc/shareos/dnsfilter/local.json';
+let tls_state = null;   // HTTPS as start() wrote it: {https, force}
 // ports of the box that the interface of AdGuard must not take
 const RESERVED = { '80': 1, '443': 1, '8081': 1, '8444': 1, '3053': 1, '5353': 1, '8384': 1, '9091': 1, '10050': 1, '6060': 1 };
 const UPSTREAM_RE = /^(https:\/\/[A-Za-z0-9.-]+(:[0-9]{1,5})?(\/[A-Za-z0-9._~\/{}-]*)?|(tls|quic):\/\/[A-Za-z0-9.-]+(:[0-9]{1,5})?|[0-9.]{7,15}(:[0-9]{1,5})?|\[[0-9A-Fa-f:]{2,45}\](:[0-9]{1,5})?|[0-9A-Fa-f:]{2,45})$/;
@@ -84,9 +105,11 @@ function conf() {
 	return {
 		enabled: g('enabled') == '1',
 		web_port: +(g('web_port') ?? 8053),
+		https_port: +(g('https_port') ?? (+(g('web_port') ?? 8053) + 1)),
 		memlimit: ml >= 24 && ml <= 128 ? ml : 32
 	};
 }
+
 function set_conf(k, v) {
 	let c = uci();
 	c.set('dnsfilter', 'main', 'dnsfilter');
@@ -134,7 +157,11 @@ function api(method, path, body, port) {
 		writefile(f, sprintf('%J', body));
 		cmd += ' -H "Content-Type: application/json" --data-binary @' + shq(f);
 	}
-	let r = sh(cmd + ' ' + shq(sprintf('http://127.0.0.1:%d/control/%s', p, path)));
+	// with forced HTTPS plain HTTP only redirects: ask the HTTPS port (the
+	// certificate names the box, not 127.0.0.1); if it is not up, plain HTTP
+	let force = port == null && (tls_state?.force ?? match(readfile(CONF) ?? '', /\n  force_https: true\n/));
+	let r = force ? sh(cmd + ' -k ' + shq(sprintf('https://127.0.0.1:%d/control/%s', conf().https_port, path))) : null;
+	if (!r || match(r.out, /\n000$/)) r = sh(cmd + ' ' + shq(sprintf('http://127.0.0.1:%d/control/%s', p, path)));
 	if (f) unlink(f);
 	let lines = split(trim(r.out), '\n');
 	let code = +pop(lines);
@@ -159,6 +186,38 @@ function yaml_set(text, section, key, value) {
 	}
 	if (!done) die('settings of AdGuard Home: ' + section + '.' + key + ' not found');
 	return join('\n', lines);
+}
+
+/* ---------- HTTPS with the certificate of the web interface ---------- */
+
+function cert_files() {
+	let c = uci();
+	let crt = ROOT + (c.get('shareos', 'web', 'cert') ?? '/etc/ssl/shareos/server.crt');
+	let key = ROOT + (c.get('shareos', 'web', 'key') ?? '/etc/ssl/shareos/server.key');
+	return stat(crt)?.size > 0 && stat(key)?.size > 0 ? { crt, key } : null;
+}
+
+// a certificate browsers can trust: issuer differs from the subject (own CA,
+// Let's Encrypt, an own one) – the self-signed one of the box is not
+function cert_trusted() {
+	let i = sh('/usr/sbin/shareos-cert info').out;
+	let iss = match(i, /(^|\n)issuer=([^\n]*)/), sub = match(i, /(^|\n)subject=([^\n]*)/);
+	return !!(iss && sub && iss[2] != sub[2]);
+}
+
+// HTTPS of AdGuard's interface: on with a certificate, forced when trusted
+function tls_settings(y, c) {
+	let f = cert_files(), force = !!f && cert_trusted();
+	y = yaml_set(y, 'tls', 'enabled', f ? 'true' : 'false');
+	y = yaml_set(y, 'tls', 'force_https', force ? 'true' : 'false');
+	y = yaml_set(y, 'tls', 'port_https', '' + c.https_port);
+	y = yaml_set(y, 'tls', 'port_dns_over_tls', '0');
+	y = yaml_set(y, 'tls', 'port_dns_over_quic', '0');
+	y = yaml_set(y, 'tls', 'certificate_path', f ? f.crt : '""');
+	y = yaml_set(y, 'tls', 'private_key_path', f ? f.key : '""');
+	y = yaml_set(y, 'tls', 'certificate_chain', '""');
+	y = yaml_set(y, 'tls', 'private_key', '""');
+	return { y, https: !!f, force };
 }
 
 function own(d) { sh(sprintf('mkdir -p %s && chmod 700 %s', shq(d), shq(d))); }
@@ -204,6 +263,47 @@ function first_setup(work) {
 	writefile(CONF, y);
 }
 
+/* ---------- local names: rewrites for the box, local domains to the router ---------- */
+
+function box_ip() {
+	return match(sh("ip -4 -o addr show dev eth0 2>/dev/null | sed -n 's/.*inet \\([0-9.]*\\).*/\\1/p' | head -1").out, /^([0-9.]+)/)?.[1];
+}
+function local_wanted() {
+	let ip = box_ip(), host = trim(readfile(ROOT + '/proc/sys/kernel/hostname') ?? ''), doms = [], ns = [];
+	for (let l in split(readfile(ROOT + '/etc/resolv.conf') ?? '', '\n')) {
+		let m = match(l, /^(search|domain)\s+(.+)$/);
+		if (m) for (let d in split(trim(m[2]), /\s+/)) if (match(d, /^[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*$/) && index(doms, lc(d)) < 0) push(doms, lc(d));
+		m = match(l, /^nameserver\s+([0-9.]+)\s*$/);
+		if (m && m[1] != ip && substr(m[1], 0, 4) != '127.') push(ns, m[1]);
+	}
+	let names = [];
+	let add = (n) => { n = lc(n ?? ''); if (match(n, /^[a-z0-9-]+(\.[a-z0-9-]+)*$/) && index(names, n) < 0) push(names, n); };
+	if (host) { add(host); for (let d in doms) add(host + '.' + d); }
+	add(uci().get('shareos', 'web', 'host'));
+	return { ip, names: ip ? names : [], upstream: length(ns) ? map(doms, (d) => '[/' + d + '/]' + join(' ', ns)) : [] };
+}
+// managed lines of the upstream list: "[/domain/]servers"
+function managed_line(u) { return substr(u, 0, 2) == '[/'; }
+
+function local_dns() {
+	let w = local_wanted(), old = json(readfile(LOCAL_STATE) || '{}') ?? {};
+	let rw = api('GET', 'rewrite/list');
+	if (!rw.ok) return;
+	for (let e in rw.data ?? []) {
+		let mine = index(old.names ?? [], e.domain) >= 0 || index(w.names, e.domain) >= 0;
+		if (mine && (index(w.names, e.domain) < 0 || e.answer != w.ip)) api('POST', 'rewrite/delete', { domain: e.domain, answer: e.answer });
+	}
+	let have = map(filter(api('GET', 'rewrite/list').data ?? [], (e) => e.answer == w.ip), (e) => e.domain);
+	for (let n in w.names) if (index(have, n) < 0) api('POST', 'rewrite/add', { domain: n, answer: w.ip });
+	let d = api('GET', 'dns_info');
+	if (d.ok) {
+		let ups = filter(d.data?.upstream_dns ?? [], (u) => !managed_line(u));
+		let want = [ ...ups, ...w.upstream ];
+		if (sprintf('%J', want) != sprintf('%J', d.data?.upstream_dns ?? [])) api('POST', 'dns_config', { upstream_dns: want });
+	}
+	writefile(LOCAL_STATE, sprintf('%J', { ip: w.ip, names: w.names, upstream: w.upstream }));
+}
+
 function start() {
 	if (!installed()) die('the system app "dnsfilter" is not installed');
 	if (pid()) return;
@@ -213,13 +313,16 @@ function start() {
 	if (!stat(CONF)) first_setup(work);
 	// the web port may have changed in the settings
 	let c = conf();
-	writefile(CONF, yaml_set(readfile(CONF), 'http', 'address', '0.0.0.0:' + c.web_port));
+	let t = tls_settings(yaml_set(readfile(CONF), 'http', 'address', '0.0.0.0:' + c.web_port), c);
+	writefile(CONF, t.y);
+	tls_state = { https: t.https, force: t.force };
 	own(CONFDIR); own(work); own(RUN); own(DATA);
 	let cmd = sprintf('GOMEMLIMIT=%dMiB exec %s -c %s -w %s --no-check-update --no-permcheck >>%s 2>&1',
 		c.memlimit, shq(BIN), shq(CONF), shq(work), shq(LOG));
 	sh(sprintf('start-stop-daemon -S -b -m -p %s -x /bin/sh -- -c %s', shq(PID), shq(cmd)));
 	if (!wait_for(() => !pid() || api_up(), 90)) die('AdGuard Home does not answer: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
 	if (!pid()) die('AdGuard Home stopped: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
+	local_dns();
 }
 
 function filters() {
@@ -241,6 +344,10 @@ function status() {
 	st.ready = !!up?.ok;
 	st.starting = !!p && !st.ready;
 	st.web_port = c.web_port;
+	st.https_port = c.https_port;
+	let y = readfile(CONF) ?? '';
+	st.https = !!match(y, /\n  enabled: true\n  server_name/) && cert_files() != null;
+	st.https_forced = st.https && !!match(y, /\n  force_https: true\n/);
 	st.memlimit = c.memlimit;
 	st.drive = work_dir() != null;
 	st.version = up?.data?.version ?? null;
@@ -254,7 +361,9 @@ function status() {
 		st.queries = s.data?.num_dns_queries ?? 0;
 		st.blocked = s.data?.num_blocked_filtering ?? 0;
 		let d = api('GET', 'dns_info');
-		st.upstream = d.data?.upstream_dns ?? [];
+		st.upstream = filter(d.data?.upstream_dns ?? [], (u) => !managed_line(u));
+		let l = json(readfile(LOCAL_STATE) || 'null');
+		st.local = type(l) == 'object' ? { ip: l.ip, names: l.names ?? [], domains: map(l.upstream ?? [], (u) => match(u, /^\[\/([^\/]+)\/\]/)?.[1]) } : null;
 		// about 15 MB + 0.1 KB per rule, plus the program (measured 10.11.2026)
 		st.estimate_mb = 25 + int(st.rules / 10000);
 		st.warn = st.rules > WARN_RULES;
@@ -268,12 +377,19 @@ function cmd_set() {
 	let a = stdin_json();
 	if (!a) die('expected a JSON object on stdin');
 	let restart = false;
+	if ((a.web_port ?? conf().web_port) == (a.https_port ?? conf().https_port)) die('the HTTP and the HTTPS port must differ');
 	if (a.web_port != null) {
 		if (type(a.web_port) != 'int' || a.web_port < 1024 || a.web_port > 65535 || RESERVED['' + a.web_port]) die('web_port: 1024 … 65535, not a port of the box');
 		if (a.web_port != conf().web_port) { set_conf('web_port', '' + a.web_port); restart = true; }
 	}
+	if (a.https_port != null) {
+		if (type(a.https_port) != 'int' || a.https_port < 1024 || a.https_port > 65535 || RESERVED['' + a.https_port]) die('https_port: 1024 … 65535, not a port of the box');
+		if (a.https_port != conf().https_port) { set_conf('https_port', '' + a.https_port); restart = true; }
+	}
 	if (a.upstream != null) {
 		if (type(a.upstream) != 'array' || !length(a.upstream) || length(a.upstream) > 8) die('upstream: 1 … 8 servers');
+		a.upstream = filter(a.upstream, (u) => type(u) != 'string' || !managed_line(u));
+		if (!length(a.upstream)) die('upstream: 1 … 8 servers');
 		for (let u in a.upstream) if (type(u) != 'string' || !match(u, UPSTREAM_RE)) die('invalid upstream server: ' + u);
 	}
 	if (a.enabled != null) set_conf('enabled', a.enabled ? '1' : '0');
@@ -284,6 +400,7 @@ function cmd_set() {
 		need_up();
 		let r = api('POST', 'dns_config', { upstream_dns: a.upstream });
 		if (!r.ok) die('upstream: ' + trim(r.text));
+		local_dns();   // the local domains go to the router again
 	}
 	if (a.protection != null) {
 		need_up();
@@ -323,11 +440,13 @@ case 'filter-add': cmd_filter('add'); break;
 case 'filter-remove': cmd_filter('remove'); break;
 case 'filter-enable': cmd_filter('enable'); break;
 case 'refresh': cmd_filter('refresh'); break;
-case 'password': out({ user: 'admin', password: password(), port: conf().web_port }); break;
+case 'password': out({ user: 'admin', password: password(), port: conf().web_port, https_port: conf().https_port }); break;
+case 'local-names': need_up(); local_dns(); out(status().local); break;
+case 'reload-cert': if (pid()) { stop_proc(); if (conf().enabled) start(); } out({ ok: true }); break;
 case 'start': set_conf('enabled', '1'); start(); out(status()); break;
 case 'start-bg':
 	set_conf('enabled', '1');
-	sh('( /usr/sbin/shareos-dnsfilter start >/dev/null 2>&1 & )');
+	sh('mkdir -p ' + shq(RUN) + ' && ( /usr/sbin/shareos-dnsfilter start >' + shq(RUN + '/start.log') + ' 2>&1 & )');
 	out({ ok: true });
 	break;
 case 'boot': if (installed() && conf().enabled) { start(); out(status()); } else out({ started: false }); break;
@@ -338,6 +457,6 @@ case 'module-installed': exit(0);
 // nothing to take over from versions before the module
 case 'module-configured': exit(1);
 default:
-	print('usage: shareos-dnsfilter status|set|filters|filter-add|filter-remove|filter-enable|refresh|password|start|start-bg|boot|stop-all|stop|restart|log\n');
+	print('usage: shareos-dnsfilter status|set|filters|filter-add|filter-remove|filter-enable|refresh|password|start|start-bg|boot|stop-all|stop|restart|log|reload-cert|local-names\n');
 	exit(2);
 }

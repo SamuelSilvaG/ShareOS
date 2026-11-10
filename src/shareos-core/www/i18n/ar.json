@@ -1507,7 +1507,15 @@
 		"Filterung aktiv (aus = nur weiterleiten)": "التصفية مفعّلة (إيقاف = تمرير فقط)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "كل قاعدة تستهلك ذاكرة (نحو 0.1 كيلوبايت). من 300000 قاعدة يحذّر ShareOS.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "مرشّح DNS (AdGuard Home) وحدة أيضًا: تبويب مرشّح DNS بعد تثبيته ضمن التطبيقات.",
-		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless والسحابة ومرشّح DNS وحدات: يظهر تبويبها عند تثبيتها ضمن التطبيقات ويختفي عند إزالتها – تبقى الإعدادات والبيانات."
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless والسحابة ومرشّح DNS وحدات: يظهر تبويبها عند تثبيتها ضمن التطبيقات ويختفي عند إزالتها – تبقى الإعدادات والبيانات.",
+		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "منفذ HTTPS لواجهة AdGuard",
+		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "مشفّر (HTTPS) بشهادة الجهاز؛ يُعاد توجيه طلبات HTTP.",
+		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "مشفّر (HTTPS) بالشهادة الموقّعة ذاتيًا للجهاز – يحذّر المتصفح كما في الواجهة. لا يُعاد توجيه HTTP إلا عندما تكون للجهاز شهادة موثوقة (جهة تصديق خاصة أو Let's Encrypt ضمن",
+		"Ohne Zertifikat der Box nur unverschlüsselt (HTTP).": "بدون شهادة للجهاز يكون الاتصال غير مشفّر فقط (HTTP).",
+		"Lokale Namen": "الأسماء المحلية",
+		"Lokale Domäne": "النطاق المحلي",
+		"DNS-Server des Netzwerks": "خادم DNS للشبكة",
+		"System → Netzwerk": "النظام ← الشبكة"
 	},
 	"patterns": [
 		[
