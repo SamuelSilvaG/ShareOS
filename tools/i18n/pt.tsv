@@ -1224,7 +1224,7 @@ E965	ID DO CHAT
 E966	TOKEN DO BOT (DO @BOTFATHER)
 E967	Telegram (bot)
 E968	ÁREAS
-E969	Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps, tarefas de nuvem agendadas). Definições e dados mantêm-se; ligar repõe tudo.
+E969	Desligado: o separador desaparece, também para os utilizadores em «O meu ShareOS», e o trabalho em segundo plano para (servidor web das apps e tarefas das apps). Definições e dados mantêm-se; ligar repõe tudo.
 E970	Apps (loja, apps web, tarefas das apps)
 E971	Nuvem (sincronização com armazenamento na nuvem)
 E972	Paperless (pastas de entrada para o Paperless-ngx)
@@ -1877,3 +1877,4 @@ E1500	Abrir o AdGuard Home ↗
 E1501	Filtragem ativa (desligada = só reencaminhar)
 E1502	Cada regra gasta memória (cerca de 0,1 KB). A partir de 300 000 regras, o ShareOS avisa.
 E1503	O filtro DNS (AdGuard Home) também é um módulo: separador FILTRO DNS quando instalado em APPS.
+E1504	Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se.

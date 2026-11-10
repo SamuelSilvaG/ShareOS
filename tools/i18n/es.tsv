@@ -1224,7 +1224,7 @@ E965	ID DE CHAT
 E966	TOKEN DEL BOT (DE @BOTFATHER)
 E967	Telegram (bot)
 E968	ÁREAS
-E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps, tareas en la nube programadas). Ajustes y datos se conservan; al activar vuelve todo.
+E969	Desactivado: la pestaña desaparece, también para los usuarios en «Mi ShareOS», y el trabajo en segundo plano se detiene (servidor web de apps y tareas de apps). Ajustes y datos se conservan; al activar vuelve todo.
 E970	Apps (tienda, apps web, tareas de las apps)
 E971	Nube (sincronización con almacenamiento en la nube)
 E972	Paperless (carpetas de entrada para Paperless-ngx)
@@ -1877,3 +1877,4 @@ E1500	Abrir AdGuard Home ↗
 E1501	Filtrado activo (desactivado = solo reenviar)
 E1502	Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.
 E1503	El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.
+E1504	Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan.

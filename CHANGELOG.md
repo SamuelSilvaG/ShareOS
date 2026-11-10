@@ -4,6 +4,13 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.5
+
+- **Cloud becomes the third module.** Cloud sync (rclone) is now the system app **"Cloud"** in the store: once installed, the *CLOUD* tab and the cloud part of "My ShareOS" appear; removed, the tab is gone and no scheduled job runs – accounts (`rclone.conf`), jobs and logs stay for a later reinstall. rclone itself is still downloaded to the apps drive when Cloud is set up.
+  - **Updating boxes:** a box that used cloud sync (a job, an account of the box or rclone installed, area not switched off) gets the module once at the first start, from a copy in the firmware – no internet needed. Unused, it stays out until installed from the store.
+  - Without the module, `shareos.cloud` and the cloud methods of `shareos.me` answer "not installed", `shareos-cloud run` refuses and cron has no cloud entries. *System → Darstellung → Bereiche* keeps only Apps; one note there explains the three modules.
+  - Tests: `test-cloud-paperless` (not installed → refused; not taken over while unused; taken over where jobs exist; removal keeps jobs and accounts, no cron entry) – 59/59 with the real rclone ARM build; `run-stack-qemu` (off until installed, methods refused).
+
 ## 0.3.0-beta.4
 
 - **DNS filter (AdGuard Home) as the second module.** The new system app **"DNS-Filter"** in the store (Apps → Store) makes the box the DNS server of the network: it blocks ads, trackers and malicious sites for every device and asks the internet encrypted (DNS-over-HTTPS, Quad9 by default). Once installed, the *DNS-FILTER* tab appears behind *PAPERLESS*: switch on, status (queries, blocked, rules, RAM), upstream servers, filtering on/off, port of AdGuard's own interface (default 8053), block lists (add, switch on/off, remove, update), login for AdGuard Home. Then enter the box as DNS server in the router.

@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "机器人令牌（来自 @BOTFATHER）",
 		"Telegram (Bot)": "Telegram（机器人）",
 		"BEREICHE": "功能区",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "关闭后：该标签页消失（用户的“我的 ShareOS”中也一样），后台工作暂停（应用 Web 服务器和应用任务、计划的云任务）。设置和数据保留；重新开启即可恢复。",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "关闭后：该标签页消失（用户的“我的 ShareOS”中也一样），后台工作暂停（应用 Web 服务器和应用任务）。设置和数据保留；重新开启即可恢复。",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "应用（应用商店、Web 应用、应用任务）",
 		"Cloud (Abgleich mit Cloud-Speichern)": "云（与云存储同步）",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless（Paperless-ngx 收件文件夹）",
@@ -1506,7 +1506,8 @@
 		"AdGuard Home öffnen ↗": "打开 AdGuard Home ↗",
 		"Filterung aktiv (aus = nur weiterleiten)": "过滤已开启（关闭 = 仅转发）",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "每条规则都占用内存（约 0.1 KB）。超过 300,000 条规则时 ShareOS 会警告。",
-		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS 过滤（AdGuard Home）也是一个模块：在“应用”中安装后出现“DNS 过滤”标签页。"
+		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS 过滤（AdGuard Home）也是一个模块：在“应用”中安装后出现“DNS 过滤”标签页。",
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless、云和 DNS 过滤都是模块：在“应用”中安装后出现对应标签页，移除后消失——设置和数据保留。"
 	},
 	"patterns": [
 		[

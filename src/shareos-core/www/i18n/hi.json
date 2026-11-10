@@ -972,7 +972,7 @@
 		"BOT-TOKEN (VON @BOTFATHER)": "बॉट टोकन (@BOTFATHER से)",
 		"Telegram (Bot)": "Telegram (बॉट)",
 		"BEREICHE": "क्षेत्र",
-		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben, geplante Cloud-Aufträge). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "बंद करने पर: टैब गायब हो जाता है, „मेरा ShareOS“ में उपयोगकर्ताओं के लिए भी, और पृष्ठभूमि का काम रुक जाता है (ऐप वेब सर्वर और ऐप कार्य, निर्धारित क्लाउड काम)। सेटिंग्स और डेटा बने रहते हैं; चालू करने पर सब वापस आ जाता है।",
+		"Ausgeschaltet: Der Reiter verschwindet, auch für Benutzer in „Mein ShareOS“, und die Hintergrundarbeit ruht (App-Webserver und App-Aufgaben). Einstellungen und Daten bleiben erhalten; einschalten macht alles wieder an.": "बंद करने पर: टैब गायब हो जाता है, „मेरा ShareOS“ में उपयोगकर्ताओं के लिए भी, और पृष्ठभूमि का काम रुक जाता है (ऐप वेब सर्वर और ऐप कार्य)। सेटिंग्स और डेटा बने रहते हैं; चालू करने पर सब वापस आ जाता है।",
 		"Apps (App-Store, Web-Apps, Aufgaben der Apps)": "ऐप्स (ऐप स्टोर, वेब ऐप्स, ऐप कार्य)",
 		"Cloud (Abgleich mit Cloud-Speichern)": "क्लाउड (क्लाउड स्टोरेज से सिंक)",
 		"Paperless (Eingangsordner für Paperless-ngx)": "Paperless (Paperless-ngx के इनबॉक्स)",
@@ -1506,7 +1506,8 @@
 		"AdGuard Home öffnen ↗": "AdGuard Home खोलें ↗",
 		"Filterung aktiv (aus = nur weiterleiten)": "फ़िल्टरिंग चालू (बंद = केवल आगे भेजें)",
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "हर नियम मेमोरी लेता है (लगभग 0.1 KB)। 3,00,000 नियमों से ShareOS चेतावनी देता है।",
-		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS फ़िल्टर (AdGuard Home) भी एक मॉड्यूल है: APPS में इंस्टॉल होते ही DNS फ़िल्टर टैब।"
+		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "DNS फ़िल्टर (AdGuard Home) भी एक मॉड्यूल है: APPS में इंस्टॉल होते ही DNS फ़िल्टर टैब।",
+		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, क्लाउड और DNS फ़िल्टर मॉड्यूल हैं: APPS में इंस्टॉल होने पर इनका टैब दिखता है और हटाने पर गायब हो जाता है – सेटिंग्स और डेटा बने रहते हैं।"
 	},
 	"patterns": [
 		[

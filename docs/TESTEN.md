@@ -217,6 +217,12 @@ Der DNS-Filter ist ein **Modul** (AdGuard Home). Er braucht das Apps-Laufwerk.
 
 ## 9. Cloud-Sync
 
+Cloud ist ein **Modul** (ab 0.3.0-beta.5): Der Reiter *CLOUD* erscheint erst,
+wenn unter **Apps → Store** die System-App **Cloud** installiert ist. Eine Box,
+die Cloud vor dem Update schon benutzt hat (Auftrag, Konto oder rclone), bekommt
+das Modul beim ersten Start von selbst (`cat /etc/shareos/module-migrated.cloud`).
+
+0. **Apps → Store → Cloud → Installieren.** Der Reiter *CLOUD* erscheint hinter *APPS*.
 1. **Cloud → rclone installieren** (lädt rclone von GitHub, braucht einen eingerichteten Apps-Bereich).
 2. **Konto hinzufügen**: Nextcloud/WebDAV, S3 oder SFTP direkt; Google Drive, OneDrive, Dropbox: auf dem PC `rclone config` ausführen und den fertigen Abschnitt aus `rclone.conf` einfügen. **Testen** zeigt, ob die Anmeldung klappt.
 3. **Neuer Auftrag**: Ordner auf dem NAS, Konto, Ordner in der Cloud, Richtung (Hochladen ist die sichere Wahl, Spiegeln löscht auf der Zielseite), Zeitplan. **Jetzt starten** und das **Protokoll** ansehen.
