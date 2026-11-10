@@ -284,6 +284,8 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 |---|---|
 | 06:50 | **0.3.0-beta.3** erscheint (Paperless als Modul). Messung AdGuard Home v0.107.80 (offizielles ARMv5-Programm) im ShareOS-Userland: Standardliste (188 000 Regeln) 45 MB Go-Speicher, mit `GOMEMLIMIT=32MiB` 30 MB; 696 000 Regeln 107 bzw. 77 MB – plus Programmcode. Deutlich mehr als Pi-hole (Listen in SQLite). Jan entscheidet: AdGuard Home mit Leitplanken. |
 | 07:30 | **DNS-Filter als zweites Modul:** System-App „DNS-Filter“, Steuerung `shareos-dnsfilter`, Reiter DNS-FILTER. Einrichtung über AdGuards eigene Setup-API, Bremse, Protokoll und Statistik nur im RAM, Warnung ab 300 000 Regeln. AdGuards Benutzerwechsel gibt root zu früh ab (Port 53 scheitert) – es läuft als root. `test-dnsfilter` mit 34 Prüfungen, Blockieren über Port 53 eingeschlossen. |
+| 10:17 | **Projekt-Webseite** auf GitHub Pages: [uniquedroid.github.io/ShareOS](https://uniquedroid.github.io/ShareOS/) – Funktionen, Downloads je Modell, App-Katalog, Diskussionen und diese Doku als Wiki. Sie baut sich bei jedem Push, Release und einmal täglich selbst aus dem Repository. |
+| 11:30 | Doku für **0.3.0-beta.4** (DNS-Filter, Webseite). |
 
 ### Montag, 09.11.2026
 
