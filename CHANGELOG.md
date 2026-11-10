@@ -4,6 +4,14 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.4
+
+- **DNS filter (AdGuard Home) as the second module.** The new system app **"DNS-Filter"** in the store (Apps → Store) makes the box the DNS server of the network: it blocks ads, trackers and malicious sites for every device and asks the internet encrypted (DNS-over-HTTPS, Quad9 by default). Once installed, the *DNS-FILTER* tab appears behind *PAPERLESS*: switch on, status (queries, blocked, rules, RAM), upstream servers, filtering on/off, port of AdGuard's own interface (default 8053), block lists (add, switch on/off, remove, update), login for AdGuard Home. Then enter the box as DNS server in the router.
+  - AdGuard Home is the official static `linux_armv5` build v0.107.80 (package `shareos-adguardhome`, checked with its SHA-256, nothing compiled), controlled by the firmware's `shareos-dnsfilter`. The first start sets AdGuard up through its own setup API (user `admin`, random password in `/etc/shareos/dnsfilter.pass`, root only); settings in `/etc/shareos/dnsfilter/` (in the settings backup), block lists on the apps drive.
+  - **Guard rails for 256 MB** (measured: about 40–45 MB with the default list of ~190 000 rules, about 90 MB with ~700 000): `GOMEMLIMIT=32MiB` always, query log and statistics in RAM only (no writes to the drive, nothing that keeps it awake), at most 12 lists; the tab estimates the memory and warns from 300 000 rules on.
+  - AdGuard Home runs as root: it must bind port 53, and the box has no setcap or port redirection (AdGuard's own user switch drops root before it binds).
+  - Removing the module stops AdGuard Home and hides the tab; its settings stay. Tests: `test-dnsfilter` (34 checks: module, first start, guard rails, blocking over port 53, lists, settings, restart, boot, removal).
+
 ## 0.3.0-beta.3
 
 - **Modules: Paperless only when you need it.** A system app can now switch on an area of the firmware (`"module"` in its `app.json`): its tab, its part of "My ShareOS" and its background work exist only while it is installed. **Paperless is the first module** – the new system app **"paperless"** in the store (Apps → Store) shows the *PAPERLESS* tab behind *CLOUD*; removing it hides the tab again and stops the scheduled uploads (settings, inboxes and folders stay for a later reinstall).

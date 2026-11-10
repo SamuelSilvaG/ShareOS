@@ -278,6 +278,13 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | abends | Aus Diskussion #88 (lgustavod) wird ein **Ordner-Browser** für Freigaben, Medienserver und Cloud-Aufträge; dazu Kopieren/Einfügen im Dateibrowser (#127). |
 | nachts | Ein technisches Audit bringt Kernel-Härtung (#128; `FORTIFY_SOURCE` scheitert am ARM-Entpacker) und den **Claim-Modus** (#129): Eine neue Box hat kein bekanntes Passwort mehr, man übernimmt sie mit der USB-Taste – Updates sperren nie. Desktop 0.2.3 kann das auch. |
 
+### Dienstag, 10.11.2026
+
+| Zeit | Was passiert ist |
+|---|---|
+| 06:50 | **0.3.0-beta.3** erscheint (Paperless als Modul). Messung AdGuard Home v0.107.80 (offizielles ARMv5-Programm) im ShareOS-Userland: Standardliste (188 000 Regeln) 45 MB Go-Speicher, mit `GOMEMLIMIT=32MiB` 30 MB; 696 000 Regeln 107 bzw. 77 MB – plus Programmcode. Deutlich mehr als Pi-hole (Listen in SQLite). Jan entscheidet: AdGuard Home mit Leitplanken. |
+| 07:30 | **DNS-Filter als zweites Modul:** System-App „DNS-Filter“, Steuerung `shareos-dnsfilter`, Reiter DNS-FILTER. Einrichtung über AdGuards eigene Setup-API, Bremse, Protokoll und Statistik nur im RAM, Warnung ab 300 000 Regeln. AdGuards Benutzerwechsel gibt root zu früh ab (Port 53 scheitert) – es läuft als root. `test-dnsfilter` mit 34 Prüfungen, Blockieren über Port 53 eingeschlossen. |
+
 ### Montag, 09.11.2026
 
 | Zeit | Was passiert ist |

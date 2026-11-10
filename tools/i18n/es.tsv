@@ -1842,3 +1842,38 @@ E1465	Paperless es un módulo: aparece cuando está instalado en APPS y desapare
 E1466	Módulo · pestaña propia
 E1467	Activa una parte de ShareOS con su propia pestaña. El código forma parte del firmware revisado: el paquete solo trae el interruptor.
 E1468	Módulo
+E1469	FILTRO DNS
+E1470	CÓMO USARLO
+E1471	LISTAS DE BLOQUEO
+E1472	CONSULTAS
+E1473	BLOQUEADAS
+E1474	REGLAS
+E1475	RAM
+E1476	LISTA
+E1477	en marcha
+E1478	iniciando …
+E1479	filtrado en pausa
+E1480	Mostrar acceso
+E1481	Actualizar listas
+E1482	Listas actualizadas.
+E1483	Lista quitada.
+E1484	¿Quitar la lista?
+E1485	Añadir lista
+E1486	Lista añadida.
+E1487	SERVIDORES UPSTREAM (UNO POR LÍNEA)
+E1488	DIRECCIÓN DE LA LISTA
+E1489	PUERTO DE LA INTERFAZ DE ADGUARD
+E1490	El filtro DNS se inicia …
+E1491	Filtro DNS (AdGuard Home)
+E1492	Introduce la dirección de la caja como servidor DNS en el router, o solo en algunos dispositivos:
+E1493	No introduzcas un segundo servidor DNS; si no, los dispositivos preguntan sin pasar por la caja. Mientras la caja esté apagada o reiniciando, los dispositivos no tienen DNS.
+E1494	Ajustes finos, registro de consultas y estadísticas en la interfaz de AdGuard Home.
+E1495	Activar el filtro DNS (también arranca tras un reinicio)
+E1496	El filtro DNS necesita la unidad de apps (Almacenamiento → Unidades).
+E1497	Necesidad estimada con estas listas:
+E1498	Muchas reglas: las listas grandes consumen mucha memoria. Con los 256 MB de la caja, mejor quedarse con la lista predeterminada.
+E1499	AdGuard Home se está iniciando; la primera vez tarda un poco.
+E1500	Abrir AdGuard Home ↗
+E1501	Filtrado activo (desactivado = solo reenviar)
+E1502	Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.
+E1503	El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.

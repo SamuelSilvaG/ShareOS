@@ -1,0 +1,19 @@
+{
+	"id": "dnsfilter",
+	"name": "DNS-Filter",
+	"version": "0.107.80",
+	"publisher": "UniqueDroid",
+	"description": {
+		"de": "DNS-Filter mit AdGuard Home: Die Box beantwortet die DNS-Anfragen im Netz und blockiert Werbung, Tracker und Schadseiten für alle Geräte – ohne Software auf den Geräten. Anfragen gehen verschlüsselt (DNS-over-HTTPS) ins Internet. Modul: Installiert erscheint der Reiter DNS-FILTER. Braucht etwa 40 MB RAM mit der Standardliste, mehr mit großen Listen.",
+		"en": "DNS filter with AdGuard Home: the box answers the DNS queries of the network and blocks ads, trackers and malicious sites for every device – no software on the devices. Queries go to the internet encrypted (DNS-over-HTTPS). Module: once installed, the DNS-FILTER tab appears. Needs about 40 MB of RAM with the default list, more with large lists."
+	},
+	"type": "system",
+	"module": "dnsfilter",
+	"commands": [],
+	"service": { "control": "dnsfilter", "delay": 5 },
+	"icon": "icon.svg",
+	"category": "network",
+	"license": "GPL-3.0",
+	"homepage": "https://github.com/AdguardTeam/AdGuardHome",
+	"min_shareos": "0.3.0-beta.4"
+}

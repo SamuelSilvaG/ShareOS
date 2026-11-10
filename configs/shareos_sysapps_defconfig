@@ -51,6 +51,9 @@ BR2_PACKAGE_SHAREOS_SYNCTHING=y
 # Zabbix agent, classic C version (system app "zabbix-agent"), see
 # package/shareos-zabbix-agent
 BR2_PACKAGE_SHAREOS_ZABBIX_AGENT=y
+# DNS filter (system app "dnsfilter", AdGuard Home, official build), see
+# package/shareos-adguardhome
+BR2_PACKAGE_SHAREOS_ADGUARDHOME=y
 # printer (system app "printer"): IPP over USB for current printers and
 # scanners (driverless), p910nd (port 9100, raw) for older ones, see
 # package/shareos-ipp-usb
