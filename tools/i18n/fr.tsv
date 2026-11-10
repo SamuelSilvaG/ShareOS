@@ -1901,50 +1901,65 @@ P338	$1 : ouvert jusqu’à $2
 P339	$1 minutes
 P340	$1 heures
 P341	Coffre : $1
-E1519	Affichage
-E1520	Classique
-E1521	Bureau
-E1522	Vue bureau
-E1523	Menu Démarrer
-E1524	Fenêtres ouvertes
-E1525	Messages
-E1526	Recherche
-E1527	Menu utilisateur
-E1528	Fichiers
-E1529	Stockage
-E1530	Panneau de configuration
-E1531	Boutique d’apps
-E1532	Gestionnaire des tâches
-E1533	Journaux
-E1534	Cloud
-E1535	Paperless
-E1536	Filtre DNS
-E1537	Accès et connexion
-E1538	Général
-E1539	Heure
-E1540	Apparence
-E1541	Fond d’écran
-E1542	Alimentation et réinitialisation
-E1543	État
-E1544	Démarrage auto
-E1545	Serveur multimédia
-E1546	Réduire
-E1547	Agrandir
-E1548	Rechercher des apps et réglages
-E1549	Vue classique
-E1550	Aucun résultat.
-E1551	MODULES ET APPS
-E1552	Réinitialiser la disposition
-E1553	Réinitialiser la disposition ?
-E1554	Les icônes et fenêtres reprennent leur place par défaut.
-E1555	Rechercher dans tous les réglages
-E1556	Aucun disque ni partage.
-E1557	Aucune image dans ce dossier.
-E1558	Un fond d’écran depuis la box demande le droit « Fichiers » pour votre compte.
-E1559	Une image (JPG, PNG, WebP, GIF) de la box – enregistrée pour vous seul.
-E1560	AJUSTEMENT DE L’IMAGE
-E1561	Remplir
-E1562	Ajuster
-E1563	Mosaïque
-E1564	ShareOS (par défaut)
-E1565	Fond d’écran enregistré.
+E1519	PORT HTTPS DE L’INTERFACE ADGUARD
+E1520	Chiffré (HTTPS) avec le certificat du boîtier ; les accès en HTTP sont redirigés.
+E1521	Chiffré (HTTPS) avec le certificat autosigné du boîtier – le navigateur avertit comme pour l’interface. HTTP n’est redirigé que lorsque le boîtier a un certificat de confiance (propre AC ou Let’s Encrypt sous
+E1522	Sans certificat du boîtier, seulement en clair (HTTP).
+E1523	Noms locaux
+E1524	Domaine local
+E1525	Serveur DNS du réseau
+E1526	Système → Réseau
+E1527	ENTRÉES LOCALES
+E1528	Ajouter une entrée
+E1529	Pour les appareils à adresse IP fixe que le routeur ne connaît pas.
+E1530	s’applique à tous les noms en dessous. ShareOS définit lui-même les noms du boîtier.
+E1531	Supprimer l’entrée ?
+E1532	Entrée ajoutée.
+E1533	Entrée supprimée.
+E1534	Affichage
+E1535	Classique
+E1536	Bureau
+E1537	Vue bureau
+E1538	Menu Démarrer
+E1539	Fenêtres ouvertes
+E1540	Messages
+E1541	Recherche
+E1542	Menu utilisateur
+E1543	Fichiers
+E1544	Stockage
+E1545	Panneau de configuration
+E1546	Boutique d’apps
+E1547	Gestionnaire des tâches
+E1548	Journaux
+E1549	Cloud
+E1550	Paperless
+E1551	Filtre DNS
+E1552	Accès et connexion
+E1553	Général
+E1554	Heure
+E1555	Apparence
+E1556	Fond d’écran
+E1557	Alimentation et réinitialisation
+E1558	État
+E1559	Démarrage auto
+E1560	Serveur multimédia
+E1561	Réduire
+E1562	Agrandir
+E1563	Rechercher des apps et réglages
+E1564	Vue classique
+E1565	Aucun résultat.
+E1566	MODULES ET APPS
+E1567	Réinitialiser la disposition
+E1568	Réinitialiser la disposition ?
+E1569	Les icônes et fenêtres reprennent leur place par défaut.
+E1570	Rechercher dans tous les réglages
+E1571	Aucun disque ni partage.
+E1572	Aucune image dans ce dossier.
+E1573	Un fond d’écran depuis la box demande le droit « Fichiers » pour votre compte.
+E1574	Une image (JPG, PNG, WebP, GIF) de la box – enregistrée pour vous seul.
+E1575	AJUSTEMENT DE L’IMAGE
+E1576	Remplir
+E1577	Ajuster
+E1578	Mosaïque
+E1579	ShareOS (par défaut)
+E1580	Fond d’écran enregistré.

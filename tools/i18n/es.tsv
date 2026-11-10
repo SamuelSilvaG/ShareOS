@@ -1901,50 +1901,65 @@ P338	$1: abierta hasta las $2
 P339	$1 minutos
 P340	$1 horas
 P341	Caja fuerte: $1
-E1519	Vista
-E1520	Clásica
-E1521	Escritorio
-E1522	Vista de escritorio
-E1523	Menú de inicio
-E1524	Ventanas abiertas
-E1525	Mensajes
-E1526	Buscar
-E1527	Menú de usuario
-E1528	Archivos
-E1529	Almacenamiento
-E1530	Panel de control
-E1531	Tienda de apps
-E1532	Administrador de tareas
-E1533	Registros
-E1534	Nube
-E1535	Paperless
-E1536	Filtro DNS
-E1537	Acceso y conexión
-E1538	General
-E1539	Hora
-E1540	Apariencia
-E1541	Fondo de pantalla
-E1542	Energía y restablecer
-E1543	Estado
-E1544	Inicio automático
-E1545	Servidor multimedia
-E1546	Minimizar
-E1547	Maximizar
-E1548	Buscar apps y ajustes
-E1549	Vista clásica
-E1550	No se encontró nada.
-E1551	MÓDULOS Y APPS
-E1552	Restablecer disposición
-E1553	¿Restablecer la disposición?
-E1554	Los iconos y ventanas vuelven a su lugar predeterminado.
-E1555	Buscar en todos los ajustes
-E1556	No hay discos ni carpetas compartidas.
-E1557	No hay imágenes en esta carpeta.
-E1558	Un fondo de pantalla de la caja necesita el permiso «Archivos» en tu cuenta.
-E1559	Una imagen (JPG, PNG, WebP, GIF) de la caja: se guarda solo para ti.
-E1560	AJUSTE DE LA IMAGEN
-E1561	Rellenar
-E1562	Ajustar
-E1563	Mosaico
-E1564	ShareOS (predeterminado)
-E1565	Fondo de pantalla guardado.
+E1519	PUERTO HTTPS DE LA INTERFAZ DE ADGUARD
+E1520	Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.
+E1521	Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en
+E1522	Sin certificado del equipo, solo sin cifrar (HTTP).
+E1523	Nombres locales
+E1524	Dominio local
+E1525	Servidor DNS de la red
+E1526	Sistema → Red
+E1527	ENTRADAS LOCALES
+E1528	Añadir entrada
+E1529	Para dispositivos con dirección IP fija que el router no conoce.
+E1530	se aplica a todos los nombres por debajo. ShareOS añade él mismo los nombres de la caja.
+E1531	¿Eliminar la entrada?
+E1532	Entrada añadida.
+E1533	Entrada eliminada.
+E1534	Vista
+E1535	Clásica
+E1536	Escritorio
+E1537	Vista de escritorio
+E1538	Menú de inicio
+E1539	Ventanas abiertas
+E1540	Mensajes
+E1541	Buscar
+E1542	Menú de usuario
+E1543	Archivos
+E1544	Almacenamiento
+E1545	Panel de control
+E1546	Tienda de apps
+E1547	Administrador de tareas
+E1548	Registros
+E1549	Nube
+E1550	Paperless
+E1551	Filtro DNS
+E1552	Acceso y conexión
+E1553	General
+E1554	Hora
+E1555	Apariencia
+E1556	Fondo de pantalla
+E1557	Energía y restablecer
+E1558	Estado
+E1559	Inicio automático
+E1560	Servidor multimedia
+E1561	Minimizar
+E1562	Maximizar
+E1563	Buscar apps y ajustes
+E1564	Vista clásica
+E1565	No se encontró nada.
+E1566	MÓDULOS Y APPS
+E1567	Restablecer disposición
+E1568	¿Restablecer la disposición?
+E1569	Los iconos y ventanas vuelven a su lugar predeterminado.
+E1570	Buscar en todos los ajustes
+E1571	No hay discos ni carpetas compartidas.
+E1572	No hay imágenes en esta carpeta.
+E1573	Un fondo de pantalla de la caja necesita el permiso «Archivos» en tu cuenta.
+E1574	Una imagen (JPG, PNG, WebP, GIF) de la caja: se guarda solo para ti.
+E1575	AJUSTE DE LA IMAGEN
+E1576	Rellenar
+E1577	Ajustar
+E1578	Mosaico
+E1579	ShareOS (predeterminado)
+E1580	Fondo de pantalla guardado.

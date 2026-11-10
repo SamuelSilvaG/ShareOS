@@ -214,6 +214,9 @@ Der DNS-Filter ist ein **Modul** (AdGuard Home). Er braucht das Apps-Laufwerk.
 7. Box neu starten: Der Filter läuft danach von selbst wieder, die Einstellungen sind noch da.
 8. **Plattenschlaf:** Mit laufendem Filter ein paar Stunden warten – schläft die Platte trotzdem ein? (Speicher → Gesundheit)
 9. **Apps → Installiert → DNS-Filter → Entfernen:** Reiter weg, `nslookup … 127.0.0.1` antwortet nicht mehr. Wieder installieren: Listen und Passwort sind wie vorher.
+10. **HTTPS (0.3.0-beta.5):** Nach dem Update einmal *DNS-FILTER → Speichern* (startet den Filter neu). Der Link *AdGuard Home öffnen ↗* öffnet jetzt `https://<box>:8054`. Mit dem selbstsignierten Zertifikat warnt der Browser einmal, `http://<box>:8053` bleibt offen. Mit eigener CA (*System → Zertifikat*, CA am PC installiert) leitet `http://<box>:8053` auf HTTPS um, und der Browser warnt nicht.
+11. **Lokaler Name (0.3.0-beta.5):** PC/Chromebook mit der Box als DNS-Server: `https://shareos.skynet.lan` (Name deiner Box) öffnet die Box; `nslookup shareos.skynet.lan <box-ip>` liefert die Adresse der Box; ein anderes lokales Gerät (z. B. der Router per Name) wird weiter aufgelöst. Der Reiter zeigt die Namen unter *Lokale Namen*.
+12. **Lokale Einträge (0.3.0-beta.5):** *DNS-FILTER → Lokale Einträge*: Name `drucker.skynet.lan`, IP `192.168.1.50` → *Eintrag hinzufügen*. `nslookup drucker.skynet.lan <box-ip>` liefert `192.168.1.50`; der Eintrag erscheint auch in AdGuard unter *Filter → DNS-Umschreibungen*. Der eigene Name der Box wird abgelehnt. *Entfernen* nimmt ihn wieder heraus.
 
 ## 9. Cloud-Sync
 
