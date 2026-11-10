@@ -287,6 +287,7 @@ the box for why the web server was not running.
 | 15:30 | **DNS filter:** AdGuard's interface over HTTPS with the box's certificate (redirect only with a trusted certificate – HSTS), and the box keeps its local name when the filter is the network's DNS server (rewrites for its names, local domain to the router). Reported by Jan: the Chromebook could no longer reach the box. |
 | 13:00 | **Cloud as the third module:** system app "Cloud", CLOUD tab and "My ShareOS" part only while it is installed. Boxes with jobs, accounts or rclone get it by themselves on the update. All three planned modules are done; *Areas* now only switches Apps. |
 | 11:30 | Docs for **0.3.0-beta.4** (DNS filter, website). |
+| 14:30 | **Vault shares** (discussion #88, idea of SamuelSilvaG): a share stays locked and invisible until a user unlocks it with the password for some minutes – then only for that user, and it locks itself again (cron). While locked the top folder's ACL shuts out open connections and apps too. App permission `vault` with `ShareOS.vault`, so Samuel can build the companion app. For 0.3.0-beta.5. |
 
 ### Monday, 09.11.2026
 

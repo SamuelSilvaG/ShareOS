@@ -6,6 +6,10 @@
 #                            configuration, (re)start or reload the services
 #   shareos-shares start | stop
 #   shareos-shares status    key=value lines for the web interface
+#   shareos-shares vault-unlock <share> <user> <minutes>
+#   shareos-shares vault-lock <share> [<user>]
+#   shareos-shares vault-expire     lock what ran out (cron, every minute)
+#   shareos-shares vault-status     vault=<share>:<user>:<until (epoch)>
 #
 # Access: SMB checks users and groups per share (valid/read/write lists).
 # The same rights are set as POSIX ACLs on the folder and everything in it
@@ -15,12 +19,22 @@
 # FAT) only have the checks of SMB and the web interface. NFS has no
 # accounts: clients are listed by address/network and act as nobody.
 #
+# Vault (option vault '1', discussion #88): the share is locked by default –
+# not exported over SMB, never over NFS or to guests. A user with rights on
+# it unlocks it for some minutes (web interface or the app SDK, after
+# entering the password again): then it is exported for the users who
+# unlocked it only, and locked again when the time runs out (cron). While
+# locked, the top folder's ACL lets nobody but root in, so open SMB
+# connections and the user's programs lose access too (on drives with Linux
+# rights). The unlock state lives in /tmp: a restart locks everything.
+#
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 SMBCONF=/etc/ksmbd/ksmbd.conf
 SMBPROTO=/tmp/shareos-shares.smbcompat   # compatibility mode ksmbd was started with
 ACLSTATE=/etc/shareos/share-acl
 EXPORTS=/etc/exports
 AVAHI_SMB=/etc/avahi/services/smb.service
+VAULT=/tmp/shareos-vault                 # <share>: lines "<user> <until>"
 
 log() { logger -t shareos-shares "$*"; echo "$*"; }
 
@@ -38,6 +52,41 @@ share_path() {   # name -> absolute path (or nothing when the volume is unknown)
 }
 volume_mounted() { grep -q " /mnt/$1 " /proc/mounts; }
 
+# --- vault ---
+vault() { on "$1" vault; }
+now() { date +%s; }
+# users who unlocked the share and whose time has not run out (one per line)
+vault_users() {   # share
+	[ -f "$VAULT/$1" ] || return 0
+	t=$(now)
+	while read -r u until; do [ -n "$u" ] && [ "${until:-0}" -gt "$t" ] && echo "$u"; done < "$VAULT/$1"
+}
+# access of a user to a share from its lists: rw, ro or nothing
+user_access() {   # share user
+	acc=
+	for g in "$2" $(id -Gn "$2" 2>/dev/null | tr ' ' '\n' | sed 's/^/@/'); do
+		for x in $(get "$1" rw); do [ "$x" = "$g" ] && { echo rw; return 0; }; done
+		for x in $(get "$1" ro); do [ "$x" = "$g" ] && acc=ro; done
+	done
+	[ -n "$acc" ] && echo "$acc"
+	return 0
+}
+# the top folder of a vault: only root and the users who unlocked it (not
+# recursive – the folders inside keep the share's ACL); remembered in
+# $ACLSTATE/<share>.vault so switching the vault off restores the share's ACL
+vault_gate() {   # share path
+	command -v setfacl >/dev/null || return 0
+	spec='u::rwx,g::---,o::---'
+	for u in $(vault_users "$1"); do
+		case "$(user_access "$1" "$u")" in
+			rw) spec="$spec,u:$u:rwx" ;;
+			ro) spec="$spec,u:$u:r-x" ;;
+		esac
+	done
+	setfacl --set "$spec,m::rwx" "$2" 2>/dev/null || return 0
+	mkdir -p "$ACLSTATE" && : > "$ACLSTATE/$1.vault"
+}
+
 ensure_folder() {   # path
 	[ -d "$1" ] && return 0
 	mkdir -p "$1" && chown root:users "$1" && chmod 2775 "$1"
@@ -49,8 +98,10 @@ acl_spec() {   # share
 	spec='u::rwX,g::---,o::---' nob=
 	for x in $(get "$1" rw); do acl_entry "$x" rwX; done
 	for x in $(get "$1" ro); do acl_entry "$x" r-X; done
-	on "$1" guest && nob=r-X
-	if on "$1" nfs && [ -n "$(get "$1" nfs_hosts)" ]; then on "$1" nfs_rw && nob=rwX || nob=${nob:-r-X}; fi
+	if ! vault "$1"; then
+		on "$1" guest && nob=r-X
+		if on "$1" nfs && [ -n "$(get "$1" nfs_hosts)" ]; then on "$1" nfs_rw && nob=rwX || nob=${nob:-r-X}; fi
+	fi
 	[ -n "$nob" ] && spec="$spec,u:nobody:$nob"
 	echo "$spec,m::rwX"
 }
@@ -77,6 +128,8 @@ apply_acl() {   # share path
 		nice -n 19 setfacl -R --set "$spec" "$2" 2>/dev/null
 		find "$2" -type d -exec nice -n 19 setfacl -d --set "$(echo "$spec" | tr X x)" {} + 2>/dev/null
 		echo "$spec $2" > "$ACLSTATE/$1"
+		# --set -R also opened the top folder of a vault: close it again
+		vault "$1" && vault_gate "$1" "$2"
 	) </dev/null >/dev/null 2>&1 &
 	[ "${SHAREOS_ACL_WAIT:-0}" = 1 ] && wait
 	return 0
@@ -120,13 +173,22 @@ write_smb() {
 			p=$(share_path "$s") || continue
 			v=$(get "$s" volume); volume_mounted "$v" || continue
 			rw=$(acl_list "$s" rw); ro=$(acl_list "$s" ro)
+			# vault: only while unlocked, only for the users who unlocked it
+			vu=
+			if vault "$s"; then
+				for u in $(vault_users "$s"); do [ -n "$(user_access "$s" "$u")" ] && vu="$vu$u "; done
+				[ -n "$vu" ] || continue
+			fi
 			echo
 			echo "[$s]"
 			c=$(get "$s" comment); [ -n "$c" ] && echo "	comment = $c"
 			echo "	path = $p"
 			echo "	read only = yes"
 			echo "	browseable = yes"
-			if on "$s" guest; then
+			if [ -n "$vu" ]; then
+				echo "	guest ok = no"
+				echo "	valid users = $vu"
+			elif on "$s" guest; then
 				echo "	guest ok = yes"
 			else
 				echo "	guest ok = no"
@@ -150,6 +212,7 @@ write_nfs() {
 		echo "# written by shareos-shares from /etc/config/shares – edit there"
 		for s in $(shares); do
 			on "$s" nfs || continue
+			vault "$s" && continue   # NFS has no accounts: a vault is never exported
 			p=$(share_path "$s") || continue
 			volume_mounted "$(get "$s" volume)" || continue
 			mode=ro; on "$s" nfs_rw && mode=rw
@@ -226,7 +289,11 @@ cmd_apply() {
 	[ -f /etc/config/shares ] || : > /etc/config/shares
 	for s in $(shares); do
 		p=$(share_path "$s") || continue
-		volume_mounted "$(get "$s" volume)" && ensure_folder "$p" && apply_acl "$s" "$p"
+		volume_mounted "$(get "$s" volume)" && ensure_folder "$p" || continue
+		# a share that is no vault any more: set its full ACL again
+		if ! vault "$s" && [ -f "$ACLSTATE/$s.vault" ]; then rm -f "$ACLSTATE/$s" "$ACLSTATE/$s.vault"; fi
+		apply_acl "$s" "$p"
+		vault "$s" && vault_gate "$s" "$p"
 	done
 	write_smb
 	write_nfs
@@ -252,10 +319,82 @@ cmd_status() {
 	done
 }
 
+valid_share() { echo "$1" | grep -qE '^[a-z0-9][a-z0-9_-]{0,15}$' && [ "$(uci -q get shares."$1")" = share ]; }
+
+cmd_vault_unlock() {   # share user minutes
+	valid_share "$1" && vault "$1" || { echo "error: not a vault"; return 1; }
+	echo "$2" | grep -qE '^[a-z][a-z0-9_]{0,31}$' && id -u "$2" >/dev/null 2>&1 || { echo "error: unknown user"; return 1; }
+	[ -n "$(user_access "$1" "$2")" ] || { echo "error: no access to this share"; return 1; }
+	echo "$3" | grep -qE '^[0-9]+$' && [ "$3" -ge 1 ] && [ "$3" -le 480 ] || { echo "error: invalid time (1–480 minutes)"; return 1; }
+	p=$(share_path "$1") && volume_mounted "$(get "$1" volume)" || { echo "error: the drive is not mounted"; return 1; }
+	mkdir -p "$VAULT" && chmod 700 "$VAULT"
+	until=$(( $(now) + $3 * 60 ))
+	{ grep -v "^$2 " "$VAULT/$1" 2>/dev/null; echo "$2 $until"; } > "$VAULT/$1.new" && mv "$VAULT/$1.new" "$VAULT/$1"
+	log "vault $1 unlocked for $2 until $(date -d "@$until" '+%H:%M' 2>/dev/null || echo "$until")"
+	vault_gate "$1" "$p"
+	write_smb
+	smb_wanted && { pidof ksmbd.mountd >/dev/null && smb_reload || smb_start; smb_announce 1; }
+	echo "until=$until"
+}
+
+# lock a vault for one user or everyone; open SMB connections lose access
+# through the folder's ACL, the export disappears with the reload
+vault_close() {   # share [user]
+	if [ -n "$2" ]; then
+		[ -f "$VAULT/$1" ] && grep -v "^$2 " "$VAULT/$1" > "$VAULT/$1.new"; mv "$VAULT/$1.new" "$VAULT/$1" 2>/dev/null
+		[ -s "$VAULT/$1" ] || rm -f "$VAULT/$1"
+	else rm -f "$VAULT/$1"; fi
+	p=$(share_path "$1") && volume_mounted "$(get "$1" volume)" && vault_gate "$1" "$p"
+	return 0
+}
+cmd_vault_lock() {   # share [user]
+	valid_share "$1" && vault "$1" || { echo "error: not a vault"; return 1; }
+	vault_close "$1" "$2"
+	log "vault $1 locked${2:+ for $2}"
+	write_smb
+	pidof ksmbd.mountd >/dev/null && smb_reload
+	return 0
+}
+
+cmd_vault_expire() {
+	[ -d "$VAULT" ] || return 0
+	changed=
+	for f in "$VAULT"/*; do
+		[ -f "$f" ] || continue
+		s=${f##*/}
+		case "$s" in *.new) continue ;; esac
+		if ! valid_share "$s" || ! vault "$s"; then rm -f "$f"; changed=1; continue; fi
+		left=$(vault_users "$s")
+		[ "$(grep -c . "$f")" = "$(echo "$left" | grep -c .)" ] && continue
+		t=$(now)
+		while read -r u until; do [ -n "$u" ] && [ "${until:-0}" -gt "$t" ] && echo "$u $until"; done < "$f" > "$f.new"
+		if [ -s "$f.new" ]; then mv "$f.new" "$f"; else rm -f "$f" "$f.new"; fi
+		log "vault $s: time ran out${left:+ (still open for $(echo $left))}"
+		p=$(share_path "$s") && volume_mounted "$(get "$s" volume)" && vault_gate "$s" "$p"
+		changed=1
+	done
+	if [ -n "$changed" ]; then write_smb; pidof ksmbd.mountd >/dev/null && smb_reload; fi
+	return 0
+}
+
+cmd_vault_status() {
+	for s in $(shares); do
+		vault "$s" || continue
+		[ -f "$VAULT/$s" ] || continue
+		t=$(now)
+		while read -r u until; do [ -n "$u" ] && [ "${until:-0}" -gt "$t" ] && echo "vault=$s:$u:$until"; done < "$VAULT/$s"
+	done
+	return 0
+}
+
 case "$1" in
 	apply) cmd_apply ;;
+	vault-unlock) cmd_vault_unlock "$2" "$3" "$4" ;;
+	vault-lock) cmd_vault_lock "$2" "$3" ;;
+	vault-expire) cmd_vault_expire ;;
+	vault-status) cmd_vault_status ;;
 	start) cmd_apply ;;
 	stop) smb_stop; nfs_stop ;;
 	status) cmd_status ;;
-	*) sed -n '3,14s/^# \{0,1\}//p' "$0"; exit 2 ;;
+	*) sed -n '3,18s/^# \{0,1\}//p' "$0"; exit 2 ;;
 esac

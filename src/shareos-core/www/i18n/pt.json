@@ -1508,6 +1508,20 @@
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "Cada regra gasta memória (cerca de 0,1 KB). A partir de 300 000 regras, o ShareOS avisa.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "O filtro DNS (AdGuard Home) também é um módulo: separador FILTRO DNS quando instalado em APPS.",
 		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless, Cloud e o filtro DNS são módulos: o separador aparece quando estão instalados em APPS e desaparece ao removê-los – definições e dados mantêm-se.",
+		"TRESOR": "COFRE",
+		"gesperrt": "bloqueado",
+		"Entsperren": "Desbloquear",
+		"Sperren": "Bloquear",
+		"Jetzt sperren": "Bloquear agora",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "Como cofre: compartilhar só sob pedido, por alguns minutos",
+		"STANDARD-DAUER BEIM ENTSPERREN": "DURAÇÃO PADRÃO AO DESBLOQUEAR",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "Um cofre não aparece na rede. Um usuário com direito a ele o desbloqueia em “Meu ShareOS” (ou num app) com sua senha – então, pelo tempo escolhido, só ele o acessa como",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "e depois ele se bloqueia sozinho. Bloqueado, ninguém chega aos arquivos, nem por conexões abertas nem por apps. Um cofre só é compartilhado por SMB, sem convidados e sem NFS.",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "Sua senha mais uma vez, por segurança. Depois o cofre fica acessível na rede só para você e se bloqueia sozinho de novo.",
+		"OFFEN FÜR": "ABERTO POR",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "O cofre some da rede para todos que o desbloquearam. Conexões abertas perdem o acesso.",
+		"Tresor-Freigaben": "Compartilhamentos cofre",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "Pode desbloquear (após o usuário digitar a senha) e bloquear os cofres do usuário; para administradores, também pode definir quais compartilhamentos são cofres.",
 		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "PORTA HTTPS DA INTERFACE DO ADGUARD",
 		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "Criptografado (HTTPS) com o certificado do aparelho; acessos por HTTP são redirecionados.",
 		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "Criptografado (HTTPS) com o certificado autoassinado do aparelho – o navegador avisa como na interface. O HTTP só é redirecionado quando o aparelho tem um certificado confiável (CA própria ou Let’s Encrypt em",
@@ -2849,6 +2863,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"$1 item(ns) na área de transferência – escolha “Colar” na pasta de destino."
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"Desbloquear o cofre “$1”"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"O cofre “$1” está aberto até $2."
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"Bloquear o cofre “$1” agora?"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"Cofre “$1” bloqueado."
+		],
+		[
+			"^offen bis (.+)$",
+			"aberto até $1"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1: aberto até $2"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 minutos"
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 horas"
+		],
+		[
+			"^Tresor: (.+)$",
+			"Cofre: $1"
 		]
 	],
 	"words": [

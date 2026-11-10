@@ -1508,6 +1508,20 @@
 		"Jede Regel kostet Arbeitsspeicher (etwa 0,1 KB). Ab 300 000 Regeln warnt ShareOS.": "كل قاعدة تستهلك ذاكرة (نحو 0.1 كيلوبايت). من 300000 قاعدة يحذّر ShareOS.",
 		"Der DNS-Filter (AdGuard Home) ist ebenfalls ein Modul: Reiter DNS-FILTER, sobald er unter APPS installiert ist.": "مرشّح DNS (AdGuard Home) وحدة أيضًا: تبويب مرشّح DNS بعد تثبيته ضمن التطبيقات.",
 		"Paperless, Cloud und der DNS-Filter sind Module: Ihr Reiter erscheint, wenn sie unter APPS installiert sind, und verschwindet beim Entfernen – Einstellungen und Daten bleiben.": "Paperless والسحابة ومرشّح DNS وحدات: يظهر تبويبها عند تثبيتها ضمن التطبيقات ويختفي عند إزالتها – تبقى الإعدادات والبيانات.",
+		"TRESOR": "خزنة",
+		"gesperrt": "مقفلة",
+		"Entsperren": "فتح القفل",
+		"Sperren": "قفل",
+		"Jetzt sperren": "اقفل الآن",
+		"Als Tresor: nur auf Anfrage für einige Minuten freigeben": "كخزنة: المشاركة عند الطلب فقط لبضع دقائق",
+		"STANDARD-DAUER BEIM ENTSPERREN": "المدة الافتراضية عند فتح القفل",
+		"Ein Tresor ist im Netzwerk nicht zu sehen. Ein Benutzer mit Recht darauf entsperrt ihn unter „Mein ShareOS“ (oder in einer App) mit seinem Passwort – dann ist er für die gewählte Zeit nur für ihn als": "الخزنة غير مرئية في الشبكة. يفتح قفلها مستخدم له صلاحية عليها من „ShareOS الخاص بي“ (أو من تطبيق) بكلمة مروره – فتصبح خلال المدة المختارة متاحة له وحده باسم",
+		"erreichbar und sperrt sich danach von selbst. Gesperrt kommt auch über bestehende Verbindungen und Apps niemand an die Dateien. Einen Tresor gibt es nur über SMB, ohne Gäste und ohne NFS.": "ثم تُقفل من تلقاء نفسها. وهي مقفلة لا يصل أحد إلى الملفات، ولا عبر الاتصالات المفتوحة أو التطبيقات. تُشارك الخزنة عبر SMB فقط، بلا ضيوف وبلا NFS.",
+		"Zur Sicherheit noch einmal dein Passwort. Der Tresor ist danach nur für dich im Netzwerk erreichbar und sperrt sich von selbst wieder.": "أدخل كلمة مرورك مرة أخرى للأمان. بعدها تصبح الخزنة متاحة في الشبكة لك وحدك وتُقفل من تلقاء نفسها مجددًا.",
+		"OFFEN FÜR": "مفتوحة لمدة",
+		"Der Tresor verschwindet für alle, die ihn entsperrt haben, aus dem Netzwerk. Offene Verbindungen verlieren den Zugriff.": "تختفي الخزنة من الشبكة لكل من فتح قفلها. تفقد الاتصالات المفتوحة الوصول.",
+		"Tresor-Freigaben": "مشاركات الخزنة",
+		"Darf die Tresor-Freigaben des Benutzers entsperren (nach Eingabe seines Passworts) und sperren; Administratoren können damit auch festlegen, welche Freigaben Tresore sind.": "يمكنه فتح قفل خزائن المستخدم (بعد إدخال كلمة مروره) وقفلها؛ وللمسؤولين يمكنه أيضًا تحديد المشاركات التي تكون خزائن.",
 		"HTTPS-PORT DER ADGUARD-OBERFLÄCHE": "منفذ HTTPS لواجهة AdGuard",
 		"Verschlüsselt (HTTPS) mit dem Zertifikat der Box; Aufrufe über HTTP werden umgeleitet.": "مشفّر (HTTPS) بشهادة الجهاز؛ يُعاد توجيه طلبات HTTP.",
 		"Verschlüsselt (HTTPS) mit dem selbstsignierten Zertifikat der Box – der Browser warnt wie bei der Oberfläche. HTTP wird erst umgeleitet, wenn die Box ein vertrauenswürdiges Zertifikat hat (eigene CA oder Let's Encrypt unter": "مشفّر (HTTPS) بالشهادة الموقّعة ذاتيًا للجهاز – يحذّر المتصفح كما في الواجهة. لا يُعاد توجيه HTTP إلا عندما تكون للجهاز شهادة موثوقة (جهة تصديق خاصة أو Let's Encrypt ضمن",
@@ -2849,6 +2863,42 @@
 		[
 			"^(\\d+) Eintrag/Einträge in der Zwischenablage – im Zielordner „Einfügen“ wählen\\.$",
 			"$1 عنصر في الحافظة – اختر «لصق» في المجلد الهدف."
+		],
+		[
+			"^Tresor „(.+)“ entsperren$",
+			"فتح قفل الخزنة „$1“"
+		],
+		[
+			"^Tresor „(.+)“ ist bis (.+) offen\\.$",
+			"الخزنة „$1“ مفتوحة حتى $2."
+		],
+		[
+			"^Tresor „(.+)“ jetzt sperren\\?$",
+			"قفل الخزنة „$1“ الآن؟"
+		],
+		[
+			"^Tresor „(.+)“ gesperrt\\.$",
+			"تم قفل الخزنة „$1“."
+		],
+		[
+			"^offen bis (.+)$",
+			"مفتوحة حتى $1"
+		],
+		[
+			"^(\\S+): offen bis (.+)$",
+			"$1: مفتوحة حتى $2"
+		],
+		[
+			"^(\\d+) Minuten$",
+			"$1 دقيقة"
+		],
+		[
+			"^(\\d+) Stunden$",
+			"$1 ساعات"
+		],
+		[
+			"^Tresor: (.+)$",
+			"الخزنة: $1"
 		]
 	],
 	"words": [

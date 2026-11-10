@@ -288,6 +288,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 15:30 | **DNS-Filter:** AdGuard-Oberfläche per HTTPS mit dem Zertifikat der Box (Umleitung nur mit vertrauenswürdigem Zertifikat – HSTS), und die Box behält ihren lokalen Namen, wenn der Filter DNS-Server des Netzwerks ist (Einträge für ihre Namen, lokale Domäne an den Router). Gemeldet von Jan: Das Chromebook kam nicht mehr auf die Box. |
 | 13:00 | **Cloud als drittes Modul:** System-App „Cloud“, Reiter CLOUD und „Mein ShareOS“-Teil nur, solange sie installiert ist. Boxen mit Aufträgen, Konten oder rclone bekommen sie beim Update von selbst. Damit sind alle drei geplanten Module fertig; *Bereiche* schaltet nur noch Apps. |
 | 11:30 | Doku für **0.3.0-beta.4** (DNS-Filter, Webseite). |
+| 14:30 | **Tresor-Freigaben** (Diskussion #88, Idee von SamuelSilvaG): Eine Freigabe bleibt gesperrt und unsichtbar, bis ein Benutzer sie mit seinem Passwort für einige Minuten entsperrt – dann nur für ihn, danach sperrt sie sich selbst wieder (cron). Gesperrt hält die ACL des obersten Ordners auch offene Verbindungen und Apps draußen. App-Recht `vault` mit `ShareOS.vault`, damit Samuel die Begleit-App bauen kann. Für 0.3.0-beta.5. |
 
 ### Montag, 09.11.2026
 

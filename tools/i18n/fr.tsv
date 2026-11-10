@@ -1878,11 +1878,34 @@ E1501	Filtrage actif (désactivé = transfert seul)
 E1502	Chaque règle coûte de la mémoire (environ 0,1 Ko). À partir de 300 000 règles, ShareOS avertit.
 E1503	Le filtre DNS (AdGuard Home) est aussi un module : onglet FILTRE DNS une fois installé sous APPS.
 E1504	Paperless, Cloud et le filtre DNS sont des modules : leur onglet apparaît une fois installés sous APPS et disparaît quand on les retire – réglages et données sont conservés.
-E1505	PORT HTTPS DE L’INTERFACE ADGUARD
-E1506	Chiffré (HTTPS) avec le certificat du boîtier ; les accès en HTTP sont redirigés.
-E1507	Chiffré (HTTPS) avec le certificat autosigné du boîtier – le navigateur avertit comme pour l’interface. HTTP n’est redirigé que lorsque le boîtier a un certificat de confiance (propre AC ou Let’s Encrypt sous
-E1508	Sans certificat du boîtier, seulement en clair (HTTP).
-E1509	Noms locaux
-E1510	Domaine local
-E1511	Serveur DNS du réseau
-E1512	Système → Réseau
+E1505	COFFRE
+E1506	verrouillé
+E1507	Déverrouiller
+E1508	Verrouiller
+E1509	Verrouiller maintenant
+E1510	Comme coffre : partager seulement sur demande, pendant quelques minutes
+E1511	DURÉE PAR DÉFAUT AU DÉVERROUILLAGE
+E1512	Un coffre n’est pas visible sur le réseau. Un utilisateur qui y a droit le déverrouille sous « Mon ShareOS » (ou dans une app) avec son mot de passe – il est alors accessible pour lui seul pendant la durée choisie, sous
+E1513	puis se verrouille tout seul. Verrouillé, personne n’accède aux fichiers, même par des connexions ouvertes ou des apps. Un coffre n’est partagé qu’en SMB, sans invités ni NFS.
+E1514	Ton mot de passe encore une fois, par sécurité. Le coffre est ensuite accessible sur le réseau pour toi seul et se reverrouille tout seul.
+E1515	OUVERT PENDANT
+E1516	Le coffre disparaît du réseau pour tous ceux qui l’ont déverrouillé. Les connexions ouvertes perdent l’accès.
+E1517	Partages coffres
+E1518	Peut déverrouiller (après saisie du mot de passe de l’utilisateur) et verrouiller ses partages coffres ; pour les administrateurs, peut aussi choisir quels partages sont des coffres.
+P333	Déverrouiller le coffre « $1 »
+P334	Le coffre « $1 » est ouvert jusqu’à $2.
+P335	Verrouiller le coffre « $1 » maintenant ?
+P336	Coffre « $1 » verrouillé.
+P337	ouvert jusqu’à $1
+P338	$1 : ouvert jusqu’à $2
+P339	$1 minutes
+P340	$1 heures
+P341	Coffre : $1
+E1519	PORT HTTPS DE L’INTERFACE ADGUARD
+E1520	Chiffré (HTTPS) avec le certificat du boîtier ; les accès en HTTP sont redirigés.
+E1521	Chiffré (HTTPS) avec le certificat autosigné du boîtier – le navigateur avertit comme pour l’interface. HTTP n’est redirigé que lorsque le boîtier a un certificat de confiance (propre AC ou Let’s Encrypt sous
+E1522	Sans certificat du boîtier, seulement en clair (HTTP).
+E1523	Noms locaux
+E1524	Domaine local
+E1525	Serveur DNS du réseau
+E1526	Système → Réseau

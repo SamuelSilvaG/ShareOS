@@ -195,6 +195,25 @@
  *   .status({ip, id, key, version})          data points {"1": true, "19": 1234 …}
  *   .set({ip, id, key, version}, {"1": false})   switch; resolves to the
  *                                  changed data points
+ * ShareOS.vault               vault shares: SMB shares that stay locked and
+ *                             are unlocked on demand for some minutes, for
+ *                             apps with the permissions "files" and "vault"
+ *                             (ShareOS 0.3.0-beta.5+, null otherwise):
+ *   .status()                      {user, host, vaults [{name, comment, access
+ *                                  'rw'|'ro', ttl (default minutes), until (epoch
+ *                                  seconds, 0 = locked for this user), open_for
+ *                                  (users it is unlocked for)}]} – the vaults
+ *                                  this account may unlock
+ *   .unlock({share, ttl, password}) the account's password again; ttl in
+ *                                  minutes 1–480 (default: the share's); the
+ *                                  share appears as \\<host>\<share> for this
+ *                                  account only; resolves to {share, until}.
+ *                                  Five wrong passwords block it for 10 minutes
+ *   .lock(share)                   locks it for this account now (admins: for
+ *                                  everybody); open connections lose access
+ *   .set({share, vault, default_ttl})   admins: make a share a vault (SMB
+ *                                  only, no guests, no NFS) or not, change the
+ *                                  default time
  * ShareOS.status              a chip in the header of the ShareOS interface,
  *                             for apps with the permissions "files" and
  *                             "status" (ShareOS 0.2.0-beta.6+, null otherwise):
@@ -587,6 +606,21 @@
 		send: function (level, key, title, text) { return cgiCall('notify', 'send', { level: level || 'info', key: key, title: title, text: text || '' }); },
 		clear: function (key) { return cgiCall('notify', 'clear', { key: key }); }
 	} : null;
+	/* vault shares (permissions "files" + "vault") */
+	var vault = fs ? {
+		status: function () { return cgiCall('vault', 'status'); },
+		unlock: function (o) {
+			o = o || {};
+			return cgiCall('vault', 'unlock', { share: o.share, minutes: o.ttl || 0, password: o.password || '' }).then(function (j) { return { share: j.share, until: j.until }; });
+		},
+		lock: function (share) { return cgiCall('vault', 'lock', { share: share }); },
+		set: function (o) {
+			o = o || {}; var a = { share: o.share };
+			if (o.vault != null) a.vault = !!o.vault;
+			if (o.default_ttl) a.default_ttl = o.default_ttl;
+			return cgiCall('vault', 'set', a);
+		}
+	} : null;
 	/* Tuya devices (permissions "files" + "tuya", admins) */
 	function tuyaDev(d) { d = d || {}; return { ip: d.ip, id: d.id, key: d.key, version: d.version || '3.3' }; }
 	var tuya = fs ? {
@@ -736,6 +770,7 @@
 		docker: docker,
 		tuya: tuya,
 		notify: notify,
+		vault: vault,
 		status: status,
 		menu: menu,
 		on: function (type, fn) { (handlers[type] = handlers[type] || []).push(fn); },

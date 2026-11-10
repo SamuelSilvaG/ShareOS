@@ -1878,11 +1878,34 @@ E1501	Filtrado activo (desactivado = solo reenviar)
 E1502	Cada regla consume memoria (unos 0,1 KB). A partir de 300 000 reglas, ShareOS avisa.
 E1503	El filtro DNS (AdGuard Home) también es un módulo: pestaña FILTRO DNS cuando está instalado en APPS.
 E1504	Paperless, Cloud y el filtro DNS son módulos: su pestaña aparece cuando están instalados en APPS y desaparece al quitarlos; los ajustes y datos se conservan.
-E1505	PUERTO HTTPS DE LA INTERFAZ DE ADGUARD
-E1506	Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.
-E1507	Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en
-E1508	Sin certificado del equipo, solo sin cifrar (HTTP).
-E1509	Nombres locales
-E1510	Dominio local
-E1511	Servidor DNS de la red
-E1512	Sistema → Red
+E1505	CAJA FUERTE
+E1506	bloqueada
+E1507	Desbloquear
+E1508	Bloquear
+E1509	Bloquear ahora
+E1510	Como caja fuerte: compartir solo bajo demanda, durante unos minutos
+E1511	DURACIÓN PREDETERMINADA AL DESBLOQUEAR
+E1512	Una caja fuerte no es visible en la red. Un usuario con derechos la desbloquea en «Mi ShareOS» (o en una app) con su contraseña; entonces, durante el tiempo elegido, solo él puede acceder a ella como
+E1513	y después se bloquea sola. Bloqueada, nadie accede a los archivos, tampoco por conexiones abiertas ni apps. Una caja fuerte solo se comparte por SMB, sin invitados ni NFS.
+E1514	Tu contraseña otra vez, por seguridad. Después la caja fuerte solo es accesible en la red para ti y se vuelve a bloquear sola.
+E1515	ABIERTA DURANTE
+E1516	La caja fuerte desaparece de la red para todos los que la desbloquearon. Las conexiones abiertas pierden el acceso.
+E1517	Cajas fuertes
+E1518	Puede desbloquear (tras introducir la contraseña del usuario) y bloquear sus cajas fuertes; a los administradores también les permite elegir qué recursos son cajas fuertes.
+P333	Desbloquear la caja fuerte «$1»
+P334	La caja fuerte «$1» está abierta hasta las $2.
+P335	¿Bloquear ahora la caja fuerte «$1»?
+P336	Caja fuerte «$1» bloqueada.
+P337	abierta hasta las $1
+P338	$1: abierta hasta las $2
+P339	$1 minutos
+P340	$1 horas
+P341	Caja fuerte: $1
+E1519	PUERTO HTTPS DE LA INTERFAZ DE ADGUARD
+E1520	Cifrado (HTTPS) con el certificado del equipo; los accesos por HTTP se redirigen.
+E1521	Cifrado (HTTPS) con el certificado autofirmado del equipo: el navegador avisa como con la interfaz. HTTP solo se redirige cuando el equipo tiene un certificado de confianza (CA propia o Let’s Encrypt en
+E1522	Sin certificado del equipo, solo sin cifrar (HTTP).
+E1523	Nombres locales
+E1524	Dominio local
+E1525	Servidor DNS de la red
+E1526	Sistema → Red
