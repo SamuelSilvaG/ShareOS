@@ -520,7 +520,7 @@ function shareTx(db, mode, fn) {
 }
 
 // file name for the box: no slashes or control characters, no leading dot
-const shareName = (n, i) => (String(n || '').replace(/[\/\\\u0000-\u001f]+/g, '_').replace(/^\.+/, '').trim().slice(0, 200) || `Datei ${i + 1}`);
+const shareName = (n, i) => (String(n || '').replace(/[/\\\u0000-\u001f]+/g, '_').replace(/^\.+/, '').trim().slice(0, 200) || `Datei ${i + 1}`);
 
 async function shareInbox() {
 	if (!('indexedDB' in window)) return;
@@ -1179,12 +1179,6 @@ const VIEWS = {
 		${(SYS[sub] || SYS.general)()}`;
 	}
 };
-
-function planned(title, phase, items, icon = I.info) {
-	return html`<section class="sec"><h2 class="gh">${title.toUpperCase()} <span>geplant · ${phase}</span></h2>
-		<div class="panel"><div class="empty">${svg(icon)}<div><span>Dieser Bereich ist noch nicht gebaut. Geplant:</span>
-		<ul class="plan">${items.map((x) => html`<li>${x}</li>`)}</ul></div></div></div></section>`;
-}
 
 function svcActions(s) {
 	return s.running ? html`<button class="btn sm" type="button" data-act="svc" data-name="${s.name}" data-op="restart">${svg(I.reboot)}Neustart</button>

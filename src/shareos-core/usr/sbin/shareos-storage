@@ -196,7 +196,7 @@ release_disk() {
 		base=${dev#/dev/}
 		on_disk=0
 		case "$base" in
-			md*) for sl in $(ls /sys/block/$base/slaves 2>/dev/null); do of_disk $sl $disk && on_disk=1; done ;;
+			md*) for sl in /sys/block/$base/slaves/*; do [ -e "$sl" ] && of_disk "${sl##*/}" $disk && on_disk=1; done ;;
 			*) of_disk $base $disk && on_disk=1 ;;
 		esac
 		if [ $on_disk = 1 ]; then
@@ -209,7 +209,7 @@ release_disk() {
 	for md in /sys/block/md*; do
 		[ -e "$md/slaves" ] || continue
 		on_disk=0
-		for sl in $(ls $md/slaves); do of_disk $sl $disk && on_disk=1; done
+		for sl in "$md"/slaves/*; do [ -e "$sl" ] && of_disk "${sl##*/}" $disk && on_disk=1; done
 		if [ $on_disk = 1 ]; then
 			grep -q "^/dev/${md##*/} " /proc/mounts && umount /dev/${md##*/}
 			mdadm --stop /dev/${md##*/} >/dev/null 2>&1
@@ -401,7 +401,9 @@ cmd_repair() {
 	[ "$(cat /sys/block/$b/md/degraded 2>/dev/null || echo 0)" -ge 1 ] || die "mirror $name is complete – nothing to repair"
 	valid_disk "$disk" || die "invalid disk '$disk'"
 	need=0
-	for sl in $(ls /sys/block/$b/slaves 2>/dev/null); do
+	for sl in /sys/block/$b/slaves/*; do
+		[ -e "$sl" ] || continue
+		sl=${sl##*/}
 		of_disk $sl $disk && die "$disk already belongs to $name"
 		need=$(cat /sys/class/block/$sl/size)
 	done

@@ -67,7 +67,9 @@ find_local() {
 		return 1
 	fi
 	mkdir -p $SRC
-	for dev in $(ls /dev/sd[a-z][0-9]* /dev/sd[a-z] 2>/dev/null); do
+	# in the order ls gave before: sda, sda1, sda2, sdb …
+	for dev in $(printf '%s\n' /dev/sd[a-z][0-9]* /dev/sd[a-z] | sort); do
+		[ -b "$dev" ] || continue
 		for t in vfat exfat ext4; do
 			mount -t $t -o ro "$dev" $SRC 2>/dev/null || continue
 			f=$(ls $SRC/ShareOS-*-"$FWNAME".sysupgrade.tar $SRC/shareos/ShareOS-*-"$FWNAME".sysupgrade.tar 2>/dev/null | sort | tail -1)
