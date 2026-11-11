@@ -16,6 +16,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  static-analysis:
+    # ShellCheck (errors), ESLint and unused code of the web interface –
+    # nothing is run; see tests/static-analysis.sh. CodeQL: codeql.yml
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: ShellCheck, ESLint, dead code
+        run: tests/static-analysis.sh
+      - name: Report (warnings and complexity, informational)
+        if: always()
+        run: tests/static-analysis.sh --report > static-analysis-report.txt 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: static-analysis-report
+          path: static-analysis-report.txt
+
   backend-tests:
     # fast checks of the ucode backend (updater) without a firmware build
     runs-on: ubuntu-24.04

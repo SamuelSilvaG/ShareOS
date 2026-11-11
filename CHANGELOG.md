@@ -4,6 +4,11 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.6 (in progress)
+
+- **Static code analysis in CI.** New job `static-analysis` (`tests/static-analysis.sh`): ShellCheck over all shell scripts of the firmware (errors fail the build), ESLint over the web interface, the desktop view and the app SDK (`eslint.config.mjs`), and `tests/check-dead-code.py` for top-level names nobody uses. `--report` adds all ShellCheck warnings and the most complex functions (cyclomatic complexity) as a build artifact. **CodeQL** (`codeql.yml`) analyses JavaScript and Python for security issues (data flow from input to XSS/injection sinks) on every PR and weekly; findings appear under *Security → Code scanning*. They join the existing checks (ucode compile and forward references, ACL, i18n, weekly CVE overview).
+  - Fixed on the way: three loops over `ls` output in `shareos-storage` and the first-install initramfs (now globs), an unused function and two needless escapes in the web interface.
+
 ## 0.3.0-beta.5
 
 - **Cloud becomes the third module.** Cloud sync (rclone) is now the system app **"Cloud"** in the store: once installed, the *CLOUD* tab and the cloud part of "My ShareOS" appear; removed, the tab is gone and no scheduled job runs – accounts (`rclone.conf`), jobs and logs stay for a later reinstall. rclone itself is still downloaded to the apps drive when Cloud is set up.

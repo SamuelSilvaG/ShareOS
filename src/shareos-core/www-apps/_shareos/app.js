@@ -443,7 +443,7 @@
 			document.addEventListener('keydown', onKey, true);
 			function chosen() { return Object.keys(sel).map(function (n) { return { root: cur.root, path: cur.path, name: n }; }); }
 			function update() {
-				okB.disabled = o.folder ? !cur.root : o.save ? !nameIn.value.trim() || /[\/]/.test(nameIn.value) : !Object.keys(sel).length;
+				okB.disabled = o.folder ? !cur.root : o.save ? !nameIn.value.trim() || /\//.test(nameIn.value) : !Object.keys(sel).length;
 				[].forEach.call(list.children, function (li) { li.classList.toggle('sel', !!sel[li.dataset.name] && li.dataset.type === 'file'); });
 			}
 			function load() {

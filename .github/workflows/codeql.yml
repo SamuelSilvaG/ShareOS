@@ -1,0 +1,48 @@
+name: codeql
+
+# Security analysis (SAST) of the web interface, the app SDK and the Python
+# tools with GitHub CodeQL: data flow / taint analysis from user input to
+# dangerous sinks (XSS, injection, unsafe URLs …). Findings appear under
+# Security → Code scanning; they do not fail the build.
+# ucode and shell are not supported by CodeQL – see tests/static-analysis.sh
+# and the ucode checks in build.yml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '41 4 * * 3'   # weekly, also catches new CodeQL queries
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, python]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+          config: |
+            paths-ignore:
+              - buildroot
+              - output
+              - node_modules
+              - src/shareos-core/www/i18n
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}
