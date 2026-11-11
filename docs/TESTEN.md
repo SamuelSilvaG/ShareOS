@@ -266,7 +266,7 @@ Die Desktop-Ansicht ist ein **Modul**. Die klassische Ansicht bleibt daneben.
 
 - **Admins:** Freigaben → **Dateien** zeigt alle eingehängten Laufwerke: Ordner anlegen, hochladen (auch per Ziehen), herunterladen, umbenennen, verschieben, kopieren, löschen.
 - **Benutzer:** Im Benutzerkonto „Dateien“ einschalten. Dann gibt es in „Mein ShareOS“ den Reiter **Dateien** mit dem eigenen Ordner und den Freigaben, für die der Benutzer Rechte hat (ab 0.2.0-beta.6, siehe 14m).
-- **Darstellung:** Benutzer mit Web-Zugang stellen unter **Darstellung** Hell/Dunkel und Akzentfarbe für sich ein. „Wie für alle“ nimmt wieder die Vorgabe des Admins.
+- **Darstellung:** Benutzer mit Web-Zugang stellen unter **Darstellung** Hell/Dunkel und Akzentfarbe für sich ein (seit 0.3.0-beta.6 acht Farben, darunter Grau: Logo, Browser-Symbol und eine offene App ziehen mit). „Wie für alle“ nimmt wieder die Vorgabe des Admins.
 - Testidee: eine große Datei (z. B. 1 GB) hochladen und wieder herunterladen. Das darf nicht nach 60 s abbrechen.
 
 ## 12. Apps (Store)

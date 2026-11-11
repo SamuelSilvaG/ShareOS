@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (الافتراضي)",
 		"Hintergrundbild gespeichert.": "تم حفظ الخلفية.",
 		"Installierte Apps": "التطبيقات المثبّتة",
-		"App-Quellen": "مصادر التطبيقات"
+		"App-Quellen": "مصادر التطبيقات",
+		"Türkis": "فيروزي",
+		"Orange": "برتقالي",
+		"Violett": "بنفسجي",
+		"Grau": "رمادي",
+		"Akzentfarbe Türkis": "لون التمييز فيروزي",
+		"Akzentfarbe Orange": "لون التمييز برتقالي",
+		"Akzentfarbe Violett": "لون التمييز بنفسجي",
+		"Akzentfarbe Grau": "لون التمييز رمادي"
 	},
 	"patterns": [
 		[

@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (ডিফল্ট)",
 		"Hintergrundbild gespeichert.": "ওয়ালপেপার সংরক্ষিত।",
 		"Installierte Apps": "ইনস্টল করা অ্যাপ",
-		"App-Quellen": "অ্যাপের উৎস"
+		"App-Quellen": "অ্যাপের উৎস",
+		"Türkis": "ফিরোজা",
+		"Orange": "কমলা",
+		"Violett": "বেগুনি",
+		"Grau": "ধূসর",
+		"Akzentfarbe Türkis": "অ্যাকসেন্ট রং ফিরোজা",
+		"Akzentfarbe Orange": "অ্যাকসেন্ট রং কমলা",
+		"Akzentfarbe Violett": "অ্যাকসেন্ট রং বেগুনি",
+		"Akzentfarbe Grau": "অ্যাকসেন্ট রং ধূসর"
 	},
 	"patterns": [
 		[

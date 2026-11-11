@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (डिफ़ॉल्ट)",
 		"Hintergrundbild gespeichert.": "वॉलपेपर सहेजा गया।",
 		"Installierte Apps": "इंस्टॉल किए गए ऐप",
-		"App-Quellen": "ऐप स्रोत"
+		"App-Quellen": "ऐप स्रोत",
+		"Türkis": "फ़िरोज़ी",
+		"Orange": "नारंगी",
+		"Violett": "बैंगनी",
+		"Grau": "धूसर",
+		"Akzentfarbe Türkis": "एक्सेंट रंग फ़िरोज़ी",
+		"Akzentfarbe Orange": "एक्सेंट रंग नारंगी",
+		"Akzentfarbe Violett": "एक्सेंट रंग बैंगनी",
+		"Akzentfarbe Grau": "एक्सेंट रंग धूसर"
 	},
 	"patterns": [
 		[

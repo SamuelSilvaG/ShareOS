@@ -6,7 +6,7 @@
  * Colours: --sos-bg, --sos-panel, --sos-bar, --sos-line, --sos-accent,
  * --sos-soft, --sos-dim, --sos-text, --sos-muted, --sos-ok, --sos-warn,
  * --sos-err, --sos-rgb (accent as r,g,b). Light/dark: <html data-theme>,
- * accent: <html data-accent="blue|green|red|white">.
+ * accent: <html data-accent="blue|green|red|white|grey|violet|orange|teal">.
  * Building blocks: .sos-app, .sos-titlebar, .sos-menubar (+ .sos-menu),
  * .sos-toolbar, .sos-statusbar, .sos-btn, .sos-input, .sos-dialog.
  */
@@ -31,6 +31,26 @@
 	--sos-accent: #f2f4f5; --sos-soft: #c9cdd1; --sos-dim: #5a6066; --sos-rgb: 242, 244, 245;
 	--sos-text: #e3e6e8; --sos-muted: #8d9399;
 }
+:root[data-accent="grey"] {
+	--sos-bg: #09090a; --sos-panel: #111214; --sos-bar: #181a1c; --sos-line: #25282b;
+	--sos-accent: #a3adb8; --sos-soft: #76808e; --sos-dim: #484d55; --sos-rgb: 163, 173, 184;
+	--sos-text: #dadde1; --sos-muted: #8a8d92;
+}
+:root[data-accent="violet"] {
+	--sos-bg: #09060d; --sos-panel: #110b1a; --sos-bar: #170f25; --sos-line: #23163a;
+	--sos-accent: #a98bff; --sos-soft: #6c2fd5; --sos-dim: #421f7e; --sos-rgb: 169, 139, 255;
+	--sos-text: #d8c7f4; --sos-muted: #8671ab;
+}
+:root[data-accent="orange"] {
+	--sos-bg: #0d0a06; --sos-panel: #1a120b; --sos-bar: #261a0e; --sos-line: #3b2815;
+	--sos-accent: #ffa043; --sos-soft: #d9822b; --sos-dim: #804e1d; --sos-rgb: 255, 160, 67;
+	--sos-text: #f5dec6; --sos-muted: #ad8e6f;
+}
+:root[data-accent="teal"] {
+	--sos-bg: #060d0d; --sos-panel: #0b1a19; --sos-bar: #0f2525; --sos-line: #163a39;
+	--sos-accent: #38d9cf; --sos-soft: #2fd5cf; --sos-dim: #1f7e7a; --sos-rgb: 56, 217, 207;
+	--sos-text: #c7f4f2; --sos-muted: #71aba9;
+}
 :root { --sos-ok: #3dff8a; --sos-warn: #e6c25a; --sos-err: #ff5f5f; color-scheme: dark; }
 
 :root[data-theme="light"],
@@ -53,6 +73,26 @@
 	--sos-bg: #f5f6f7; --sos-panel: #fff; --sos-bar: #f0f1f2; --sos-line: #dde0e3;
 	--sos-accent: #1d2125; --sos-soft: #3a4046; --sos-dim: #b9bec3; --sos-rgb: 29, 33, 37;
 	--sos-text: #15181b; --sos-muted: #61676d;
+}
+:root[data-theme="light"][data-accent="grey"] {
+	--sos-bg: #f6f6f6; --sos-panel: #ffffff; --sos-bar: #f3f4f6; --sos-line: #e0e2e4;
+	--sos-accent: #56616e; --sos-soft: #57616e; --sos-dim: #c6cbd1; --sos-rgb: 86, 97, 110;
+	--sos-text: #1c1e20; --sos-muted: #63666a;
+}
+:root[data-theme="light"][data-accent="violet"] {
+	--sos-bg: #f5f3f9; --sos-panel: #ffffff; --sos-bar: #f3eefb; --sos-line: #dfd7ed;
+	--sos-accent: #6a46d4; --sos-soft: #501ea7; --sos-dim: #c3abec; --sos-rgb: 106, 70, 212;
+	--sos-text: #1b122a; --sos-muted: #625479;
+}
+:root[data-theme="light"][data-accent="orange"] {
+	--sos-bg: #f9f6f3; --sos-panel: #ffffff; --sos-bar: #fbf4ee; --sos-line: #eee2d6;
+	--sos-accent: #a85400; --sos-soft: #ab621a; --sos-dim: #eecca9; --sos-rgb: 168, 84, 0;
+	--sos-text: #2b1e11; --sos-muted: #7a6653;
+}
+:root[data-theme="light"][data-accent="teal"] {
+	--sos-bg: #f3f9f9; --sos-panel: #ffffff; --sos-bar: #eefbfa; --sos-line: #d7eded;
+	--sos-accent: #0a7f79; --sos-soft: #1ea7a3; --sos-dim: #abecea; --sos-rgb: 10, 127, 121;
+	--sos-text: #122a2a; --sos-muted: #547978;
 }
 :root[data-theme="light"] { --sos-ok: #0f8a42; --sos-warn: #8a6200; --sos-err: #c93030; color-scheme: light; }
 

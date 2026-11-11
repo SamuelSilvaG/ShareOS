@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (par défaut)",
 		"Hintergrundbild gespeichert.": "Fond d’écran enregistré.",
 		"Installierte Apps": "Applications installées",
-		"App-Quellen": "Sources d’applications"
+		"App-Quellen": "Sources d’applications",
+		"Türkis": "Turquoise",
+		"Orange": "Orange",
+		"Violett": "Violet",
+		"Grau": "Gris",
+		"Akzentfarbe Türkis": "Couleur d’accent turquoise",
+		"Akzentfarbe Orange": "Couleur d’accent orange",
+		"Akzentfarbe Violett": "Couleur d’accent violette",
+		"Akzentfarbe Grau": "Couleur d’accent grise"
 	},
 	"patterns": [
 		[

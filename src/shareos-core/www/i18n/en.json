@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (default)",
 		"Hintergrundbild gespeichert.": "Wallpaper saved.",
 		"Installierte Apps": "Installed apps",
-		"App-Quellen": "App sources"
+		"App-Quellen": "App sources",
+		"Türkis": "Teal",
+		"Orange": "Orange",
+		"Violett": "Violet",
+		"Grau": "Grey",
+		"Akzentfarbe Türkis": "Accent colour teal",
+		"Akzentfarbe Orange": "Accent colour orange",
+		"Akzentfarbe Violett": "Accent colour violet",
+		"Akzentfarbe Grau": "Accent colour grey"
 	},
 	"patterns": [
 		[

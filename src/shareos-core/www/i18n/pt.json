@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (padrão)",
 		"Hintergrundbild gespeichert.": "Papel de parede salvo.",
 		"Installierte Apps": "Aplicações instaladas",
-		"App-Quellen": "Fontes de aplicações"
+		"App-Quellen": "Fontes de aplicações",
+		"Türkis": "Turquesa",
+		"Orange": "Laranja",
+		"Violett": "Violeta",
+		"Grau": "Cinzento",
+		"Akzentfarbe Türkis": "Cor de destaque turquesa",
+		"Akzentfarbe Orange": "Cor de destaque laranja",
+		"Akzentfarbe Violett": "Cor de destaque violeta",
+		"Akzentfarbe Grau": "Cor de destaque cinzenta"
 	},
 	"patterns": [
 		[

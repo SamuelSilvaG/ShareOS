@@ -261,7 +261,7 @@ The desktop view is a **module**. The classic view stays next to it.
 
 - **Admins:** Shares → **Files** shows every mounted drive: create folders, upload (also by dragging), download, rename, move, copy, delete.
 - **Users:** enable "Dateien" in the user account. "My ShareOS" then has a **Files** tab with the own folder and the shares the user has rights to (from 0.2.0-beta.6, see 14m).
-- **Look:** users with web access set light/dark and the accent colour for themselves under **Appearance**. "Same as for everyone" goes back to the admin's choice.
+- **Look:** users with web access set light/dark and the accent colour for themselves under **Appearance** (eight colours since 0.3.0-beta.6, among them grey: logo, browser icon and an open app take it on). "Same as for everyone" goes back to the admin's choice.
 - Test idea: upload a large file (e.g. 1 GB) and download it again. It must not stop after 60 s.
 
 ## 12. Apps (store)

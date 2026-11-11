@@ -306,7 +306,7 @@
 	function applyTheme(theme, accent) {
 		if (theme !== 'light' && theme !== 'dark')
 			theme = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-		if (['blue', 'green', 'red', 'white'].indexOf(accent) < 0) accent = 'blue';
+		if (['blue', 'green', 'red', 'white', 'grey', 'violet', 'orange', 'teal'].indexOf(accent) < 0) accent = 'blue';
 		root.setAttribute('data-theme', theme);
 		root.setAttribute('data-accent', accent);
 		api.theme = { theme: theme, accent: accent };
