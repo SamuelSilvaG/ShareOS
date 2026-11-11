@@ -292,6 +292,12 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | 23:30 | **Desktop-Ansicht: Fenster sind Apps.** Jans erster Blick: Die Fenster wirkten wie kleine Browser im Browser (die Seite in einem Rahmen, das Terminal ein Fenster im Fenster), und Web-Apps öffneten weiter Browser-Fenster. Umgebaut: `app.js` zeichnet einen Bereich direkt in ein Fenster (`VIEW`), das vorderste Fenster ist „die Seite“, die Teile eines Bereichs sind eine Leiste, Terminal und Task-Manager sind eigene Werkzeuge, jede Web-App ist ein Desktop-Fenster. Der Rahmen-Modus (`?frame=1`) ist weg; die klassische Ansicht ist unverändert. |
 | 16:00 | **Desktop-Ansicht als viertes Modul:** Jan wünscht sich die Oberfläche als Desktop wie bei anderen NAS (Symbole, Startmenü, Fenster, Systemsteuerung). Zuerst ein klickbarer Entwurf, dann der Code: eigene kleine `desktop.js` ohne Framework, die Fenster zeigen die vorhandenen Seiten (`?frame=1`), Anordnung und Hintergrundbild je Konto auf der Box. Beide Ansichten bleiben, die Anmeldeseite fragt. `tests/ui-desktop.js` prüft alles in Chromium (47 Prüfungen). |
 
+### Mittwoch, 11.11.2026
+
+| Zeit | Was passiert ist |
+|---|---|
+| 13:00 | **Statische Codeanalyse** (Jan: „Bei KI-Projekten wird das immer bemängelt – wie stehen wir dazu?“). Es gab schon projekteigene Prüfungen (ucode übersetzen, Vorwärtsverweise, ACL, i18n) und die wöchentliche CVE-Übersicht; neu: ShellCheck über alle Shell-Skripte, ESLint für die Oberfläche und das App-SDK, eine Prüfung auf ungenutzten Code, ein Komplexitätsbericht (`tests/static-analysis.sh`, CI-Job `static-analysis`) und CodeQL für JavaScript und Python (Taint-Analyse, `codeql.yml`). Behoben: drei Schleifen über `ls`-Ausgaben, eine ungenutzte Funktion, zwei überflüssige Escapes. Das monatliche Audit wertet den Bericht aus. |
+
 ### Montag, 09.11.2026
 
 | Zeit | Was passiert ist |

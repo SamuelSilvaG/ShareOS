@@ -291,6 +291,12 @@ the box for why the web server was not running.
 | 23:30 | **Desktop view: windows are apps.** Jan's first look: the windows felt like small browsers in the browser (the page in a frame, the terminal a window in a window), and web apps still opened browser windows. Rebuilt: `app.js` draws an area straight into a window (`VIEW`), the window in front is "the page", parts of an area are a bar, terminal and task manager are tools of their own, every web app is a desktop window. The frame mode (`?frame=1`) is gone; the classic view is unchanged. |
 | 16:00 | **Desktop view as the fourth module:** Jan wants the interface as a desktop like other NAS systems have (icons, start menu, windows, control panel). First a clickable design, then the code: a small `desktop.js` without a framework, the windows show the existing pages (`?frame=1`), layout and wallpaper per account on the box. Both views stay, the login page asks. `tests/ui-desktop.js` checks it all in Chromium (47 checks). |
 
+### Wednesday, 11.11.2026
+
+| Time | What happened |
+|---|---|
+| 13:00 | **Static analysis** (Jan: "AI projects are criticised for this – where do we stand?"). There were already project-specific checks (ucode compile, forward references, ACL, i18n) and the weekly CVE overview; new: ShellCheck over all shell scripts, ESLint for the web interface and the app SDK, a check for unused top-level code, a complexity report (`tests/static-analysis.sh`, CI job `static-analysis`) and CodeQL for JavaScript and Python (taint analysis, `codeql.yml`). Findings fixed: three loops over `ls` output, one unused function, two needless escapes. The monthly audit now looks at the report. |
+
 ### Monday, 09.11.2026
 
 | Time | What happened |
