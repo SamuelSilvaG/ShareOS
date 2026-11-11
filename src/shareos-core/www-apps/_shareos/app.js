@@ -335,6 +335,9 @@
 		var target = embedded ? window.parent : window.opener;
 		try { if (target) target.postMessage(msg, adminOrigin); } catch (e) { }
 	}
+	// An app in a window of the desktop view cannot close itself (it is a frame):
+	// window.close() asks the desktop to close its window instead.
+	if (embedded) window.close = function () { toAdmin({ sos: 'close' }); };
 
 	/* the opened file */
 	function check(r) {

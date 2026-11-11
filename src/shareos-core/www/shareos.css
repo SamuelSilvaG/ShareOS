@@ -347,10 +347,8 @@ select.app-display{min-height:28px;padding:0 8px}
 .lookcols>.panel{break-inside:avoid;margin:0 0 16px!important;display:inline-block;width:100%}
 }
 
-/* desktop view (module "desktop"): a page in a desktop window (?frame=1),
-   the desktop itself (desktop.css) and the choice of the view on the login page */
-.sos.frame{padding:18px 20px 32px}
-.sos.frame #hd,.sos.frame #tabs,.sos.frame #ft{display:none}
+/* desktop view (module "desktop"): the desktop itself (desktop.css) and the
+   choice of the view on the login page */
 .sos.desk{padding:0;height:100vh;overflow:hidden}
 .sos.desk>.wrap{max-width:none;height:100%}
 .viewpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}

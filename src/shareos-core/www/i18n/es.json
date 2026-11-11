@@ -1583,7 +1583,9 @@
 		"Einpassen": "Ajustar",
 		"Kacheln": "Mosaico",
 		"ShareOS (Standard)": "ShareOS (predeterminado)",
-		"Hintergrundbild gespeichert.": "Fondo de pantalla guardado."
+		"Hintergrundbild gespeichert.": "Fondo de pantalla guardado.",
+		"Installierte Apps": "Aplicaciones instaladas",
+		"App-Quellen": "Fuentes de aplicaciones"
 	},
 	"patterns": [
 		[

@@ -235,11 +235,13 @@ The desktop view is a **module**. The classic view stays next to it.
 
 1. **Apps → Store → Desktop-Ansicht → Install.** Log out: above *Anmelden* there are now **Klassisch** and **Desktop**.
 2. **Choose Desktop, log in.** Bar at the top (start menu, CPU/RAM rings, network, bell, search, account, clock), icons on the left.
-3. Click **Storage**: a window with the storage page. **Move** it by the title bar, **resize** it at the edges, drag it to the left/right edge (half the screen), to the top (whole screen), double click the title, minimise it and bring it back from the bar.
-4. **Control panel** → *Network*: opens its own window. Type into the search at the top.
+3. Click **Storage**: a window with the storage area itself (no page inside, opens at once); *Drives / Health / Snapshots* are a bar under the title. **Move** it by the title bar, **resize** it at the edges, drag it to the left/right edge (half the screen), to the top (whole screen), double click the title, minimise it and bring it back from the bar.
+4. **Control panel** → *Network*: opens the window *Settings* at the network part; *Time* afterwards uses the same window. Type into the search at the top. Open several windows: each keeps what it shows.
+4a. **Terminal** icon: the shell fills the window. **Task manager:** load and status, live.
+4b. Click a **web app** icon (e.g. Webpad): it opens as a window of the desktop, not as a browser window. In **Files** open a text file with it: a second window with the file.
 5. **Start menu** → type "log" → *Logs*.
 6. **Account (letter at the top right) → Wallpaper:** pick an image on the box, try *Fill/Fit/Tile*, *ShareOS (default)* back.
-7. **Account → Toggle light/dark:** the desktop and all windows change. Change *Appearance* in a window: the desktop follows.
+7. **Account → Toggle light/dark:** the desktop and all windows change. Change *Appearance* in the settings window: the desktop follows.
 8. Drag an icon somewhere else, reload the page (F5): windows, places and wallpaper are back – also in another browser with the same account.
 9. **Account → Classic view:** the normal page; the desktop icon at the top right leads back.
 10. Log in as a **plain user**: desktop with *My ShareOS*, files, apps, settings.

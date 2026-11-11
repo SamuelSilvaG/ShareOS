@@ -71,6 +71,15 @@
 .dk-wb.x:hover{color:#fff;background:#d33a4a}
 .dk-wc{flex:1;min-height:0;position:relative;overflow:auto;background:var(--bg)}
 .dk-wc iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+.dk-wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+/* an area of the interface in its window: only the area – its parts are a bar
+   under the title, the tools that have a window of their own are not in it */
+.dk-view{padding:18px 20px 28px;user-select:text;-webkit-user-select:text}
+.dk-view .subtabs{position:sticky;top:-18px;z-index:5;width:auto;max-width:none;margin:-18px -20px 18px;padding:8px 14px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:var(--panel)}
+.dk-view .subtabs a[href="#/shares/files"],.dk-view .subtabs a[href="#/system/logs"],.dk-view .subtabs a[href="#/system/terminal"]{display:none}
+.dk-win[data-id=files] .subtabs,.dk-win[data-id=logs] .subtabs{display:none}
+.dk-win[data-id=task] .sec:not([data-part=load]):not([data-part=status]){display:none}
+.dk-view .sec:last-child{margin-bottom:0}
 .dk-dragging iframe{pointer-events:none}
 .dk-dragging,.dk-dragging *{cursor:grabbing!important}
 .dk-rs{position:absolute;z-index:2;touch-action:none}

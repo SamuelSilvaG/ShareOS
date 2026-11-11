@@ -1583,7 +1583,9 @@
 		"Einpassen": "फ़िट करें",
 		"Kacheln": "टाइल",
 		"ShareOS (Standard)": "ShareOS (डिफ़ॉल्ट)",
-		"Hintergrundbild gespeichert.": "वॉलपेपर सहेजा गया।"
+		"Hintergrundbild gespeichert.": "वॉलपेपर सहेजा गया।",
+		"Installierte Apps": "इंस्टॉल किए गए ऐप",
+		"App-Quellen": "ऐप स्रोत"
 	},
 	"patterns": [
 		[
