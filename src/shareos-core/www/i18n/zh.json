@@ -1614,7 +1614,10 @@
 		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "已关闭——种子只能通过 Transmission 应用控制。",
 		"Passwort entziehen": "撤销密码",
 		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "暂无——每个用户在 Transmission 应用中自行生成密码。",
-		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "使用此密码的程序将失去访问权限。用户可以在 Transmission 应用中生成新密码。"
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "使用此密码的程序将失去访问权限。用户可以在 Transmission 应用中生成新密码。",
+		"AdGuard Home startet und lädt die Blocklisten – das dauert etwa eine Minute.": "AdGuard Home 正在启动并加载拦截列表——大约需要一分钟。",
+		"Start fehlgeschlagen:": "启动失败：",
+		"Speichern geht wieder, sobald er läuft.": "运行后即可再次保存。"
 	},
 	"patterns": [
 		[

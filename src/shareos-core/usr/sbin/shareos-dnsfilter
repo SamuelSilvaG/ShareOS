@@ -181,6 +181,13 @@ function api(method, path, body, port) {
 }
 
 function api_up() { return api('GET', 'status').ok; }
+// AdGuard answers its API long before DNS: it loads the block lists first
+// (about 40 s for ~190 000 rules on the box) and opens port 53 only then
+function dns_up() {
+	for (let f in [ '/proc/net/udp', '/proc/net/udp6' ])
+		if (match(readfile(ROOT + f) ?? '', /\n *[0-9]+: [0-9A-F]+:0035 [0-9A-F]+:0000 07 /)) return true;
+	return false;
+}
 
 /* ---------- AdGuard's settings file: small line edits in a section ---------- */
 
@@ -277,14 +284,27 @@ function first_setup(work) {
 function box_ip() {
 	return match(sh("ip -4 -o addr show dev eth0 2>/dev/null | sed -n 's/.*inet \\([0-9.]*\\).*/\\1/p' | head -1").out, /^([0-9.]+)/)?.[1];
 }
+// the default gateway of eth0 (/proc/net/route, little-endian hex)
+function gateway_ip() {
+	for (let l in split(readfile(ROOT + '/proc/net/route') ?? '', '\n')) {
+		let f = split(trim(l), /\s+/);
+		if (length(f) > 3 && f[0] == 'eth0' && f[1] == '00000000' && match(f[2], /^[0-9A-F]{8}$/) && f[2] != '00000000')
+			return join('.', map([ 6, 4, 2, 0 ], (i) => '' + hex(substr(f[2], i, 2))));
+	}
+	return null;
+}
 function local_wanted() {
 	let ip = box_ip(), host = trim(readfile(ROOT + '/proc/sys/kernel/hostname') ?? ''), doms = [], ns = [];
 	for (let l in split(readfile(ROOT + '/etc/resolv.conf') ?? '', '\n')) {
 		let m = match(l, /^(search|domain)\s+(.+)$/);
 		if (m) for (let d in split(trim(m[2]), /\s+/)) if (match(d, /^[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*$/) && index(doms, lc(d)) < 0) push(doms, lc(d));
 		m = match(l, /^nameserver\s+([0-9.]+)\s*$/);
-		if (m && m[1] != ip && substr(m[1], 0, 4) != '127.') push(ns, m[1]);
+		if (m && m[1] != ip && substr(m[1], 0, 4) != '127.' && index(ns, m[1]) < 0) push(ns, m[1]);
 	}
+	// the network hands out the box itself as DNS server (the DNS filter for
+	// everyone): the local domains go to the router then
+	let gw = gateway_ip();
+	if (!length(ns) && gw && gw != ip) push(ns, gw);
 	let names = [];
 	let add = (n) => { n = lc(n ?? ''); if (match(n, /^[a-z0-9-]+(\.[a-z0-9-]+)*$/) && index(names, n) < 0) push(names, n); };
 	if (host) { add(host); for (let d in doms) add(host + '.' + d); }
@@ -331,6 +351,10 @@ function start() {
 	sh(sprintf('start-stop-daemon -S -b -m -p %s -x /bin/sh -- -c %s', shq(PID), shq(cmd)));
 	if (!wait_for(() => !pid() || api_up(), 90)) die('AdGuard Home does not answer: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
 	if (!pid()) die('AdGuard Home stopped: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
+	// the API waits while the lists load (and times out): the local names
+	// are set once DNS answers
+	if (!wait_for(() => !pid() || dns_up(), 300)) die('AdGuard Home does not answer DNS: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
+	if (!pid()) die('AdGuard Home stopped: ' + trim(sh('tail -n 3 ' + shq(LOG)).out));
 	local_dns();
 }
 
@@ -346,12 +370,22 @@ function filters() {
 }
 
 function status() {
-	let c = conf(), p = pid(), up = p ? api('GET', 'status') : null, st = {};
+	let c = conf(), p = pid(), st = {};
 	st.installed = installed();
 	st.enabled = c.enabled;
 	st.running = !!p;
+	// ready = DNS and the API answer. Port 53 opens after the lists are loaded;
+	// until then the API is not asked: it answers late while the lists load
+	// (up to the 30 s of curl), and rpcd – the whole web interface – would wait
+	st.dns = !!p && dns_up();
+	let up = st.dns ? api('GET', 'status') : null;
 	st.ready = !!up?.ok;
 	st.starting = !!p && !st.ready;
+	// a start in the background (switched on in the web interface) that failed
+	if (!p && c.enabled) {
+		let e = json(readfile(RUN + '/start.log') || 'null');
+		if (type(e) == 'object' && type(e.error) == 'string') st.start_error = e.error;
+	}
 	st.web_port = c.web_port;
 	st.https_port = c.https_port;
 	let y = readfile(CONF) ?? '';
@@ -495,6 +529,7 @@ case 'reload-cert': if (pid()) { stop_proc(); if (conf().enabled) start(); } out
 case 'start': set_conf('enabled', '1'); start(); out(status()); break;
 case 'start-bg':
 	set_conf('enabled', '1');
+	unlink(RUN + '/start.log');
 	sh('mkdir -p ' + shq(RUN) + ' && ( /usr/sbin/shareos-dnsfilter start >' + shq(RUN + '/start.log') + ' 2>&1 & )');
 	out({ ok: true });
 	break;

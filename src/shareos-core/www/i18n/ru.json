@@ -1614,7 +1614,10 @@
 		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "Выключено – торрентами можно управлять только в приложении Transmission.",
 		"Passwort entziehen": "Отозвать пароль",
 		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "Пока никого – каждый пользователь сам создаёт пароль в приложении Transmission.",
-		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Программы с этим паролем потеряют доступ. Пользователь может создать новый в приложении Transmission."
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Программы с этим паролем потеряют доступ. Пользователь может создать новый в приложении Transmission.",
+		"AdGuard Home startet und lädt die Blocklisten – das dauert etwa eine Minute.": "AdGuard Home запускается и загружает списки блокировки – это занимает около минуты.",
+		"Start fehlgeschlagen:": "Запуск не удался:",
+		"Speichern geht wieder, sobald er läuft.": "Сохранить снова можно, когда он запустится."
 	},
 	"patterns": [
 		[

@@ -508,6 +508,18 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zr. DNS filter: switching off and on (0.3.0-beta.7)
+
+Needs the DNS filter on with the default list. Best with the router handing out the box as DNS server.
+
+1. *Dienste*: the DNS filter shows "läuft" (green).
+2. `cat /etc/resolv.conf`: if the box's own address is the only DNS server from the network, the router follows as a second `nameserver` line.
+3. DNS-FILTER tab: untick *DNS-Filter einschalten*, *Speichern* → "aus"; *Dienste* shows it as stopped. On the box `nslookup github.com` still answers (through the router).
+4. Tick it again, *Speichern* → "startet …" for about a minute, then "läuft" with the rule count of the list (not 0). The moment it shows "läuft", `nslookup doubleclick.net 127.0.0.1` answers `0.0.0.0`.
+5. Wait two minutes: still "läuft"; `uci get dnsfilter.main.enabled` = `1`; *Dienste* shows it running.
+6. The status shows *Lokale Namen* (the box's names); `nslookup <box name>.<local domain> 127.0.0.1` gives the box's address, and another device of the local domain resolves through the router.
+7. Restart the box: the filter is on again after the boot, as before.
+
 ## 14zq. Remote access for Transmission programs (0.3.0-beta.6)
 
 Needs the system app `transmission-daemon`, the Transmission app 1.4.0+ (ShareOS-Apps) and a user with *Dateien*, e.g. `anna`. On a PC or phone in the home network: Transmission Remote GUI, Transmissionic or Tremotesf.

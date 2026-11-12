@@ -39,6 +39,7 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S12ubus $(TARGET_DIR)/etc/init.d/S12ubus
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S13rpcd $(TARGET_DIR)/etc/init.d/S13rpcd
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S50uhttpd $(TARGET_DIR)/etc/init.d/S50uhttpd
+	$(INSTALL) -D -m 0755 $(@D)/usr/share/udhcpc/default.script.d/shareos-dns $(TARGET_DIR)/usr/share/udhcpc/default.script.d/shareos-dns
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S52tremote $(TARGET_DIR)/etc/init.d/S52tremote
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-update $(TARGET_DIR)/usr/sbin/shareos-update
 	$(INSTALL) -D -m 0644 $(@D)/usr/share/rpcd/ucode/shareos.uc $(TARGET_DIR)/usr/share/rpcd/ucode/shareos.uc

@@ -1997,3 +1997,6 @@ E1611	Os programas com esta palavra-passe perdem o acesso. O utilizador pode ger
 P342	Revogar a palavra-passe de acesso remoto de “$1”?
 P343	Palavra-passe de “$1” revogada.
 P344	Acesso remoto a torrents: $1
+E1612	O AdGuard Home está a iniciar e a carregar as listas de bloqueio – demora cerca de um minuto.
+E1613	O arranque falhou:
+E1614	Poderá guardar novamente assim que estiver a funcionar.

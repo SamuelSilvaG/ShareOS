@@ -53,6 +53,24 @@ u set network.lan.dns=''; u commit network
 sh "$NET" restart >/dev/null
 check "static without DNS: the gateway is the DNS server" "grep -qx 'nameserver 192.168.7.1' $R/etc/resolv.conf"
 
+u set network.lan.dns='192.168.7.20'; u commit network
+sh "$NET" restart >/dev/null
+check "static, the box itself as DNS (DNS filter): the gateway as second server" "[ \"\$(cat $R/etc/resolv.conf)\" = \"\$(printf 'nameserver 192.168.7.20\nnameserver 192.168.7.1')\" ]"
+
+# udhcpc hook: the network hands out the box itself as DNS server
+HOOK="$TOP/src/shareos-core/usr/share/udhcpc/default.script.d/shareos-dns"
+dhcp() { printf 'search test.lan\n' > $R/etc/resolv.conf; for d in $3; do echo "nameserver $d" >> $R/etc/resolv.conf; done; ip=$1 router=$2 dns=$3 sh "$HOOK" "${4:-bound}"; }
+dhcp 192.168.7.20 192.168.7.1 192.168.7.20
+check "dhcp, the box itself as DNS: the router added" "[ \"\$(grep nameserver $R/etc/resolv.conf | tr '\n' ' ')\" = 'nameserver 192.168.7.20 nameserver 192.168.7.1 ' ]"
+ip=192.168.7.20 router=192.168.7.1 dns=192.168.7.20 sh "$HOOK" renew
+check "dhcp renew: the router not added twice" "[ \$(grep -c 'nameserver 192.168.7.1' $R/etc/resolv.conf) = 1 ]"
+dhcp 192.168.7.20 192.168.7.1 '192.168.7.2 9.9.9.9'
+check "dhcp, other DNS servers: unchanged" "! grep -q 'nameserver 192.168.7.1' $R/etc/resolv.conf"
+dhcp 192.168.7.20 192.168.7.1 '192.168.7.20 9.9.9.9'
+check "dhcp, the box and another server: unchanged" "! grep -q 'nameserver 192.168.7.1' $R/etc/resolv.conf"
+dhcp 192.168.7.20 192.168.7.1 192.168.7.20 deconfig
+check "dhcp deconfig: nothing added" "! grep -q 'nameserver 192.168.7.1' $R/etc/resolv.conf"
+
 # apply without confirmation -> rollback
 cp $R/etc/config/network $R/etc/shareos/network.rollback
 u set network.lan.ipaddr=10.9.9.9; u set network.lan.netmask=255.0.0.0; u set network.lan.gateway=''; u commit network
