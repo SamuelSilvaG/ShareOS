@@ -43,6 +43,7 @@ jobs:
           config: |
             paths-ignore:
               - buildroot
+              - legacy        # Alt-F reference only, not part of the firmware
               - output
               - node_modules
               - src/shareos-core/www/i18n
