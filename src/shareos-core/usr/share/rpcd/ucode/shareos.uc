@@ -465,6 +465,8 @@ function spawn_storage(args) {
 const CERT = '/usr/sbin/shareos-cert';
 
 const THEMES = { dark: 1, light: 1, system: 1 };
+// accent colours – also in www-apps/_shareos/app.js (accepted list) and
+// www/app.js (ACCENT_NAMES, LOGO_FILTER), palettes in shareos.css and theme.css
 const ACCENTS = { blue: 1, green: 1, red: 1, white: 1, grey: 1, violet: 1, orange: 1, teal: 1 };
 
 // modules: system apps with "module" (see shareos-apps) that switch on an
