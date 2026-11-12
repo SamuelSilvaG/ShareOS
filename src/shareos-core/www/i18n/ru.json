@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (по умолчанию)",
 		"Hintergrundbild gespeichert.": "Обои сохранены.",
 		"Installierte Apps": "Установленные приложения",
-		"App-Quellen": "Источники приложений"
+		"App-Quellen": "Источники приложений",
+		"Türkis": "Бирюзовый",
+		"Orange": "Оранжевый",
+		"Violett": "Фиолетовый",
+		"Grau": "Серый",
+		"Akzentfarbe Türkis": "Акцентный цвет: бирюзовый",
+		"Akzentfarbe Orange": "Акцентный цвет: оранжевый",
+		"Akzentfarbe Violett": "Акцентный цвет: фиолетовый",
+		"Akzentfarbe Grau": "Акцентный цвет: серый"
 	},
 	"patterns": [
 		[

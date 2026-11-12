@@ -465,7 +465,9 @@ function spawn_storage(args) {
 const CERT = '/usr/sbin/shareos-cert';
 
 const THEMES = { dark: 1, light: 1, system: 1 };
-const ACCENTS = { blue: 1, green: 1, red: 1, white: 1 };
+// accent colours – also in www-apps/_shareos/app.js (accepted list) and
+// www/app.js (ACCENT_NAMES, LOGO_FILTER), palettes in shareos.css and theme.css
+const ACCENTS = { blue: 1, green: 1, red: 1, white: 1, grey: 1, violet: 1, orange: 1, teal: 1 };
 
 // modules: system apps with "module" (see shareos-apps) that switch on an
 // area of the firmware – tab, "My ShareOS" part, background work. The code
@@ -3752,7 +3754,7 @@ return {
 				let u = session_user(req), a = req.args, c = cursor();
 				if (!u || u == 'root' || c.get('accounts', u) != 'user') return { error: 'session not bound' };
 				if (a.theme && !(a.theme in { dark: 1, light: 1, system: 1 })) return { error: 'invalid theme' };
-				if (a.accent && !(a.accent in { blue: 1, green: 1, red: 1, white: 1 })) return { error: 'invalid accent' };
+				if (a.accent && !(a.accent in ACCENTS)) return { error: 'invalid accent' };
 				for (let k in [ 'theme', 'accent' ]) {
 					if (!(k in a)) continue;
 					if (a[k]) c.set('accounts', u, k, a[k]); else c.delete('accounts', u, k);

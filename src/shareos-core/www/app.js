@@ -216,9 +216,13 @@ function routeParts(hash) {
 // the logo is drawn in blue; these filters turn it into the other accent colours
 const LOGO_FILTER = {
 	blue: '', green: 'hue-rotate(-78deg) saturate(1.15)', red: 'hue-rotate(148deg) saturate(1.25)',
-	white: 'grayscale(1) brightness(1.25)', 'white-light': 'grayscale(1) brightness(.55)'
+	white: 'grayscale(1) brightness(1.25)', 'white-light': 'grayscale(1) brightness(.55)',
+	grey: 'grayscale(.88) brightness(1.02)', 'grey-light': 'grayscale(.88) brightness(.72)',
+	violet: 'hue-rotate(52deg) saturate(1.05)', orange: 'hue-rotate(178deg) saturate(1.35) brightness(1.08)', teal: 'hue-rotate(-30deg) saturate(.95)'
 };
-const logoFilter = () => LOGO_FILTER[S.accent === 'white' && effTheme() === 'light' ? 'white-light' : S.accent] || '';
+const logoFilter = () => LOGO_FILTER[effTheme() === 'light' && LOGO_FILTER[S.accent + '-light'] != null ? S.accent + '-light' : S.accent] || '';
+// the accent colours to choose from (order of the swatches)
+const ACCENT_NAMES = { blue: 'Blau', teal: 'Türkis', green: 'Grün', orange: 'Orange', red: 'Rot', violet: 'Violett', grey: 'Grau', white: 'Weiß' };
 
 const MQ_DARK = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 function effTheme() { return S.theme === 'system' ? (MQ_DARK && !MQ_DARK.matches ? 'light' : 'dark') : S.theme; }
@@ -2272,7 +2276,7 @@ function renderUserShell() {
 }
 
 function userLookView() {
-	const names = { green: 'Grün', red: 'Rot', blue: 'Blau', white: 'Weiß' };
+	const names = ACCENT_NAMES;
 	const own = S.me.ui || {}, sys = S.sysLook || {};
 	const themeTxt = { dark: 'Dunkel', light: 'Hell', system: 'Wie das Betriebssystem (automatisch)' };
 	return html`<section class="sec"><h2 class="gh">EINSTELLUNGEN <span>${S.me.name}</span></h2><div class="g2"><div class="panel">
@@ -3455,7 +3459,7 @@ const SYS = {
 	},
 
 	appearance() {
-		const names = { green: 'Grün', red: 'Rot', blue: 'Blau', white: 'Weiß' };
+		const names = ACCENT_NAMES;
 		return html`<div class="lookcols"><div class="panel" style="max-width:560px">
 			<div class="ph"><span class="pt">DARSTELLUNG</span><span class="tag ml">gilt für alle</span></div>
 			<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>HELL ODER DUNKEL</span><select id="opt-theme">

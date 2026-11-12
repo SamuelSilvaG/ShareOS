@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS（默认）",
 		"Hintergrundbild gespeichert.": "壁纸已保存。",
 		"Installierte Apps": "已安装的应用",
-		"App-Quellen": "应用来源"
+		"App-Quellen": "应用来源",
+		"Türkis": "青绿色",
+		"Orange": "橙色",
+		"Violett": "紫色",
+		"Grau": "灰色",
+		"Akzentfarbe Türkis": "强调色：青绿色",
+		"Akzentfarbe Orange": "强调色：橙色",
+		"Akzentfarbe Violett": "强调色：紫色",
+		"Akzentfarbe Grau": "强调色：灰色"
 	},
 	"patterns": [
 		[

@@ -1585,7 +1585,15 @@
 		"ShareOS (Standard)": "ShareOS (predeterminado)",
 		"Hintergrundbild gespeichert.": "Fondo de pantalla guardado.",
 		"Installierte Apps": "Aplicaciones instaladas",
-		"App-Quellen": "Fuentes de aplicaciones"
+		"App-Quellen": "Fuentes de aplicaciones",
+		"Türkis": "Turquesa",
+		"Orange": "Naranja",
+		"Violett": "Violeta",
+		"Grau": "Gris",
+		"Akzentfarbe Türkis": "Color de acento turquesa",
+		"Akzentfarbe Orange": "Color de acento naranja",
+		"Akzentfarbe Violett": "Color de acento violeta",
+		"Akzentfarbe Grau": "Color de acento gris"
 	},
 	"patterns": [
 		[
