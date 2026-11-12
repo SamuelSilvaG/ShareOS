@@ -1,0 +1,18 @@
+#!/bin/sh
+# ShareOS: when the network hands out the box itself as its only DNS server
+# (the DNS filter answering for everyone), the router is added as a second
+# one – so the box still resolves names while the filter is off or starting
+# (updates, the store, time). musl asks all servers at once and takes the
+# first answer. Called by udhcpc's default.script with the action; the lease
+# is in the environment ($ip, $router, $dns).
+RESOLV_CONF=${SHAREOS_ROOT:-}/etc/resolv.conf
+case "$1" in
+	renew|bound) ;;
+	*) exit 0 ;;
+esac
+[ -n "$ip" ] && [ -n "$router" ] || exit 0
+for d in $dns; do [ "$d" = "$ip" ] || exit 0; done
+[ -n "$dns" ] || exit 0
+set -- $router
+[ "$1" = "$ip" ] && exit 0
+grep -q "^nameserver $1\$" "$RESOLV_CONF" || echo "nameserver $1" >> "$RESOLV_CONF"

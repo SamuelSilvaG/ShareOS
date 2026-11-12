@@ -4,6 +4,16 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
+## 0.3.0-beta.7 (in progress)
+
+- **DNS filter: switching off and on in operation** (found on Jan's box with the default list of ~190 000 rules):
+  - "Ready" only once AdGuard Home answers DNS. It answers its API right away but opens port 53 only after the block lists are loaded (about 40 s on the box); until then the tab shows "startet …" instead of "läuft" with 0 rules (new status field `dns`).
+  - The local names (the box's own names, local domains to the router) are set once DNS answers. Before, they were set while the lists were still loading; the API did not answer in time and the box's names were missing (`"local": null`).
+  - When the network hands out the box itself as its only DNS server (the usual setup for a network-wide filter), the local domains go to the default gateway, and the box adds the router as a second DNS server for itself (udhcpc hook `shareos-dns`; static addresses in `shareos-net`). Before, the box could not resolve any name while the filter was off or starting – no updates, no store.
+  - *Dienste*: the DNS filter is shown as running (it was always "nicht gestartet": the system app lists no command, the page now looks for `AdGuardHome`).
+  - The DNS-FILTER tab loads the state again each time it is opened, so its form never sends a switch position from an earlier visit.
+  - Tests: `test-dnsfilter` (+6: ready means DNS answers, local names after boot, Services page, off and on in operation stays on, the box as its own DNS server), `test-net` (+6: router as second DNS server, DHCP and static).
+
 ## 0.3.0-beta.6
 
 - **Remote access for Transmission programs** (issue #103): Transmission Remote GUI, Transmissionic, Tremotesf and other remote clients can control a user's own Transmission service from a PC or phone. Only the RPC – the web interface stays the Transmission app.

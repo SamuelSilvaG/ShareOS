@@ -54,7 +54,9 @@ const SYS_SVC_TEXT = {
 	vpn:          { label: 'VPN (OpenVPN)', desc: 'Client und Server, App NetTunnel' },
 	transmission: { label: 'Torrents (Transmission)', desc: 'ein Dienst pro Konto' },
 	autobrr:      { label: 'Download-Automatik (autobrr)', desc: 'autobrr, Port 7474' },
-	zabbix:       { label: 'Überwachung (Zabbix-Agent)', desc: 'zabbix_agentd, Aktiv-Modus' }
+	zabbix:       { label: 'Überwachung (Zabbix-Agent)', desc: 'zabbix_agentd, Aktiv-Modus' },
+	// proc: the program to look for when the system app lists no command
+	dnsfilter:    { proc: 'AdGuardHome' }
 };
 // services that must not be stopped from the UI (it would cut itself off)
 const ESSENTIAL = { uhttpd: true, rpcd: true, ubus: true, board: true };
@@ -215,6 +217,8 @@ function proc_names() {
 	let n = {};
 	for (let pid in lsdir('/proc') ?? []) {
 		if (!match(pid, /^[0-9]+$/)) continue;
+		// a process that has ended but is not reaped yet (zombie) does not run
+		if (match(readfile('/proc/' + pid + '/stat', 512) ?? '', /\) Z /)) continue;
 		let c = trim(readfile('/proc/' + pid + '/comm') ?? '');
 		if (c != '') n[c] = true;
 		// comm is cut to 15 characters: the program name from the command line too
@@ -2936,7 +2940,7 @@ return {
 				}
 				for (let s in sys_services()) {
 					let t = SYS_SVC_TEXT[s.control];
-					push(list, { name: s.control, label: t?.label ?? s.name, desc: t?.desc ?? s.id, running: running(s.proc, names),
+					push(list, { name: s.control, label: t?.label ?? s.name, desc: t?.desc ?? s.id, running: running(t?.proc ?? s.proc, names),
 						essential: false, autostart: !(s.control in off), sysapp: s.id });
 				}
 				return { services: list };
@@ -2955,7 +2959,7 @@ return {
 					// start = what the boot does (the controller follows its settings)
 					let ctl = '/usr/sbin/shareos-' + svc.control;
 					let r = sh(act == 'start' ? ctl + ' boot' : act == 'stop' ? ctl + ' stop-all' : ctl + ' stop-all; ' + ctl + ' boot');
-					return { ok: r.rc == 0, output: trim(r.out), running: running(svc.proc) };
+					return { ok: r.rc == 0, output: trim(r.out), running: running(SYS_SVC_TEXT[svc.control]?.proc ?? svc.proc) };
 				}
 				if (!script)
 					return { error: 'unknown service' };

@@ -5166,6 +5166,8 @@ function pageChanged() {
 	if (S.route.tab !== 'services' || S.route.sub !== 'printer') { clearTimeout(S.prnTimer); S.prnTimer = null; }
 	if (S.route.tab !== 'services' || S.route.sub !== 'ups') { clearTimeout(S.upsTimer); S.upsTimer = null; }
 	if (S.route.tab === 'services' && S.route.sub === 'torrent' && S.tremote) loadTremote();
+	// the DNS filter may have been switched elsewhere (Services, another window): fresh state, not the form of the last visit
+	if (S.route.tab === 'dnsfilter' && S.df) loadDnsfilter();
 	if (S.fb && S.route.sub === 'files') S.fb.roots = null;   // volumes may have changed
 	if (S.route.tab !== 'paperless') { if (!keep) { S.plEdit = null; S.plLog = null; } } else if (S.pl) loadPaperless();
 	if (S.route.tab !== 'dnsfilter') { clearTimeout(S.dfTimer); if (!keep) S.dfPass = null; } else if (S.df) loadDnsfilter();

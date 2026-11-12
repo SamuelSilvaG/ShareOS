@@ -57,6 +57,11 @@ write_resolv() {
 	[ "$(get proto)" = static ] || return 0
 	dns=$(get dns)
 	[ -n "$dns" ] || dns=$(get gateway)
+	# only the box itself (the DNS filter): the gateway as a second server, so
+	# the box resolves names while the filter is off or starting (as the
+	# udhcpc hook shareos-dns does for DHCP)
+	gw=$(get gateway)
+	[ "$dns" = "$(get ipaddr)" ] && [ -n "$gw" ] && [ "$gw" != "$dns" ] && dns="$dns $gw"
 	: > "$RESOLV.new"
 	for d in $dns; do echo "nameserver $d" >> "$RESOLV.new"; done
 	cat "$RESOLV.new" > "$RESOLV"; rm -f "$RESOLV.new"

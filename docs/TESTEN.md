@@ -513,6 +513,18 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zr. DNS-Filter: aus- und wieder einschalten (0.3.0-beta.7)
+
+Braucht den DNS-Filter eingeschaltet mit der Standardliste. Am besten verteilt der Router die Box als DNS-Server.
+
+1. *Dienste*: Der DNS-Filter steht auf „läuft“ (grün).
+2. `cat /etc/resolv.conf`: Ist die eigene Adresse der Box der einzige DNS-Server aus dem Netz, folgt der Router als zweite `nameserver`-Zeile.
+3. Reiter DNS-FILTER: Haken bei *DNS-Filter einschalten* weg, *Speichern* → „aus“; *Dienste* zeigt ihn als gestoppt. Auf der Box antwortet `nslookup github.com` trotzdem (über den Router).
+4. Haken wieder setzen, *Speichern* → etwa eine Minute „startet …“, dann „läuft“ mit der Regelzahl der Liste (nicht 0). Sobald „läuft“ dasteht, antwortet `nslookup doubleclick.net 127.0.0.1` mit `0.0.0.0`.
+5. Zwei Minuten warten: weiter „läuft“; `uci get dnsfilter.main.enabled` = `1`; *Dienste* zeigt ihn als laufend.
+6. Der Status zeigt *Lokale Namen* (die Namen der Box); `nslookup <Boxname>.<lokale Domain> 127.0.0.1` liefert die Adresse der Box, und ein anderes Gerät der lokalen Domain wird über den Router aufgelöst.
+7. Box neu starten: Der Filter ist nach dem Booten wie vorher wieder an.
+
 ## 14zq. Fernzugriff für Transmission-Programme (0.3.0-beta.6)
 
 Braucht die System-App `transmission-daemon`, die Transmission-App ab 1.4.0 (ShareOS-Apps) und einen Benutzer mit *Dateien*, z. B. `anna`. Auf einem PC oder Handy im Heimnetz: Transmission Remote GUI, Transmissionic oder Tremotesf.
