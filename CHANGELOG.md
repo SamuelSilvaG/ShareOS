@@ -4,7 +4,7 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
-## 0.3.0-beta.6 (in progress)
+## 0.3.0-beta.6
 
 - **Remote access for Transmission programs** (issue #103): Transmission Remote GUI, Transmissionic, Tremotesf and other remote clients can control a user's own Transmission service from a PC or phone. Only the RPC – the web interface stays the Transmission app.
   - Switched on by an admin under *Dienste → Torrents* (new sub-tab; off by default): own web server on port **9091** (HTTP) and **9092** (HTTPS with the box's certificate, while the interface uses HTTPS), path `/transmission/rpc`, ports adjustable. The page shows the address and the accounts that have a remote password, with *Passwort entziehen*.

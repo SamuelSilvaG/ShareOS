@@ -302,6 +302,7 @@ the box for why the web server was not running.
 | Time | What happened |
 |---|---|
 | 11:30 | **Remote access for Transmission programs** (issue #103). Jan's decisions: a separate password, home network only (VPN covers the rest), no extra web interface. The box's Transmission daemons only listen on Unix sockets, so the existing app proxy got a second entry point: `/transmission/rpc` on its own port with basic auth, the same checks and allowed methods. uhttpd does not pass `X-Transmission-Session-Id` to CGI, so the CSRF guard is "no `Origin` header" instead (there is no page that could need one). Passwords are made by the box and kept as hashes; rpcd keeps a right one in memory for 5 minutes so a client polling every two seconds does not run `mkpasswd` each time. |
+| 13:50 | #149 (remote access for Transmission programs), #150 (CodeQL findings as an artifact; `legacy/` no longer scanned) and the Transmission app 1.4.0 are merged – everything for `v0.3.0-beta.6` is on `main`. The monthly audit now also fetches and rates the CodeQL findings. |
 
 ### Monday, 09.11.2026
 
