@@ -1614,7 +1614,10 @@
 		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "Desativado – os torrents só podem ser controlados com a app Transmission.",
 		"Passwort entziehen": "Revogar a palavra-passe",
 		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "Nenhum ainda – cada utilizador gera a sua palavra-passe na app Transmission.",
-		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Os programas com esta palavra-passe perdem o acesso. O utilizador pode gerar uma nova na app Transmission."
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Os programas com esta palavra-passe perdem o acesso. O utilizador pode gerar uma nova na app Transmission.",
+		"AdGuard Home startet und lädt die Blocklisten – das dauert etwa eine Minute.": "O AdGuard Home está a iniciar e a carregar as listas de bloqueio – demora cerca de um minuto.",
+		"Start fehlgeschlagen:": "O arranque falhou:",
+		"Speichern geht wieder, sobald er läuft.": "Poderá guardar novamente assim que estiver a funcionar."
 	},
 	"patterns": [
 		[

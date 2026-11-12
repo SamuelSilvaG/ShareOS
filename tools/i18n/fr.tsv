@@ -1997,3 +1997,6 @@ E1611	Les programmes utilisant ce mot de passe perdent l’accès. L’utilisate
 P342	Retirer le mot de passe d’accès distant de « $1 » ?
 P343	Mot de passe de « $1 » retiré.
 P344	Accès distant torrent : $1
+E1612	AdGuard Home démarre et charge les listes de blocage – cela prend environ une minute.
+E1613	Échec du démarrage :
+E1614	Vous pourrez enregistrer à nouveau dès qu’il fonctionne.

@@ -1997,3 +1997,6 @@ E1611	Los programas con esta contraseña pierden el acceso. El usuario puede gen
 P342	¿Revocar la contraseña de acceso remoto de «$1»?
 P343	Contraseña de «$1» revocada.
 P344	Acceso remoto a torrents: $1
+E1612	AdGuard Home se está iniciando y cargando las listas de bloqueo; tarda aproximadamente un minuto.
+E1613	El inicio falló:
+E1614	Podrás guardar de nuevo en cuanto esté en marcha.

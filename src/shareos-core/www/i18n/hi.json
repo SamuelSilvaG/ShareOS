@@ -1614,7 +1614,10 @@
 		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "बंद – टोरेंट केवल Transmission ऐप से चलाए जा सकते हैं।",
 		"Passwort entziehen": "पासवर्ड रद्द करें",
 		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "अभी कोई नहीं – हर उपयोगकर्ता अपना पासवर्ड Transmission ऐप में खुद बनाता है।",
-		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "इस पासवर्ड वाले प्रोग्राम एक्सेस खो देंगे। उपयोगकर्ता Transmission ऐप में नया पासवर्ड बना सकता है।"
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "इस पासवर्ड वाले प्रोग्राम एक्सेस खो देंगे। उपयोगकर्ता Transmission ऐप में नया पासवर्ड बना सकता है।",
+		"AdGuard Home startet und lädt die Blocklisten – das dauert etwa eine Minute.": "AdGuard Home शुरू हो रहा है और ब्लॉक सूचियाँ लोड कर रहा है – इसमें लगभग एक मिनट लगता है।",
+		"Start fehlgeschlagen:": "शुरू नहीं हो सका:",
+		"Speichern geht wieder, sobald er läuft.": "चलने के बाद आप फिर से सहेज सकते हैं।"
 	},
 	"patterns": [
 		[

@@ -1453,7 +1453,7 @@ async function loadDnsfilter() {
 		d.filters = d.ready ? (await rpc('shareos.dnsfilter', 'filters')).filters : [];
 		d.rewrites = d.ready ? (await rpc('shareos.dnsfilter', 'rewrites')).rewrites : [];
 		S.df = d;
-		if (d.starting || (d.enabled && !d.running && S.dfStarting)) S.dfTimer = setTimeout(loadDnsfilter, 3000);
+		if (!d.start_error && (d.starting || (d.enabled && !d.running && S.dfStarting))) S.dfTimer = setTimeout(loadDnsfilter, 3000);
 		else S.dfStarting = false;
 	} catch (e) { if (e.code !== 'auth') toast('DNS-Filter: ' + e.message, true); }
 	if (S.route.tab === 'dnsfilter' && !document.activeElement?.matches('input,select,textarea')) renderMain();
@@ -1463,7 +1463,9 @@ function dnsfilterView() {
 	const d = S.df;
 	if (!d) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
 	const host = location.hostname, num = (n) => (n ?? 0).toLocaleString(LOC);
-	const state = d.ready ? html`<span class="tag ok ml">läuft</span>` : d.starting || S.dfStarting ? html`<span class="tag warn ml">startet …</span>` : html`<span class="tag ml">aus</span>`;
+	const starting = !d.ready && !d.start_error && (d.starting || S.dfStarting);
+	const state = d.ready ? html`<span class="tag ok ml">läuft</span>` : starting ? html`<span class="tag warn ml">startet …</span>`
+		: d.start_error ? html`<span class="tag err ml">Fehler</span>` : html`<span class="tag ml">aus</span>`;
 	return html`
 	<section class="sec">
 		<h2 class="gh">DNS-FILTER <span>AdGuard Home${d.version ? ' ' + d.version : ''}</span></h2>
@@ -1478,7 +1480,9 @@ function dnsfilterView() {
 					<div class="tile"><div class="k">RAM</div><div class="v">${d.rss_mb != null ? Math.round(d.rss_mb) + ' MB' : '–'}</div></div></div>
 					<p class="note"><span>Geschätzter Bedarf mit diesen Listen:</span> ~${d.estimate_mb} MB</p>
 					${d.warn ? html`<p class="note" style="color:var(--amber)">Viele Regeln: Große Listen kosten viel Arbeitsspeicher. Für die 256 MB der Box besser bei der Standardliste bleiben.</p>` : ''}`
-				: html`<p class="mut" style="margin:0;font-size:13px">${d.starting || S.dfStarting ? 'AdGuard Home startet – beim ersten Mal dauert das etwas.' : 'Unten einschalten.'}</p>`}
+				: starting ? html`<div class="empty" style="padding:8px 0"><div class="spin" style="margin:0"></div><span>AdGuard Home startet und lädt die Blocklisten – das dauert etwa eine Minute.</span></div>`
+				: d.start_error ? html`<p class="mut" style="margin:0;font-size:13px"><span>Start fehlgeschlagen:</span> <code data-i18n-skip>${d.start_error}</code></p>`
+				: html`<p class="mut" style="margin:0;font-size:13px">Unten einschalten.</p>`}
 			</div>
 			<div class="panel">
 				<div class="ph"><span class="pt">SO NUTZT DU IHN</span></div>
@@ -1509,7 +1513,8 @@ function dnsfilterView() {
 			<label class="f"><span>PORT DER ADGUARD-OBERFLÄCHE</span><input name="web_port" type="number" min="1024" max="65535" value="${d.web_port}"></label>
 			<label class="f"><span>HTTPS-PORT DER ADGUARD-OBERFLÄCHE</span><input name="https_port" type="number" min="1024" max="65535" value="${d.https_port || d.web_port + 1}"></label>
 		</div>
-		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit"${starting ? raw(' disabled') : ''}>Speichern</button>
+			${starting ? html`<span class="mut" style="font-size:12px">Speichern geht wieder, sobald er läuft.</span>` : ''}</div>
 	</form></section>
 	${d.ready ? html`<section class="sec">
 		<h2 class="gh">LOKALE EINTRÄGE <span>${d.rewrites.length}</span></h2>
@@ -3936,11 +3941,13 @@ const VIEWS_AFTER = {
 			const f = e.target, args = { enabled: f.enabled.checked, web_port: +f.web_port.value, https_port: +f.https_port.value };
 			if (f.protection) args.protection = f.protection.checked;
 			if (f.upstream) args.upstream = f.upstream.value.split('\n').map((x) => x.trim()).filter(Boolean);
+			const b = $('button[type=submit]', f); b.disabled = true;
 			try {
 				const r = await rpc('shareos.dnsfilter', 'set', args);
-				if (args.enabled && !S.df.running) S.dfStarting = true;
+				// switched on: show "startet …" at once, the status follows every 3 s
+				if (args.enabled && !S.df.running) { S.dfStarting = true; S.df = { ...S.df, enabled: true, start_error: null }; renderMain(); }
 				toast(r.ok && args.enabled && !S.df.running ? 'DNS-Filter startet …' : 'Gespeichert.'); loadDnsfilter();
-			} catch (err) { toast('DNS-Filter: ' + err.message, true); }
+			} catch (err) { b.disabled = false; toast('DNS-Filter: ' + err.message, true); }
 		});
 		$('#f-dfadd')?.addEventListener('submit', async (e) => {
 			e.preventDefault();

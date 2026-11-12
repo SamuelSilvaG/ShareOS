@@ -1614,7 +1614,10 @@
 		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "متوقف – لا يمكن التحكم في التورنت إلا من تطبيق Transmission.",
 		"Passwort entziehen": "سحب كلمة المرور",
 		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "لا أحد بعد – ينشئ كل مستخدم كلمة مروره بنفسه في تطبيق Transmission.",
-		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "تفقد البرامج التي تستخدم كلمة المرور هذه الوصول. يمكن للمستخدم إنشاء كلمة جديدة في تطبيق Transmission."
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "تفقد البرامج التي تستخدم كلمة المرور هذه الوصول. يمكن للمستخدم إنشاء كلمة جديدة في تطبيق Transmission.",
+		"AdGuard Home startet und lädt die Blocklisten – das dauert etwa eine Minute.": "يبدأ AdGuard Home ويحمّل قوائم الحظر – يستغرق ذلك نحو دقيقة.",
+		"Start fehlgeschlagen:": "فشل التشغيل:",
+		"Speichern geht wieder, sobald er läuft.": "يمكنك الحفظ مجددًا بمجرد تشغيله."
 	},
 	"patterns": [
 		[

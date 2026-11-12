@@ -828,6 +828,11 @@ def call(obj, method, args):
             'filters': [{'name': 'AdGuard DNS filter', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt', 'enabled': True, 'rules': 188364, 'updated': None},
                         {'name': 'AdAway Default Blocklist', 'url': 'https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt', 'enabled': False, 'rules': 6540, 'updated': None}]})
         fl = d['filters']
+        if d.get('_start'):
+            t = time.time() - d['_start']
+            d.update({'running': t > 2, 'starting': 2 < t <= 8, 'dns': t > 8, 'ready': t > 8})
+            if t > 8:
+                d.pop('_start'); d.update({'rss_mb': 41.5, 'queries': 12873, 'blocked': 2214}); d['rules'] = sum(f['rules'] for f in fl if f['enabled']); d['lists'] = len(fl)
         rw = STATE.setdefault('dnsfilter_rw', [{'domain': 'drucker.skynet.lan', 'answer': '10.241.1.50'}])
         if method == 'rewrites':
             return {'rewrites': rw}
@@ -842,7 +847,8 @@ def call(obj, method, args):
             d['estimate_mb'] = 25 + d['rules'] // 10000; d['warn'] = d['rules'] > 300000
         if method == 'set':
             if args.get('enabled') is True and not d['running']:
-                d.update({'enabled': True, 'running': True, 'ready': True, 'rss_mb': 41.5, 'queries': 12873, 'blocked': 2214}); upd(); return {'ok': True}
+                # starts in the background: running after 2 s, ready (DNS) after 8 s
+                d.update({'enabled': True, 'running': False, 'ready': False, 'starting': False, 'dns': False}); d['_start'] = time.time(); return {'ok': True}
             if args.get('enabled') is False: d.update({'enabled': False, 'running': False, 'ready': False, 'rss_mb': None})
             for k in ('web_port', 'https_port', 'upstream', 'protection'):
                 if k in args: d[k] = args[k]
