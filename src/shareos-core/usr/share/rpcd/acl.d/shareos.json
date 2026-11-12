@@ -125,6 +125,9 @@
 					"password",
 					"log",
 					"rewrites"
+				],
+				"shareos.tremote": [
+					"get"
 				]
 			},
 			"uci": [
@@ -345,6 +348,10 @@
 					"refresh",
 					"rewrite_add",
 					"rewrite_remove"
+				],
+				"shareos.tremote": [
+					"set",
+					"revoke"
 				]
 			},
 			"uci": [

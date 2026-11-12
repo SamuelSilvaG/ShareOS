@@ -1,0 +1,8 @@
+#!/usr/bin/ucode -S
+// ShareOS: remote access for Transmission programs (Transmission Remote GUI,
+// Transmissionic, Tremotesf …) on its own port – see S52tremote.
+//   POST /transmission/rpc   basic auth: account name + remote password
+// See /usr/share/shareos/transmission-rpc.uc (shared with the apps' proxy
+// /_shareos/cgi/transmission).
+global.TR_MODE = 'remote';
+include('/usr/share/shareos/transmission-rpc.uc');

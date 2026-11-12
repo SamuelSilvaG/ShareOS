@@ -242,6 +242,8 @@ cmd_del() {
 	deluser "$n" 2>/dev/null
 	linux_user "$n" && sed -i "/^$n:/d" /etc/passwd /etc/shadow
 	uci delete accounts."$n"; uci commit accounts
+	# its remote password for Transmission programs (shareos.tremote in rpcd)
+	rm -f "/etc/shareos/tremote/$n"
 	if [ $O_REMOVE_HOME = 1 ] && [ -n "$h" ] && echo "$h" | grep -qE "^/mnt/[a-z0-9_-]+/home/$n\$" && [ -d "$h" ]; then
 		rm -rf "$h"
 	fi

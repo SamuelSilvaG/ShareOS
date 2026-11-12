@@ -1593,7 +1593,28 @@
 		"Akzentfarbe Türkis": "অ্যাকসেন্ট রং ফিরোজা",
 		"Akzentfarbe Orange": "অ্যাকসেন্ট রং কমলা",
 		"Akzentfarbe Violett": "অ্যাকসেন্ট রং বেগুনি",
-		"Akzentfarbe Grau": "অ্যাকসেন্ট রং ধূসর"
+		"Akzentfarbe Grau": "অ্যাকসেন্ট রং ধূসর",
+		"TORRENTS": "টরেন্ট",
+		"Torrent-Fernzugriff": "টরেন্ট রিমোট অ্যাক্সেস",
+		"Torrent-Fernzugriff gespeichert.": "টরেন্ট রিমোট অ্যাক্সেস সংরক্ষিত হয়েছে।",
+		"PORT (HTTP)": "পোর্ট (HTTP)",
+		"PORT (HTTPS)": "পোর্ট (HTTPS)",
+		"BENUTZER MIT FERNZUGRIFF-PASSWORT": "রিমোট পাসওয়ার্ডসহ ব্যবহারকারী",
+		"Im Store installieren (Transmission)": "স্টোর থেকে ইনস্টল করুন (Transmission)",
+		"Entziehen": "প্রত্যাহার",
+		"Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.": "টরেন্ট চলে সিস্টেম অ্যাপ Transmission দিয়ে: প্রত্যেক ব্যবহারকারীর নিজস্ব সার্ভিস আছে এবং তিনি Transmission অ্যাপ দিয়ে তা চালান। এখানে Transmission Remote GUI বা Transmissionic-এর মতো প্রোগ্রামের জন্য অ্যাক্সেসও চালু করা যায়।",
+		"FERNZUGRIFF FÜR TORRENT-PROGRAMME": "টরেন্ট প্রোগ্রামের জন্য রিমোট অ্যাক্সেস",
+		"Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.": "Transmission Remote GUI, Transmissionic বা Tremotesf-এর মতো প্রোগ্রাম এর মাধ্যমে ব্যবহারকারীর নিজস্ব Transmission সার্ভিস চালায়।",
+		"Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.": "ব্যবহারকারীর নাম এবং আলাদা একটি রিমোট পাসওয়ার্ড দিয়ে সাইন ইন করুন, যা ব্যবহারকারী Transmission অ্যাপে তৈরি করেন – বক্সের পাসওয়ার্ড দিয়ে নয়।",
+		"Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.": "শুধু হোম নেটওয়ার্ক থেকে, VPN বা Tailscale দিয়েও; ইন্টারনেট থেকে অ্যাক্সেস বন্ধ।",
+		"Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.": "৫টি ভুল পাসওয়ার্ডের পর সাইন ইন ১০ মিনিটের জন্য বন্ধ থাকে।",
+		"Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.": "আলাদা কোনো ওয়েব ইন্টারফেস নেই: ব্রাউজারে Transmission অ্যাপ ব্যবহার করুন।",
+		"Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)": "টরেন্ট প্রোগ্রামের জন্য রিমোট অ্যাক্সেস চালু করুন (রিস্টার্টের পরেও চালু হয়)",
+		"HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.": "ওয়েব ইন্টারফেস HTTPS ব্যবহার করলে (সিস্টেম → নেটওয়ার্ক) HTTPS পাওয়া যায়; একই সার্টিফিকেট প্রযোজ্য। অনেক প্রোগ্রাম পোর্ট 9091 আশা করে।",
+		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "বন্ধ – টরেন্ট শুধু Transmission অ্যাপ দিয়ে চালানো যায়।",
+		"Passwort entziehen": "পাসওয়ার্ড প্রত্যাহার",
+		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "এখনও কেউ নেই – প্রত্যেক ব্যবহারকারী নিজের পাসওয়ার্ড Transmission অ্যাপে তৈরি করেন।",
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "এই পাসওয়ার্ড ব্যবহারকারী প্রোগ্রামগুলো অ্যাক্সেস হারাবে। ব্যবহারকারী Transmission অ্যাপে নতুন পাসওয়ার্ড তৈরি করতে পারেন।"
 	},
 	"patterns": [
 		[
@@ -2963,6 +2984,18 @@
 		[
 			"^Tresor: (.+)$",
 			"সিন্দুক: $1"
+		],
+		[
+			"^Fernzugriff-Passwort von „(.+)“ entziehen\\?$",
+			"“$1”-এর রিমোট পাসওয়ার্ড প্রত্যাহার করবেন?"
+		],
+		[
+			"^Passwort von „(.+)“ entzogen\\.$",
+			"“$1”-এর পাসওয়ার্ড প্রত্যাহার করা হয়েছে।"
+		],
+		[
+			"^Torrent-Fernzugriff: (.+)$",
+			"টরেন্ট রিমোট অ্যাক্সেস: $1"
 		]
 	],
 	"words": [

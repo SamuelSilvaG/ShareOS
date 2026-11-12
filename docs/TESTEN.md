@@ -513,6 +513,19 @@ Braucht ein Tailscale-Konto (kostenlos), ein Handy oder einen Rechner mit Tailsc
 5. Konto ohne persönlichen Ordner: Teilen meldet „no personal folder“; das Geteilte wird verworfen und kommt bei der nächsten Anmeldung nicht wieder.
 6. Dateidialog einer App für ein Konto **ohne** *Dateien* (z. B. Webpad → *Öffnen*): Die Ordnerauswahl zeigt zuerst *App-Daten*, dann *Mein Ordner* und die Freigaben des Benutzers; Freigaben nur zum Lesen sind markiert und fehlen beim Speichern. Die App legt ihre eigenen Dateien weiter in *App-Daten* ab.
 
+## 14zq. Fernzugriff für Transmission-Programme (0.3.0-beta.6)
+
+Braucht die System-App `transmission-daemon`, die Transmission-App ab 1.4.0 (ShareOS-Apps) und einen Benutzer mit *Dateien*, z. B. `anna`. Auf einem PC oder Handy im Heimnetz: Transmission Remote GUI, Transmissionic oder Tremotesf.
+
+1. *Dienste → Torrents*: „Ausgeschaltet“. *Fernzugriff für Torrent-Programme einschalten* ankreuzen, Ports 9091/9092, *Speichern* → Kennzeichen „läuft“, Adresse `http://<box>:9091/transmission/rpc` (und `https://<box>:9092/…`, wenn HTTPS an ist). Im Terminal: `netstat -ltn | grep 909` zeigt beide Ports.
+2. Als `anna` anmelden, Transmission-App → *Einstellungen* → Reiter *Fernzugriff*: *Fernsteuer-Programme für mein Konto erlauben* ankreuzen → ein Passwort wie `k7wm-…` erscheint einmal (*Kopieren*). Der Reiter zeigt Host, Port, RPC-Pfad `/transmission/rpc` und den Benutzernamen.
+3. Im Fernsteuer-Programm: Host = die Box, Port 9091, Pfad `/transmission/rpc`, Benutzer `anna`, das Passwort. Es zeigt annas Torrents; Download-Ordner erscheinen als `/home/Downloads` (`/<Wurzel>/<Pfad>`). Magnet-Link hinzufügen, anhalten, Ordner auf `/home/<Ordner>` ändern: klappt. Ein Ordner außerhalb von annas Ordnern (`/etc`, der eines anderen Benutzers) wird mit einer Meldung abgelehnt.
+4. Mit dem Box-Passwort oder einem falschen Passwort: „401“ / Anmeldung schlägt fehl. Fünf falsche Passwörter hintereinander: Das Programm bekommt 10 Minuten lang „too many wrong passwords“ (`ls /tmp/shareos-tremote/`).
+5. `curl -u anna:<Passwort> -H 'Origin: http://x' -d '{"method":"session-get"}' http://<box>:9091/transmission/rpc` → 403 (kein Zugriff aus dem Browser); `http://<box>:9091/` im Browser → 404, eine Weboberfläche gibt es nicht.
+6. Von außerhalb des Heimnetzes (z. B. zum Test eine Portweiterleitung auf 9091, Handy im Mobilfunk): abgelehnt (403 „only from the home network“). Über Tailscale oder das VPN der Box klappt es.
+7. App → *Neues Passwort*: Das Programm verliert den Zugriff, bis das neue eingetragen ist. Admin → *Dienste → Torrents* → *Passwort entziehen* bei anna: ebenso. App: Haken weg → `/etc/shareos/tremote/anna` ist weg.
+8. Fernzugriff unter *Dienste → Torrents* ausschalten: Ports 9091/9092 sind zu; nach einem Neustart bleibt er aus (bzw. an, wenn er an war).
+
 ## 14zp. Tresor-Freigaben (0.3.0-beta.5)
 
 Braucht ein Laufwerk mit ext4 (oder Btrfs) und zwei Benutzer mit SMB-Zugang, z. B. `jan` (Admin) und `anna`.

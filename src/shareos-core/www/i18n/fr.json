@@ -1593,7 +1593,28 @@
 		"Akzentfarbe Türkis": "Couleur d’accent turquoise",
 		"Akzentfarbe Orange": "Couleur d’accent orange",
 		"Akzentfarbe Violett": "Couleur d’accent violette",
-		"Akzentfarbe Grau": "Couleur d’accent grise"
+		"Akzentfarbe Grau": "Couleur d’accent grise",
+		"TORRENTS": "TORRENTS",
+		"Torrent-Fernzugriff": "Accès distant torrent",
+		"Torrent-Fernzugriff gespeichert.": "Accès distant torrent enregistré.",
+		"PORT (HTTP)": "PORT (HTTP)",
+		"PORT (HTTPS)": "PORT (HTTPS)",
+		"BENUTZER MIT FERNZUGRIFF-PASSWORT": "UTILISATEURS AVEC MOT DE PASSE D’ACCÈS DISTANT",
+		"Im Store installieren (Transmission)": "Installer depuis la boutique (Transmission)",
+		"Entziehen": "Retirer",
+		"Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.": "Les torrents passent par l’app système Transmission : chaque utilisateur a son propre service et le pilote avec l’app Transmission. Ici, vous pouvez aussi activer l’accès pour des programmes comme Transmission Remote GUI ou Transmissionic.",
+		"FERNZUGRIFF FÜR TORRENT-PROGRAMME": "ACCÈS DISTANT POUR LES PROGRAMMES TORRENT",
+		"Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.": "Des programmes comme Transmission Remote GUI, Transmissionic ou Tremotesf pilotent ainsi le service Transmission propre à un utilisateur.",
+		"Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.": "Connexion avec le nom d’utilisateur et un mot de passe d’accès distant distinct que l’utilisateur crée dans l’app Transmission – pas avec le mot de passe de la box.",
+		"Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.": "Uniquement depuis le réseau domestique, aussi via VPN ou Tailscale ; l’accès depuis Internet est bloqué.",
+		"Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.": "Après 5 mots de passe erronés, la connexion est bloquée pendant 10 minutes.",
+		"Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.": "Il n’y a pas d’interface web dédiée : dans le navigateur, utilisez l’app Transmission.",
+		"Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)": "Activer l’accès distant pour les programmes torrent (démarre aussi après un redémarrage)",
+		"HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.": "HTTPS est disponible tant que l’interface web utilise HTTPS (Système → Réseau) ; le même certificat s’applique. Beaucoup de programmes attendent le port 9091.",
+		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "Désactivé – les torrents ne se pilotent qu’avec l’app Transmission.",
+		"Passwort entziehen": "Retirer le mot de passe",
+		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "Aucun pour l’instant – chaque utilisateur crée son mot de passe dans l’app Transmission.",
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Les programmes utilisant ce mot de passe perdent l’accès. L’utilisateur peut en créer un nouveau dans l’app Transmission."
 	},
 	"patterns": [
 		[
@@ -2963,6 +2984,18 @@
 		[
 			"^Tresor: (.+)$",
 			"Coffre : $1"
+		],
+		[
+			"^Fernzugriff-Passwort von „(.+)“ entziehen\\?$",
+			"Retirer le mot de passe d’accès distant de « $1 » ?"
+		],
+		[
+			"^Passwort von „(.+)“ entzogen\\.$",
+			"Mot de passe de « $1 » retiré."
+		],
+		[
+			"^Torrent-Fernzugriff: (.+)$",
+			"Accès distant torrent : $1"
 		]
 	],
 	"words": [

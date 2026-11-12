@@ -192,7 +192,7 @@ const TABS = [
 	['apps', 'APPS'], ['cloud', 'CLOUD'], ['paperless', 'PAPERLESS'], ['dnsfilter', 'DNS-FILTER'], ['system', 'SYSTEM']
 ];
 const SYS_SUBS = [['general', 'ALLGEMEIN'], ['appearance', 'DARSTELLUNG'], ['network', 'NETZWERK'], ['notifications', 'MELDUNGEN'], ['logs', 'PROTOKOLLE'], ['terminal', 'TERMINAL'], ['time', 'ZEIT'], ['power', 'ENERGIE & RESET'], ['firmware', 'FIRMWARE']];
-const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART'], ['dlna', 'MEDIENSERVER'], ['printer', 'DRUCKER'], ['ups', 'USV']];
+const SVC_SUBS = [['status', 'STATUS'], ['autostart', 'AUTOSTART'], ['dlna', 'MEDIENSERVER'], ['printer', 'DRUCKER'], ['ups', 'USV'], ['torrent', 'TORRENTS']];
 const SHR_SUBS = [['shares', 'FREIGABEN'], ['files', 'DATEIEN'], ['users', 'BENUTZER'], ['groups', 'GRUPPEN']];
 const STO_SUBS = [['volumes', 'LAUFWERKE'], ['health', 'GESUNDHEIT'], ['snapshots', 'SNAPSHOTS']];
 const ROLE_TXT = { admin: 'Administrator', user: 'Benutzer', share: 'Nur Freigaben' };
@@ -1172,7 +1172,7 @@ const VIEWS = {
 		const sub = S.route.sub;
 		return html`
 		<nav class="subtabs" aria-label="Dienste">${SVC_SUBS.map(([id, label]) => html`<a class="st${sub === id ? ' on' : ''}" href="#/services/${id}">${label}</a>`)}</nav>
-		${sub === 'dlna' ? dlnaView() : sub === 'printer' ? printerView() : sub === 'ups' ? upsView() : sub === 'autostart' ? autostartView()
+		${sub === 'dlna' ? dlnaView() : sub === 'printer' ? printerView() : sub === 'ups' ? upsView() : sub === 'torrent' ? tremoteView() : sub === 'autostart' ? autostartView()
 			: html`<section class="sec">${secHead('services', 'DIENSTE', 'Start, Stopp, Neustart')}${serviceCards(true, isTable('services'))}</section>`}`;
 	},
 
@@ -2219,6 +2219,64 @@ function upsAfter() {
 		try { S.ups = await rpc('shareos.ups', 'set', v); toast('USV gespeichert.'); }
 		catch (err) { toast('USV: ' + err.message, true); }
 		loadUps();
+	});
+}
+
+/* ---------- remote access for Transmission programs (Services -> Torrents) ---------- */
+
+async function loadTremote() {
+	try { S.tremote = await rpc('shareos.tremote', 'get'); } catch (e) { toast('Torrent-Fernzugriff: ' + e.message, true); }
+	if (S.route.tab === 'services' && S.route.sub === 'torrent' && !document.activeElement?.matches('input')) renderMain();
+}
+
+function tremoteView() {
+	const d = S.tremote;
+	if (!d) return html`<div class="panel"><div class="empty"><div class="spin" style="margin:0"></div><span>Lade …</span></div></div>`;
+	if (!d.installed) return html`<section class="sec"><div class="panel"><div class="empty">${svg(I.info)}<div>
+		<span>Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.</span>
+		<div class="acts" style="margin-top:12px"><a class="btn primary" href="#/apps/store">Im Store installieren (Transmission)</a></div></div></div></div></section>`;
+	const host = d.host || location.hostname;
+	return html`<section class="sec">
+		<div class="g2">
+			<div class="panel">
+				<div class="ph"><span class="pt">FERNZUGRIFF FÜR TORRENT-PROGRAMME</span>${d.running ? html`<span class="tag ok ml">läuft</span>` : html`<span class="tag ml">aus</span>`}</div>
+				${d.enabled ? html`<dl class="kv">
+					<dt>Adresse</dt><dd data-i18n-skip><code>http://${host}:${d.port}${d.path}</code></dd>
+					${d.https ? html`<dt>HTTPS</dt><dd data-i18n-skip><code>https://${host}:${d.https_port}${d.path}</code></dd>` : ''}
+				</dl>` : html`<p class="mut" style="margin:0;font-size:13px">Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.</p>`}
+				<div class="pt" style="margin:14px 0 6px">BENUTZER MIT FERNZUGRIFF-PASSWORT</div>
+				${d.accounts.length ? html`<div class="tw"><table class="t"><tbody>${d.accounts.map((u) => html`<tr><td data-i18n-skip><b>${u}</b></td>
+					<td><div class="acts"><button class="btn sm ghost" type="button" data-act="tr-revoke" data-user="${u}">Passwort entziehen</button></div></td></tr>`)}</tbody></table></div>`
+				: html`<p class="mut" style="margin:0;font-size:13px">Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.</p>`}
+			</div>
+			<div class="panel">
+				<div class="ph"><span class="pt">HINWEISE</span></div>
+				<p class="mut" style="margin:0;font-size:13px;line-height:1.6"><span>Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.</span> <span>Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.</span> <span>Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.</span> <span>Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.</span> <span>Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.</span></p>
+			</div>
+		</div>
+	</section>
+	<section class="sec"><form class="panel" id="f-tremote" style="max-width:820px">
+		<div class="ph"><span class="pt">EINSTELLUNGEN</span></div>
+		<label class="chk"><input type="checkbox" name="enabled"${d.enabled ? raw(' checked') : ''}>Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)</label>
+		<div class="fields" style="margin-top:12px">
+			<label class="f"><span>PORT (HTTP)</span><input name="port" type="number" min="1024" max="65535" value="${d.port}"></label>
+			<label class="f"><span>PORT (HTTPS)</span><input name="https_port" type="number" min="1024" max="65535" value="${d.https_port}"></label>
+		</div>
+		<p class="note">HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.</p>
+		<div class="acts" style="margin-top:12px"><button class="btn primary" type="submit">Speichern</button></div>
+	</form></section>`;
+}
+
+function tremoteAfter() {
+	if (!S.tremote) { loadTremote(); return; }
+	$('#f-tremote')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = e.target, b = $('button[type=submit]', f); b.disabled = true;
+		try {
+			S.tremote = await rpc('shareos.tremote', 'set', { enabled: f.enabled.checked, port: +f.port.value, https_port: +f.https_port.value });
+			toast('Torrent-Fernzugriff gespeichert.');
+		} catch (err) { toast('Torrent-Fernzugriff: ' + err.message, true); }
+		renderMain();
 	});
 }
 
@@ -3973,6 +4031,7 @@ const VIEWS_AFTER = {
 		if (S.route.sub === 'dlna') { dlnaAfter(); return; }
 		if (S.route.sub === 'printer') { printerAfter(); return; }
 		if (S.route.sub === 'ups') { upsAfter(); return; }
+		if (S.route.sub === 'torrent') { tremoteAfter(); return; }
 		if (!S.services) loadServices();
 		document.querySelectorAll('.as-toggle').forEach((c) => c.addEventListener('change', async () => {
 			c.disabled = true;
@@ -4657,6 +4716,12 @@ const ACTIONS = {
 		if (!await confirmDlg(`Auftrag „${n}“ entfernen?`, 'Der Auftrag läuft nicht mehr. Dateien auf dem NAS und in der Cloud bleiben, wie sie sind.', 'Entfernen')) return;
 		try { await CLOUD_API[el.dataset.scope].delJob(n); toast(`Auftrag „${n}“ entfernt.`); loadCloud(el.dataset.scope); } catch (e) { toast(e.message, true); }
 	},
+	async 'tr-revoke'(el) {
+		const u = el.dataset.user;
+		if (!await confirmDlg(`Fernzugriff-Passwort von „${u}“ entziehen?`, 'Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.', 'Entziehen', true)) return;
+		try { S.tremote = await rpc('shareos.tremote', 'revoke', { user: u }); toast(`Passwort von „${u}“ entzogen.`); } catch (e) { toast(e.message, true); }
+		renderMain();
+	},
 	async 'dlna-rescan'(el) {
 		el.disabled = true;
 		try { S.dlna = await rpc('shareos.dlna', 'rescan'); toast('Medienserver liest alle Ordner neu ein.'); } catch (e) { toast(e.message, true); }
@@ -5100,6 +5165,7 @@ function pageChanged() {
 	if (S.route.tab !== 'services' || S.route.sub !== 'dlna') clearTimeout(S.dlnaTimer);
 	if (S.route.tab !== 'services' || S.route.sub !== 'printer') { clearTimeout(S.prnTimer); S.prnTimer = null; }
 	if (S.route.tab !== 'services' || S.route.sub !== 'ups') { clearTimeout(S.upsTimer); S.upsTimer = null; }
+	if (S.route.tab === 'services' && S.route.sub === 'torrent' && S.tremote) loadTremote();
 	if (S.fb && S.route.sub === 'files') S.fb.roots = null;   // volumes may have changed
 	if (S.route.tab !== 'paperless') { if (!keep) { S.plEdit = null; S.plLog = null; } } else if (S.pl) loadPaperless();
 	if (S.route.tab !== 'dnsfilter') { clearTimeout(S.dfTimer); if (!keep) S.dfPass = null; } else if (S.df) loadDnsfilter();

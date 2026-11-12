@@ -1593,7 +1593,28 @@
 		"Akzentfarbe Türkis": "لون التمييز فيروزي",
 		"Akzentfarbe Orange": "لون التمييز برتقالي",
 		"Akzentfarbe Violett": "لون التمييز بنفسجي",
-		"Akzentfarbe Grau": "لون التمييز رمادي"
+		"Akzentfarbe Grau": "لون التمييز رمادي",
+		"TORRENTS": "التورنت",
+		"Torrent-Fernzugriff": "الوصول عن بُعد للتورنت",
+		"Torrent-Fernzugriff gespeichert.": "تم حفظ الوصول عن بُعد للتورنت.",
+		"PORT (HTTP)": "المنفذ (HTTP)",
+		"PORT (HTTPS)": "المنفذ (HTTPS)",
+		"BENUTZER MIT FERNZUGRIFF-PASSWORT": "مستخدمون لديهم كلمة مرور للوصول عن بُعد",
+		"Im Store installieren (Transmission)": "التثبيت من المتجر (Transmission)",
+		"Entziehen": "سحب",
+		"Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.": "تعمل ملفات التورنت عبر تطبيق النظام Transmission: لكل مستخدم خدمته الخاصة ويتحكم بها من تطبيق Transmission. يمكنك هنا أيضًا تفعيل الوصول لبرامج مثل Transmission Remote GUI أو Transmissionic.",
+		"FERNZUGRIFF FÜR TORRENT-PROGRAMME": "الوصول عن بُعد لبرامج التورنت",
+		"Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.": "تتحكم برامج مثل Transmission Remote GUI أو Transmissionic أو Tremotesf من خلاله بخدمة Transmission الخاصة بالمستخدم.",
+		"Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.": "تسجيل الدخول باسم المستخدم وكلمة مرور خاصة للوصول عن بُعد ينشئها المستخدم في تطبيق Transmission – وليس بكلمة مرور الجهاز.",
+		"Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.": "من الشبكة المنزلية فقط، وأيضًا عبر VPN أو Tailscale؛ الوصول من الإنترنت محظور.",
+		"Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.": "بعد 5 كلمات مرور خاطئة يُحظر تسجيل الدخول لمدة 10 دقائق.",
+		"Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.": "لا توجد واجهة ويب خاصة: استخدم تطبيق Transmission في المتصفح.",
+		"Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)": "تفعيل الوصول عن بُعد لبرامج التورنت (يبدأ أيضًا بعد إعادة التشغيل)",
+		"HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.": "يتوفر HTTPS ما دامت واجهة الويب تستخدم HTTPS (النظام ← الشبكة)؛ وتُستخدم الشهادة نفسها. تتوقع برامج كثيرة المنفذ 9091.",
+		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "متوقف – لا يمكن التحكم في التورنت إلا من تطبيق Transmission.",
+		"Passwort entziehen": "سحب كلمة المرور",
+		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "لا أحد بعد – ينشئ كل مستخدم كلمة مروره بنفسه في تطبيق Transmission.",
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "تفقد البرامج التي تستخدم كلمة المرور هذه الوصول. يمكن للمستخدم إنشاء كلمة جديدة في تطبيق Transmission."
 	},
 	"patterns": [
 		[
@@ -2963,6 +2984,18 @@
 		[
 			"^Tresor: (.+)$",
 			"الخزنة: $1"
+		],
+		[
+			"^Fernzugriff-Passwort von „(.+)“ entziehen\\?$",
+			"سحب كلمة مرور الوصول عن بُعد من «$1»؟"
+		],
+		[
+			"^Passwort von „(.+)“ entzogen\\.$",
+			"تم سحب كلمة مرور «$1»."
+		],
+		[
+			"^Torrent-Fernzugriff: (.+)$",
+			"الوصول عن بُعد للتورنت: $1"
 		]
 	],
 	"words": [

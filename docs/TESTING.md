@@ -508,6 +508,19 @@ Needs a Tailscale account (free), a phone or computer with Tailscale, the file `
 5. An account without a personal folder: sharing shows "no personal folder"; the shared item is dropped and does not come back at the next login.
 6. File dialog of an app for an account **without** *Dateien* (e.g. Webpad → *Öffnen*): the list of folders shows *App-Daten* first, then *Mein Ordner* and the user's shares; read-only shares are marked and are missing when saving. The app still keeps its own files in *App-Daten*.
 
+## 14zq. Remote access for Transmission programs (0.3.0-beta.6)
+
+Needs the system app `transmission-daemon`, the Transmission app 1.4.0+ (ShareOS-Apps) and a user with *Dateien*, e.g. `anna`. On a PC or phone in the home network: Transmission Remote GUI, Transmissionic or Tremotesf.
+
+1. *Dienste → Torrents*: "Ausgeschaltet". Tick *Fernzugriff für Torrent-Programme einschalten*, ports 9091/9092, *Speichern* → tag "läuft", address `http://<box>:9091/transmission/rpc` (and `https://<box>:9092/…` with HTTPS on). In the terminal: `netstat -ltn | grep 909` shows both ports.
+2. Log in as `anna`, Transmission app → *Einstellungen* → tab *Fernzugriff*: tick *Fernsteuer-Programme für mein Konto erlauben* → a password like `k7wm-…` is shown once (*Kopieren*). The tab lists host, port, RPC path `/transmission/rpc` and the user name.
+3. In the remote program: host = the box, port 9091, path `/transmission/rpc`, user `anna`, the password. It shows anna's torrents; download folders appear as `/home/Downloads` (`/<root>/<path>`). Add a magnet link, pause, change the folder to `/home/<folder>`: works. A folder outside anna's (`/etc`, another user's) is refused with a message.
+4. With the box password or a wrong password: "401" / sign-in fails. Five wrong passwords in a row: the program gets "too many wrong passwords" for 10 minutes (`ls /tmp/shareos-tremote/`).
+5. `curl -u anna:<password> -H 'Origin: http://x' -d '{"method":"session-get"}' http://<box>:9091/transmission/rpc` → 403 (no browser access); `http://<box>:9091/` in the browser → 404, there is no web interface.
+6. From outside the home network (e.g. a port forwarding to 9091 for the test, phone on mobile data): refused (403 "only from the home network"). Over Tailscale or the VPN of the box it works.
+7. App → *Neues Passwort*: the program loses access until the new one is entered. Admin → *Dienste → Torrents* → *Passwort entziehen* for anna: the same. App: untick → `/etc/shareos/tremote/anna` is gone.
+8. Switch the remote access off under *Dienste → Torrents*: ports 9091/9092 are closed; after a restart it stays off (or on, if it was on).
+
 ## 14zp. Vault shares (0.3.0-beta.5)
 
 Needs a drive with ext4 (or Btrfs) and two users with SMB access, e.g. `jan` (admin) and `anna`.

@@ -859,6 +859,17 @@ def call(obj, method, args):
         if method in ('filters', 'filter_add', 'filter_remove', 'filter_enable', 'refresh'):
             return {'filters': fl, 'rules': d['rules'], 'filtering': True}
         return {k: v for k, v in d.items() if k != 'filters'}
+    if obj == 'shareos.tremote':
+        d = STATE.setdefault('tremote', {'enabled': False, 'port': 9091, 'https_port': 9092, 'https': True, 'installed': True, 'running': False,
+            'accounts': ['anna', 'root'], 'host': 'shareos.lan', 'path': '/transmission/rpc'})
+        if method == 'set':
+            if args.get('port') == args.get('https_port') and args.get('port'):
+                return {'error': 'HTTP and HTTPS need two different ports'}
+            d.update({'enabled': bool(args.get('enabled')), 'port': args.get('port') or d['port'], 'https_port': args.get('https_port') or d['https_port']})
+            d['running'] = d['enabled']
+        if method == 'revoke':
+            d['accounts'] = [a for a in d['accounts'] if a != args.get('user')]
+        return d
     if obj == 'shareos.ups':
         u = STATE.setdefault('ups', {'installed': True, 'enabled': False, 'running': False, 'detected': '051d:0002', 'driver': 'usbhid-ups',
             'status': None, 'charge': None, 'runtime': None, 'load': None, 'voltage': None, 'mfr': None, 'model': None, 'charge_low': None, 'battery_date': None,

@@ -298,6 +298,12 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 |---|---|
 | 13:00 | **Statische Codeanalyse** (Jan: „Bei KI-Projekten wird das immer bemängelt – wie stehen wir dazu?“). Es gab schon projekteigene Prüfungen (ucode übersetzen, Vorwärtsverweise, ACL, i18n) und die wöchentliche CVE-Übersicht; neu: ShellCheck über alle Shell-Skripte, ESLint für die Oberfläche und das App-SDK, eine Prüfung auf ungenutzten Code, ein Komplexitätsbericht (`tests/static-analysis.sh`, CI-Job `static-analysis`) und CodeQL für JavaScript und Python (Taint-Analyse, `codeql.yml`). Behoben: drei Schleifen über `ls`-Ausgaben, eine ungenutzte Funktion, zwei überflüssige Escapes. Das monatliche Audit wertet den Bericht aus. |
 
+### Donnerstag, 12.11.2026
+
+| Zeit | Was passiert ist |
+|---|---|
+| 11:30 | **Fernzugriff für Transmission-Programme** (Issue #103). Jans Entscheidungen: eigenes Passwort, nur Heimnetz (VPN deckt den Rest ab), keine zusätzliche Weboberfläche. Die Transmission-Dienste der Box hören nur auf Unix-Sockets, also bekam der bestehende App-Proxy einen zweiten Eingang: `/transmission/rpc` auf eigenem Port mit Basic Auth, gleichen Prüfungen und erlaubten Methoden. uhttpd reicht `X-Transmission-Session-Id` nicht an CGI weiter, deshalb schützt stattdessen „kein `Origin`-Header“ vor CSRF (es gibt keine Seite, die einen bräuchte). Die Box erzeugt die Passwörter und speichert nur Hashes; rpcd merkt sich ein richtiges 5 Minuten im Speicher, damit ein Programm, das alle zwei Sekunden fragt, nicht jedes Mal `mkpasswd` startet. |
+
 ### Montag, 09.11.2026
 
 | Zeit | Was passiert ist |
