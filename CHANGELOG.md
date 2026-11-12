@@ -4,7 +4,7 @@ Changes per release (newest first). The section of a version is added to its
 GitHub release automatically when the release is built. Test versions are
 pre-releases for test devices only.
 
-## 0.3.0-beta.7 (in progress)
+## 0.3.0-beta.7
 
 - **DNS filter: switching off and on in operation** (found on Jan's box with the default list of ~190 000 rules):
   - "Ready" only once AdGuard Home answers DNS. It answers its API right away but opens port 53 only after the block lists are loaded (about 40 s on the box); until then the tab shows "startet …" instead of "läuft" with 0 rules (new status field `dns`).
