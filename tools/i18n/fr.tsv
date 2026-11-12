@@ -1973,3 +1973,27 @@ E1587	Couleur d’accent turquoise
 E1588	Couleur d’accent orange
 E1589	Couleur d’accent violette
 E1590	Couleur d’accent grise
+E1591	TORRENTS
+E1592	Accès distant torrent
+E1593	Accès distant torrent enregistré.
+E1594	PORT (HTTP)
+E1595	PORT (HTTPS)
+E1596	UTILISATEURS AVEC MOT DE PASSE D’ACCÈS DISTANT
+E1597	Installer depuis la boutique (Transmission)
+E1598	Retirer
+E1599	Les torrents passent par l’app système Transmission : chaque utilisateur a son propre service et le pilote avec l’app Transmission. Ici, vous pouvez aussi activer l’accès pour des programmes comme Transmission Remote GUI ou Transmissionic.
+E1600	ACCÈS DISTANT POUR LES PROGRAMMES TORRENT
+E1601	Des programmes comme Transmission Remote GUI, Transmissionic ou Tremotesf pilotent ainsi le service Transmission propre à un utilisateur.
+E1602	Connexion avec le nom d’utilisateur et un mot de passe d’accès distant distinct que l’utilisateur crée dans l’app Transmission – pas avec le mot de passe de la box.
+E1603	Uniquement depuis le réseau domestique, aussi via VPN ou Tailscale ; l’accès depuis Internet est bloqué.
+E1604	Après 5 mots de passe erronés, la connexion est bloquée pendant 10 minutes.
+E1605	Il n’y a pas d’interface web dédiée : dans le navigateur, utilisez l’app Transmission.
+E1606	Activer l’accès distant pour les programmes torrent (démarre aussi après un redémarrage)
+E1607	HTTPS est disponible tant que l’interface web utilise HTTPS (Système → Réseau) ; le même certificat s’applique. Beaucoup de programmes attendent le port 9091.
+E1608	Désactivé – les torrents ne se pilotent qu’avec l’app Transmission.
+E1609	Retirer le mot de passe
+E1610	Aucun pour l’instant – chaque utilisateur crée son mot de passe dans l’app Transmission.
+E1611	Les programmes utilisant ce mot de passe perdent l’accès. L’utilisateur peut en créer un nouveau dans l’app Transmission.
+P342	Retirer le mot de passe d’accès distant de « $1 » ?
+P343	Mot de passe de « $1 » retiré.
+P344	Accès distant torrent : $1

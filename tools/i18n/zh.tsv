@@ -1973,3 +1973,27 @@ E1587	强调色：青绿色
 E1588	强调色：橙色
 E1589	强调色：紫色
 E1590	强调色：灰色
+E1591	种子
+E1592	种子远程访问
+E1593	种子远程访问已保存。
+E1594	端口 (HTTP)
+E1595	端口 (HTTPS)
+E1596	拥有远程访问密码的用户
+E1597	从商店安装 (Transmission)
+E1598	撤销
+E1599	种子由系统应用 Transmission 运行：每个用户都有自己的服务，并通过 Transmission 应用进行控制。在这里还可以为 Transmission Remote GUI 或 Transmissionic 等程序开启访问。
+E1600	种子程序远程访问
+E1601	Transmission Remote GUI、Transmissionic 或 Tremotesf 等程序借此控制用户自己的 Transmission 服务。
+E1602	使用用户名和用户在 Transmission 应用中生成的单独远程访问密码登录——而不是设备密码。
+E1603	仅限家庭网络，也可通过 VPN 或 Tailscale；来自互联网的访问被阻止。
+E1604	输错 5 次密码后，登录将被锁定 10 分钟。
+E1605	没有单独的网页界面：在浏览器中请使用 Transmission 应用。
+E1606	为种子程序开启远程访问（重启后也会启动）
+E1607	只要网页界面使用 HTTPS（系统 → 网络），就可以使用 HTTPS；使用同一证书。许多程序默认使用端口 9091。
+E1608	已关闭——种子只能通过 Transmission 应用控制。
+E1609	撤销密码
+E1610	暂无——每个用户在 Transmission 应用中自行生成密码。
+E1611	使用此密码的程序将失去访问权限。用户可以在 Transmission 应用中生成新密码。
+P342	撤销“$1”的远程访问密码？
+P343	已撤销“$1”的密码。
+P344	种子远程访问：$1

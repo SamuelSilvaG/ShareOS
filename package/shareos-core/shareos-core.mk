@@ -39,6 +39,7 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S12ubus $(TARGET_DIR)/etc/init.d/S12ubus
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S13rpcd $(TARGET_DIR)/etc/init.d/S13rpcd
 	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S50uhttpd $(TARGET_DIR)/etc/init.d/S50uhttpd
+	$(INSTALL) -D -m 0755 $(@D)/etc/init.d/S52tremote $(TARGET_DIR)/etc/init.d/S52tremote
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-update $(TARGET_DIR)/usr/sbin/shareos-update
 	$(INSTALL) -D -m 0644 $(@D)/usr/share/rpcd/ucode/shareos.uc $(TARGET_DIR)/usr/share/rpcd/ucode/shareos.uc
 	$(INSTALL) -D -m 0644 $(@D)/usr/share/rpcd/acl.d/shareos.json $(TARGET_DIR)/usr/share/rpcd/acl.d/shareos.json
@@ -51,6 +52,8 @@ define SHAREOS_CORE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/file $(TARGET_DIR)/www-apps/_shareos/cgi/file
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/fs $(TARGET_DIR)/www-apps/_shareos/cgi/fs
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/transmission $(TARGET_DIR)/www-apps/_shareos/cgi/transmission
+	$(INSTALL) -D -m 0644 $(@D)/usr/share/shareos/transmission-rpc.uc $(TARGET_DIR)/usr/share/shareos/transmission-rpc.uc
+	$(INSTALL) -D -m 0755 $(@D)/www-tremote/transmission/rpc $(TARGET_DIR)/www-tremote/transmission/rpc
 	$(INSTALL) -D -m 0755 $(@D)/www-apps/_shareos/cgi/media $(TARGET_DIR)/www-apps/_shareos/cgi/media
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-media $(TARGET_DIR)/usr/sbin/shareos-media
 	$(INSTALL) -D -m 0755 $(@D)/usr/sbin/shareos-snapshot $(TARGET_DIR)/usr/sbin/shareos-snapshot

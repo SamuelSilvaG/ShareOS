@@ -297,6 +297,12 @@ the box for why the web server was not running.
 |---|---|
 | 13:00 | **Static analysis** (Jan: "AI projects are criticised for this – where do we stand?"). There were already project-specific checks (ucode compile, forward references, ACL, i18n) and the weekly CVE overview; new: ShellCheck over all shell scripts, ESLint for the web interface and the app SDK, a check for unused top-level code, a complexity report (`tests/static-analysis.sh`, CI job `static-analysis`) and CodeQL for JavaScript and Python (taint analysis, `codeql.yml`). Findings fixed: three loops over `ls` output, one unused function, two needless escapes. The monthly audit now looks at the report. |
 
+### Thursday, 12.11.2026
+
+| Time | What happened |
+|---|---|
+| 11:30 | **Remote access for Transmission programs** (issue #103). Jan's decisions: a separate password, home network only (VPN covers the rest), no extra web interface. The box's Transmission daemons only listen on Unix sockets, so the existing app proxy got a second entry point: `/transmission/rpc` on its own port with basic auth, the same checks and allowed methods. uhttpd does not pass `X-Transmission-Session-Id` to CGI, so the CSRF guard is "no `Origin` header" instead (there is no page that could need one). Passwords are made by the box and kept as hashes; rpcd keeps a right one in memory for 5 minutes so a client polling every two seconds does not run `mkpasswd` each time. |
+
 ### Monday, 09.11.2026
 
 | Time | What happened |

@@ -1973,3 +1973,27 @@ E1587	Cor de destaque turquesa
 E1588	Cor de destaque laranja
 E1589	Cor de destaque violeta
 E1590	Cor de destaque cinzenta
+E1591	TORRENTS
+E1592	Acesso remoto a torrents
+E1593	Acesso remoto a torrents guardado.
+E1594	PORTA (HTTP)
+E1595	PORTA (HTTPS)
+E1596	UTILIZADORES COM PALAVRA-PASSE DE ACESSO REMOTO
+E1597	Instalar a partir da loja (Transmission)
+E1598	Revogar
+E1599	Os torrents funcionam com a app de sistema Transmission: cada utilizador tem o seu próprio serviço e controla-o com a app Transmission. Aqui também pode ativar o acesso para programas como Transmission Remote GUI ou Transmissionic.
+E1600	ACESSO REMOTO PARA PROGRAMAS DE TORRENT
+E1601	Programas como Transmission Remote GUI, Transmissionic ou Tremotesf controlam assim o serviço Transmission próprio de um utilizador.
+E1602	Início de sessão com o nome de utilizador e uma palavra-passe de acesso remoto própria que o utilizador gera na app Transmission – não com a palavra-passe da caixa.
+E1603	Apenas a partir da rede doméstica, também via VPN ou Tailscale; o acesso a partir da Internet está bloqueado.
+E1604	Após 5 palavras-passe erradas, o início de sessão fica bloqueado durante 10 minutos.
+E1605	Não existe uma interface web própria: no navegador, use a app Transmission.
+E1606	Ativar o acesso remoto para programas de torrent (também arranca após um reinício)
+E1607	O HTTPS está disponível enquanto a interface web usar HTTPS (Sistema → Rede); aplica-se o mesmo certificado. Muitos programas esperam a porta 9091.
+E1608	Desativado – os torrents só podem ser controlados com a app Transmission.
+E1609	Revogar a palavra-passe
+E1610	Nenhum ainda – cada utilizador gera a sua palavra-passe na app Transmission.
+E1611	Os programas com esta palavra-passe perdem o acesso. O utilizador pode gerar uma nova na app Transmission.
+P342	Revogar a palavra-passe de acesso remoto de “$1”?
+P343	Palavra-passe de “$1” revogada.
+P344	Acesso remoto a torrents: $1

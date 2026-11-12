@@ -7,6 +7,8 @@
 #
 #   shareos-uhttpd          admin interface: /www on port 80/443, /ubus
 #   shareos-uhttpd apps     web apps: /www-apps on apps.store.port / https_port
+#   shareos-uhttpd tremote  remote access for Transmission programs: /www-tremote
+#                           (only /transmission/rpc) on shareos.tremote.port / https_port
 #
 child=
 trap '[ -n "$child" ] && kill $child 2>/dev/null; exit 0' TERM INT
@@ -18,10 +20,12 @@ while :; do
 		crt=$(uci -q get shareos.web.cert || echo /etc/ssl/shareos/server.crt)
 		key=$(uci -q get shareos.web.key || echo /etc/ssl/shareos/server.key)
 		# also renews our self-signed one after an IP/name change
-		[ "$MODE" = apps ] || /usr/sbin/shareos-cert ensure >/dev/null 2>&1
+		[ "$MODE" = admin ] && /usr/sbin/shareos-cert ensure >/dev/null 2>&1
 		if [ -s "$crt" ] && [ -s "$key" ]; then
 			if [ "$MODE" = apps ]; then
 				tls="-s $(uci -q get apps.store.https_port || echo 8444) -C $crt -K $key"
+			elif [ "$MODE" = tremote ]; then
+				tls="-s $(uci -q get shareos.tremote.https_port || echo 9092) -C $crt -K $key"
 			else
 				tls="-s ${SHAREOS_HTTPS_PORT:-443} -C $crt -K $key"
 				[ "$(uci -q get shareos.web.redirect)" = 1 ] && tls="$tls -q"
@@ -31,6 +35,9 @@ while :; do
 	if [ "$MODE" = apps ]; then
 		/usr/bin/uhttpd -f -h /www-apps -r ShareOS-Apps -p "$(uci -q get apps.store.port || echo 8081)" $tls \
 			-x /_shareos/cgi -S -D -t 300 -T 30 -k 20 -n 3 -N 50 &
+	elif [ "$MODE" = tremote ]; then
+		/usr/bin/uhttpd -f -h /www-tremote -r ShareOS -p "$(uci -q get shareos.tremote.port || echo 9091)" $tls \
+			-x /transmission -S -D -t 300 -T 30 -k 20 -n 3 -N 30 &
 	else
 		/usr/bin/uhttpd -f -h /www -r ShareOS -p $PORT $tls \
 			-u /ubus -U /var/run/ubus/ubus.sock -x /cgi-bin \

@@ -1,0 +1,29 @@
+#!/bin/sh
+# Remote access for Transmission programs (Transmission Remote GUI,
+# Transmissionic, Tremotesf …): /transmission/rpc on its own port
+# (shareos.tremote.port, default 9091; HTTPS on https_port, default 9092),
+# only when switched on under Services -> Torrents. Every account signs in
+# with its name and its own remote password (made in the Transmission app);
+# rpcd lets only the home network in (shareos.apptorrent remote_session).
+# Supervised by shareos-uhttpd.
+PID=/var/run/shareos-uhttpd-tremote.pid
+
+start() {
+	[ "$(uci -q get shareos.tremote.enabled)" = 1 ] || return 0
+	start-stop-daemon -S -q -b -m -p $PID -x /bin/sh -- /usr/sbin/shareos-uhttpd tremote
+}
+
+stop() {
+	start-stop-daemon -K -q -p $PID 2>/dev/null
+	rm -f $PID
+	# the supervisor stops its uhttpd on TERM; one still running is ended here
+	sleep 1; pgrep -f 'uhttpd .*-h /www-tremote' >/dev/null && pkill -f 'uhttpd .*-h /www-tremote'
+	return 0
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	restart|reload) stop; start ;;
+	*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

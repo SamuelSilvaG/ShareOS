@@ -2,8 +2,10 @@
 #
 # Tests Transmission per account: shareos-transmission (one daemon per
 # account, with its rights), the proxy /_shareos/cgi/transmission of the apps
-# web server and the rpcd object shareos.apptorrent – with the built ARM
-# userland (qemu-user) in a chroot and the system app transmission-daemon.
+# web server, the remote access for Transmission programs (S52tremote,
+# /transmission/rpc) and the rpcd objects shareos.apptorrent and
+# shareos.tremote – with the built ARM userland (qemu-user) in a chroot and
+# the system app transmission-daemon.
 #
 #   sudo tests/test-transmission.sh [output/dns320l] [transmission-daemon.sapp]
 #
@@ -26,7 +28,7 @@ PORT=${SHAREOS_TEST_TR_PORT:-18091}
 T=$(mktemp -d /tmp/shareos-tr-test.XXXX)
 R=$T/root
 cleanup() {
-	chroot "$R" /bin/sh -c '/usr/sbin/shareos-transmission stop-all; /etc/init.d/S51apps stop; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
+	chroot "$R" /bin/sh -c '/usr/sbin/shareos-transmission stop-all; /etc/init.d/S52tremote stop; /etc/init.d/S51apps stop; /etc/init.d/S13rpcd stop; /etc/init.d/S12ubus stop' >/dev/null 2>&1
 	for m in $(grep " $R/" /proc/mounts | awk '{print $2}' | sort -r); do umount -l "$m" 2>/dev/null; done
 	if grep -q " $R/" /proc/mounts; then echo "still mounted below $R – not removed" >&2; else rm -rf "$T"; fi
 }
@@ -187,6 +189,82 @@ run "shareos-transmission stop-all" >/dev/null
 check "stop-all ends the daemons" "! run \"pgrep -f '[/]bin/transmission-daemon '\" | grep -q ."
 o=$(run "shareos-transmission boot")
 check "boot starts them again, torrents kept" "echo '$o' | js \"sorted(d['started'])==['anna','bernd','root']\" && tr $GA '{\"method\":\"torrent-get\",\"arguments\":{\"fields\":[\"name\"]}}' | js \"[t['name'] for t in d['arguments']['torrents']]==['ShareOS-Test']\""
+# --- remote access for Transmission programs (S52tremote, /transmission/rpc) ----------
+TRP=$((PORT + 2))
+rurl() { echo "http://127.0.0.1:$TRP/transmission/rpc"; }
+rpc_() { curl -s -m 120 -u "$1" -X POST -d "$2" "$(rurl)"; }                                         # user:pass body
+rcode() { curl -s -m 60 -o /dev/null -w '%{http_code}' -u "$1" -X POST -d "$2" "$(rurl)"; }
+ub() { run "ubus call shareos.apptorrent $1 '$2'"; }
+check "remote access: off by default, nothing listens" "! (exec 3<>/dev/tcp/127.0.0.1/$TRP) 2>/dev/null && ub remote_session '{\"user\":\"anna\",\"pass\":\"x\",\"ip\":\"127.0.0.1\"}' | js \"d['error']=='off'\""
+o=$(run "ubus call shareos.tremote set '{\"enabled\":true,\"port\":$PORT,\"https_port\":$((TRP + 1))}'")
+o2=$(run "ubus call shareos.tremote set '{\"enabled\":true,\"port\":80,\"https_port\":$((TRP + 1))}'")
+check "remote access: ports of the box and below 1024 are refused" "echo '$o' | grep -q 'service of the box' && echo '$o2' | grep -q 'between 1024 and 65535'"
+o=$(run "ubus call shareos.tremote set '{\"enabled\":true,\"port\":$TRP,\"https_port\":$TRP}'")
+check "remote access: HTTP and HTTPS need two ports" "echo '$o' | grep -q 'two different ports'"
+o=$(run "ubus call shareos.tremote set '{\"enabled\":true,\"port\":$TRP,\"https_port\":$((TRP + 1))}'")
+i=0; until (exec 3<>/dev/tcp/127.0.0.1/$TRP) 2>/dev/null || [ $i -ge 30 ]; do sleep 0.5; i=$((i + 1)); done
+check "remote access: switched on, own web server runs" "echo '$o' | js \"d['enabled'] and d['running'] and d['port']==$TRP and d['installed'] and d['accounts']==[]\" && [ \"\$(run 'uci -q get shareos.tremote.enabled')\" = 1 ]"
+check "remote access: only /transmission/rpc (no web interface, no files)" "( for u in / /transmission/web/ /transmission/ /index.html; do c=\$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$TRP\$u); [ \$c != 200 ] || exit 1; done )"
+o=$(tr $GA '{"method":"shareos-remote-get"}')
+check "app: remote access of anna – no password yet, address shown" "echo '$o' | js \"d['result']=='success' and not d['arguments']['on'] and d['arguments']['box_enabled'] and d['arguments']['port']==$TRP and d['arguments']['path']=='/transmission/rpc' and d['arguments']['user']=='anna'\""
+check "app without torrent permission: no remote access" "[ \$(code $GF '{\"method\":\"shareos-remote-get\"}') = 403 ]"
+o=$(tr $GA '{"method":"shareos-remote-set","arguments":{"on":true}}')
+PA=$(echo "$o" | python3 -c "import json,sys; print(json.load(sys.stdin)['arguments'].get('password',''))")
+check "app: password made by the box (4×4 characters), shown once" "echo '$PA' | grep -qE '^[a-z2-9]{4}(-[a-z2-9]{4}){3}\$' && tr $GA '{\"method\":\"shareos-remote-get\"}' | js \"d['arguments']['on'] and 'password' not in d['arguments']\""
+check "only its hash is kept, root only" "grep -q '^\\\$5\\\$' $R/etc/shareos/tremote/anna && ! grep -q '$PA' $R/etc/shareos/tremote/anna && [ \"\$(stat -c %a $R/etc/shareos/tremote/anna) \$(stat -c %a $R/etc/shareos/tremote)\" = '600 700' ]"
+o=$(tr $GA '{"method":"shareos-remote-set","arguments":{"on":true}}')
+check "app: switching on again keeps the password" "echo '$o' | js \"'password' not in d['arguments'] and d['arguments']['on']\""
+check "no name and password: 401 asking for basic auth" "curl -s -D - -o /dev/null -X POST -d '{\"method\":\"session-get\"}' $(rurl) | grep -qi '^WWW-Authenticate: Basic'"
+check "wrong password: 401" "[ \$(rcode anna:wrong-pass '{\"method\":\"session-get\"}') = 401 ]"
+check "the box password does not open it" "[ \$(rcode anna:anna1234 '{\"method\":\"session-get\"}') = 401 ]"
+o=$(rpc_ "anna:$PA" '{"method":"session-get","tag":7}')
+check "right password: session-get of anna's daemon, folders as /<root>/<path>" "echo '$o' | js \"d['result']=='success' and d['tag']==7 and d['arguments']['download-dir'].startswith('/home/') and 'rpc-bind-address' not in d['arguments']\""
+o=$(rpc_ "anna:$PA" '{"method":"torrent-get","arguments":{"fields":["name","downloadDir"]}}')
+check "remote: anna's torrents" "echo '$o' | js \"'ShareOS-Test' in [t['name'] for t in d['arguments']['torrents']] and all(t['downloadDir'].startswith('/home/') for t in d['arguments']['torrents'])\""
+o=$(rpc_ "anna:$PA" '{"method":"torrent-set-location","arguments":{"ids":[1],"location":"/home/Filme","move":false}}')
+check "remote: her folder as /home/Filme" "echo '$o' | js \"d['result']=='success'\" && rpc_ anna:$PA '{\"method\":\"torrent-get\",\"arguments\":{\"ids\":[1],\"fields\":[\"downloadDir\"]}}' | js \"d['arguments']['torrents'][0]['downloadDir']=='/home/Filme'\""
+o=$(rpc_ "anna:$PA" '{"method":"torrent-set-location","arguments":{"ids":[1],"location":"/mnt/daten/home/bernd"},"tag":3}')
+check "remote: bernd's folder refused (as a result the program shows)" "echo '$o' | js \"d['result'].startswith('folder not allowed') and d['tag']==3\""
+check "remote: unknown methods refused" "rpc_ anna:$PA '{\"method\":\"blocklist-update\"}' | js \"d['result']=='method not allowed'\""
+check "remote: watch folder and peer port with the ticket of the request" "rpc_ anna:$PA '{\"method\":\"session-set\",\"arguments\":{\"peer-port\":52141}}' | js \"d['result']=='success'\" && rpc_ anna:$PA '{\"method\":\"session-get\"}' | js \"d['arguments']['peer-port']==52141 and d['arguments']['watch-dir']=='/home/Watch'\""
+check "a made-up ticket opens nothing" "ub path '{\"ticket\":\"0123456789abcdef0123456789abcdef\",\"root\":\"home\",\"path\":\"\"}' | js \"d['error']=='no access'\""
+check "a browser (Origin) is refused" "[ \$(curl -s -o /dev/null -w '%{http_code}' -u anna:$PA -H 'Origin: http://evil.example' -X POST -d '{\"method\":\"session-get\"}' $(rurl)) = 403 ]"
+check "anna's password does not open bernd's account" "[ \$(rcode bernd:$PA '{\"method\":\"session-get\"}') = 401 ]"
+PB=$(tr $GB '{"method":"shareos-remote-set","arguments":{"on":true}}' | python3 -c "import json,sys; print(json.load(sys.stdin)['arguments'].get('password',''))")
+check "bernd with his own password sees only his torrents" "rpc_ bernd:$PB '{\"method\":\"torrent-get\",\"arguments\":{\"fields\":[\"name\"]}}' | js \"d['arguments']['torrents']==[]\""
+check "admin page lists the accounts with a password" "run 'ubus call shareos.tremote get' | js \"d['accounts']==['anna','bernd']\""
+check "home network: private IPv4, Tailscale/CGNAT, IPv4 in IPv6, ULA, link-local" "( for ip in 10.1.2.3 172.20.0.9 192.168.178.20 100.101.102.103 ::ffff:192.168.0.7 fd7a:115c:a1e0::1 fe80::1 169.254.3.4; do ub remote_session '{\"user\":\"anna\",\"pass\":\"$PA\",\"ip\":\"'\$ip'\"}' | js \"d.get('user')=='anna'\" || exit 1; done )"
+check "internet addresses refused" "( for ip in 8.8.8.8 172.32.0.1 192.169.1.1 100.128.0.1 2001:db8::1 ::ffff:8.8.8.8 ''; do ub remote_session '{\"user\":\"anna\",\"pass\":\"$PA\",\"ip\":\"'\$ip'\"}' | js \"d['error']=='not local'\" || exit 1; done )"
+for i in 1 2 3 4 5; do ub remote_session '{"user":"bernd","pass":"nope","ip":"10.9.9.9"}' >/dev/null; done
+check "5 wrong passwords lock the account name (also with the right one)" "ub remote_session '{\"user\":\"bernd\",\"pass\":\"$PB\",\"ip\":\"10.9.9.8\"}' | js \"d['error']=='locked'\""
+check "… and the address (also for other accounts)" "ub remote_session '{\"user\":\"anna\",\"pass\":\"$PA\",\"ip\":\"10.9.9.9\"}' | js \"d['error']=='locked'\""
+check "… and say so over HTTP (429)" "for i in 1 2 3 4 5; do rcode bernd:nope '{\"method\":\"session-get\"}' >/dev/null; done; [ \$(rcode bernd:$PB '{\"method\":\"session-get\"}') = 429 ]"
+check "other accounts from other addresses still get in" "[ \$(rcode anna:$PA '{\"method\":\"session-get\"}') = 200 ]"
+rm -f $R/tmp/shareos-tremote/fail-*
+OLD=$PA
+PA=$(tr $GA '{"method":"shareos-remote-set","arguments":{"on":true,"regen":true}}' | python3 -c "import json,sys; print(json.load(sys.stdin)['arguments'].get('password',''))")
+check "new password: the old one stops working at once" "[ '$PA' != '$OLD' ] && [ \$(rcode anna:$OLD '{\"method\":\"session-get\"}') = 401 ] && [ \$(rcode anna:$PA '{\"method\":\"session-get\"}') = 200 ]"
+rm -f $R/tmp/shareos-tremote/fail-*
+run "uci delete apps.app_tclient.users; uci add_list apps.app_tclient.users=bernd; uci commit apps" >/dev/null
+check "anna loses the Transmission app: remote access ends too" "[ \$(rcode anna:$PA '{\"method\":\"session-get\"}') = 401 ]"
+run "uci delete apps.app_tclient.users; uci add_list apps.app_tclient.users='*'; uci commit apps" >/dev/null; rm -f $R/tmp/shareos-tremote/fail-*
+check "… and is back with the app" "[ \$(rcode anna:$PA '{\"method\":\"session-get\"}') = 200 ]"
+o=$(run "ubus call shareos.tremote revoke '{\"user\":\"bernd\"}'")
+check "admin revokes bernd's password" "echo '$o' | js \"d['accounts']==['anna']\" && [ \$(rcode bernd:$PB '{\"method\":\"session-get\"}') = 401 ]"
+rm -f $R/tmp/shareos-tremote/fail-*
+tr $GA '{"method":"shareos-remote-set","arguments":{"on":false}}' >/dev/null
+check "app: switched off, the password is gone" "[ ! -e $R/etc/shareos/tremote/anna ] && [ \$(rcode anna:$PA '{\"method\":\"session-get\"}') = 401 ]"
+rm -f $R/tmp/shareos-tremote/fail-*
+PA=$(tr $GA '{"method":"shareos-remote-set","arguments":{"on":true}}' | python3 -c "import json,sys; print(json.load(sys.stdin)['arguments'].get('password',''))")
+run "uci set shareos.web.https=1; uci commit shareos; shareos-cert ensure; /etc/init.d/S52tremote restart" >/dev/null 2>&1
+i=0; until (exec 3<>/dev/tcp/127.0.0.1/$((TRP + 1))) 2>/dev/null || [ $i -ge 40 ]; do sleep 0.5; i=$((i + 1)); done
+check "HTTPS on the second port, with the box's certificate" "curl -sk -m 60 -u anna:$PA -X POST -d '{\"method\":\"session-get\"}' https://127.0.0.1:$((TRP + 1))/transmission/rpc | js \"d['result']=='success'\""
+run "uci set shareos.web.https=0; uci commit shareos" >/dev/null
+o=$(run "ubus call shareos.tremote set '{\"enabled\":false}'")
+check "switched off: web server gone, logins refused" "echo '$o' | js \"not d['enabled'] and not d['running']\" && ! (exec 3<>/dev/tcp/127.0.0.1/$TRP) 2>/dev/null && ub remote_session '{\"user\":\"anna\",\"pass\":\"$PA\",\"ip\":\"127.0.0.1\"}' | js \"d['error']=='off'\""
+run "shareos-users del bernd" >/dev/null 2>&1
+check "deleting an account removes its remote password" "[ ! -e $R/etc/shareos/tremote/bernd ]"
+
 run "shareos-apps remove transmission-daemon" >/dev/null
 check "removing the system app stops the daemons" "! run \"pgrep -f '[/]bin/transmission-daemon '\" | grep -q . && [ ! -e $R/opt/shareos/bin/transmission-daemon ]"
 check "downloads and state stay on the drive" "[ -f $R/mnt/daten/home/anna/.config/transmission-daemon/settings.json ]"

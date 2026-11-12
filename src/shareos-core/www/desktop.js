@@ -62,6 +62,7 @@ const DK_I = {
 	media: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 9l4 2-4 2z"/><path d="M8 21h8"/>',
 	printer: '<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
 	ups: '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M12.5 7 10 12h4l-2.5 5"/>',
+	torrent: '<path d="M12 3v11M8 10l4 4 4-4"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/>',
 	health: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M8 12h2l1-2 2 4 1-2h2"/>',
 	snap: '<circle cx="12" cy="13" r="4"/><path d="M4 8h3l2-3h6l2 3h3v11H4z"/>',
 	app: '<rect x="4" y="4" width="16" height="16" rx="4"/>'
@@ -129,7 +130,7 @@ function dkPanel() {
 		['Zugang & Verbindung', [['Benutzer', 'users', '#/shares/users'], ['Gruppen', 'group', '#/shares/groups'], ['Freigaben', 'shares', '#/shares/shares'], ['Terminal', 'term', '#/system/terminal']]],
 		['Allgemein', [['Allgemein', 'general', '#/system/general'], ['Netzwerk', 'net', '#/system/network'], ['Zeit', 'time', '#/system/time'], ['Darstellung', 'look', '#/system/appearance'],
 			['Hintergrundbild', 'image', null, 'wall'], ['Meldungen', 'notes', '#/system/notifications'], ['Energie & Reset', 'power', '#/system/power']]],
-		['Dienste', [['Status', 'services', '#/services/status'], ['Autostart', 'autostart', '#/services/autostart'], ['Medienserver', 'media', '#/services/dlna'], ['Drucker', 'printer', '#/services/printer'], ['USV', 'ups', '#/services/ups']]],
+		['Dienste', [['Status', 'services', '#/services/status'], ['Autostart', 'autostart', '#/services/autostart'], ['Medienserver', 'media', '#/services/dlna'], ['Drucker', 'printer', '#/services/printer'], ['USV', 'ups', '#/services/ups'], ['Torrent-Fernzugriff', 'torrent', '#/services/torrent']]],
 		['Speicher', [['Laufwerke', 'storage', '#/storage/volumes'], ['Gesundheit', 'health', '#/storage/health'], ['Snapshots', 'snap', '#/storage/snapshots']]],
 		['System', [['Firmware', 'firmware', '#/system/firmware'], ['Protokolle', 'logs', '#/system/logs'],
 			...(tabOn('apps') ? [['Installierte Apps', 'store', '#/apps/installed'], ['App-Quellen', 'store', '#/apps/sources']] : [])]]

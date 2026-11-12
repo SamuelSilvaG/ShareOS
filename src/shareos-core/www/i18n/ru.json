@@ -1593,7 +1593,28 @@
 		"Akzentfarbe Türkis": "Акцентный цвет: бирюзовый",
 		"Akzentfarbe Orange": "Акцентный цвет: оранжевый",
 		"Akzentfarbe Violett": "Акцентный цвет: фиолетовый",
-		"Akzentfarbe Grau": "Акцентный цвет: серый"
+		"Akzentfarbe Grau": "Акцентный цвет: серый",
+		"TORRENTS": "ТОРРЕНТЫ",
+		"Torrent-Fernzugriff": "Удалённый доступ к торрентам",
+		"Torrent-Fernzugriff gespeichert.": "Удалённый доступ к торрентам сохранён.",
+		"PORT (HTTP)": "ПОРТ (HTTP)",
+		"PORT (HTTPS)": "ПОРТ (HTTPS)",
+		"BENUTZER MIT FERNZUGRIFF-PASSWORT": "ПОЛЬЗОВАТЕЛИ С ПАРОЛЕМ УДАЛЁННОГО ДОСТУПА",
+		"Im Store installieren (Transmission)": "Установить из магазина (Transmission)",
+		"Entziehen": "Отозвать",
+		"Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.": "Торренты работают через системное приложение Transmission: у каждого пользователя своя служба, которой он управляет в приложении Transmission. Здесь можно дополнительно включить доступ для программ вроде Transmission Remote GUI или Transmissionic.",
+		"FERNZUGRIFF FÜR TORRENT-PROGRAMME": "УДАЛЁННЫЙ ДОСТУП ДЛЯ ТОРРЕНТ-ПРОГРАММ",
+		"Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.": "Программы вроде Transmission Remote GUI, Transmissionic или Tremotesf управляют так собственной службой Transmission пользователя.",
+		"Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.": "Вход по имени пользователя и отдельному паролю удалённого доступа, который пользователь создаёт в приложении Transmission, – не по паролю устройства.",
+		"Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.": "Только из домашней сети, также через VPN или Tailscale; доступ из интернета заблокирован.",
+		"Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.": "После 5 неверных паролей вход блокируется на 10 минут.",
+		"Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.": "Отдельного веб-интерфейса нет: в браузере используйте приложение Transmission.",
+		"Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)": "Включить удалённый доступ для торрент-программ (запускается и после перезагрузки)",
+		"HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.": "HTTPS доступен, пока веб-интерфейс использует HTTPS (Система → Сеть); действует тот же сертификат. Многие программы ожидают порт 9091.",
+		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "Выключено – торрентами можно управлять только в приложении Transmission.",
+		"Passwort entziehen": "Отозвать пароль",
+		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "Пока никого – каждый пользователь сам создаёт пароль в приложении Transmission.",
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Программы с этим паролем потеряют доступ. Пользователь может создать новый в приложении Transmission."
 	},
 	"patterns": [
 		[
@@ -2963,6 +2984,18 @@
 		[
 			"^Tresor: (.+)$",
 			"Сейф: $1"
+		],
+		[
+			"^Fernzugriff-Passwort von „(.+)“ entziehen\\?$",
+			"Отозвать пароль удалённого доступа пользователя «$1»?"
+		],
+		[
+			"^Passwort von „(.+)“ entzogen\\.$",
+			"Пароль пользователя «$1» отозван."
+		],
+		[
+			"^Torrent-Fernzugriff: (.+)$",
+			"Удалённый доступ к торрентам: $1"
 		]
 	],
 	"words": [

@@ -60,7 +60,13 @@
  *                                  a folder the daemon watches for .torrent files
  *                                  (0.2.0-beta.20+; kept by the box, restarts the
  *                                  daemon; session-get also gives
- *                                  "watch-dir-autobrr": true when autobrr uses it)
+ *                                  "watch-dir-autobrr": true when autobrr uses it);
+ *                                  remote access for Transmission programs
+ *                                  (0.3.0-beta.6+): "shareos-remote-get" ->
+ *                                  { on, box_enabled, user, host, port, https,
+ *                                  https_port, path }, "shareos-remote-set"
+ *                                  { on, regen } -> the same, plus "password"
+ *                                  when the box made a new one (shown once)
  * ShareOS.syncthing           the account's own Syncthing (system app
  *                             "syncthing"), for apps with the permissions
  *                             "files" and "syncthing" (ShareOS 0.2.0-beta.20+,

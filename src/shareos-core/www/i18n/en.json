@@ -1593,7 +1593,28 @@
 		"Akzentfarbe Türkis": "Accent colour teal",
 		"Akzentfarbe Orange": "Accent colour orange",
 		"Akzentfarbe Violett": "Accent colour violet",
-		"Akzentfarbe Grau": "Accent colour grey"
+		"Akzentfarbe Grau": "Accent colour grey",
+		"TORRENTS": "TORRENTS",
+		"Torrent-Fernzugriff": "Torrent remote access",
+		"Torrent-Fernzugriff gespeichert.": "Torrent remote access saved.",
+		"PORT (HTTP)": "PORT (HTTP)",
+		"PORT (HTTPS)": "PORT (HTTPS)",
+		"BENUTZER MIT FERNZUGRIFF-PASSWORT": "USERS WITH A REMOTE PASSWORD",
+		"Im Store installieren (Transmission)": "Install from the store (Transmission)",
+		"Entziehen": "Revoke",
+		"Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.": "Torrents run on the system app Transmission: every user has their own service and controls it with the Transmission app. Here you can also switch on access for programs such as Transmission Remote GUI or Transmissionic.",
+		"FERNZUGRIFF FÜR TORRENT-PROGRAMME": "REMOTE ACCESS FOR TORRENT PROGRAMS",
+		"Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.": "Programs such as Transmission Remote GUI, Transmissionic or Tremotesf use it to control a user’s own Transmission service.",
+		"Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.": "Sign in with the user name and a separate remote password the user creates in the Transmission app – not with the box password.",
+		"Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.": "Only from the home network, also over VPN or Tailscale; access from the internet is blocked.",
+		"Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.": "After 5 wrong passwords, sign-in is blocked for 10 minutes.",
+		"Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.": "There is no separate web interface: in the browser, use the Transmission app.",
+		"Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)": "Switch on remote access for torrent programs (also starts after a restart)",
+		"HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.": "HTTPS is available while the web interface uses HTTPS (System → Network); the same certificate applies. Many programs expect port 9091.",
+		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "Switched off – torrents can only be controlled with the Transmission app.",
+		"Passwort entziehen": "Revoke password",
+		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "None yet – each user creates their password in the Transmission app.",
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Programs using this password lose access. The user can create a new one in the Transmission app."
 	},
 	"patterns": [
 		[
@@ -2963,6 +2984,18 @@
 		[
 			"^Tresor: (.+)$",
 			"Vault: $1"
+		],
+		[
+			"^Fernzugriff-Passwort von „(.+)“ entziehen\\?$",
+			"Revoke the remote password of “$1”?"
+		],
+		[
+			"^Passwort von „(.+)“ entzogen\\.$",
+			"Remote password of “$1” revoked."
+		],
+		[
+			"^Torrent-Fernzugriff: (.+)$",
+			"Torrent remote access: $1"
 		]
 	],
 	"words": [

@@ -1593,7 +1593,28 @@
 		"Akzentfarbe Türkis": "Color de acento turquesa",
 		"Akzentfarbe Orange": "Color de acento naranja",
 		"Akzentfarbe Violett": "Color de acento violeta",
-		"Akzentfarbe Grau": "Color de acento gris"
+		"Akzentfarbe Grau": "Color de acento gris",
+		"TORRENTS": "TORRENTS",
+		"Torrent-Fernzugriff": "Acceso remoto a torrents",
+		"Torrent-Fernzugriff gespeichert.": "Acceso remoto a torrents guardado.",
+		"PORT (HTTP)": "PUERTO (HTTP)",
+		"PORT (HTTPS)": "PUERTO (HTTPS)",
+		"BENUTZER MIT FERNZUGRIFF-PASSWORT": "USUARIOS CON CONTRASEÑA DE ACCESO REMOTO",
+		"Im Store installieren (Transmission)": "Instalar desde la tienda (Transmission)",
+		"Entziehen": "Revocar",
+		"Torrents laufen über die System-App Transmission: Jeder Benutzer hat seinen eigenen Dienst und bedient ihn mit der Transmission-App. Hier lässt sich zusätzlich der Zugriff für Programme wie Transmission Remote GUI oder Transmissionic einschalten.": "Los torrents funcionan con la app de sistema Transmission: cada usuario tiene su propio servicio y lo maneja con la app Transmission. Aquí también se puede activar el acceso para programas como Transmission Remote GUI o Transmissionic.",
+		"FERNZUGRIFF FÜR TORRENT-PROGRAMME": "ACCESO REMOTO PARA PROGRAMAS DE TORRENT",
+		"Programme wie Transmission Remote GUI, Transmissionic oder Tremotesf steuern damit den eigenen Transmission-Dienst eines Benutzers.": "Programas como Transmission Remote GUI, Transmissionic o Tremotesf controlan así el servicio Transmission propio de un usuario.",
+		"Anmeldung mit dem Benutzernamen und einem eigenen Fernzugriff-Passwort, das der Benutzer in der Transmission-App erzeugt – nicht mit dem Passwort der Box.": "Inicio de sesión con el nombre de usuario y una contraseña de acceso remoto propia que el usuario genera en la app Transmission, no con la contraseña de la caja.",
+		"Nur aus dem Heimnetz, auch über VPN oder Tailscale; aus dem Internet ist der Zugriff gesperrt.": "Solo desde la red doméstica, también a través de VPN o Tailscale; el acceso desde Internet está bloqueado.",
+		"Nach 5 falschen Passwörtern ist die Anmeldung 10 Minuten gesperrt.": "Tras 5 contraseñas incorrectas, el inicio de sesión se bloquea durante 10 minutos.",
+		"Es gibt keine eigene Weboberfläche: Im Browser dient die Transmission-App.": "No hay una interfaz web propia: en el navegador se usa la app Transmission.",
+		"Fernzugriff für Torrent-Programme einschalten (startet auch nach einem Neustart)": "Activar el acceso remoto para programas de torrent (también arranca tras un reinicio)",
+		"HTTPS gibt es, solange die Weboberfläche HTTPS nutzt (System → Netzwerk); es gilt dasselbe Zertifikat. Viele Programme erwarten Port 9091.": "HTTPS está disponible mientras la interfaz web use HTTPS (Sistema → Red); se aplica el mismo certificado. Muchos programas esperan el puerto 9091.",
+		"Ausgeschaltet – Torrents lassen sich nur mit der Transmission-App bedienen.": "Desactivado: los torrents solo se pueden manejar con la app Transmission.",
+		"Passwort entziehen": "Revocar la contraseña",
+		"Noch keiner – das Passwort erzeugt jeder Benutzer selbst in der Transmission-App.": "Ninguno todavía: cada usuario genera su contraseña en la app Transmission.",
+		"Programme mit diesem Passwort verlieren den Zugriff. Der Benutzer kann in der Transmission-App ein neues erzeugen.": "Los programas con esta contraseña pierden el acceso. El usuario puede generar una nueva en la app Transmission."
 	},
 	"patterns": [
 		[
@@ -2963,6 +2984,18 @@
 		[
 			"^Tresor: (.+)$",
 			"Caja fuerte: $1"
+		],
+		[
+			"^Fernzugriff-Passwort von „(.+)“ entziehen\\?$",
+			"¿Revocar la contraseña de acceso remoto de «$1»?"
+		],
+		[
+			"^Passwort von „(.+)“ entzogen\\.$",
+			"Contraseña de «$1» revocada."
+		],
+		[
+			"^Torrent-Fernzugriff: (.+)$",
+			"Acceso remoto a torrents: $1"
 		]
 	],
 	"words": [
