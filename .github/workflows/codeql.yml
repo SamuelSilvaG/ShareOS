@@ -3,7 +3,10 @@ name: codeql
 # Security analysis (SAST) of the web interface, the app SDK and the Python
 # tools with GitHub CodeQL: data flow / taint analysis from user input to
 # dangerous sinks (XSS, injection, unsafe URLs …). Findings appear under
-# Security → Code scanning; they do not fail the build.
+# Security → Code scanning; they do not fail the build. The SARIF files are
+# also kept as the artifact "codeql-sarif-<language>" (90 days) and listed in
+# the job summary (tools/sarif-summary.py), so they can be read without
+# access to Code scanning – e.g. by the monthly audit.
 # ucode and shell are not supported by CodeQL – see tests/static-analysis.sh
 # and the ucode checks in build.yml.
 on:
@@ -40,9 +43,24 @@ jobs:
           config: |
             paths-ignore:
               - buildroot
+              - legacy        # Alt-F reference only, not part of the firmware
               - output
               - node_modules
               - src/shareos-core/www/i18n
       - uses: github/codeql-action/analyze@v4
         with:
           category: /language:${{ matrix.language }}
+          output: sarif-results
+      - name: Findings in the job summary
+        if: always()
+        run: |
+          [ -d sarif-results ] || exit 0
+          python3 tools/sarif-summary.py sarif-results --markdown >> "$GITHUB_STEP_SUMMARY"
+          python3 tools/sarif-summary.py sarif-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codeql-sarif-${{ matrix.language }}
+          path: sarif-results
+          if-no-files-found: ignore
+          retention-days: 90
