@@ -303,6 +303,7 @@ direkt auf der Box nachgesehen, warum der Webserver nicht lief.
 | Zeit | Was passiert ist |
 |---|---|
 | 11:30 | **Fernzugriff für Transmission-Programme** (Issue #103). Jans Entscheidungen: eigenes Passwort, nur Heimnetz (VPN deckt den Rest ab), keine zusätzliche Weboberfläche. Die Transmission-Dienste der Box hören nur auf Unix-Sockets, also bekam der bestehende App-Proxy einen zweiten Eingang: `/transmission/rpc` auf eigenem Port mit Basic Auth, gleichen Prüfungen und erlaubten Methoden. uhttpd reicht `X-Transmission-Session-Id` nicht an CGI weiter, deshalb schützt stattdessen „kein `Origin`-Header“ vor CSRF (es gibt keine Seite, die einen bräuchte). Die Box erzeugt die Passwörter und speichert nur Hashes; rpcd merkt sich ein richtiges 5 Minuten im Speicher, damit ein Programm, das alle zwei Sekunden fragt, nicht jedes Mal `mkpasswd` startet. |
+| 13:50 | #149 (Fernzugriff für Transmission-Programme), #150 (CodeQL-Funde als Artefakt; `legacy/` wird nicht mehr gescannt) und die Transmission-App 1.4.0 sind gemergt – alles für `v0.3.0-beta.6` steht auf `main`. Das monatliche Audit holt und bewertet jetzt auch die CodeQL-Funde. |
 
 ### Montag, 09.11.2026
 
