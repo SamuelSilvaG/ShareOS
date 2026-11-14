@@ -1657,7 +1657,14 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "अपना सार्वजनिक IPv4 पता जानने के लिए बॉक्स api.ipify.org से पूछता है (उत्तर न मिलने पर ipv4.icanhazip.com से)।",
 		"The password needs at least 8 characters.": "पासवर्ड में कम से कम 8 अक्षर चाहिए।",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "नया पासवर्ड (कम से कम 8 अक्षर)। शेयर के लिए और – भूमिका के अनुसार – वेब इंटरफ़ेस के लिए।",
-		"Applies to the web interface and SSH. At least 8 characters.": "वेब इंटरफ़ेस और SSH के लिए। कम से कम 8 अक्षर।"
+		"Applies to the web interface and SSH. At least 8 characters.": "वेब इंटरफ़ेस और SSH के लिए। कम से कम 8 अक्षर।",
+		"The signature of the ShareOS project is valid.": "ShareOS प्रोजेक्ट का हस्ताक्षर मान्य है।",
+		"Not signed by the ShareOS project.": "ShareOS प्रोजेक्ट द्वारा हस्ताक्षरित नहीं।",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "रिलीज़ की .sig फ़ाइल के साथ हस्ताक्षर भी जाँचा जाता है; उसके बिना फ़ाइल अहस्ताक्षरित मानी जाती है।",
+		"SIGNATURE (.SIG, OPTIONAL)": "हस्ताक्षर (.SIG, वैकल्पिक)",
+		"Install unsigned firmware?": "अहस्ताक्षरित फ़र्मवेयर इंस्टॉल करें?",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.": "इस फ़ाइल पर ShareOS प्रोजेक्ट का हस्ताक्षर नहीं है। इसे तभी इंस्टॉल करें जब आपने इसे स्वयं बनाया हो या इसके स्रोत पर भरोसा हो।",
+		"Install anyway": "फिर भी इंस्टॉल करें"
 	},
 	"patterns": [
 		[

@@ -280,6 +280,17 @@ The desktop view is a **module**. The classic view stays next to it.
 - **Install**, then **Restart now** – the same as an update from GitHub.
 - Wrong `.sha256`, a file for another device or a damaged file are refused with a message.
 
+## 12b. Signed releases
+
+From the first version with a release key on the box (*System → Firmware* then shows the field *SIGNATURE (.SIG, OPTIONAL)* under *INSTALL FIRMWARE FILE*):
+
+1. Update from GitHub to a newer release: after the download the note reads "… The signature of the ShareOS project is valid." **Install** works as before.
+2. *Install firmware file* with the `.tar` and its `.sig` from the release: same note.
+3. The `.tar` without the `.sig`: the note reads "Not signed by the ShareOS project."; **Install** first asks *Install unsigned firmware?*. **Cancel** leaves everything as it is.
+4. The `.tar` with the `.sig` of another release: refused ("the signature does not match this file").
+5. A release from before signing, picked in the list of versions: refused ("this release is not signed – not installed"); it can only be installed as a file (step 3).
+6. On the PC: `openssl dgst -sha256 -verify release.pub -signature ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar.sig ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` prints `Verified OK` (`release.pub` from the repository, `src/shareos-core/etc/shareos/`).
+
 ## 13. File systems and USB drives
 
 - **Storage → Wizard**: in the "Name" step every volume gets a choice of **ext4** (recommended, everything), **Btrfs** (no storage limit per user), **exFAT** and **NTFS** (also readable on Windows/macOS; no permissions per user, no storage limit, no personal folders, no apps). The summary shows the chosen file system. "Erase & format" on a disk has the same field.

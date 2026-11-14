@@ -2073,3 +2073,10 @@ E1671	Um ihre öffentliche IPv4-Adresse zu erfahren, fragt die Box api.ipify.org
 E1672	Das Passwort braucht mindestens 8 Zeichen.
 E1673	Neues Passwort (mindestens 8 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.
 E1674	Gilt für die Weboberfläche und SSH. Mindestens 8 Zeichen.
+E1675	Die Signatur des ShareOS-Projekts ist gültig.
+E1676	Nicht vom ShareOS-Projekt signiert.
+E1677	Mit der .sig-Datei des Releases wird auch die Signatur geprüft; ohne sie gilt die Datei als unsigniert.
+E1678	SIGNATUR (.SIG, OPTIONAL)
+E1679	Unsignierte Firmware installieren?
+E1680	Diese Datei trägt keine Signatur des ShareOS-Projekts. Nur installieren, wenn du sie selbst gebaut hast oder ihrer Herkunft vertraust.
+E1681	Trotzdem installieren

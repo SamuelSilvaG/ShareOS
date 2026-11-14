@@ -1657,7 +1657,14 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "Para conocer su dirección IPv4 pública, la caja pregunta a api.ipify.org (ipv4.icanhazip.com si no responde).",
 		"The password needs at least 8 characters.": "La contraseña necesita al menos 8 caracteres.",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "Nueva contraseña (al menos 8 caracteres). Sirve para las carpetas compartidas y – según el rol – para la interfaz web.",
-		"Applies to the web interface and SSH. At least 8 characters.": "Vale para la interfaz web y SSH. Al menos 8 caracteres."
+		"Applies to the web interface and SSH. At least 8 characters.": "Vale para la interfaz web y SSH. Al menos 8 caracteres.",
+		"The signature of the ShareOS project is valid.": "La firma del proyecto ShareOS es válida.",
+		"Not signed by the ShareOS project.": "No está firmado por el proyecto ShareOS.",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "Con el archivo .sig de la versión también se comprueba la firma; sin él, el archivo cuenta como no firmado.",
+		"SIGNATURE (.SIG, OPTIONAL)": "FIRMA (.SIG, OPCIONAL)",
+		"Install unsigned firmware?": "¿Instalar firmware sin firmar?",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.": "Este archivo no lleva la firma del proyecto ShareOS. Instálelo solo si lo ha compilado usted mismo o confía en su origen.",
+		"Install anyway": "Instalar de todos modos"
 	},
 	"patterns": [
 		[

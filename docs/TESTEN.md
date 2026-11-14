@@ -285,6 +285,17 @@ Die Desktop-Ansicht ist ein **Modul**. Die klassische Ansicht bleibt daneben.
 - **Installieren**, danach **Jetzt neu starten** – wie beim Update von GitHub.
 - Falsche `.sha256`, eine Datei für ein anderes Gerät oder eine beschädigte Datei werden mit einer Meldung abgelehnt.
 
+## 12b. Signierte Releases
+
+Ab der ersten Version mit Release-Schlüssel auf der Box (*System → Firmware* zeigt dann unter *Firmware-Datei einspielen* das Feld *Signatur (.sig, optional)*):
+
+1. Update von GitHub auf ein neueres Release: Nach dem Download steht im Hinweis „… Die Signatur des ShareOS-Projekts ist gültig.“ **Installieren** geht wie bisher.
+2. *Firmware-Datei einspielen* mit der `.tar` und ihrer `.sig` aus dem Release: derselbe Hinweis.
+3. Die `.tar` ohne `.sig`: Im Hinweis steht „Nicht vom ShareOS-Projekt signiert.“; **Installieren** fragt zuerst *Unsignierte Firmware installieren?*. **Abbrechen** lässt alles, wie es ist.
+4. Die `.tar` mit der `.sig` eines anderen Releases: abgelehnt („the signature does not match this file“).
+5. Ein Release von vor der Signierung, in der Versionsliste gewählt: abgelehnt („this release is not signed – not installed“); es lässt sich nur als Datei einspielen (Schritt 3).
+6. Am PC: `openssl dgst -sha256 -verify release.pub -signature ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar.sig ShareOS-<version>-DNS-320L-rev-Ax.sysupgrade.tar` gibt `Verified OK` aus (`release.pub` aus dem Repository, `src/shareos-core/etc/shareos/`).
+
 ## 13. Dateisysteme und USB-Laufwerke
 
 - **Speicher → Assistent**: Im Schritt „Name“ gibt es je Laufwerk die Auswahl **ext4** (empfohlen, alle Funktionen), **Btrfs** (ohne Speicherlimit je Benutzer), **exFAT** und **NTFS** (auch an Windows/macOS lesbar; keine Rechte je Benutzer, kein Speicherlimit, keine persönlichen Ordner, keine Apps). Die Zusammenfassung zeigt das gewählte Dateisystem. Das gleiche Feld hat „Löschen & formatieren“ an einer Platte.

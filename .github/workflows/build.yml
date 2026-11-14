@@ -130,11 +130,13 @@ jobs:
       - name: Own certificate authority (shareos-ca with the firmware's mbedtls and uci in qemu)
         run: |
           T=$PWD/output/${{ matrix.board }}/target W=$(mktemp -d)
-          for p in gen_key cert_write cert_app uci; do
+          for p in gen_key cert_write cert_app pk_verify uci; do
             f=$T/usr/bin/$p; [ -e "$f" ] || f=$T/sbin/$p
             printf '#!/bin/sh\nexec qemu-arm-static -L %s %s "$@"\n' "$T" "$f" > $W/$p; chmod 755 $W/$p
           done
           tests/test-ca.sh $W $W
+          # signed releases: the box's pk_verify takes what the release job signs
+          tests/test-signature.sh $W/pk_verify
 
       - name: Initramfs load address of every model
         run: tests/check-initrd-address.sh output/${{ matrix.board }}/images
@@ -155,32 +157,10 @@ jobs:
           name: shareos-${{ matrix.board }}
           path: artifacts/
 
-      - name: Release notes from CHANGELOG.md
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          v=${GITHUB_REF_NAME#v}
-          awk -v v="$v" '$0 ~ "^## " {p = ($2 == v)} p' CHANGELOG.md | tail -n +2 > notes.md
-          if [ -s notes.md ]; then
-            { echo; echo "---"; echo; cat notes.md; } > notes.tmp && mv notes.tmp notes.md
-          else
-            echo "::warning::CHANGELOG.md has no section '## $v' – please add the changes of this release"
-          fi
-
-      - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
-        # not an action of GitHub itself and it runs with the right to publish:
-        # pinned to a commit (a tag can be moved), here v2.6.2
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65
-        with:
-          files: artifacts/*
-          prerelease: ${{ contains(github.ref_name, '-') }}
-          body_path: notes.md
-          append_body: true
-
       # The built system (ARM) in a chroot with qemu-user: rpcd with the ShareOS
       # plugin, users, storage, apps, cloud … – what the host tests cannot
-      # show. Last step: the images are uploaded (and a release is published)
-      # also when one of these tests fails.
+      # show. Last step: the images are uploaded (and the job "release"
+      # publishes them) also when one of these tests fails.
       - name: ARM emulator tests (the built system with qemu-user)
         run: |
           sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support
@@ -210,3 +190,67 @@ jobs:
           echo "::endgroup::"
           run "test-cloud-paperless" tests/test-cloud-paperless.sh "$O" "$PWD/rclone-dl"
           exit $rc
+
+  # A tag "v…": sign the images and publish the release. Its own job because
+  # of the key: RELEASE_SIGNING_KEY is a secret of the environment "release",
+  # which only this job may use – the build above also runs for pull requests
+  # and never sees it. The boxes check the signature against
+  # src/shareos-core/etc/shareos/release.pub (shareos-update).
+  release:
+    if: ${{ !cancelled() && startsWith(github.ref, 'refs/tags/v') }}
+    needs: firmware
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: release
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shareos-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Sign the images
+        env:
+          RELEASE_SIGNING_KEY: ${{ secrets.RELEASE_SIGNING_KEY }}
+        run: |
+          pub=src/shareos-core/etc/shareos/release.pub
+          ls artifacts/*.sysupgrade.tar >/dev/null
+          if [ -z "$RELEASE_SIGNING_KEY" ]; then
+            # boxes with the public key install nothing unsigned: no release then
+            echo "::error::The secret RELEASE_SIGNING_KEY of the environment 'release' is empty – nothing published (see docs/RELEASE.md)"
+            exit 1
+          fi
+          umask 077
+          key=$(mktemp); trap 'rm -f "$key"' EXIT
+          printf '%s\n' "$RELEASE_SIGNING_KEY" > "$key"
+          for f in artifacts/*.sysupgrade.tar artifacts/*.bin; do
+            [ -e "$f" ] || continue
+            openssl dgst -sha256 -sign "$key" -out "$f.sig" "$f"
+            # the key must be the one the boxes know
+            openssl dgst -sha256 -verify "$pub" -signature "$f.sig" "$f" >/dev/null || {
+              echo "::error::$f: the signature does not fit $pub – wrong key in the secret?"; exit 1; }
+            echo "signed: $f"
+          done
+          chmod 644 artifacts/*.sig
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          v=${GITHUB_REF_NAME#v}
+          awk -v v="$v" '$0 ~ "^## " {p = ($2 == v)} p' CHANGELOG.md | tail -n +2 > notes.md
+          if [ -s notes.md ]; then
+            { echo; echo "---"; echo; cat notes.md; } > notes.tmp && mv notes.tmp notes.md
+          else
+            echo "::warning::CHANGELOG.md has no section '## $v' – please add the changes of this release"
+          fi
+
+      - name: Publish release
+        # not an action of GitHub itself and it runs with the right to publish:
+        # pinned to a commit (a tag can be moved), here v2.6.2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65
+        with:
+          files: artifacts/*
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          body_path: notes.md
+          append_body: true

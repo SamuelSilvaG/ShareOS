@@ -1657,7 +1657,14 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "لمعرفة عنوان IPv4 العام، يسأل الجهاز api.ipify.org ‏(ipv4.icanhazip.com إذا لم يُجب).",
 		"The password needs at least 8 characters.": "تحتاج كلمة المرور إلى 8 أحرف على الأقل.",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "كلمة مرور جديدة (8 أحرف على الأقل). للمشاركات و– حسب الدور – لواجهة الويب.",
-		"Applies to the web interface and SSH. At least 8 characters.": "تسري على واجهة الويب وSSH. 8 أحرف على الأقل."
+		"Applies to the web interface and SSH. At least 8 characters.": "تسري على واجهة الويب وSSH. 8 أحرف على الأقل.",
+		"The signature of the ShareOS project is valid.": "توقيع مشروع ShareOS صالح.",
+		"Not signed by the ShareOS project.": "غير موقّع من مشروع ShareOS.",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "مع ملف ‎.sig‏ الخاص بالإصدار يُتحقَّق من التوقيع أيضًا؛ وبدونه يُعدّ الملف غير موقّع.",
+		"SIGNATURE (.SIG, OPTIONAL)": "التوقيع (‎.SIG‏، اختياري)",
+		"Install unsigned firmware?": "تثبيت برنامج ثابت غير موقّع؟",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.": "هذا الملف لا يحمل توقيع مشروع ShareOS. ثبّته فقط إذا بنيته بنفسك أو كنت تثق بمصدره.",
+		"Install anyway": "التثبيت على أي حال"
 	},
 	"patterns": [
 		[

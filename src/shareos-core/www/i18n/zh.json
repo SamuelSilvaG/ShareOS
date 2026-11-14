@@ -1657,7 +1657,14 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "为了获知公网 IPv4 地址，设备会查询 api.ipify.org（若无响应则查询 ipv4.icanhazip.com）。",
 		"The password needs at least 8 characters.": "密码至少需要 8 个字符。",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "新密码 (至少 8 个字符)。用于共享，并根据角色用于网页界面。",
-		"Applies to the web interface and SSH. At least 8 characters.": "适用于网页界面和 SSH。至少 8 个字符。"
+		"Applies to the web interface and SSH. At least 8 characters.": "适用于网页界面和 SSH。至少 8 个字符。",
+		"The signature of the ShareOS project is valid.": "ShareOS 项目的签名有效。",
+		"Not signed by the ShareOS project.": "未经 ShareOS 项目签名。",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "附上该版本的 .sig 文件时还会校验签名；没有它，文件视为未签名。",
+		"SIGNATURE (.SIG, OPTIONAL)": "签名（.SIG，可选）",
+		"Install unsigned firmware?": "安装未签名的固件？",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.": "此文件没有 ShareOS 项目的签名。仅在您自行构建或信任其来源时才安装。",
+		"Install anyway": "仍然安装"
 	},
 	"patterns": [
 		[

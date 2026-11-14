@@ -84,15 +84,26 @@ ignored, pre-releases only on the `beta` channel. Before anything is
 flashed:
 
 1. HTTPS with certificate verification (curl + mbedTLS + CA bundle)
-2. SHA-256 against the published `.sha256`
-3. D-Link container signature must match the box (`dns323-fw -f`)
-4. container checksums (`dns323-fw -s`), kernel and initramfs each ≤ 3 MB
+2. the signature `<bundle>.sig` of the release against the project's public
+   key `/etc/shareos/release.pub` (ECDSA P-256, `pk_verify` of mbedTLS);
+   checked after the download and again right before writing. Without a valid
+   signature nothing from GitHub is installed. A file uploaded by hand may be
+   unsigned (own build): it is marked and needs a second confirmation
+   (`apply` with `unsigned`). No key file on the box = check off.
+3. SHA-256 against the published `.sha256`
+4. D-Link container signature must match the box (`dns323-fw -f`)
+5. container checksums (`dns323-fw -s`), kernel and initramfs each ≤ 3 MB
    (what the stock U-Boot loads)
-5. board check (`/proc/device-tree/model`) and an explicit `confirm`
-6. every written partition is read back and compared
+6. board check (`/proc/device-tree/model`) and an explicit `confirm`
+7. every written partition is read back and compared
 
-Rollback = flash an older release from the list. Still open: signed
-releases (detached signature), settings backup before flashing,
+The private key exists only as the secret `RELEASE_SIGNING_KEY` of the GitHub
+environment `release` (and offline with the owner); the job `release` of
+`build.yml` signs with it, see `docs/RELEASE.md`. `tests/test-signature.sh`
+checks the firmware's `pk_verify` against what that job produces.
+
+Rollback = flash an older release from the list (a release from before
+signing: download it and upload it as a file). Still open: settings backup before flashing,
 persistent configuration (config partition, phase 3).
 
 **Not yet tested on hardware:** the flashing step itself (`flash_erase`,

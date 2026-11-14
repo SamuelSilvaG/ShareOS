@@ -6,7 +6,7 @@
 #
 #   tests/test-update.sh <ucode-binary>
 #
-# Needs: python3, curl, sha256sum, tar, mkimage; ucode built with fs + uci.
+# Needs: python3, curl, sha256sum, tar, mkimage, openssl; ucode built with fs + uci.
 #
 set -u
 UCODE=$(realpath "${1:?ucode binary}")
@@ -183,6 +183,55 @@ o=$(run check);          check "board.env: a DNS-325 looks for DNS-325 files (no
 run download v0.1.0 >/dev/null
 o=$(run apply v0.1.0);   check "board.env: no DNS-325 bundle installed on it" "$o" "d['state']=='error'"
 rm -f "$ROOT/tmp/sys/board.env"
+
+# --- signed releases --------------------------------------------------------------
+# The box has the public key of the project: nothing from the internet is
+# installed without a valid signature. Signatures as the release workflow makes
+# them (openssl dgst -sha256 -sign); pk_verify of mbedtls is replaced by openssl.
+check "without a key file the signature check is off" "$(run status)" "d['signing'] is False"
+printf '#!/bin/sh\n# pk_verify <public key> <file>: the signature is in <file>.sig\nexec openssl dgst -sha256 -verify "$1" -signature "$2.sig" "$2" >/dev/null 2>&1\n' > "$T/bin/pk_verify"
+chmod +x "$T/bin/pk_verify"
+openssl ecparam -name prime256v1 -genkey -noout -out "$T/release.key" 2>/dev/null
+openssl ecparam -name prime256v1 -genkey -noout -out "$T/other.key" 2>/dev/null
+mkdir -p "$ROOT/etc/shareos"
+openssl ec -in "$T/release.key" -pubout -out "$ROOT/etc/shareos/release.pub" 2>/dev/null
+sign() { openssl dgst -sha256 -sign "$T/${2:-release}.key" -out "$WEB/dl/$1.sig" "$WEB/dl/$1"; }
+bundle s1 0.4.0; publish s1 0.4.0; sign "ShareOS-0.4.0-$FWN.sysupgrade.tar"
+bundle s2 0.4.1; publish s2 0.4.1; sign "ShareOS-0.4.1-$FWN.sysupgrade.tar" other      # signed by someone else
+bundle s3 0.4.2; publish s3 0.4.2; sign "ShareOS-0.4.2-$FWN.sysupgrade.tar"
+echo tampered >> "$WEB/dl/ShareOS-0.4.2-$FWN.sysupgrade.tar"                               # changed after signing
+(cd "$WEB/dl" && sha256sum "ShareOS-0.4.2-$FWN.sysupgrade.tar" > "ShareOS-0.4.2-$FWN.sysupgrade.tar.sha256")
+srel() { # tag version: a release with bundle, checksum and signature
+	local n=ShareOS-$2-$FWN.sysupgrade.tar
+	printf '{"tag_name":"%s","draft":false,"prerelease":false,"published_at":"2026-11-14T10:00:00Z","body":"signed","assets":[%s,%s,%s]}' \
+		"$1" "$(asset "$n")" "$(asset "$n.sha256")" "$(asset "$n.sig")"
+}
+{ echo '['; srel v0.4.2 0.4.2; echo ','; srel v0.4.1 0.4.1; echo ','; srel v0.4.0 0.4.0; echo ','; rel v0.1.0 false "first release" 0.1.0; echo ']'; } > "$WEB/repos/UniqueDroid/ShareOS/releases"
+check "with the key file the signature check is on" "$(run status)" "d['signing'] is True"
+o=$(run check);          check "signed: the list says which releases carry a signature" "$o" "[bool(r['sig_url']) for r in d['releases']]==[True,True,True,False]"
+o=$(run download v0.1.0);check "signed: a release without signature is not installed" "$o" "d['state']=='error' and 'not signed' in d['error']"
+o=$(run download v0.4.1);check "signed: a signature of another key is rejected" "$o" "d['state']=='error' and 'not valid' in d['error']"
+check "signed: the rejected download is gone" "{\"there\": $([ -e "$ROOT/tmp/shareos-update/dl/fw.tar" ] && echo true || echo false)}" "d['there'] is False"
+o=$(run download v0.4.2);check "signed: a bundle changed after signing is rejected (although its .sha256 fits)" "$o" "d['state']=='error' and 'not valid' in d['error']"
+o=$(run download v0.4.0);check "signed: valid signature, ready" "$o" "d['state']=='ready' and d['release']['signature']=='valid'"
+echo x >> "$ROOT/tmp/shareos-update/dl/fw.tar.sig"
+o=$(run apply v0.4.0);   check "signed: checked again right before writing" "$o" "d['state']=='error' and 'not valid any more' in d['error']"
+run download v0.4.0 >/dev/null
+o=$(run apply v0.4.0);   check "signed: installed" "$o" "d['state']=='flashed' and d['flashed']['tag']=='v0.4.0'"
+run cancel >/dev/null
+# a file uploaded by hand: with its .sig like a download, without it only on request
+S1=ShareOS-0.4.0-$FWN.sysupgrade.tar
+cp "$WEB/dl/$S1" "$ROOT/tmp/up.tar"; cp "$WEB/dl/$S1.sig" "$ROOT/tmp/up.sig"
+o=$(run local "$ROOT/tmp/up.tar" "" "$ROOT/tmp/up.sig"); check "signed, local: with its .sig the signature is valid" "$o" "d['state']=='ready' and d['release']['signature']=='valid'"
+cp "$WEB/dl/$S1" "$ROOT/tmp/up.tar"; cp "$WEB/dl/ShareOS-0.4.1-$FWN.sysupgrade.tar.sig" "$ROOT/tmp/up.sig"
+o=$(run local "$ROOT/tmp/up.tar" "" "$ROOT/tmp/up.sig"); check "signed, local: a .sig that does not fit is rejected" "$o" "d['state']=='error' and 'does not match' in d['error']"
+cp "$WEB/dl/$S1" "$ROOT/tmp/up.tar"
+o=$(run local "$ROOT/tmp/up.tar"); check "signed, local: without .sig the file counts as unsigned" "$o" "d['state']=='ready' and d['release']['signature']=='none'"
+o=$(run apply local);    check "signed, local: an unsigned file is not installed just so" "$o" "'not signed' in d['error']"
+check "signed, local: it stays ready for the decision" "$(run status)" "d['state']=='ready' and 'error' not in d"
+o=$(run apply local unsigned); check "signed, local: installed when asked for (own build)" "$o" "d['state']=='flashed' and d['flashed']['tag']=='local'"
+run cancel >/dev/null
+rm -f "$ROOT/etc/shareos/release.pub"
 
 echo; echo "$pass passed, $failed failed"
 [ $failed -eq 0 ]

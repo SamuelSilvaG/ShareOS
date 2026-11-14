@@ -2089,3 +2089,10 @@ E1671	Para saber o seu endereço IPv4 público, a caixa pergunta a api.ipify.org
 E1672	A senha precisa de pelo menos 8 caracteres.
 E1673	Nova senha (pelo menos 8 caracteres). Serve para os compartilhamentos e – conforme a função – para a interface web.
 E1674	Vale para a interface web e o SSH. Pelo menos 8 caracteres.
+E1675	A assinatura do projeto ShareOS é válida.
+E1676	Não está assinado pelo projeto ShareOS.
+E1677	Com o ficheiro .sig da versão, a assinatura também é verificada; sem ele, o ficheiro conta como não assinado.
+E1678	ASSINATURA (.SIG, OPCIONAL)
+E1679	Instalar firmware não assinado?
+E1680	Este ficheiro não tem a assinatura do projeto ShareOS. Instale-o apenas se o compilou ou se confia na sua origem.
+E1681	Instalar mesmo assim
