@@ -8,9 +8,10 @@ VIEWS_AFTER.system = () => {
 };
 
 // While an update writes kernel and system, nothing that restarts, switches
-// off or resets the box. (The box refuses these too; here the click gets its
-// answer at once.)
-const LOCKED_WHILE_FLASHING = { reboot: 1, poweroff: 1, factory: 1 };
+// off or resets the box, and nothing that formats or checks a drive (heavy
+// load). The box refuses these too; here the click gets its answer at once.
+const LOCKED_WHILE_FLASHING = { reboot: 1, poweroff: 1, factory: 1,
+	'wiz-start': 1, 'wiz-run': 1, format: 1, 'usb-format': 1, 'vol-repair': 1 };
 function flashingNow() { return S.upd?.state === 'flashing'; }
 function flashingRefused() { toast('Not now: the update is being installed. Wait until it has finished.', true); }
 
