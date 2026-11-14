@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
-# minimal mDNS query: python3 mdnsq.py <name.local>  -> prints the A record or nothing
+# minimal mDNS query: python3 mdnsq.py <name.local> [address of the interface to ask on]
+#   -> prints the A record or nothing
 import socket, struct, sys, time
 name = sys.argv[1]
 q = struct.pack('>HHHHHH', 0, 0, 1, 0, 0, 0) + b''.join(bytes([len(p)]) + p.encode() for p in name.split('.')) + b'\0' + struct.pack('>HH', 1, 0x8001)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 s.settimeout(0.5)
 s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 1)
-s.bind(('', 0))
+if len(sys.argv) > 2 and sys.argv[2]:
+    # ask on this interface (not the one of the default route) and answer there
+    s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(sys.argv[2]))
+    s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
+    s.bind((sys.argv[2], 0))
+# without an address the socket is bound by the first sendto (any free port)
 end = time.time() + 4
 while time.time() < end:
     s.sendto(q, ('224.0.0.251', 5353))

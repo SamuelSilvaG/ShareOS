@@ -202,7 +202,7 @@ if [ "$CHECK" = "--check" ]; then
 	t "renewed certificate names this box and its IP" "$(chroot "$R" /usr/sbin/shareos-cert info | python3 -c 'import json,sys; print(json.dumps({"l":sys.stdin.read().split()}))')" "any(x.startswith('san=iPAddress:') for x in d['l']) and 'san=dNSName:old-name' not in d['l']"
 	t "a current certificate is left alone" "$(chroot "$R" /usr/sbin/shareos-cert ensure | python3 -c 'import json,sys; print(json.dumps({"o":sys.stdin.read()}))')" "d['o']==''"
 	chroot "$R" /etc/init.d/S50avahi-daemon start >/dev/null 2>&1; sleep 3
-	t "mDNS: <hostname>.local answers with the box address" "$(python3 "$TOP/tests/mdns-query.py" "$(cat /proc/sys/kernel/hostname).local" | python3 -c 'import json,sys; print(json.dumps({"ip":sys.stdin.read().strip()}))')" "d['ip'].count('.')==3"
+	t "mDNS: <hostname>.local answers with the box address" "$(python3 "$TOP/tests/mdns-query.py" "$(cat /proc/sys/kernel/hostname).local" "$(ip -4 -o addr show dev eth0 2>/dev/null | sed -n 's/.*inet \([0-9.]*\).*/\1/p' | head -1)" | python3 -c 'import json,sys; print(json.dumps({"ip":sys.stdin.read().strip()}))')" "d['ip'].count('.')==3"
 	t "mDNS: avahi user exists after an upgrade (overlay passwd)" "$(grep -c '^avahi:' "$R/etc/passwd" | python3 -c 'import json,sys; print(json.dumps({"n":int(sys.stdin.read())}))')" "d['n']==1"
 	# terminal over HTTPS: HTTP/1.1 only (h2 has no Host header – ttyd's origin check refused the WebSocket)
 	TM=$(rpc $SID shareos.system terminal '{"tls":true}')

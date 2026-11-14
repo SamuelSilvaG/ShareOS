@@ -208,6 +208,7 @@ add_methods({
 			call: function(req) {
 				if (req.args.confirm !== true)
 					return { error: 'confirm must be true' };
+				if (flash_busy()) return { error: FLASH_BUSY };
 				let r = sh('/usr/sbin/shareos-factory-reset --yes --no-reboot');
 				if (r.rc != 0)
 					return { error: trim(r.out) };

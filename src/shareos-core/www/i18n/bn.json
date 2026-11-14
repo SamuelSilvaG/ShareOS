@@ -1657,7 +1657,8 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "নিজের পাবলিক IPv4 ঠিকানা জানতে বক্সটি api.ipify.org-কে জিজ্ঞাসা করে (সেটি উত্তর না দিলে ipv4.icanhazip.com)।",
 		"The password needs at least 8 characters.": "পাসওয়ার্ডে অন্তত ৮ অক্ষর দরকার।",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "নতুন পাসওয়ার্ড (অন্তত ৮ অক্ষর)। শেয়ারের জন্য এবং – ভূমিকা অনুযায়ী – ওয়েব ইন্টারফেসের জন্য।",
-		"Applies to the web interface and SSH. At least 8 characters.": "ওয়েব ইন্টারফেস ও SSH-এর জন্য। অন্তত ৮ অক্ষর।"
+		"Applies to the web interface and SSH. At least 8 characters.": "ওয়েব ইন্টারফেস ও SSH-এর জন্য। অন্তত ৮ অক্ষর।",
+		"Not now: the update is being installed. Wait until it has finished.": "এখন নয়: আপডেট ইনস্টল হচ্ছে। শেষ না হওয়া পর্যন্ত অপেক্ষা করুন।"
 	},
 	"patterns": [
 		[
@@ -2815,6 +2816,10 @@
 		[
 			"^Remove: (.*)$",
 			"সরানো: $1"
+		],
+		[
+			"^Reboot: (.*)$",
+			"রিবুট: $1"
 		],
 		[
 			"^(\\d+) set up$",

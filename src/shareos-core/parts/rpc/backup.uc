@@ -290,6 +290,8 @@ add_methods({
 				}
 				j = backup_upgrade(j);
 				if (!req.args.apply) return { ok: true, preview: true, encrypted: !!req.args.password, ...backup_summary(j) };
+				// it ends with a restart
+				if (flash_busy()) return { error: FLASH_BUSY };
 				let essentials = restore_essentials(j);
 				return { ok: true, reboot: true, recovery: true, essentials };
 			}

@@ -1657,7 +1657,8 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "为了获知公网 IPv4 地址，设备会查询 api.ipify.org（若无响应则查询 ipv4.icanhazip.com）。",
 		"The password needs at least 8 characters.": "密码至少需要 8 个字符。",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "新密码 (至少 8 个字符)。用于共享，并根据角色用于网页界面。",
-		"Applies to the web interface and SSH. At least 8 characters.": "适用于网页界面和 SSH。至少 8 个字符。"
+		"Applies to the web interface and SSH. At least 8 characters.": "适用于网页界面和 SSH。至少 8 个字符。",
+		"Not now: the update is being installed. Wait until it has finished.": "现在不行：正在安装更新。请等待完成。"
 	},
 	"patterns": [
 		[
@@ -2815,6 +2816,10 @@
 		[
 			"^Remove: (.*)$",
 			"移除：$1"
+		],
+		[
+			"^Reboot: (.*)$",
+			"重启：$1"
 		],
 		[
 			"^(\\d+) set up$",

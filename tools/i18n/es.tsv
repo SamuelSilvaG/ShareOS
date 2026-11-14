@@ -2089,3 +2089,5 @@ E1671	Para conocer su dirección IPv4 pública, la caja pregunta a api.ipify.org
 E1672	La contraseña necesita al menos 8 caracteres.
 E1673	Nueva contraseña (al menos 8 caracteres). Sirve para las carpetas compartidas y – según el rol – para la interfaz web.
 E1674	Vale para la interfaz web y SSH. Al menos 8 caracteres.
+E1675	Ahora no: se está instalando la actualización. Espere a que termine.
+P372	Reinicio: $1
