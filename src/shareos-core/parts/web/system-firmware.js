@@ -101,8 +101,8 @@ Object.assign(SYS, {
 						${u.state === 'verifying' ? html`<div class="bar big busy" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Checking the bundle …</b> SHA-256 and contents, takes about half a minute.</p>` : ''}
 						${u.state === 'flashing' ? (() => { const [fp, fl] = FLASH_STEPS[u.step] || [2, 'Starting'], fn = Object.keys(FLASH_STEPS).indexOf(u.step) + 1; return html`<div class="bar big busy" style="margin-top:12px"><i style="width:${fp}%"></i></div><p class="note"><b>${fl} …</b> (step ${fn || 1} of ${Object.keys(FLASH_STEPS).length}) – <b>do not switch off</b>, this takes about 1–2 minutes.</p>`; })() : ''}
 						${u.state === 'flashed' ? html`<div class="bar big" style="margin-top:12px"><i style="width:100%"></i></div><p class="note"><b>Installation finished</b> (100 %) – restart now.</p>` : ''}
-						${u.state === 'ready' ? html`<div class="acts" style="margin-top:14px"><button class="btn primary" type="button" data-act="apply" data-tag="${u.release.tag}" data-ver="${u.release.version}" ${bootOk ? '' : 'disabled'}>Install ${svg(I.dl)}${u.release.version}</button><button class="btn ghost" type="button" data-act="cancel">Discard</button></div>
-							<p class="note">${u.release.local ? (u.release.sha_checked ? 'Uploaded file – verified: SHA-256 of the .sha256 file, checksums of all parts, made for this device.' : 'Uploaded file – verified: checksums of all parts, made for this device (without .sha256 file).') : 'Verified: SHA-256, checksums of all parts, made for this device.'} Settings and packages are kept.</p>` : ''}`
+						${u.state === 'ready' ? html`<div class="acts" style="margin-top:14px"><button class="btn primary" type="button" data-act="apply" data-tag="${u.release.tag}" data-ver="${u.release.version}"${u.signing && u.release.signature !== 'valid' ? raw(' data-unsigned="1"') : ''} ${bootOk ? '' : 'disabled'}>Install ${svg(I.dl)}${u.release.version}</button><button class="btn ghost" type="button" data-act="cancel">Discard</button></div>
+							<p class="note">${u.release.local ? (u.release.sha_checked ? 'Uploaded file – verified: SHA-256 of the .sha256 file, checksums of all parts, made for this device.' : 'Uploaded file – verified: checksums of all parts, made for this device (without .sha256 file).') : 'Verified: SHA-256, checksums of all parts, made for this device.'} ${u.signing ? (u.release.signature === 'valid' ? 'The signature of the ShareOS project is valid.' : html`<b style="color:var(--amber)">Not signed by the ShareOS project.</b>`) : ''} Settings and packages are kept.</p>` : ''}`
 					: ''}
 					${u.state === 'error' ? html`<div class="banner" style="margin:16px 0 0">${svg(I.warn)}<span><b>Error:</b> ${u.error}</span><button class="btn sm ghost" type="button" data-act="cancel">OK</button></div>` : ''}
 					<div class="fields" style="margin-top:18px">
@@ -140,9 +140,11 @@ Object.assign(SYS, {
 				<form class="panel" id="f-bin" style="margin-top:16px">
 					<div class="ph"><span class="pt">INSTALL FIRMWARE FILE</span><span class="tag ml">.tar · .bin</span></div>
 					<p class="note" style="margin:0 0 10px"><b>Update without internet:</b> upload the .sysupgrade.tar of a ShareOS release, preferably with its .sha256 file. It is checked like an update from GitHub.</p>
+					${u.signing ? html`<p class="note" style="margin:0 0 10px">With the .sig file of the release the signature is checked too; without it the file counts as unsigned.</p>` : ''}
 					<p class="note" style="margin:0 0 10px">A firmware in D-Link format, e.g. for the <b>switch back to Alt-F</b>. Kernel and boot system are written; the ShareOS system and settings stay in flash.</p>
 					<div class="fields" style="grid-template-columns:1fr"><label class="f"><span>FILE</span><input type="file" name="file" accept=".tar,.bin" required></label>
-						<label class="f"><span>CHECKSUM (.SHA256, OPTIONAL)</span><input type="file" name="sha" accept=".sha256,.txt"></label></div>
+						<label class="f"><span>CHECKSUM (.SHA256, OPTIONAL)</span><input type="file" name="sha" accept=".sha256,.txt"></label>
+						${u.signing ? html`<label class="f"><span>SIGNATURE (.SIG, OPTIONAL)</span><input type="file" name="sig" accept=".sig"></label>` : ''}</div>
 					<div id="bin-info"></div>
 					<div class="acts" style="margin-top:12px"><button class="btn" type="submit" ${busy ? 'disabled' : ''}>${svg(I.ul)}Upload & check</button></div>
 				</form>
@@ -162,9 +164,12 @@ afterSystemPage('firmware', () => {
 			if (/\.tar$/i.test(file.name)) {
 				try {
 					const sha = f.sha.files[0] ? (await f.sha.files[0].text()).slice(0, 400) : '';
+					// the signature is binary (about 70 bytes): sent as base64
+					const sigFile = f.sig?.files[0];
+					const sig = sigFile ? btoa(String.fromCharCode(...new Uint8Array((await sigFile.arrayBuffer()).slice(0, 1024)))) : '';
 					const t = await rpc('shareos.update', 'local_ticket');
 					await fbSend(t.url, file, () => {});
-					await rpc('shareos.update', 'local', { sha256: sha });
+					await rpc('shareos.update', 'local', { sha256: sha, sig });
 					f.reset();
 					toast('Uploaded – the bundle is being checked.');
 					S.updPending = { state: 'verifying', until: Date.now() + 15000 };
@@ -232,11 +237,13 @@ Object.assign(ACTIONS, {
 	async apply(el) {
 		const tag = el.dataset.tag;
 		el.disabled = true;
+		const unsigned = el.dataset.unsigned === '1';
+		if (unsigned && !await confirmDlg('Install unsigned firmware?', 'This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.', 'Install anyway', true)) { el.disabled = false; return; }
 		if (!await confirmDlg('Install update?', `ShareOS ${(el.dataset.ver || tag).replace(/^v/, '')} will be written to flash. A reboot is needed afterwards, during which the new system is installed. Do not switch the box off while writing.`, 'Install')) { el.disabled = false; return; }
 		S.updPending = { state: 'flashing', until: Date.now() + 15000 };
 		S.upd = { ...S.upd, state: 'flashing', step: '' };
 		renderMain();
-		try { await rpc('shareos.update', 'apply', { tag, confirm: true }); refreshUpdateStatus(); }
+		try { await rpc('shareos.update', 'apply', { tag, confirm: true, unsigned }); refreshUpdateStatus(); }
 		catch (e) { S.updPending = null; toast('Install: ' + e.message, true); refreshUpdateStatus(); }
 	},
 	async 'upd-ack'() {

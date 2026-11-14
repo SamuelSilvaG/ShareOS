@@ -4,14 +4,16 @@
 //
 //   shareos-update check [stable|beta]   list releases for this box (JSON)
 //   shareos-update download <tag>        download + verify into /tmp (JSON state)
-//   shareos-update apply <tag>           install a verified download, then reboot
+//   shareos-update apply <tag> [unsigned]  install a verified download, then reboot
+//                                          ("unsigned": an uploaded file without signature)
 //   shareos-update status                current state (JSON)
 //   shareos-update cancel                forget a download
 //   shareos-update busy                  exit 0 while firmware is being written
 //                                        (this updater or shareos-flash-bin):
 //                                        switching off or restarting then
 //                                        would leave a half-written kernel
-//   shareos-update local <file> [sha256] verify an uploaded .sysupgrade.tar (no internet
+//   shareos-update local <file> [sha256] [signature file]
+//                                        verify an uploaded .sysupgrade.tar (no internet
 //                                        needed); then "apply local" installs it
 //
 // Everything prints one JSON object on stdout; the rpcd plugin
@@ -25,6 +27,12 @@
 // Settings and packages in /overlay stay.
 //
 // Safety checks:
+//   - signature of the bundle (<bundle>.sig of the release) against the public
+//     key of the project in /etc/shareos/release.pub. The key that signs is
+//     not in the repository and not on the box; without a valid signature
+//     nothing from the internet is installed. A file uploaded by hand may be
+//     unsigned (own builds) – that has to be confirmed.
+//     No key file on the box: this check is off (firmware before signing).
 //   - SHA-256 of the bundle against the .sha256 published with the release
 //   - SHA256SUMS inside the bundle, fwname of the bundle = this box
 //   - U-Boot headers (magic, "ShareOS-" name), 3 MB limit of the stock U-Boot
@@ -44,6 +52,9 @@ function jparse(s) { try { return json(s); } catch (e) { return null; } }
 const ROOT = getenv('SHAREOS_ROOT') ?? '';
 const STATE_DIR = ROOT + '/tmp/shareos-update';
 const STATE = STATE_DIR + '/state.json';
+// public key of the releases (PEM, ECDSA P-256); the signature is made with
+// "openssl dgst -sha256 -sign" and checked with pk_verify of mbedtls
+const PUBKEY = ROOT + '/etc/shareos/release.pub';
 const UBOOT_MAX = 3145728;          // bytes U-Boot copies from uImage/ramdisk
 const CA = '/etc/ssl/certs/ca-certificates.crt';
 const CURL = [ 'curl', '-fsSL', '--retry', '2', '--connect-timeout', '10',
@@ -150,6 +161,21 @@ function flash_busy() {
 	return p > 1 && stat('/proc/' + p) != null;
 }
 
+// are releases checked against the project's key on this box?
+function signing() {
+	return index(readfile(PUBKEY) ?? '', 'BEGIN PUBLIC KEY') >= 0;
+}
+
+// is <dir>/fw.tar.sig a valid signature of <dir>/fw.tar? (pk_verify reads
+// the signature from "<file>.sig" and hashes the file with SHA-256)
+function signature_ok(dir) {
+	if (!stat(dir + '/fw.tar.sig')) return false;
+	for (let prog in [ 'mbedtls_pk_verify', 'pk_verify' ])
+		if (capture([ 'sh', '-c', 'command -v ' + prog ]).rc == 0)
+			return capture([ prog, PUBKEY, dir + '/fw.tar' ]).rc == 0;
+	return false;
+}
+
 function out(o) {
 	print(sprintf('%J\n', o));
 	return o;
@@ -210,14 +236,16 @@ function releases_for_box(list, fwname, channel) {
 	let found = [];
 	let re_bin = regexp('^ShareOS-.+-' + fwname + '\\.sysupgrade\\.tar$');
 	let re_sum = regexp('^ShareOS-.+-' + fwname + '\\.sysupgrade\\.tar\\.sha256$');
+	let re_sig = regexp('^ShareOS-.+-' + fwname + '\\.sysupgrade\\.tar\\.sig$');
 
 	for (let x in list) {
 		if (x.draft || (x.prerelease && channel != 'beta'))
 			continue;
-		let bin = null, sum = null;
+		let bin = null, sum = null, sig = null;
 		for (let a in x.assets) {
 			if (match(a.name, re_bin)) bin = a;
 			else if (match(a.name, re_sum)) sum = a;
+			else if (match(a.name, re_sig)) sig = a;
 		}
 		if (!bin || !sum)
 			continue;
@@ -231,7 +259,8 @@ function releases_for_box(list, fwname, channel) {
 			file: bin.name,
 			size: bin.size,
 			bin_url: bin.browser_download_url,
-			sha_url: sum.browser_download_url
+			sha_url: sum.browser_download_url,
+			sig_url: sig ? sig.browser_download_url : null
 		});
 	}
 	return sort(found, (a, b) => vcmp(b.version, a.version));
@@ -386,12 +415,20 @@ function cmd_download(tag) {
 	mkdir(dir);
 	unlink(dir + '/fw.tar');
 	unlink(dir + '/fw.tar.part');
+	unlink(dir + '/fw.tar.sig');
 
 	s.state = 'downloading';
 	s.release = rel;
+	delete s.release.signature;
 	delete s.error;
 	save_state(s);
 
+	if (signing()) {
+		if (!rel.sig_url)
+			fail(s, 'this release is not signed – not installed');
+		if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.tar.sig', rel.sig_url ]).rc != 0)
+			fail(s, 'download of the signature failed');
+	}
 	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.sha256', rel.sha_url ]).rc != 0)
 		fail(s, 'download of the checksum failed');
 	if (capture([ ...CURL, '--max-time', '600', '-o', dir + '/fw.tar.part', rel.bin_url ]).rc != 0)
@@ -400,6 +437,13 @@ function cmd_download(tag) {
 
 	s.state = 'verifying';
 	save_state(s);
+	if (signing()) {
+		if (!signature_ok(dir)) {
+			unlink(dir + '/fw.tar');
+			fail(s, 'the signature of this release is not valid – not installed');
+		}
+		s.release.signature = 'valid';
+	}
 	verify_image(s, dir, rel);
 
 	s.state = 'ready';
@@ -410,7 +454,10 @@ function cmd_download(tag) {
 // a bundle uploaded in the web interface (no internet, GitHub blocked …).
 // Same checks as a download; the outer SHA-256 only when the .sha256 of the
 // release was given too (otherwise integrity comes from SHA256SUMS inside).
-function cmd_local(file, sha) {
+// With the .sig of the release the signature is checked like for a download;
+// without it the file counts as unsigned (an own build): release.signature
+// is "none", and apply needs the word "unsigned".
+function cmd_local(file, sha, sig) {
 	let s = load_state();
 	if (s.state == 'downloading' || s.state == 'verifying' || s.state == 'flashing')
 		return out({ ...s, error: 'busy: ' + s.state });
@@ -429,6 +476,7 @@ function cmd_local(file, sha) {
 	mkdir(dir);
 	unlink(dir + '/fw.tar');
 	unlink(dir + '/fw.tar.part');
+	unlink(dir + '/fw.tar.sig');
 	s.release = { tag: 'local', version: '?', local: true, size: st.size };
 	delete s.error;
 	if (!rename(file, dir + '/fw.tar') && capture([ 'mv', file, dir + '/fw.tar' ]).rc != 0)
@@ -436,6 +484,16 @@ function cmd_local(file, sha) {
 
 	s.state = 'verifying';
 	save_state(s);
+	if (signing()) {
+		if (sig && stat(sig)) {
+			if (!rename(sig, dir + '/fw.tar.sig') && capture([ 'mv', sig, dir + '/fw.tar.sig' ]).rc != 0)
+				fail(s, 'cannot move the uploaded signature');
+			if (!signature_ok(dir))
+				fail(s, 'the signature does not match this file');
+			s.release.signature = 'valid';
+		} else
+			s.release.signature = 'none';
+	}
 	let have = match(capture([ 'sha256sum', dir + '/fw.tar' ]).out, /^([0-9a-f]{64})/);
 	if (!have)
 		fail(s, 'cannot read the uploaded file');
@@ -503,12 +561,24 @@ function mounted_on(dir) {
 	return null;
 }
 
-function cmd_apply(tag) {
+function cmd_apply(tag, unsigned) {
 	let s = load_state();
 	let dir = STATE_DIR + '/dl';
 
 	if (s.state != 'ready' || s.release?.tag != tag)
 		fail(s, 'release ' + (tag ?? '(none)') + ' is not downloaded and verified');
+
+	// the signature once more right before writing; /tmp could have been
+	// touched. Unsigned only for a file uploaded by hand, and only when asked.
+	if (signing()) {
+		if (s.release.signature == 'valid') {
+			if (!signature_ok(dir))
+				fail(s, 'the signature is not valid any more – not installed');
+		} else if (!(s.release.local && unsigned == 'unsigned')) {
+			out({ ...s, error: 'not signed by the ShareOS project' });
+			exit(1);
+		}
+	}
 
 	let model = trim(replace(readfile(ROOT + '/proc/device-tree/model') ?? '', '\0', ''));
 	let board_model = box_model();
@@ -563,6 +633,7 @@ function cmd_status() {
 		s.progress = { bytes: st?.size ?? 0, total: s.release?.size ?? 0 };
 	}
 	s.current = release_info().SHAREOS_VERSION;
+	s.signing = signing();
 	// a check from before an update would still offer the version now running
 	if (s.check)
 		s.check.update_available = !!s.check.releases?.[0] && vcmp(s.check.releases[0].version, s.current) > 0;
@@ -598,11 +669,11 @@ switch (cmd) {
 case 'check':    cmd_check(ARGV[1]); break;
 case 'auto':     cmd_check(null, true); break;
 case 'download': cmd_download(ARGV[1]); break;
-case 'apply':    cmd_apply(ARGV[1]); break;
+case 'apply':    cmd_apply(ARGV[1], ARGV[2]); break;
 case 'status':   cmd_status(); break;
 case 'cancel':   cmd_cancel(); break;
 case 'busy':     exit(flash_busy() ? 0 : 1);
-case 'local':    cmd_local(ARGV[1], ARGV[2]); break;
+case 'local':    cmd_local(ARGV[1], ARGV[2], ARGV[3]); break;
 case 'ack':      cmd_ack(); break;
 default:
 	warn('usage: shareos-update check [stable|beta] | auto | download <tag> | apply <tag> | status | cancel | ack\n');

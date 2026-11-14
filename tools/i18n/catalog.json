@@ -1676,7 +1676,14 @@
 		"The password needs at least 8 characters.",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.",
 		"Applies to the web interface and SSH. At least 8 characters.",
-		"Not now: the update is being installed. Wait until it has finished."
+		"Not now: the update is being installed. Wait until it has finished.",
+		"The signature of the ShareOS project is valid.",
+		"Not signed by the ShareOS project.",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.",
+		"SIGNATURE (.SIG, OPTIONAL)",
+		"Install unsigned firmware?",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.",
+		"Install anyway"
 	],
 	"patterns": [
 		[

@@ -1658,7 +1658,14 @@
 		"The password needs at least 8 characters.": "La contraseña necesita al menos 8 caracteres.",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "Nueva contraseña (al menos 8 caracteres). Sirve para las carpetas compartidas y – según el rol – para la interfaz web.",
 		"Applies to the web interface and SSH. At least 8 characters.": "Vale para la interfaz web y SSH. Al menos 8 caracteres.",
-		"Not now: the update is being installed. Wait until it has finished.": "Ahora no: se está instalando la actualización. Espere a que termine."
+		"Not now: the update is being installed. Wait until it has finished.": "Ahora no: se está instalando la actualización. Espere a que termine.",
+		"The signature of the ShareOS project is valid.": "La firma del proyecto ShareOS es válida.",
+		"Not signed by the ShareOS project.": "No está firmado por el proyecto ShareOS.",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "Con el archivo .sig de la versión también se comprueba la firma; sin él, el archivo cuenta como no firmado.",
+		"SIGNATURE (.SIG, OPTIONAL)": "FIRMA (.SIG, OPCIONAL)",
+		"Install unsigned firmware?": "¿Instalar firmware sin firmar?",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.": "Este archivo no lleva la firma del proyecto ShareOS. Instálelo solo si lo ha compilado usted mismo o confía en su origen.",
+		"Install anyway": "Instalar de todos modos"
 	},
 	"patterns": [
 		[

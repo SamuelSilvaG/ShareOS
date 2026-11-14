@@ -1658,7 +1658,14 @@
 		"The password needs at least 8 characters.": "পাসওয়ার্ডে অন্তত ৮ অক্ষর দরকার।",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "নতুন পাসওয়ার্ড (অন্তত ৮ অক্ষর)। শেয়ারের জন্য এবং – ভূমিকা অনুযায়ী – ওয়েব ইন্টারফেসের জন্য।",
 		"Applies to the web interface and SSH. At least 8 characters.": "ওয়েব ইন্টারফেস ও SSH-এর জন্য। অন্তত ৮ অক্ষর।",
-		"Not now: the update is being installed. Wait until it has finished.": "এখন নয়: আপডেট ইনস্টল হচ্ছে। শেষ না হওয়া পর্যন্ত অপেক্ষা করুন।"
+		"Not now: the update is being installed. Wait until it has finished.": "এখন নয়: আপডেট ইনস্টল হচ্ছে। শেষ না হওয়া পর্যন্ত অপেক্ষা করুন।",
+		"The signature of the ShareOS project is valid.": "ShareOS প্রকল্পের স্বাক্ষর বৈধ।",
+		"Not signed by the ShareOS project.": "ShareOS প্রকল্পের স্বাক্ষর নেই।",
+		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "রিলিজের .sig ফাইল দিলে স্বাক্ষরও যাচাই করা হয়; না দিলে ফাইলটি স্বাক্ষরহীন বলে গণ্য হয়।",
+		"SIGNATURE (.SIG, OPTIONAL)": "স্বাক্ষর (.SIG, ঐচ্ছিক)",
+		"Install unsigned firmware?": "স্বাক্ষরহীন ফার্মওয়্যার ইনস্টল করবেন?",
+		"This file carries no signature of the ShareOS project. Install it only if you built it yourself or trust where it comes from.": "এই ফাইলে ShareOS প্রকল্পের কোনো স্বাক্ষর নেই। নিজে তৈরি করে থাকলে বা উৎসের ওপর আস্থা থাকলে তবেই ইনস্টল করুন।",
+		"Install anyway": "তবুও ইনস্টল করুন"
 	},
 	"patterns": [
 		[

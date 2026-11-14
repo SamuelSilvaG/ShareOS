@@ -2091,3 +2091,10 @@ E1673	Nova senha (pelo menos 8 caracteres). Serve para os compartilhamentos e �
 E1674	Vale para a interface web e o SSH. Pelo menos 8 caracteres.
 E1675	Agora não: a atualização está a ser instalada. Aguarde até terminar.
 P372	Reinício: $1
+E1676	A assinatura do projeto ShareOS é válida.
+E1677	Não está assinado pelo projeto ShareOS.
+E1678	Com o ficheiro .sig da versão, a assinatura também é verificada; sem ele, o ficheiro conta como não assinado.
+E1679	ASSINATURA (.SIG, OPCIONAL)
+E1680	Instalar firmware não assinado?
+E1681	Este ficheiro não tem a assinatura do projeto ShareOS. Instale-o apenas se o compilou ou se confia na sua origem.
+E1682	Instalar mesmo assim

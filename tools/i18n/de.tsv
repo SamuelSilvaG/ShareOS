@@ -2075,3 +2075,10 @@ E1673	Neues Passwort (mindestens 8 Zeichen). Gilt für Freigaben und – je nach
 E1674	Gilt für die Weboberfläche und SSH. Mindestens 8 Zeichen.
 E1675	Jetzt nicht: Das Update wird gerade installiert. Bitte warten, bis es fertig ist.
 P372	Neustart: $1
+E1676	Die Signatur des ShareOS-Projekts ist gültig.
+E1677	Nicht vom ShareOS-Projekt signiert.
+E1678	Mit der .sig-Datei des Releases wird auch die Signatur geprüft; ohne sie gilt die Datei als unsigniert.
+E1679	SIGNATUR (.SIG, OPTIONAL)
+E1680	Unsignierte Firmware installieren?
+E1681	Diese Datei trägt keine Signatur des ShareOS-Projekts. Nur installieren, wenn du sie selbst gebaut hast oder ihrer Herkunft vertraust.
+E1682	Trotzdem installieren

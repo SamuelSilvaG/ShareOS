@@ -55,14 +55,19 @@ add_methods({
 
 		apply: {
 			// "confirm" must be true: flashing is the one step that cannot be undone
-			args: { tag: '', confirm: false },
+			// "unsigned": an uploaded file without a signature of the project
+			// (an own build) – the user was asked
+			args: { tag: '', confirm: false, unsigned: false },
 			call: function(req) {
 				if (req.args.confirm !== true)
 					return { error: 'confirm must be true' };
 				let s = run_updater([ 'status' ]);
 				if (s.state != 'ready' || s.release?.tag != req.args.tag)
 					return { error: 'release not downloaded and verified' };
-				return spawn_updater([ 'apply', req.args.tag ]);
+				let unsigned = s.release?.local && req.args.unsigned === true;
+				if (s.signing && s.release?.signature != 'valid' && !unsigned)
+					return { error: 'not signed by the ShareOS project' };
+				return spawn_updater(unsigned ? [ 'apply', req.args.tag, 'unsigned' ] : [ 'apply', req.args.tag ]);
 			}
 		},
 
@@ -91,7 +96,9 @@ add_methods({
 
 		local: {
 			// sha256: content of the release's .sha256 file (optional)
-			args: { sha256: '' },
+			// sig: the release's .sig file, base64 (optional; without it the
+			// file counts as unsigned)
+			args: { sha256: '', sig: '' },
 			call: function(req) {
 				let sha = req.args.sha256 ?? '';
 				let m = match(sha, /[0-9a-f]{64}/);
@@ -100,7 +107,15 @@ add_methods({
 				let s = run_updater([ 'status' ]);
 				if (s.state == 'downloading' || s.state == 'verifying' || s.state == 'flashing')
 					return { error: 'busy: ' + s.state };
-				return spawn_updater(m ? [ 'local', '/tmp/shareos-fw/upload.tar', m[0] ] : [ 'local', '/tmp/shareos-fw/upload.tar' ]);
+				let sigfile = '';
+				unlink('/tmp/shareos-fw/upload.sig');
+				if ((req.args.sig ?? '') != '') {
+					let raw = b64dec(req.args.sig);
+					if (!raw || length(raw) < 8 || length(raw) > 1024) return { error: 'signature file is invalid' };
+					put_file('/tmp/shareos-fw/upload.sig', raw, true);
+					sigfile = '/tmp/shareos-fw/upload.sig';
+				}
+				return spawn_updater([ 'local', '/tmp/shareos-fw/upload.tar', m ? m[0] : '', sigfile ]);
 			}
 		},
 

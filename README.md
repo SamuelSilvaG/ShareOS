@@ -118,7 +118,7 @@ Version in brackets = first release with the feature.
 - Media jobs: FFmpeg as a system app, app permission `media` – convert audio, change the container of videos, cut, in the background with the user's rights (MediaTranscoder) (0.2.0-beta.5)
 
 **Firmware and system**
-- Online updates from GitHub Releases: checked every 6 hours, SHA-256 verified, progress for download, check and installation (beta.1)
+- Online updates from GitHub Releases: checked every 6 hours, SHA-256 verified, progress for download, check and installation (beta.1); releases are signed and the box installs nothing from GitHub without a valid signature (0.3.0-beta.10)
 - First installation from the Alt-F or D-Link web interface: the `.bin` fetches the system from a USB stick or from GitHub (beta.7; tested on real hardware, step by step: [SWITCHING.md](docs/SWITCHING.md) · [UMSTIEG.md](docs/UMSTIEG.md))
 - Back to Alt-F (or any D-Link `.bin`) from the firmware page, checked and read back (beta.7)
 - First-run assistant, network settings with automatic rollback, name via mDNS (`<name>.local`), fallback address `192.168.0.32` without DHCP

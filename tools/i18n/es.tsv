@@ -2091,3 +2091,10 @@ E1673	Nueva contraseña (al menos 8 caracteres). Sirve para las carpetas compart
 E1674	Vale para la interfaz web y SSH. Al menos 8 caracteres.
 E1675	Ahora no: se está instalando la actualización. Espere a que termine.
 P372	Reinicio: $1
+E1676	La firma del proyecto ShareOS es válida.
+E1677	No está firmado por el proyecto ShareOS.
+E1678	Con el archivo .sig de la versión también se comprueba la firma; sin él, el archivo cuenta como no firmado.
+E1679	FIRMA (.SIG, OPCIONAL)
+E1680	¿Instalar firmware sin firmar?
+E1681	Este archivo no lleva la firma del proyecto ShareOS. Instálelo solo si lo ha compilado usted mismo o confía en su origen.
+E1682	Instalar de todos modos
