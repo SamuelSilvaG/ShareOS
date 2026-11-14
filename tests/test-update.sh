@@ -214,7 +214,7 @@ o=$(run download v0.4.1);check "signed: a signature of another key is rejected" 
 check "signed: the rejected download is gone" "{\"there\": $([ -e "$ROOT/tmp/shareos-update/dl/fw.tar" ] && echo true || echo false)}" "d['there'] is False"
 o=$(run download v0.4.2);check "signed: a bundle changed after signing is rejected (although its .sha256 fits)" "$o" "d['state']=='error' and 'not valid' in d['error']"
 o=$(run download v0.4.0);check "signed: valid signature, ready" "$o" "d['state']=='ready' and d['release']['signature']=='valid'"
-echo x >> "$ROOT/tmp/shareos-update/dl/fw.tar.sig"
+echo x >> "$ROOT/tmp/shareos-update/dl/fw.tar"          # touched in /tmp after the check
 o=$(run apply v0.4.0);   check "signed: checked again right before writing" "$o" "d['state']=='error' and 'not valid any more' in d['error']"
 run download v0.4.0 >/dev/null
 o=$(run apply v0.4.0);   check "signed: installed" "$o" "d['state']=='flashed' and d['flashed']['tag']=='v0.4.0'"
