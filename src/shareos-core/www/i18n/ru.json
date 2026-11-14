@@ -1658,6 +1658,7 @@
 		"The password needs at least 8 characters.": "Пароль должен содержать не менее 8 символов.",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "Новый пароль (не менее 8 символов). Используется для общих папок и – в зависимости от роли – для веб-интерфейса.",
 		"Applies to the web interface and SSH. At least 8 characters.": "Действует для веб-интерфейса и SSH. Не менее 8 символов.",
+		"Not now: the update is being installed. Wait until it has finished.": "Не сейчас: устанавливается обновление. Дождитесь его завершения.",
 		"The signature of the ShareOS project is valid.": "Подпись проекта ShareOS действительна.",
 		"Not signed by the ShareOS project.": "Не подписано проектом ShareOS.",
 		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "С файлом .sig выпуска проверяется и подпись; без него файл считается неподписанным.",
@@ -2822,6 +2823,10 @@
 		[
 			"^Remove: (.*)$",
 			"Удаление: $1"
+		],
+		[
+			"^Reboot: (.*)$",
+			"Перезагрузка: $1"
 		],
 		[
 			"^(\\d+) set up$",

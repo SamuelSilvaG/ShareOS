@@ -1658,6 +1658,7 @@
 		"The password needs at least 8 characters.": "密码至少需要 8 个字符。",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "新密码 (至少 8 个字符)。用于共享，并根据角色用于网页界面。",
 		"Applies to the web interface and SSH. At least 8 characters.": "适用于网页界面和 SSH。至少 8 个字符。",
+		"Not now: the update is being installed. Wait until it has finished.": "现在不行：正在安装更新。请等待完成。",
 		"The signature of the ShareOS project is valid.": "ShareOS 项目的签名有效。",
 		"Not signed by the ShareOS project.": "未经 ShareOS 项目签名。",
 		"With the .sig file of the release the signature is checked too; without it the file counts as unsigned.": "附上该版本的 .sig 文件时还会校验签名；没有它，文件视为未签名。",
@@ -2822,6 +2823,10 @@
 		[
 			"^Remove: (.*)$",
 			"移除：$1"
+		],
+		[
+			"^Reboot: (.*)$",
+			"重启：$1"
 		],
 		[
 			"^(\\d+) set up$",

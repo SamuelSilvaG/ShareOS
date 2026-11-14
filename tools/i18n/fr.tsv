@@ -2089,10 +2089,12 @@ E1671	Pour connaître son adresse IPv4 publique, le boîtier interroge api.ipify
 E1672	Le mot de passe doit comporter au moins 8 caractères.
 E1673	Nouveau mot de passe (au moins 8 caractères). Sert pour les partages et – selon le rôle – pour l'interface web.
 E1674	Vaut pour l'interface web et SSH. Au moins 8 caractères.
-E1675	La signature du projet ShareOS est valide.
-E1676	Non signé par le projet ShareOS.
-E1677	Avec le fichier .sig de la version, la signature est vérifiée aussi ; sans lui, le fichier est considéré comme non signé.
-E1678	SIGNATURE (.SIG, FACULTATIF)
-E1679	Installer un micrologiciel non signé ?
-E1680	Ce fichier ne porte pas la signature du projet ShareOS. Ne l’installez que si vous l’avez compilé vous-même ou si vous faites confiance à sa provenance.
-E1681	Installer quand même
+E1675	Pas maintenant : la mise à jour est en cours d’installation. Attendez qu’elle soit terminée.
+P372	Redémarrage : $1
+E1676	La signature du projet ShareOS est valide.
+E1677	Non signé par le projet ShareOS.
+E1678	Avec le fichier .sig de la version, la signature est vérifiée aussi ; sans lui, le fichier est considéré comme non signé.
+E1679	SIGNATURE (.SIG, FACULTATIF)
+E1680	Installer un micrologiciel non signé ?
+E1681	Ce fichier ne porte pas la signature du projet ShareOS. Ne l’installez que si vous l’avez compilé vous-même ou si vous faites confiance à sa provenance.
+E1682	Installer quand même

@@ -369,6 +369,8 @@ add_methods({
 			// fs: ext4 (default), ext3, ext2, btrfs, exfat, ntfs, vfat – volumes may carry their own
 			args: { layout: '', name: '', disks: [], volumes: [], swap: 1024, fs: '', confirm: false },
 			call: function(req) {
+				// formatting and checking load the box: not while firmware is written
+				if (flash_busy()) return { error: FLASH_BUSY };
 				let a = req.args;
 				if (a.confirm !== true)
 					return { error: 'confirm must be true' };
@@ -413,6 +415,8 @@ add_methods({
 		repair: {
 			args: { name: '', disk: '', confirm: false },
 			call: function(req) {
+				// formatting and checking load the box: not while firmware is written
+				if (flash_busy()) return { error: FLASH_BUSY };
 				let a = req.args;
 				if (a.confirm !== true) return { error: 'confirm must be true' };
 				if (!valid_name(a.name)) return { error: 'invalid name' };
@@ -499,6 +503,8 @@ add_methods({
 		usb_format: {
 			args: { disk: '', fs: '', name: '', confirm: false },
 			call: function(req) {
+				// formatting and checking load the box: not while firmware is written
+				if (flash_busy()) return { error: FLASH_BUSY };
 				let a = req.args;
 				if (a.confirm !== true) return { error: 'confirm must be true' };
 				if (!is_usb(a.disk)) return { error: 'not a USB drive' };
