@@ -191,10 +191,13 @@ afterSystemPage('firmware', () => {
 						await rpc('shareos.update', 'bin_write', { confirm: true });
 						uncover();
 						if (await confirmDlg('Written', `${kind} is in flash. Restart now?`, 'Reboot')) {
-							try { await rpc('shareos.system', 'reboot'); } catch (err) { }
-							stopPolling();
-							if (i.kind === 'shareos') waitForBox('Rebooting', `${kind} is starting`);
-							else cover('Rebooting', `${kind} is starting – its interface will be at ${location.hostname} shortly (port 80).`);
+							if (i.kind === 'shareos') await rebootBox('Rebooting', `${kind} is starting`);
+							else {
+								try { await rpc('shareos.system', 'reboot'); }
+								catch (err) { if (err.code === 'app') { toast('Reboot: ' + err.message, true); return; } }
+								stopPolling();
+								cover('Rebooting', `${kind} is starting – its interface will be at ${location.hostname} shortly (port 80).`);
+							}
 						}
 					} catch (err) { uncover(); toast('Install: ' + err.message, true); }
 				});

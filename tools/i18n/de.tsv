@@ -2073,3 +2073,5 @@ E1671	Um ihre öffentliche IPv4-Adresse zu erfahren, fragt die Box api.ipify.org
 E1672	Das Passwort braucht mindestens 8 Zeichen.
 E1673	Neues Passwort (mindestens 8 Zeichen). Gilt für Freigaben und – je nach Rolle – für die Weboberfläche.
 E1674	Gilt für die Weboberfläche und SSH. Mindestens 8 Zeichen.
+E1675	Jetzt nicht: Das Update wird gerade installiert. Bitte warten, bis es fertig ist.
+P372	Neustart: $1

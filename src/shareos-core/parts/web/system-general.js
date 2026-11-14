@@ -402,12 +402,11 @@ afterSystemPage('general', () => {
 					<p class="note" style="color:var(--amber)">Root password, network, device name, time zone, drives and the settings of the web interface are taken over right away. Then the box restarts and asks in recovery mode what else should come back. Data on the drives stays untouched.</p>
 					<div class="acts" style="margin-top:10px"><button class="btn danger" type="button" id="restore-apply">Restore</button></div>`.s;
 				$('#restore-apply').addEventListener('click', async () => {
+					if (flashingNow()) { flashingRefused(); return; }
 					if (!await confirmDlg('Restore settings?', 'Root password, network, name, time zone and drives come from the backup right away, then the box restarts. You choose the rest afterwards in recovery mode.', 'Restore and restart', true)) return;
 					try {
 						await rpc('shareos.backup', 'restore', { content, password: f.pw.value, apply: true });
-						try { await rpc('shareos.system', 'reboot'); } catch (err) { }
-						stopPolling();
-						waitForBox('Rebooting', 'Then it continues in recovery mode');
+						await rebootBox('Rebooting', 'Then it continues in recovery mode');
 					} catch (err) { toast('Restore: ' + err.message, true); }
 				});
 			} catch (err) {
@@ -482,9 +481,7 @@ Object.assign(ACTIONS, {
 	},
 	async reboot() {
 		if (!await confirmDlg('Reboot?', 'The box reboots. This page reconnects on its own (about 1–2 minutes).', 'Reboot')) return;
-		try { await rpc('shareos.system', 'reboot'); } catch (e) { }
-		stopPolling();
-		waitForBox('Rebooting', 'ShareOS is restarting');
+		await rebootBox('Rebooting', 'ShareOS is restarting');
 	},
 	'pwr-edit'() { S.pwrEdit = true; renderMain(); },
 	'pwr-cancel'() { S.pwrEdit = false; renderMain(); },

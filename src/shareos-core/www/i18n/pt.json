@@ -1657,7 +1657,8 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "Para saber o seu endereço IPv4 público, a caixa pergunta a api.ipify.org (ipv4.icanhazip.com se este não responder).",
 		"The password needs at least 8 characters.": "A senha precisa de pelo menos 8 caracteres.",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "Nova senha (pelo menos 8 caracteres). Serve para os compartilhamentos e – conforme a função – para a interface web.",
-		"Applies to the web interface and SSH. At least 8 characters.": "Vale para a interface web e o SSH. Pelo menos 8 caracteres."
+		"Applies to the web interface and SSH. At least 8 characters.": "Vale para a interface web e o SSH. Pelo menos 8 caracteres.",
+		"Not now: the update is being installed. Wait until it has finished.": "Agora não: a atualização está a ser instalada. Aguarde até terminar."
 	},
 	"patterns": [
 		[
@@ -2815,6 +2816,10 @@
 		[
 			"^Remove: (.*)$",
 			"Remover: $1"
+		],
+		[
+			"^Reboot: (.*)$",
+			"Reinício: $1"
 		],
 		[
 			"^(\\d+) set up$",

@@ -1657,7 +1657,8 @@
 		"To learn its public IPv4 address, the box asks api.ipify.org (ipv4.icanhazip.com if that does not answer).": "अपना सार्वजनिक IPv4 पता जानने के लिए बॉक्स api.ipify.org से पूछता है (उत्तर न मिलने पर ipv4.icanhazip.com से)।",
 		"The password needs at least 8 characters.": "पासवर्ड में कम से कम 8 अक्षर चाहिए।",
 		"New password (at least 8 characters). Used for shares and – depending on the role – for the web interface.": "नया पासवर्ड (कम से कम 8 अक्षर)। शेयर के लिए और – भूमिका के अनुसार – वेब इंटरफ़ेस के लिए।",
-		"Applies to the web interface and SSH. At least 8 characters.": "वेब इंटरफ़ेस और SSH के लिए। कम से कम 8 अक्षर।"
+		"Applies to the web interface and SSH. At least 8 characters.": "वेब इंटरफ़ेस और SSH के लिए। कम से कम 8 अक्षर।",
+		"Not now: the update is being installed. Wait until it has finished.": "अभी नहीं: अपडेट इंस्टॉल हो रहा है। पूरा होने तक प्रतीक्षा करें।"
 	},
 	"patterns": [
 		[
@@ -2815,6 +2816,10 @@
 		[
 			"^Remove: (.*)$",
 			"हटाएँ: $1"
+		],
+		[
+			"^Reboot: (.*)$",
+			"रीबूट: $1"
 		],
 		[
 			"^(\\d+) set up$",

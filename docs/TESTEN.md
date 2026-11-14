@@ -556,7 +556,7 @@ Nichts Neues zu bedienen; die Schritte prüfen, ob die Korrekturen auf einer ech
 
 **Ausschalten während eines Updates**
 
-19. Ein Update starten und in einem zweiten Tab *Neustart* drücken, während Kernel oder System geschrieben werden: wird abgelehnt („firmware is being written – wait until it has finished“; Meldungen des Backends sind englisch). (Auch die Netztaste wird in dieser Phase ignoriert – das nicht durch Gedrückthalten ausprobieren.)
+19. Ein Update starten und in einem zweiten Tab *Neustart* drücken, während Kernel oder System geschrieben werden: wird abgelehnt mit „Jetzt nicht: Das Update wird gerade installiert. Bitte warten, bis es fertig ist.“, und die Seite bleibt, wie sie ist (kein „Neustart“-Bildschirm). Ist das Update geschrieben, fordert die Firmware-Seite zum Neustart auf. (Auch die Netztaste wird in dieser Phase ignoriert – das nicht durch Gedrückthalten ausprobieren.)
 
 **Rettungsmodus** (nicht absichtlich herbeiführen; nur falls die Box je dort landet – langsam blinkende orange USB-LED)
 

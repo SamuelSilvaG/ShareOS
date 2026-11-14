@@ -2089,3 +2089,5 @@ E1671	Pour connaître son adresse IPv4 publique, le boîtier interroge api.ipify
 E1672	Le mot de passe doit comporter au moins 8 caractères.
 E1673	Nouveau mot de passe (au moins 8 caractères). Sert pour les partages et – selon le rôle – pour l'interface web.
 E1674	Vaut pour l'interface web et SSH. Au moins 8 caractères.
+E1675	Pas maintenant : la mise à jour est en cours d’installation. Attendez qu’elle soit terminée.
+P372	Redémarrage : $1

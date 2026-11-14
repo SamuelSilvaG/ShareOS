@@ -7,11 +7,21 @@ VIEWS_AFTER.system = () => {
 	for (const fn of SYS_AFTER[sub] || []) fn(sub);
 };
 
+// While an update writes kernel and system, nothing that restarts, switches
+// off or resets the box. (The box refuses these too; here the click gets its
+// answer at once.)
+const LOCKED_WHILE_FLASHING = { reboot: 1, poweroff: 1, factory: 1 };
+function flashingNow() { return S.upd?.state === 'flashing'; }
+function flashingRefused() { toast('Not now: the update is being installed. Wait until it has finished.', true); }
+
 document.addEventListener('click', (e) => {
 	const el = e.target.closest('[data-act]');
 	if (!el || el.disabled) return;
 	const fn = ACTIONS[el.dataset.act];
-	if (fn) { e.preventDefault(); fn(el); }
+	if (!fn) return;
+	e.preventDefault();
+	if (flashingNow() && LOCKED_WHILE_FLASHING[el.dataset.act]) { flashingRefused(); return; }
+	fn(el);
 });
 
 document.addEventListener('change', (e) => {

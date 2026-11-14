@@ -61,9 +61,7 @@ async function recoveryEnd(args) {
 		await rpc('shareos.recovery', args ? 'apply' : 'discard', args || {});
 		S.rec = null;
 		if (!args) { renderMain(); toast('Recovery mode ended.'); return; }
-		try { await rpc('shareos.system', 'reboot'); } catch (err) { }
-		stopPolling();
-		waitForBox('Rebooting', 'Applying the settings');
+		await rebootBox('Rebooting', 'Applying the settings');
 	} catch (err) { toast('Recovery: ' + err.message, true); }
 }
 

@@ -150,6 +150,19 @@ function cover(title, text) {
 function uncover() { coverEl?.remove(); coverEl = null; }
 
 // after reboot / restart: wait until the box answers again, then reload
+// Restart the box and wait for it. The box can refuse (while an update writes
+// kernel or system): then its reason is shown and nothing else happens.
+async function rebootBox(title, text) {
+	try { await rpc('shareos.system', 'reboot'); }
+	catch (e) {
+		// no answer at all: the box may already be going down
+		if (e.code === 'app') { toast('Reboot: ' + e.message, true); return false; }
+	}
+	stopPolling();
+	waitForBox(title, text);
+	return true;
+}
+
 async function waitForBox(title, text, minDown = true) {
 	cover(title, text);
 	let wasDown = !minDown;
