@@ -12,8 +12,7 @@ if len(sys.argv) > 2 and sys.argv[2]:
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(sys.argv[2]))
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
     s.bind((sys.argv[2], 0))
-else:
-    s.bind(('', 0))
+# without an address the socket is bound by the first sendto (any free port)
 end = time.time() + 4
 while time.time() < end:
     s.sendto(q, ('224.0.0.251', 5353))
