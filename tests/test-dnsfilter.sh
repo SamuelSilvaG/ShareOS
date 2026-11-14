@@ -185,7 +185,7 @@ check "Services page: shown as running (AdGuardHome, the app lists no command)" 
 
 # --- switching off and on in operation (DNS-FILTER tab), the network hands out the box as DNS ---
 # the box is its own DNS server: the local domains go to the default gateway
-GW=$(ip route | awk '/^default/ {print $3; exit}')
+GW=$(ip route show default dev eth0 2>/dev/null | awk '{print $3; exit}')   # the box looks at eth0 only
 run "printf 'search test.lan\nnameserver $BOXIP\n' > /etc/resolv.conf"
 check "switched off in operation: stopped, Services page too" "ub set '{\"enabled\":false}' | js \"not d['running'] and not d['enabled']\" && svc False"
 check "switched on in operation: starts in the background" "ub set '{\"enabled\":true}' | js \"d.get('ok')\""

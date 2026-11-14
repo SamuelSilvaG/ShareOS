@@ -176,6 +176,16 @@ jobs:
           # (names are then resolved by the servers systemd-resolved had found)
           sudo systemctl stop systemd-resolved
           sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+          # The box has one network interface, eth0, and the firmware asks it
+          # for its address (certificate, mDNS, DNS filter). Machines whose
+          # interface has another name get an eth0 with an address for the tests.
+          if ! ip -4 -o addr show dev eth0 2>/dev/null | grep -q inet; then
+            echo "no eth0 with an IPv4 address on this machine:"; ip -4 -o addr; ip route
+            sudo ip link add eth0 type dummy 2>/dev/null || true
+            sudo ip link set eth0 up multicast on
+            sudo ip addr add 192.0.2.20/24 dev eth0
+            ip -4 -o addr show dev eth0
+          fi
           rc=0
           run() { echo "::group::$1"; shift; if sudo "$@"; then echo "::endgroup::"; else echo "::endgroup::"; echo "::error::failed: $*"; rc=1; fi; }
           run "stack (rpcd, uhttpd, JSON-RPC)" tests/run-stack-qemu.sh "$O" 8080 --check
